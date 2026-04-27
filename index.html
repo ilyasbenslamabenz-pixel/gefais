@@ -1327,19 +1327,22 @@ const DEFAULT_EVENT_TYPES=['Réunion','Maraude','Formation','Sortie','Permanence
 
 // ── FIREBASE ─────────────────────────────────────────────────────
 const firebaseConfig={apiKey:"AIzaSyD7DeDaEEPIpbeR9fCfDBXVPzYeyFm04Ns",authDomain:"ge-fais.firebaseapp.com",projectId:"ge-fais",storageBucket:"ge-fais.firebasestorage.app",messagingSenderId:"908562621208",appId:"1:908562621208:web:1dae6e132a60f78051746d"};
-firebase.initializeApp(firebaseConfig);
-const db=firebase.firestore();
+try{firebase.initializeApp(firebaseConfig);}catch(e){console.warn('Firebase init:',e);}
+let db;try{db=firebase.firestore();}catch(e){console.warn('Firestore:',e);db=null;}
 
 function save(key,value){
+  // Toujours sauvegarder en localStorage comme cache local
+  lsSet(key,value);
   _lastSave[key]=Date.now();
-  db.collection('gef_data').doc(key).set({value:value}).then(()=>{
-    const s=document.getElementById('sync-indicator');
-    if(s){s.style.display='inline';clearTimeout(s._t);s._t=setTimeout(()=>s.style.display='none',1500);}
-    // Re-rendu après confirmation Firebase pour garantir l'affichage correct
-    const p=document.querySelector('.page.active')?.id?.replace('page-','');
-    const map={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport};
-    map[p]?.();
-  }).catch(e=>console.error('Firebase save error:',e));
+  try{
+    db.collection('gef_data').doc(key).set({value:value}).then(()=>{
+      const s=document.getElementById('sync-indicator');
+      if(s){s.textContent='✓ Sync';s.style.color='var(--green)';s.style.display='inline';clearTimeout(s._t);s._t=setTimeout(()=>s.style.display='none',1500);}
+      const p=document.querySelector('.page.active')?.id?.replace('page-','');
+      const map={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport};
+      map[p]?.();
+    }).catch(e=>{console.warn('Firebase save error:',e);});
+  }catch(e){console.warn('Firebase unavailable:',e);}
 }
 
 let membres=DEFAULT_MEMBRES;
@@ -1384,12 +1387,27 @@ function badgeType(t){
   return`<span class="badge badge-none">—</span>`;
 }
 
+// ── LOCALSTORAGE FALLBACK ─────────────────────────────────────────
+function lsGet(key,def){try{const v=localStorage.getItem(key);return v?JSON.parse(v):def;}catch(e){return def;}}
+function lsSet(key,val){try{localStorage.setItem(key,JSON.stringify(val));}catch(e){}}
+let _firebaseOk=false;
+
 async function initApp(){
   document.getElementById('loading-overlay').style.display='flex';
+  
+  // Timeout de 5 secondes pour Firebase — après ça on charge depuis localStorage
+  const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),5000));
+  
   try{
     const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents'];
     const defaults=[DEFAULT_MEMBRES,DEFAULT_EVENTS,DEFAULT_PRESENCES,DEFAULT_COMPTA,buildDefaultCotisations(DEFAULT_MEMBRES),DEFAULT_EVENT_TYPES,[],[]];
-    const docs=await Promise.all(keys.map(k=>db.collection('gef_data').doc(k).get()));
+    
+    const docs=await Promise.race([
+      Promise.all(keys.map(k=>db.collection('gef_data').doc(k).get())),
+      timeout
+    ]);
+    
+    _firebaseOk=true;
     const isNew=!docs[0].exists;
     docs.forEach((d,i)=>{
       const val=d.exists?d.data().value:defaults[i];
@@ -1402,14 +1420,32 @@ async function initApp(){
       else if(i===6)emailHistorique=val;
       else if(i===7)documents_list=val;
     });
+    // Sauvegarder aussi dans localStorage comme cache
+    membres&&lsSet('gef_membres',membres);
+    events&&lsSet('gef_events',events);
+    presences&&lsSet('gef_presences',presences);
+    compta&&lsSet('gef_compta',compta);
+    cotisations&&lsSet('gef_cotisations',cotisations);
     if(isNew){keys.forEach((k,i)=>save(k,defaults[i]));}
     setupListeners();
   }catch(e){
-    console.error(e);
-    alert('Erreur de connexion Firebase. Vérifiez votre connexion internet.');
+    console.warn('Firebase indisponible, chargement depuis le cache local:', e.message);
+    // Charger depuis localStorage
+    membres=lsGet('gef_membres',DEFAULT_MEMBRES);
+    events=lsGet('gef_events',DEFAULT_EVENTS);
+    presences=lsGet('gef_presences',DEFAULT_PRESENCES);
+    compta=lsGet('gef_compta',DEFAULT_COMPTA);
+    cotisations=lsGet('gef_cotisations',buildDefaultCotisations(DEFAULT_MEMBRES));
+    eventTypes=lsGet('gef_event_types',DEFAULT_EVENT_TYPES);
+    emailHistorique=lsGet('gef_email_historique',[]);
+    documents_list=lsGet('gef_documents',[]);
+    const s=document.getElementById('sync-indicator');
+    if(s){s.textContent='📴 Hors ligne';s.style.display='inline';s.style.color='var(--text3)';}
   }
+  
   document.getElementById('loading-overlay').style.display='none';
-  renderDashboard();renderMembres();
+  renderDashboard();
+  renderMembres();
 }
 
 // ── DASHBOARD ────────────────────────────────────────────────────
