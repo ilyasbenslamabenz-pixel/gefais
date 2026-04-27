@@ -218,8 +218,8 @@ tr:hover td{background:var(--bg3);}
 
 /* ── PRÉSENCES — GRILLE ÉVÉNEMENTS ── */
 .pres-events-list{width:100%;background:#fff;border:1px solid #ede9e2;border-radius:20px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);}
-.pres-events-list-header{display:grid;grid-template-columns:100px 1fr 130px 180px 70px 36px;align-items:center;padding:10px 20px;background:#f8f6f2;border-bottom:2px solid #ede9e2;font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:#aaa;font-weight:800;}
-.pres-event-row{display:grid;grid-template-columns:100px 1fr 130px 180px 70px 36px;align-items:center;padding:14px 20px;border-bottom:1px solid #f5f3ef;cursor:pointer;transition:background 0.12s;}
+.pres-events-list-header{display:grid;grid-template-columns:110px 1fr 140px 200px 36px;align-items:center;padding:10px 20px;background:#f8f6f2;border-bottom:2px solid #ede9e2;font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:#aaa;font-weight:800;}
+.pres-event-row{display:grid;grid-template-columns:110px 1fr 140px 200px 36px;align-items:center;padding:14px 20px;border-bottom:1px solid #f5f3ef;cursor:pointer;transition:background 0.12s;}
 .pres-event-row:last-child{border-bottom:none;}
 .pres-event-row:hover{background:#fdf8f8;}
 .per-date{font-size:12px;font-weight:700;color:#888;}
@@ -1568,7 +1568,6 @@ function renderPresencesEventGrid(){
       <div>Événement</div>
       <div>Type</div>
       <div>Présences</div>
-      <div>Taux</div>
       <div></div>
     </div>
     ${evts.map(e=>{
@@ -1585,9 +1584,8 @@ function renderPresencesEventGrid(){
         <div><span class="pec-type-badge ${typeClass}">${e.type}</span></div>
         <div class="per-bar-wrap">
           <div class="per-bar"><div class="per-bar-fill" style="width:${pct}%;background:${col};"></div></div>
-          <div class="per-count" style="color:${col};">${count}/${membres.length}</div>
+          <div class="per-count" style="color:${col};">${count}/${membres.length} <span style="opacity:0.6;font-weight:600;">(${pct}%)</span></div>
         </div>
-        <div style="font-size:13px;font-weight:800;color:${col};">${pct}&nbsp;%</div>
         <div class="per-arrow">›</div>
       </div>`;
     }).join('')}
