@@ -1700,7 +1700,7 @@ function renderEvents(){
               <span>${fmtDate(e.date)}</span>
               ${isPast
                 ?'<span style="color:var(--text3);">· Passé</span>'
-                :`<span style="color:var(--green);font-weight:700;">· ${joursRestantsEvt===0?'Aujourd'hui':joursRestantsEvt===1?'Demain':'Dans '+joursRestantsEvt+'j'}</span>`}
+                :`<span style="color:var(--green);font-weight:700;">· ${joursRestantsEvt===0?'Auj.':joursRestantsEvt===1?'Demain':'Dans '+joursRestantsEvt+'j'}</span>`}
             </div>
           </div>
           <!-- Compteur présences -->
