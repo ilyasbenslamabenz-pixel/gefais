@@ -251,6 +251,51 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 .gef-dot-yes{width:10px;height:10px;border-radius:50%;background:var(--red);display:inline-block;}
 .gef-dot-no{width:10px;height:10px;border-radius:50%;background:var(--border);display:inline-block;}
 
+/* KPI ROW */
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;}
+.kpi-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.kpi-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;font-weight:700;margin-bottom:2px;}
+.kpi-val{font-size:18px;font-weight:700;color:var(--text);letter-spacing:-0.3px;}
+.kpi-sub{font-size:10px;color:var(--text3);margin-top:1px;}
+
+/* KPI BAND */
+.kpi-band-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;transition:box-shadow 0.2s,transform 0.2s;}
+.kpi-band-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.kpi-band-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.kpi-band-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;font-weight:700;margin-bottom:3px;}
+.kpi-band-val{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.5px;line-height:1;}
+.kpi-band-sub{font-size:10px;color:var(--text3);margin-top:2px;}
+
+/* ÉVÉNEMENTS ACCORDÉON */
+.event-row{background:var(--card);border:1.5px solid var(--border);border-radius:16px;margin-bottom:10px;overflow:hidden;transition:box-shadow 0.2s,border-color 0.2s;}
+.event-row:hover{box-shadow:var(--shadow-md);}
+.event-row.open{border-color:var(--red);}
+.event-row-header{display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;user-select:none;-webkit-user-select:none;transition:background 0.15s;}
+.event-row-header:active{background:var(--bg3);}
+.event-row-meta{flex:1;min-width:0;}
+.event-row-title{font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;}
+.event-row-sub{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.event-row-pct{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.event-row-pct-bar{width:64px;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.event-row-pct-fill{height:100%;border-radius:3px;transition:width 0.6s ease;}
+.event-row-chevron{color:var(--text3);font-size:18px;flex-shrink:0;transition:transform 0.25s;}
+.event-row.open .event-row-chevron{transform:rotate(180deg);}
+.event-row-body{display:none;border-top:1.5px solid var(--border);padding:16px 18px;background:var(--bg3);}
+.event-row.open .event-row-body{display:block;}
+
+/* Actions événement dans l'accordéon */
+.event-row-actions{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+
+/* Grille présences dans accordéon */
+.presence-inline-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;}
+.presence-inline-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--card);cursor:pointer;transition:all 0.15s;}
+.presence-inline-item:hover{border-color:var(--text3);}
+.presence-inline-item.present{background:var(--green-light);border-color:#86efac;}
+.presence-inline-item.present .pi-check{background:var(--green);border-color:var(--green);color:#fff;}
+.pi-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;transition:all 0.15s;}
+.pi-name{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pi-type{font-size:10px;color:var(--text3);}
+
 /* HERO DASHBOARD */
 #dash-hero{box-shadow:0 6px 24px rgba(230,51,41,0.25);}
 .dash-quick-btn{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:8px 14px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:6px;transition:background 0.15s;white-space:nowrap;}
@@ -356,15 +401,34 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
   .card{padding:14px;margin-bottom:10px;border-radius:14px;}
   .card-title{font-size:11px;margin-bottom:10px;}
 
+  /* KPI row mobile : 2 colonnes */
+  #dash-kpi-row{grid-template-columns:1fr 1fr !important;}
+  .kpi-card{padding:10px 12px;gap:8px;}
+  .kpi-icon{width:30px;height:30px;font-size:15px;}
+  .kpi-val{font-size:16px;}
+  #events-stats-row{grid-template-columns:1fr 1fr 1fr !important;}
+
+  /* Présences inline : 1 colonne sur mobile */
+  .presence-inline-grid{grid-template-columns:1fr 1fr;}
+  .event-row-header{padding:13px 14px;gap:10px;}
+  .event-row-title{font-size:14px;}
+  .event-row-body{padding:12px 14px;}
+  .event-row-actions{gap:6px;}
+
   /* Hero dashboard mobile */
-  #dash-hero{padding:18px;border-radius:16px;margin-bottom:14px;}
-  #dash-hero > div > div:first-child{display:none;}
-  #dash-hero-greeting{font-size:18px;}
-  #dash-hero-quick{gap:8px;margin-top:12px;}
-  .dash-quick-btn{padding:7px 11px;font-size:11px;}
+  #dash-hero{padding:16px 18px;border-radius:16px;margin-bottom:12px;}
+  #dash-hero-greeting{font-size:17px;}
+  #dash-hero-quick{gap:6px;margin-top:10px;}
+  .dash-quick-btn{padding:6px 10px;font-size:11px;}
+
+  /* KPI band mobile — 2x2 */
+  #dash-kpi-band{grid-template-columns:1fr 1fr !important;gap:8px !important;}
+  .kpi-band-card{padding:11px 12px;gap:8px;border-radius:12px;}
+  .kpi-band-icon{width:32px;height:32px;border-radius:9px;font-size:16px;}
+  .kpi-band-val{font-size:18px;}
 
   /* Alertes mobile */
-  .dash-alerte{font-size:12px;padding:10px 12px;}
+  .dash-alerte{font-size:12px;padding:10px 12px;border-radius:10px;}
 
   /* Compta : table -> cartes mobile */
   .card .table-wrap table thead tr th:nth-child(5),
@@ -425,8 +489,13 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
   .topbar{height:58px;padding:0 14px;}
   .topbar-title{font-size:18px;}
 
-  /* Événements */
-  #events-list .card{padding:14px;}
+  /* Événements accordéon mobile */
+  .event-row-header{padding:14px 14px;}
+  .event-row-title{font-size:14px;}
+  .event-row-actions{flex-wrap:wrap;gap:6px;}
+  .event-row-actions .btn{flex:1;min-width:110px;justify-content:center;}
+  .presence-inline-grid{grid-template-columns:1fr 1fr !important;gap:6px;}
+  .pi-name{font-size:12px;}
 
   /* Email page */
   #email-destinataires-list{gap:6px;}
@@ -559,44 +628,30 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
     <!-- DASHBOARD -->
     <div id="page-dashboard" class="page active">
 
-      <!-- HERO BANNER -->
-      <div id="dash-hero" style="background:linear-gradient(135deg,#e63329 0%,#c0271e 100%);border-radius:20px;padding:24px 28px;margin-bottom:20px;color:#fff;position:relative;overflow:hidden;">
-        <div style="position:absolute;top:-20px;right:-20px;width:140px;height:140px;background:rgba(255,255,255,0.06);border-radius:50%;"></div>
-        <div style="position:absolute;bottom:-30px;right:40px;width:80px;height:80px;background:rgba(255,255,255,0.06);border-radius:50%;"></div>
+      <!-- ① HERO -->
+      <div id="dash-hero" style="background:linear-gradient(135deg,#e63329 0%,#c0271e 100%);border-radius:20px;padding:22px 26px;margin-bottom:16px;color:#fff;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:-30px;right:-20px;width:150px;height:150px;background:rgba(255,255,255,0.05);border-radius:50%;pointer-events:none;"></div>
         <div style="position:relative;z-index:1;">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-            <svg width="18" height="18" viewBox="0 0 40 40" fill="none" style="flex-shrink:0;">
-              <circle cx="20" cy="5" r="3" fill="rgba(255,255,255,0.7)"/>
-              <circle cx="28" cy="8" r="2.5" fill="rgba(255,255,255,0.7)"/>
-              <circle cx="34" cy="15" r="2" fill="rgba(255,255,255,0.7)"/>
-              <circle cx="36" cy="23" r="2" fill="rgba(255,255,255,0.7)"/>
-              <circle cx="6" cy="22" r="3" fill="#fff"/>
-              <circle cx="8" cy="13" r="3.5" fill="#f5c842"/>
-            </svg>
-            <span style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:0.8;">GE-FAIS · Espace de gestion</span>
-          </div>
-          <div style="font-size:22px;font-weight:700;letter-spacing:-0.3px;margin-bottom:4px;" id="dash-hero-greeting">Bonjour 👋</div>
-          <div style="font-size:13px;opacity:0.75;" id="dash-hero-sub">Chargement…</div>
-          <div style="display:flex;gap:16px;margin-top:16px;flex-wrap:wrap;" id="dash-hero-quick">
-          </div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:0.7;margin-bottom:6px;">GE-FAIS · Espace de gestion</div>
+          <div style="font-size:20px;font-weight:700;margin-bottom:3px;" id="dash-hero-greeting">Bonjour 👋</div>
+          <div style="font-size:13px;opacity:0.75;margin-bottom:14px;" id="dash-hero-sub">Chargement…</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;" id="dash-hero-quick"></div>
         </div>
       </div>
 
-      <!-- STATS GRID -->
-      <div class="stats-grid" id="dash-stats"></div>
+      <!-- ② KPI — chiffres clés en haut -->
+      <div id="dash-kpi-band" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;"></div>
 
-      <!-- ALERTES -->
-      <div id="dash-alertes" style="margin-bottom:16px;"></div>
+      <!-- ③ ALERTES -->
+      <div id="dash-alertes" style="margin-bottom:14px;"></div>
 
-      <!-- GRILLE principale -->
-      <div class="dash-grid" style="margin-bottom:16px;">
-        <!-- Présence membres -->
+      <!-- ④ GRILLE graphiques + events -->
+      <div class="dash-grid" style="margin-bottom:14px;">
         <div class="card">
           <div class="card-title">🏅 Présence des membres</div>
           <div id="dash-presence-bars" class="gef-chart"></div>
         </div>
-        <!-- Donut + prochains events -->
-        <div style="display:flex;flex-direction:column;gap:16px;">
+        <div style="display:flex;flex-direction:column;gap:14px;">
           <div class="card">
             <div class="card-title">🍩 Répartition</div>
             <div class="gef-donut-wrap">
@@ -611,7 +666,7 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
         </div>
       </div>
 
-      <!-- 2e ligne -->
+      <!-- ⑤ Finances + événements -->
       <div class="dash-grid">
         <div class="card">
           <div class="card-title">📅 Participation par événement</div>
@@ -674,11 +729,20 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 
     <!-- ÉVÉNEMENTS -->
     <div id="page-evenements" class="page">
-      <div class="page-header"><div class="page-header-left"><h2>Événements</h2><p>Gérez les présences par événement</p></div></div>
-      <div class="toolbar">
-        <button class="btn btn-primary btn-sm" onclick="openEventModal()">+ Ajouter un événement</button>
-        <button class="btn btn-secondary btn-sm" onclick="openTypesModal()">⚙️ Types</button>
+      <div class="page-header">
+        <div class="page-header-left"><h2>Événements</h2><p>Cliquez sur un événement pour voir les présences</p></div>
       </div>
+      <!-- Stats événements -->
+      <div id="events-stats-row" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;"></div>
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <button class="btn btn-primary btn-sm" onclick="openEventModal()">+ Ajouter</button>
+        <button class="btn btn-secondary btn-sm" onclick="openTypesModal()">⚙️ Types</button>
+        <select id="events-filter-type" onchange="renderEvents()" style="width:130px;">
+          <option value="">Tous les types</option>
+        </select>
+      </div>
+      <!-- Liste accordéon -->
       <div id="events-list"></div>
     </div>
 
@@ -1295,37 +1359,213 @@ function renderPresences(){
 function togglePresence(mid,eid,td){const key=mid+'_'+eid;presences[key]=!presences[key];save('gef_presences',presences);td.innerHTML=`<span class="dot ${presences[key]?'dot-yes':'dot-no'}"></span>`;const p=events.filter(e=>presences[mid+'_'+e.id]).length;const pct=events.length>0?Math.round((p/events.length)*100):0;td.closest('tr').querySelector('td:last-child').innerHTML=`<div style="display:flex;align-items:center;gap:4px"><div class="pct-bar"><div class="pct-fill" style="width:${pct}%"></div></div><span style="font-size:10px;color:var(--text3)">${pct}%</span></div>`;}
 
 // ── ÉVÉNEMENTS ───────────────────────────────────────────────────
+let _openEventId=null;
+
 function renderEvents(){
-  document.getElementById('events-list').innerHTML=events.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(e=>{
-    const count=membres.filter(m=>presences[m.id+'_'+e.id]).length;
-    const pct=membres.length>0?Math.round((count/membres.length)*100):0;
-    return`<div class="card" style="margin-bottom:12px;">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-        <div style="flex:1;min-width:0;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-            <span class="event-chip ${e.type==='Maraude'?'event-chip-maraude':e.type==='Réunion'?'event-chip-reunion':'event-chip-autre'}">${e.type}</span>
-            <span style="font-size:12px;color:var(--text3);">${fmtDate(e.date)}</span>
+  const filterType=document.getElementById('events-filter-type')?.value||'';
+
+  // Peupler le filtre types
+  const sel=document.getElementById('events-filter-type');
+  if(sel&&sel.options.length<=1){
+    const types=[...new Set(events.map(e=>e.type))];
+    sel.innerHTML='<option value="">Tous les types</option>'+types.map(t=>`<option value="${t}">${t}</option>`).join('');
+  }
+
+  const sorted=events.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  const filtered=filterType?sorted.filter(e=>e.type===filterType):sorted;
+
+  // Stats en haut
+  const total=events.length;
+  const maraudes=events.filter(e=>e.type==='Maraude').length;
+  const reunions=events.filter(e=>e.type==='Réunion').length;
+  const today=new Date().toISOString().slice(0,10);
+  const aVenir=events.filter(e=>e.date>=today).length;
+  document.getElementById('events-stats-row').innerHTML=`
+    <div class="stat-card" style="padding:12px 14px;">
+      <div class="stat-label">Total</div>
+      <div class="stat-value" style="font-size:22px;">${total}</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:2px;">${aVenir} à venir</div>
+    </div>
+    <div class="stat-card" style="padding:12px 14px;">
+      <div class="stat-label">Maraudes</div>
+      <div class="stat-value" style="font-size:22px;color:var(--gold);">${maraudes}</div>
+    </div>
+    <div class="stat-card" style="padding:12px 14px;">
+      <div class="stat-label">Réunions</div>
+      <div class="stat-value" style="font-size:22px;color:var(--red);">${reunions}</div>
+    </div>
+  `;
+
+  // Grouper par mois
+  const byMonth={};
+  filtered.forEach(e=>{
+    const [y,m]=e.date.split('-');
+    const key=`${y}-${m}`;
+    if(!byMonth[key])byMonth[key]=[];
+    byMonth[key].push(e);
+  });
+
+  const moisNoms=['','Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+
+  let html='';
+  Object.entries(byMonth).sort((a,b)=>b[0].localeCompare(a[0])).forEach(([key,evts])=>{
+    const [y,m]=key.split('-');
+    html+=`<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;padding:8px 4px 6px;margin-top:4px;">${moisNoms[parseInt(m)]} ${y}</div>`;
+    evts.forEach(e=>{
+      const count=membres.filter(mb=>presences[mb.id+'_'+e.id]).length;
+      const pct=membres.length>0?Math.round((count/membres.length)*100):0;
+      const isOpen=_openEventId===e.id;
+      const isPast=e.date<today;
+      const joursRestantsEvt=isPast?-1:Math.round((new Date(e.date)-new Date())/86400000);
+      const chipCls=e.type==='Maraude'?'event-chip-maraude':e.type==='Réunion'?'event-chip-reunion':'event-chip-autre';
+      const barColor=pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';
+
+      // Corps présences inline
+      const presencesHtml=membres.map(mb=>{
+        const p=!!presences[mb.id+'_'+e.id];
+        return`<div class="presence-inline-item ${p?'present':''}" onclick="togglePresenceInline(${mb.id},${e.id},this)">
+          <div class="pi-check">${p?'✓':''}</div>
+          <div style="min-width:0;">
+            <div class="pi-name">${mb.prenom} ${mb.nom}</div>
+            <div class="pi-type">${mb.type||'—'}</div>
           </div>
-          <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:8px;">${e.nom||'—'}</div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:13px;color:var(--text2);"><span style="color:var(--red);font-weight:600;">${count}</span> / ${membres.length} présents</span>
-            <div style="flex:1;max-width:80px;height:5px;background:var(--border);border-radius:3px;overflow:hidden;"><div style="height:100%;width:${pct}%;background:var(--red);border-radius:3px;"></div></div>
-            <span style="font-size:11px;color:var(--text3);">${pct}%</span>
+        </div>`;
+      }).join('');
+
+      html+=`<div class="event-row${isOpen?' open':''}" id="event-row-${e.id}">
+        <!-- HEADER cliquable -->
+        <div class="event-row-header" onclick="toggleEventRow(${e.id})">
+          <!-- Icône -->
+          <div style="width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;background:${e.type==='Maraude'?'#fffbeb':e.type==='Réunion'?'#fff1f0':'var(--bg3)'};">
+            ${e.type==='Maraude'?'🤝':e.type==='Réunion'?'📋':'📌'}
           </div>
+          <!-- Infos -->
+          <div class="event-row-meta">
+            <div class="event-row-title">${e.nom||e.type}</div>
+            <div class="event-row-sub">
+              <span class="event-chip ${chipCls}" style="font-size:10px;padding:2px 7px;">${e.type}</span>
+              <span>${fmtDate(e.date)}</span>
+              ${isPast
+                ?'<span style="color:var(--text3);">· Passé</span>'
+                :`<span style="color:var(--green);font-weight:700;">· ${joursRestantsEvt===0?'Aujourd'hui':joursRestantsEvt===1?'Demain':'Dans '+joursRestantsEvt+'j'}</span>`}
+            </div>
+          </div>
+          <!-- Compteur présences -->
+          <div class="event-row-pct">
+            <div style="text-align:right;">
+              <div style="font-size:14px;font-weight:800;color:${barColor};">${count}<span style="font-size:11px;font-weight:400;color:var(--text3);">/${membres.length}</span></div>
+              <div class="event-row-pct-bar" style="margin-top:4px;"><div class="event-row-pct-fill" style="width:${pct}%;background:${barColor};transition:width 0.5s;"></div></div>
+            </div>
+            <div style="font-size:10px;color:var(--text3);width:28px;text-align:right;">${pct}%</div>
+          </div>
+          <!-- Chevron animé -->
+          <div class="event-row-chevron" style="font-size:18px;color:var(--text3);transition:transform 0.25s;${isOpen?'transform:rotate(180deg)':''}">⌄</div>
         </div>
-        <div style="display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;">
-          <button class="btn btn-sm btn-primary" onclick="openPresencesEvent(${e.id})">👥 Présences</button>
-          <button class="btn-icon" onclick="editEvent(${e.id})">✏️</button>
-          <button class="btn-icon" onclick="deleteEvent(${e.id})">🗑️</button>
+
+        <!-- CORPS accordéon -->
+        <div class="event-row-body" id="event-body-${e.id}">
+          <!-- Actions rapides -->
+          <div class="event-row-actions">
+            <button class="btn btn-sm btn-green" onclick="toggleAllPresencesInline(${e.id},true);event.stopPropagation()">✓ Tous présents</button>
+            <button class="btn btn-sm btn-secondary" onclick="toggleAllPresencesInline(${e.id},false);event.stopPropagation()">✗ Tous absents</button>
+            <button class="btn btn-sm btn-secondary" onclick="editEvent(${e.id});event.stopPropagation()">✏️ Modifier</button>
+            <button class="btn btn-sm btn-secondary" style="color:var(--red);" onclick="deleteEvent(${e.id});event.stopPropagation()">🗑️ Supprimer</button>
+          </div>
+          ${e.commentaires?`<div style="font-size:13px;color:var(--text2);background:var(--bg3);border-radius:10px;padding:10px 14px;margin-bottom:14px;border:1px solid var(--border);display:flex;gap:8px;align-items:flex-start;"><span>💬</span><span>${e.commentaires}</span></div>`:''}
+          <!-- Label -->
+          <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;">
+            <span>Présences</span>
+            <span style="font-size:11px;font-weight:600;color:${barColor};">${count} / ${membres.length}</span>
+          </div>
+          <!-- Grille présences -->
+          <div class="presence-inline-grid" id="presence-grid-${e.id}">${presencesHtml}</div>
         </div>
-      </div>
-    </div>`;
-  }).join('');
+      </div>`;
+    });
+  });
+
+  if(!html)html='<p style="color:var(--text3);text-align:center;padding:32px 0;font-size:14px;">Aucun événement</p>';
+  document.getElementById('events-list').innerHTML=html;
 }
-function openPresencesEvent(eventId){currentEventId=eventId;const e=events.find(x=>x.id===eventId);document.getElementById('modal-presences-event-title').textContent=`Présences — ${e.nom||e.type}`;renderPresenceCheckList();document.getElementById('modal-presences-event').classList.add('open');}
-function renderPresenceCheckList(){const count=membres.filter(m=>presences[m.id+'_'+currentEventId]).length;document.getElementById('presence-event-count').textContent=`${count} / ${membres.length} présents`;document.getElementById('presence-check-list').innerHTML=membres.map(m=>{const p=!!presences[m.id+'_'+currentEventId];return`<div class="presence-check-item ${p?'present':''}" onclick="togglePresenceModal(${m.id})"><div><div class="presence-check-item-name">${m.prenom} ${m.nom}</div><div class="presence-check-item-type">${m.type||'—'}</div></div><div class="presence-toggle">${p?'✓':''}</div></div>`;}).join('');}
-function togglePresenceModal(mid){const key=mid+'_'+currentEventId;presences[key]=!presences[key];save('gef_presences',presences);renderPresenceCheckList();}
-function toggleAllPresences(val){membres.forEach(m=>{presences[m.id+'_'+currentEventId]=val;});save('gef_presences',presences);renderPresenceCheckList();}
+
+function toggleEventRow(eid){
+  const wasOpen=_openEventId===eid;
+  // Fermer l'actuel
+  if(_openEventId){
+    const prev=document.getElementById('event-row-'+_openEventId);
+    if(prev)prev.classList.remove('open');
+  }
+  _openEventId=wasOpen?null:eid;
+  if(!wasOpen){
+    const row=document.getElementById('event-row-'+eid);
+    if(row){
+      row.classList.add('open');
+      // Scroll doux vers la ligne
+      setTimeout(()=>row.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+    }
+  }
+}
+
+function togglePresenceInline(mid,eid,el){
+  const key=mid+'_'+eid;
+  presences[key]=!presences[key];
+  save('gef_presences',presences);
+  el.classList.toggle('present',presences[key]);
+  el.querySelector('.pi-check').textContent=presences[key]?'✓':'';
+  // Mettre à jour le compteur dans le header
+  const count=membres.filter(m=>presences[m.id+'_'+eid]).length;
+  const pct=membres.length>0?Math.round((count/membres.length)*100):0;
+  const barColor=pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';
+  const row=document.getElementById('event-row-'+eid);
+  if(row){
+    const pctEl=row.querySelector('.event-row-pct');
+    if(pctEl){
+      pctEl.innerHTML=`
+        <div>
+          <div style="font-size:13px;font-weight:700;color:${barColor};text-align:right;">${count}/${membres.length}</div>
+          <div class="event-row-pct-bar"><div class="event-row-pct-fill" style="width:${pct}%;background:${barColor};"></div></div>
+        </div>
+        <div style="font-size:10px;color:var(--text3);width:28px;text-align:right;">${pct}%</div>`;
+    }
+  }
+}
+
+function toggleAllPresencesInline(eid,val){
+  membres.forEach(m=>{presences[m.id+'_'+eid]=val;});
+  save('gef_presences',presences);
+  // Rafraîchir la grille de cet événement uniquement
+  const grid=document.getElementById('presence-grid-'+eid);
+  if(grid){
+    grid.querySelectorAll('.presence-inline-item').forEach((el,i)=>{
+      const m=membres[i];
+      if(!m)return;
+      el.classList.toggle('present',val);
+      el.querySelector('.pi-check').textContent=val?'✓':'';
+    });
+  }
+  // Mettre à jour compteur
+  const count=val?membres.length:0;
+  const pct=val?100:0;
+  const barColor=pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';
+  const row=document.getElementById('event-row-'+eid);
+  if(row){
+    const pctEl=row.querySelector('.event-row-pct');
+    if(pctEl){
+      pctEl.innerHTML=`
+        <div>
+          <div style="font-size:13px;font-weight:700;color:${barColor};text-align:right;">${count}/${membres.length}</div>
+          <div class="event-row-pct-bar"><div class="event-row-pct-fill" style="width:${pct}%;background:${barColor};"></div></div>
+        </div>
+        <div style="font-size:10px;color:var(--text3);width:28px;text-align:right;">${pct}%</div>`;
+    }
+  }
+}
+
+// Garder les anciennes fonctions modal pour compatibilité
+function openPresencesEvent(eventId){toggleEventRow(eventId);}
+function renderPresenceCheckList(){} // remplacé par inline
+function togglePresenceModal(mid){togglePresenceInline(mid,currentEventId,document.querySelector(`.presence-inline-item[onclick*="${mid},${currentEventId}"]`));}
+function toggleAllPresences(val){toggleAllPresencesInline(currentEventId,val);}
 function populateEventTypes(selected){const sel=document.getElementById('e-type');sel.innerHTML=eventTypes.map(t=>`<option value="${t}"${t===selected?'selected':''}>${t}</option>`).join('');}
 function openEventModal(){editingEvent=null;document.getElementById('modal-event-title').textContent='Ajouter un événement';document.getElementById('e-date').value='';populateEventTypes('Réunion');document.getElementById('e-nom').value='';document.getElementById('e-comment').value='';document.getElementById('modal-event').classList.add('open');}
 function editEvent(id){editingEvent=id;const e=events.find(x=>x.id===id);document.getElementById('modal-event-title').textContent="Modifier l'événement";document.getElementById('e-date').value=e.date;populateEventTypes(e.type);document.getElementById('e-nom').value=e.nom||'';document.getElementById('e-comment').value=e.commentaires||'';document.getElementById('modal-event').classList.add('open');}
