@@ -149,7 +149,7 @@ h1,h2,h3{font-family:'DM Serif Display',serif;font-weight:400;}
 .bottom-nav-item span{font-size:8px;font-weight:600;letter-spacing:0.3px;}
 
 /* MAIN */
-.main{margin-left:var(--sidebar);flex:1;padding:30px 34px;min-height:100vh;}
+.main{margin-left:var(--sidebar);flex:1;padding:30px 28px;min-height:100vh;}
 .page{display:none;animation:fadeIn 0.2s ease;}.page.active{display:block;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .page-header{margin-bottom:24px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;}
@@ -212,38 +212,75 @@ tr:hover td{background:var(--bg3);}
 .presence-stat-card.gold::before{background:linear-gradient(90deg,#c49a00,#e6b800);}
 .presence-stat-card.green::before{background:linear-gradient(90deg,#16a34a,#22c55e);}
 .presence-stat-card.blue::before{background:linear-gradient(90deg,#2563eb,#60a5fa);}
-.psc-val{font-family:'DM Serif Display',serif;font-size:30px;color:#1a1a1a;line-height:1;margin-bottom:4px;}
-.psc-label{font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:1px;font-weight:700;}
-.psc-sub{font-size:11px;color:#ccc;margin-top:2px;}
+.psc-val{font-family:'DM Serif Display',serif;font-size:32px;color:#1a1a1a;line-height:1;margin-bottom:5px;}
+.psc-label{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1.2px;font-weight:800;}
+.psc-sub{font-size:11px;color:#bbb;margin-top:3px;font-style:italic;}
 
-/* Filtre vue */
-.presence-view-tabs{display:flex;gap:0;background:#f0ede8;border-radius:12px;padding:3px;margin-bottom:20px;width:fit-content;}
-.pvt{padding:8px 18px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;color:#888;transition:all 0.15s;}
-.pvt.active{background:#fff;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,0.10);}
+/* ── PRÉSENCES — GRILLE ÉVÉNEMENTS ── */
+.pres-events-list{width:100%;background:#fff;border:1px solid #ede9e2;border-radius:20px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);}
+.pres-events-list-header{display:grid;grid-template-columns:80px 1fr 120px 100px 120px 48px;align-items:center;padding:10px 20px;background:#f8f6f2;border-bottom:2px solid #ede9e2;font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:#aaa;font-weight:800;}
+.pres-event-row{display:grid;grid-template-columns:80px 1fr 120px 100px 120px 48px;align-items:center;padding:14px 20px;border-bottom:1px solid #f5f3ef;cursor:pointer;transition:background 0.12s;}
+.pres-event-row:last-child{border-bottom:none;}
+.pres-event-row:hover{background:#fdf8f8;}
+.per-date{font-size:12px;font-weight:700;color:#888;}
+.per-name{font-size:13px;font-weight:700;color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:12px;}
+.pec-type-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:7px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;}
+.pec-type-badge.r{background:#fef2f2;color:#dc2626;}
+.pec-type-badge.m{background:#fefce8;color:#b08800;}
+.pec-type-badge.f{background:#eff6ff;color:#2563eb;}
+.pec-type-badge.s{background:#f0fdf4;color:#16a34a;}
+.pec-type-badge.p{background:#faf5ff;color:#7c3aed;}
+.pec-type-badge.a{background:#f3f4f6;color:#6b7280;}
+.per-bar-wrap{display:flex;align-items:center;gap:8px;}
+.per-bar{flex:1;height:5px;background:#f0ede8;border-radius:4px;overflow:hidden;}
+.per-bar-fill{height:100%;border-radius:4px;transition:width 0.4s;}
+.per-count{font-size:12px;font-weight:800;min-width:40px;text-align:right;}
+.per-arrow{color:#ccc;font-size:16px;text-align:center;}
+
+/* ── PRÉSENCES — VUE DÉTAIL ── */
+.pres-detail-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.pres-detail-stat{background:#fff;border:1px solid #ede9e2;border-radius:16px;padding:16px 18px;text-align:center;}
+.pds-val{font-family:'DM Serif Display',serif;font-size:28px;color:#1a1a1a;line-height:1;}
+.pds-label{font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-top:4px;}
+
+.pres-membres-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;}
+.pres-membre-card{background:#fff;border:1.5px solid #ede9e2;border-radius:16px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all 0.15s;}
+.pres-membre-card:hover{border-color:#c0c0b8;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.pres-membre-card.present{background:#fff5f5;border-color:#fca5a5;}
+.pres-membre-card.present:hover{border-color:#e63329;}
+.pmc-info{display:flex;align-items:center;gap:10px;}
+.pmc-check{width:30px;height:30px;border-radius:9px;border:2px solid #e0dbd2;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;transition:all 0.15s;color:transparent;}
+.pres-membre-card.present .pmc-check{background:linear-gradient(135deg,#e63329,#c0271e);border-color:transparent;color:#fff;box-shadow:0 2px 8px rgba(230,51,41,0.3);}
+.pmc-name{font-size:13px;font-weight:600;color:#1a1a1a;}
+.pmc-type{font-size:10px;color:#bbb;margin-top:2px;}
+
+/* Section en-tête groupe présents/absents */
+.pres-group-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:#aaa;margin:20px 0 10px;display:flex;align-items:center;gap:8px;}
+.pres-group-title::after{content:'';flex:1;height:1px;background:#f0ede8;}
 
 /* ── TABLEAU DESKTOP ── */
-.presence-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:20px;border:1px solid #ede9e2;box-shadow:0 2px 16px rgba(0,0,0,0.07);background:#fff;}
-.presence-table{width:100%;border-collapse:collapse;}
-.presence-table th{border-bottom:2px solid #ede9e2;}
+.presence-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:24px;border:1px solid #ede9e2;box-shadow:0 4px 24px rgba(0,0,0,0.07),0 1px 4px rgba(0,0,0,0.04);background:#fff;width:100%;}
+.presence-table{width:100%;border-collapse:collapse;table-layout:auto;}
+.presence-table th{border-bottom:2px solid #f0ede8;}
 .presence-table td{border-bottom:1px solid #f5f3ef;}
 .presence-table tr:last-child td{border-bottom:none;}
 
 /* Col membre sticky */
-.presence-table .th-membre{position:sticky;left:0;z-index:2;background:#f8f6f2;padding:14px 18px;font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#aaa;font-weight:800;white-space:nowrap;min-width:175px;border-right:1px solid #ede9e2;}
+.presence-table .th-membre{position:sticky;left:0;z-index:2;background:linear-gradient(180deg,#f8f6f2,#f3f0ea);padding:16px 20px;font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:#bbb;font-weight:800;white-space:nowrap;min-width:200px;border-right:1px solid #ede9e2;}
 .presence-table .td-membre{position:sticky;left:0;z-index:1;background:#fff;border-right:1px solid #ede9e2;transition:background 0.12s;}
-.presence-table tbody tr:hover .td-membre{background:#fdf5f4;}
-.presence-table tbody tr:hover td{background:#fdf5f4;}
-.membre-cell{display:flex;align-items:center;gap:11px;padding:11px 18px;}
-.membre-cell .avatar{width:34px;height:34px;font-size:11px;flex-shrink:0;border-radius:10px;border:none;}
-.membre-cell-name{font-size:13px;font-weight:600;color:#1a1a1a;white-space:nowrap;}
-.membre-cell-type{font-size:9px;color:#ccc;margin-top:2px;text-transform:uppercase;letter-spacing:0.8px;font-weight:600;}
+.presence-table tbody tr:hover .td-membre{background:#fef8f8;}
+.presence-table tbody tr:hover td{background:#fef8f8;}
+.membre-cell{display:flex;align-items:center;gap:12px;padding:12px 20px;}
+.membre-cell .avatar{width:36px;height:36px;font-size:12px;flex-shrink:0;border-radius:12px;background:linear-gradient(135deg,#fde8e7,#fdf6e3);color:#c0271e;font-weight:700;border:none;}
+.membre-cell-name{font-size:13px;font-weight:700;color:#1a1a1a;white-space:nowrap;letter-spacing:-0.2px;}
+.membre-cell-type{font-size:9px;color:#ccc;margin-top:2px;text-transform:uppercase;letter-spacing:0.8px;font-weight:700;}
 
-/* En-têtes événements — design vertical amélioré */
-.presence-table .th-event{padding:10px 0;text-align:center;min-width:48px;max-width:48px;width:48px;vertical-align:bottom;border-right:1px solid #f0ede8;}
-.event-col-header{display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 4px;}
-.event-col-name{font-size:8px;font-weight:700;color:#bbb;letter-spacing:0.3px;writing-mode:vertical-lr;transform:rotate(180deg);max-height:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.event-col-date{font-size:8px;font-weight:800;color:#999;letter-spacing:0.3px;background:#f5f3ef;padding:2px 5px;border-radius:5px;}
-.event-col-type{font-size:6px;padding:2px 6px;border-radius:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;}
+/* En-têtes événements */
+.presence-table .th-event{padding:12px 0 8px;text-align:center;min-width:48px;max-width:64px;width:auto;vertical-align:bottom;border-right:1px solid #f0ede8;background:linear-gradient(180deg,#f8f6f2,#f3f0ea);}
+.event-col-header{display:flex;flex-direction:column;align-items:center;gap:7px;padding:0 6px;}
+.event-col-name{font-size:8px;font-weight:700;color:#aaa;letter-spacing:0.3px;writing-mode:vertical-lr;transform:rotate(180deg);max-height:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.event-col-date{font-size:9px;font-weight:800;color:#888;letter-spacing:0.3px;background:#eae6df;padding:3px 6px;border-radius:6px;}
+.event-col-type{font-size:6px;padding:2px 7px;border-radius:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;}
 .event-col-type.r{background:#fef2f2;color:#dc2626;}
 .event-col-type.m{background:#fefce8;color:#b08800;}
 .event-col-type.a{background:#f3f4f6;color:#6b7280;}
@@ -251,25 +288,25 @@ tr:hover td{background:var(--bg3);}
 .event-col-type.s{background:#f0fdf4;color:#16a34a;}
 .event-col-type.p{background:#faf5ff;color:#7c3aed;}
 
-/* Cellules dot */
-.presence-table .td-dot{text-align:center;padding:8px 0;cursor:pointer;border-right:1px solid #f5f3ef;vertical-align:middle;transition:background 0.1s;}
-.dot{width:24px;height:24px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;font-size:13px;font-weight:800;user-select:none;}
-.dot:active{transform:scale(0.78);}
-.dot-yes{background:linear-gradient(135deg,#e63329,#c0271e);box-shadow:0 2px 8px rgba(230,51,41,0.3);color:white;}
+/* Cellules dot — plus grandes, plus claires */
+.presence-table .td-dot{text-align:center;padding:10px 0;cursor:pointer;border-right:1px solid #f5f3ef;vertical-align:middle;}
+.dot{width:28px;height:28px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;font-size:14px;font-weight:800;user-select:none;}
+.dot:active{transform:scale(0.75);}
+.dot-yes{background:linear-gradient(135deg,#e63329,#c0271e);box-shadow:0 3px 10px rgba(230,51,41,0.35);color:white;}
 .dot-yes::after{content:'✓';}
-.dot-no{background:#f0ede8;border:1.5px solid #e0dbd2;color:transparent;}
-.dot-no:hover{background:#ffe5e4;border-color:#e63329;box-shadow:0 0 0 3px rgba(230,51,41,0.08);}
+.dot-no{background:#f5f2ee;border:1.5px solid #e5e0d8;color:transparent;}
+.dot-no:hover{background:#fff0ef;border-color:#e63329;box-shadow:0 0 0 4px rgba(230,51,41,0.07);transform:scale(1.05);}
 
 /* Ligne taux événement */
-.pct-row-event td{background:#faf9f7 !important;border-bottom:2px solid #ede9e2 !important;}
-.pct-row-event .td-membre{background:#f5f3ef !important;}
+.pct-row-event td{background:#faf9f7 !important;border-top:1px solid #ede9e2;border-bottom:2px solid #e8e3db !important;}
+.pct-row-event .td-membre{background:#f3f0ea !important;}
 
-/* Col % */
-.presence-table .th-pct{padding:14px 18px;font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#aaa;font-weight:800;white-space:nowrap;text-align:right;border-left:1px solid #ede9e2;background:#f8f6f2;}
-.presence-table .td-pct{padding:11px 18px;border-left:1px solid #ede9e2;vertical-align:middle;}
-.pct-cell{display:flex;flex-direction:column;align-items:flex-end;gap:5px;min-width:60px;}
-.pct-num{font-size:14px;font-weight:800;color:#1a1a1a;}
-.pct-bar{height:5px;background:#ede9e2;border-radius:5px;width:52px;overflow:hidden;}
+/* Col taux membre */
+.presence-table .th-pct{padding:16px 20px;font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:#bbb;font-weight:800;white-space:nowrap;text-align:right;border-left:1px solid #ede9e2;background:linear-gradient(180deg,#f8f6f2,#f3f0ea);}
+.presence-table .td-pct{padding:12px 20px;border-left:1px solid #ede9e2;vertical-align:middle;}
+.pct-cell{display:flex;flex-direction:column;align-items:flex-end;gap:6px;min-width:68px;}
+.pct-num{font-size:15px;font-weight:800;color:#1a1a1a;line-height:1;}
+.pct-bar{height:5px;background:#ede9e2;border-radius:5px;width:56px;overflow:hidden;}
 .pct-fill{height:100%;border-radius:5px;transition:width 0.5s ease;}
 
 /* ── VUE HEATMAP ── */
@@ -806,33 +843,27 @@ select option{background:#fff;}
 
     <!-- PRÉSENCES -->
     <div id="page-presences" class="page">
-      <div class="page-header">
-        <div class="page-header-left"><h2>Présences</h2><p>Suivi des présences par événement</p></div>
-        <button class="btn btn-secondary btn-sm" onclick="exportPresencesCSV()">⬇️ CSV</button>
-      </div>
-      <!-- Stats cards -->
-      <div id="presence-stats-bar" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;"></div>
-      <!-- Onglets vue (desktop) -->
-      <div id="presence-view-tabs" style="display:none;margin-bottom:20px;">
-        <div class="presence-view-tabs">
-          <div class="pvt active" onclick="switchPresenceView('table',this)">Tableau</div>
-          <div class="pvt" onclick="switchPresenceView('heatmap',this)">Heatmap</div>
+      <!-- VUE LISTE ÉVÉNEMENTS -->
+      <div id="pres-view-list">
+        <div class="page-header">
+          <div class="page-header-left"><h2>Présences</h2><p>Sélectionnez un événement</p></div>
+          <button class="btn btn-secondary btn-sm" onclick="exportPresencesCSV()">⬇️ CSV</button>
         </div>
+        <div id="presence-stats-bar" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;width:100%;"></div>
+        <div id="pres-events-grid"></div>
       </div>
-      <!-- Vue mobile -->
-      <div id="presence-mobile-list" style="display:none;"></div>
-      <!-- Vue desktop tableau -->
-      <div id="presence-desktop" class="presence-table-wrap">
-        <table class="presence-table">
-          <thead id="presence-thead"></thead>
-          <tbody id="presence-tbody"></tbody>
-        </table>
-      </div>
-      <!-- Vue heatmap -->
-      <div id="presence-heatmap" style="display:none;" class="heatmap-wrap">
-        <div class="heatmap-title">Heatmap des présences</div>
-        <div id="heatmap-col-headers" class="heatmap-col-headers"></div>
-        <div id="heatmap-grid" class="heatmap-grid"></div>
+      <!-- VUE DÉTAIL ÉVÉNEMENT -->
+      <div id="pres-view-detail" style="display:none;">
+        <div class="page-header">
+          <div class="page-header-left">
+            <button class="btn btn-secondary btn-sm" onclick="presRetourListe()" style="margin-bottom:12px;">← Retour aux événements</button>
+            <h2 id="pres-detail-title"></h2>
+            <p id="pres-detail-sub" style="margin-top:4px;color:var(--text2);font-size:13px;"></p>
+          </div>
+          <div id="pres-detail-actions"></div>
+        </div>
+        <div id="pres-detail-summary" style="margin-bottom:20px;"></div>
+        <div id="pres-detail-membres"></div>
       </div>
     </div>
 
@@ -1459,261 +1490,187 @@ function deleteMember(id){if(!confirm('Supprimer ce membre ?'))return;membres=me
 // ── PRÉSENCES ────────────────────────────────────────────────────
 function isMobile(){return window.innerWidth<=768;}
 
-let _presenceView='table';
-function switchPresenceView(v,el){
-  _presenceView=v;
-  document.querySelectorAll('.pvt').forEach(x=>x.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('presence-desktop').style.display=v==='table'?'block':'none';
-  document.getElementById('presence-heatmap').style.display=v==='heatmap'?'block':'none';
-  if(v==='heatmap')renderHeatmap();
+// ── PRÉSENCES ─────────────────────────────────────────────────
+let _presCurrentEvent = null;
+
+function presRetourListe(){
+  _presCurrentEvent = null;
+  document.getElementById('pres-view-list').style.display = 'block';
+  document.getElementById('pres-view-detail').style.display = 'none';
 }
 
 function renderPresences(){
-  const totalPresences=Object.values(presences).filter(Boolean).length;
-  const totalCells=membres.length*events.length;
-  const globalPct=totalCells>0?Math.round((totalPresences/totalCells)*100):0;
-  const topMembre=membres.map(m=>({m,p:events.filter(e=>presences[m.id+'_'+e.id]).length})).sort((a,b)=>b.p-a.p)[0];
-  const bestEvent=events.map(e=>({e,p:membres.filter(m=>presences[m.id+'_'+e.id]).length})).sort((a,b)=>b.p-a.p)[0];
-  // Stats cards
-  const sb=document.getElementById('presence-stats-bar');
+  // Stats globales
+  const totalPresences = Object.values(presences).filter(Boolean).length;
+  const totalCells = membres.length * events.length;
+  const globalPct = totalCells > 0 ? Math.round((totalPresences/totalCells)*100) : 0;
+  const topMembre = membres.map(m=>({m, p:events.filter(e=>presences[m.id+'_'+e.id]).length})).sort((a,b)=>b.p-a.p)[0];
+  const pctCls = globalPct>=70?'green':globalPct>=40?'gold':'red';
+
+  const sb = document.getElementById('presence-stats-bar');
   if(sb){
-    const sc=(val,label,sub,cls)=>`<div class="presence-stat-card ${cls}"><div class="psc-val">${val}</div><div class="psc-label">${label}</div><div class="psc-sub">${sub}</div></div>`;
-    const pctCls=globalPct>=70?'green':globalPct>=40?'gold':'red';
-    sb.innerHTML=
-      sc(events.length,'Événements','au total','red')+
-      sc(membres.length,'Membres','actifs','gold')+
-      sc(globalPct+'%','Taux global','de présence',pctCls)+
-      (topMembre?sc(topMembre.m.prenom,'Meilleur taux',topMembre.p+' présences','blue'):'');
-    sb.style.display='grid';
-    sb.style.gridTemplateColumns=isMobile()?'repeat(2,1fr)':'repeat(4,1fr)';
+    const sc=(val,label,sub,cls,icon)=>`<div class="presence-stat-card ${cls}"><div style="display:flex;align-items:flex-start;justify-content:space-between;"><div><div class="psc-val">${val}</div><div class="psc-label">${label}</div><div class="psc-sub">${sub}</div></div><div style="font-size:22px;opacity:0.15;">${icon}</div></div></div>`;
+    sb.innerHTML =
+      sc(events.length,'Événements','organisés','red','📅') +
+      sc(membres.length,'Membres','dans l\'asso','gold','👥') +
+      sc(globalPct+'%','Taux global','de présence',pctCls,'📊') +
+      (topMembre ? sc(topMembre.m.prenom,'Top présence',topMembre.p+' participations','blue','🏅') : '');
+    sb.style.display = 'grid';
+    sb.style.gridTemplateColumns = isMobile() ? 'repeat(2,1fr)' : 'repeat(4,1fr)';
   }
-  // Vue tabs (desktop seulement)
-  const tabs=document.getElementById('presence-view-tabs');
-  if(tabs) tabs.style.display=isMobile()?'none':'block';
 
-  if(isMobile()){
-    document.getElementById('presence-mobile-list').style.display='block';
-    document.getElementById('presence-desktop').style.display='none';
-    document.getElementById('presence-heatmap').style.display='none';
-    renderPresencesMobile();
+  // Toujours afficher la liste d'événements au départ
+  if(_presCurrentEvent !== null){
+    document.getElementById('pres-view-list').style.display = 'none';
+    document.getElementById('pres-view-detail').style.display = 'block';
+    renderPresenceDetail(_presCurrentEvent);
   } else {
-    document.getElementById('presence-mobile-list').style.display='none';
-    if(_presenceView==='table'){
-      document.getElementById('presence-desktop').style.display='block';
-      document.getElementById('presence-heatmap').style.display='none';
-      renderPresencesDesktop();
-    } else {
-      document.getElementById('presence-desktop').style.display='none';
-      document.getElementById('presence-heatmap').style.display='block';
-      renderHeatmap();
-    }
+    document.getElementById('pres-view-list').style.display = 'block';
+    document.getElementById('pres-view-detail').style.display = 'none';
+    renderPresencesEventGrid();
   }
 }
 
-function renderHeatmap(){
-  const evts=events.slice().sort((a,b)=>a.date.localeCompare(b.date));
-  const hdrs=document.getElementById('heatmap-col-headers');
-  const grid=document.getElementById('heatmap-grid');
-  if(!hdrs||!grid)return;
-  // En-têtes colonnes
-  hdrs.innerHTML=evts.map(e=>{
-    const [y,mo,d]=e.date.split('-');
-    return`<div class="heatmap-col-header">${d}/${mo}</div>`;
-  }).join('');
-  // Lignes membres
-  grid.innerHTML=membres.map(m=>{
-    const cells=evts.map(e=>{
-      const p=!!presences[m.id+'_'+e.id];
-      // Intensité selon le contexte
-      const totalPresM=evts.filter(ev=>presences[m.id+'_'+ev.id]).length;
-      const pct=evts.length>0?totalPresM/evts.length:0;
-      const level=p?(pct>=0.75?4:pct>=0.5?3:pct>=0.25?2:1):0;
-      return`<div class="heatmap-cell hc-${level}" onclick="togglePresenceHeatmap(${m.id},${e.id},this)" title="${m.prenom} ${m.nom} — ${e.nom||e.type} — ${p?'Présent':'Absent'}">${p?'✓':''}</div>`;
-    }).join('');
-    const totalP=evts.filter(e=>presences[m.id+'_'+e.id]).length;
-    const pct=evts.length>0?Math.round((totalP/evts.length)*100):0;
-    const pctCol=pct>=70?'#16a34a':pct>=40?'#c49a00':'#e63329';
-    return`<div class="heatmap-row">
-      <div class="heatmap-label" title="${m.prenom} ${m.nom}">
-        <span style="font-size:11px;font-weight:700;color:#1a1a1a;">${m.prenom}</span>
-        <span style="font-size:10px;color:#bbb;"> ${m.nom}</span>
-      </div>
-      <div class="heatmap-cells">${cells}</div>
-      <div style="margin-left:10px;font-size:12px;font-weight:800;color:${pctCol};min-width:36px;">${pct}%</div>
-    </div>`;
-  }).join('');
-}
-
-function togglePresenceHeatmap(mid,eid,cell){
-  const key=mid+'_'+eid;
-  presences[key]=!presences[key];
-  save('gef_presences',presences);
-  const p=presences[key];
-  const m=membres.find(x=>x.id===mid);
-  const evts=events.slice().sort((a,b)=>a.date.localeCompare(b.date));
-  const totalP=evts.filter(e=>presences[mid+'_'+e.id]).length;
-  const pct=evts.length>0?totalP/evts.length:0;
-  const level=p?(pct>=0.75?4:pct>=0.5?3:pct>=0.25?2:1):0;
-  cell.className=`heatmap-cell hc-${level}`;
-  cell.textContent=p?'✓':'';
-}
-
-function renderPresencesMobile(){
-  const evts=events.slice().sort((a,b)=>b.date.localeCompare(a.date));
-  const cont=document.getElementById('presence-mobile-list');
+function renderPresencesEventGrid(){
+  const evts = events.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  const cont = document.getElementById('pres-events-grid');
+  if(!cont) return;
   if(!evts.length){
-    cont.innerHTML='<div class="card" style="text-align:center;color:var(--text3);padding:28px;">Aucun événement.</div>';
+    cont.innerHTML = '<div class="card" style="text-align:center;color:var(--text3);padding:40px;">Aucun événement. Commencez par en créer un !</div>';
     return;
   }
-  cont.innerHTML=evts.map(e=>{
-    const count=membres.filter(m=>presences[m.id+'_'+e.id]).length;
-    const pct=membres.length>0?Math.round((count/membres.length)*100):0;
-    const col=pct>=70?'#16a34a':pct>=40?'#c49a00':'#e63329';
-    const [y,mo,d]=e.date.split('-');
-    const moisCourt=['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'][parseInt(mo)-1];
-    const typeBarClass=e.type==='Réunion'?'r':e.type==='Maraude'?'m':e.type==='Formation'?'f':e.type==='Sortie'?'s':'a';
-    return`<div class="presence-event-card" id="pec-${e.id}">
-      <div class="presence-event-card-header" onclick="togglePresenceMobileEvent(${e.id})">
-        <div class="pec-type-bar ${typeBarClass}"></div>
-        <div class="presence-event-card-date">
-          <div class="day">${d}</div>
-          <div class="month">${moisCourt}</div>
+  const today = new Date().toISOString().slice(0,10);
+  cont.className = '';
+  cont.innerHTML = `<div class="pres-events-list">
+    <div class="pres-events-list-header">
+      <div>Date</div>
+      <div>Événement</div>
+      <div>Type</div>
+      <div>Présences</div>
+      <div>Taux</div>
+      <div></div>
+    </div>
+    ${evts.map(e=>{
+      const count = membres.filter(m=>presences[m.id+'_'+e.id]).length;
+      const pct = membres.length>0 ? Math.round((count/membres.length)*100) : 0;
+      const col = pct>=70?'#16a34a':pct>=40?'#c49a00':'#e63329';
+      const [y,mo,d] = e.date.split('-');
+      const moisCourt = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'][parseInt(mo)-1];
+      const typeClass = e.type==='Réunion'?'r':e.type==='Maraude'?'m':e.type==='Formation'?'f':e.type==='Sortie'?'s':e.type==='Permanence'?'p':'a';
+      const isFuture = e.date > today;
+      return `<div class="pres-event-row" onclick="ouvrirPresenceDetail(${e.id})" style="${isFuture?'opacity:0.5':''}">
+        <div class="per-date">${d} ${moisCourt} ${y}</div>
+        <div class="per-name">${e.nom||e.type}</div>
+        <div><span class="pec-type-badge ${typeClass}">${e.type}</span></div>
+        <div class="per-bar-wrap">
+          <div class="per-bar"><div class="per-bar-fill" style="width:${pct}%;background:${col};"></div></div>
+          <div class="per-count" style="color:${col};">${count}/${membres.length}</div>
         </div>
-        <div class="presence-event-card-body">
-          <div class="presence-event-card-name">${e.nom||e.type}</div>
-          <div class="pec-progress">
-            <div class="presence-event-card-bar"><div class="presence-event-card-bar-fill" style="width:${pct}%;background:${col};"></div></div>
-            <div class="presence-event-card-count" style="color:${col};">${count}/${membres.length}</div>
-          </div>
-        </div>
-        <div class="presence-event-card-arrow" id="pec-arrow-${e.id}">›</div>
-      </div>
-      <div class="presence-membres-list" id="pec-members-${e.id}" style="display:none;">
-        ${renderPresenceMobileMembers(e.id)}
-      </div>
-    </div>`;
-  }).join('');
+        <div style="font-size:13px;font-weight:800;color:${col};">${pct}%</div>
+        <div class="per-arrow">›</div>
+      </div>`;
+    }).join('')}
+  </div>`;
 }
 
-function renderPresenceMobileMembers(eid){
-  return membres.map(m=>{
-    const p=!!presences[m.id+'_'+eid];
-    return`<div class="presence-membre-row${p?' present':''}" onclick="togglePresenceMobileInline(${m.id},${eid},this)" id="pmr-${m.id}-${eid}">
-      <div class="presence-membre-row-info">
-        <div class="avatar" style="width:30px;height:30px;font-size:10px;">${initials(m)}</div>
+function ouvrirPresenceDetail(eid){
+  _presCurrentEvent = eid;
+  document.getElementById('pres-view-list').style.display = 'none';
+  document.getElementById('pres-view-detail').style.display = 'block';
+  renderPresenceDetail(eid);
+}
+
+function renderPresenceDetail(eid){
+  const e = events.find(x=>x.id===eid);
+  if(!e) return;
+  const [y,mo,d] = e.date.split('-');
+  const moisLong = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'][parseInt(mo)-1];
+  const typeClass = e.type==='Réunion'?'r':e.type==='Maraude'?'m':e.type==='Formation'?'f':e.type==='Sortie'?'s':e.type==='Permanence'?'p':'a';
+
+  document.getElementById('pres-detail-title').textContent = e.nom||e.type;
+  document.getElementById('pres-detail-sub').innerHTML = `<span class="pec-type-badge ${typeClass}" style="font-size:11px;padding:3px 10px;">${e.type}</span> &nbsp;·&nbsp; ${d} ${moisLong} ${y}`;
+
+  // Stats résumé
+  const presents = membres.filter(m=>presences[m.id+'_'+eid]);
+  const absents = membres.filter(m=>!presences[m.id+'_'+eid]);
+  const pct = membres.length>0 ? Math.round((presents.length/membres.length)*100) : 0;
+  const col = pct>=70?'#16a34a':pct>=40?'#c49a00':'#e63329';
+
+  document.getElementById('pres-detail-summary').innerHTML = `
+    <div class="pres-detail-summary-grid">
+      <div class="pres-detail-stat" style="border-top:3px solid ${col};">
+        <div class="pds-val" style="color:${col};">${pct}%</div>
+        <div class="pds-label">Taux présence</div>
+      </div>
+      <div class="pres-detail-stat" style="border-top:3px solid #16a34a;">
+        <div class="pds-val" style="color:#16a34a;">${presents.length}</div>
+        <div class="pds-label">Présents</div>
+      </div>
+      <div class="pres-detail-stat" style="border-top:3px solid #e0dbd2;">
+        <div class="pds-val" style="color:#aaa;">${absents.length}</div>
+        <div class="pds-label">Absents</div>
+      </div>
+    </div>
+    <div style="background:#fff;border:1px solid #ede9e2;border-radius:16px;padding:16px 20px;margin-bottom:4px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <span style="font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:1px;">Progression</span>
+        <span style="font-size:13px;font-weight:800;color:${col};">${presents.length} / ${membres.length}</span>
+      </div>
+      <div style="height:8px;background:#f0ede8;border-radius:6px;overflow:hidden;">
+        <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,${col},${col}cc);border-radius:6px;transition:width 0.5s;"></div>
+      </div>
+    </div>`;
+
+  // Bouton tout cocher / décocher
+  const allPresent = presents.length === membres.length;
+  document.getElementById('pres-detail-actions').innerHTML = `
+    <button class="btn btn-secondary btn-sm" onclick="presToggleAll(${eid},${allPresent})">${allPresent?'✗ Tout décocher':'✓ Tout cocher'}</button>`;
+
+  // Liste membres — présents d'abord, absents ensuite
+  const renderMembre = (m, p) => {
+    const pctM = events.length>0 ? Math.round((events.filter(ev=>presences[m.id+'_'+ev.id]).length/events.length)*100) : 0;
+    return `<div class="pres-membre-card${p?' present':''}" id="pmc-${m.id}-${eid}" onclick="togglePresenceDetail(${m.id},${eid})">
+      <div class="pmc-info">
+        <div class="avatar" style="width:38px;height:38px;font-size:12px;border-radius:12px;">${initials(m)}</div>
         <div>
-          <div style="font-size:13px;font-weight:500;color:var(--text);">${m.prenom} ${m.nom}</div>
-          <div style="font-size:10px;color:var(--text3);">${m.type||'—'}</div>
+          <div class="pmc-name">${m.prenom} ${m.nom}</div>
+          <div class="pmc-type">${m.role||m.type||'—'} · ${pctM}% global</div>
         </div>
       </div>
-      <div class="presence-membre-row-check">${p?'✓':''}</div>
+      <div class="pmc-check">${p?'✓':''}</div>
     </div>`;
-  }).join('');
+  };
+
+  document.getElementById('pres-detail-membres').innerHTML = `
+    <div class="pres-group-title">✅ Présents (${presents.length})</div>
+    <div class="pres-membres-grid">${presents.length ? presents.map(m=>renderMembre(m,true)).join('') : '<div style="color:#aaa;font-size:13px;padding:8px;">Aucun présent pour l\'instant</div>'}</div>
+    <div class="pres-group-title">○ Absents (${absents.length})</div>
+    <div class="pres-membres-grid">${absents.map(m=>renderMembre(m,false)).join('')}</div>`;
 }
 
-let _openPresenceEvent=null;
-function togglePresenceMobileEvent(eid){
-  const list=document.getElementById('pec-members-'+eid);
-  const arrow=document.getElementById('pec-arrow-'+eid);
-  const isOpen=list.style.display!=='none';
-  // Ferme l'ancien si différent
-  if(_openPresenceEvent&&_openPresenceEvent!==eid){
-    const old=document.getElementById('pec-members-'+_openPresenceEvent);
-    const oldArr=document.getElementById('pec-arrow-'+_openPresenceEvent);
-    if(old)old.style.display='none';
-    if(oldArr)oldArr.style.transform='';
-  }
-  list.style.display=isOpen?'none':'flex';
-  list.style.flexDirection='column';
-  arrow.style.transform=isOpen?'':'rotate(90deg)';
-  _openPresenceEvent=isOpen?null:eid;
+function togglePresenceDetail(mid, eid){
+  const key = mid+'_'+eid;
+  presences[key] = !presences[key];
+  save('gef_presences', presences);
+  renderPresenceDetail(eid);
 }
 
-function togglePresenceMobileInline(mid,eid,row){
-  const key=mid+'_'+eid;
-  presences[key]=!presences[key];
-  save('gef_presences',presences);
-  // Update row visually
-  const p=presences[key];
-  row.classList.toggle('present',p);
-  row.querySelector('.presence-membre-row-check').textContent=p?'✓':'';
-  // Update card header count
-  const count=membres.filter(m=>presences[m.id+'_'+eid]).length;
-  const pct=membres.length>0?Math.round((count/membres.length)*100):0;
-  const col=pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';
-  const card=document.getElementById('pec-'+eid);
-  if(card){
-    card.querySelector('.presence-event-card-bar-fill').style.width=pct+'%';
-    card.querySelector('.presence-event-card-bar-fill').style.background=col;
-    card.querySelector('.presence-event-card-count').innerHTML=`<b style="color:${col};">${count}</b> / ${membres.length} présents`;
-  }
+function presToggleAll(eid, allPresent){
+  membres.forEach(m=>{ presences[m.id+'_'+eid] = !allPresent; });
+  save('gef_presences', presences);
+  renderPresenceDetail(eid);
 }
 
-function renderPresencesDesktop(){
-  const evts=events.slice().sort((a,b)=>a.date.localeCompare(b.date));
-  document.getElementById('presence-thead').innerHTML=`<tr>
-    <th class="th-membre">Membre</th>
-    ${evts.map(e=>{
-      const [y,mo,d]=e.date.split('-');
-      const typeClass=e.type==='Réunion'?'r':e.type==='Maraude'?'m':e.type==='Formation'?'f':e.type==='Sortie'?'s':e.type==='Permanence'?'p':'a';
-      const typeAbbr=e.type==='Réunion'?'Réu':e.type==='Maraude'?'Mar':e.type==='Formation'?'For':e.type==='Sortie'?'Sor':e.type==='Permanence'?'Per':e.type.slice(0,3);
-      const evtName=(e.nom||e.type).slice(0,14);
-      return`<th class="th-event"><div class="event-col-header">
-        <span class="event-col-name">${evtName}</span>
-        <span class="event-col-date">${d}/${mo}</span>
-        <span class="event-col-type ${typeClass}">${typeAbbr}</span>
-      </div></th>`;
-    }).join('')}
-    <th class="th-pct">Taux</th>
-  </tr>
-  <tr class="pct-row-event">
-    <td class="td-membre" style="padding:6px 16px;font-size:9px;color:#bbb;font-style:italic;font-weight:600;letter-spacing:0.3px;border-right:2px solid #e8e2d8;background:#faf9f7;">Taux par événement</td>
-    ${evts.map(e=>{
-      const c=membres.filter(m=>presences[m.id+'_'+e.id]).length;
-      const pct=membres.length>0?Math.round((c/membres.length)*100):0;
-      const col=pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';
-      return`<td style="text-align:center;padding:6px 2px;border-right:1px solid #f0ede8;background:#faf9f7;"><span style="font-size:10px;font-weight:800;color:${col};">${pct}%</span></td>`;
-    }).join('')}
-    <td style="border-left:2px solid #e8e2d8;background:#faf9f7;"></td>
-  </tr>`;
-  document.getElementById('presence-tbody').innerHTML=membres.map(m=>{
-    const p=evts.filter(e=>presences[m.id+'_'+e.id]).length;
-    const pct=evts.length>0?Math.round((p/evts.length)*100):0;
-    const pctColor=pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';
-    const typeAbbr=m.type==='Actif'?'Act':m.type==='Actif Suisse'?'CH':m.type==='Passif'?'Pas':'—';
-    return`<tr>
-      <td class="td-membre">
-        <div class="membre-cell">
-          <div class="avatar">${initials(m)}</div>
-          <div>
-            <div class="membre-cell-name">${m.prenom} ${m.nom}</div>
-            <div class="membre-cell-type">${typeAbbr}</div>
-          </div>
-        </div>
-      </td>
-      ${evts.map(e=>`<td class="td-dot" onclick="togglePresence(${m.id},${e.id},this)">
-        <span class="dot ${presences[m.id+'_'+e.id]?'dot-yes':'dot-no'}"></span>
-      </td>`).join('')}
-      <td class="td-pct">
-        <div class="pct-cell">
-          <span class="pct-num">${pct}%</span>
-          <div class="pct-bar"><div class="pct-fill" style="width:${pct}%;background:${pctColor};"></div></div>
-        </div>
-      </td>
-    </tr>`;
-  }).join('');
-}
-function togglePresence(mid,eid,td){
-  const key=mid+'_'+eid;
-  presences[key]=!presences[key];
-  save('gef_presences',presences);
-  td.innerHTML=`<span class="dot ${presences[key]?'dot-yes':'dot-no'}"></span>`;
-  const p=events.filter(e=>presences[mid+'_'+e.id]).length;
-  const pct=events.length>0?Math.round((p/events.length)*100):0;
-  const pctColor=pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';
-  td.closest('tr').querySelector('.td-pct').innerHTML=`<div class="pct-cell"><span class="pct-num">${pct}%</span><div class="pct-bar"><div class="pct-fill" style="width:${pct}%;background:${pctColor};"></div></div></div>`;
-}
+// Fonctions mobile legacy (inutilisées mais conservées)
+function renderPresencesMobile(){}
+function renderPresenceMobileMembers(eid){return '';}
+function togglePresenceMobileEvent(eid){}
+function togglePresenceMobileInline(mid,eid,row){}
+function renderPresencesDesktop(){}
+function renderHeatmap(){}
+function togglePresenceHeatmap(mid,eid,cell){}
+function togglePresence(mid,eid,td){}
+function switchPresenceView(v,el){}
 
 // ── ÉVÉNEMENTS ───────────────────────────────────────────────────
 function renderEvents(){
