@@ -218,8 +218,8 @@ tr:hover td{background:var(--bg3);}
 
 /* ── PRÉSENCES — GRILLE ÉVÉNEMENTS ── */
 .pres-events-list{width:100%;background:#fff;border:1px solid #ede9e2;border-radius:20px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);}
-.pres-events-list-header{display:grid;grid-template-columns:80px 1fr 120px 100px 120px 48px;align-items:center;padding:10px 20px;background:#f8f6f2;border-bottom:2px solid #ede9e2;font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:#aaa;font-weight:800;}
-.pres-event-row{display:grid;grid-template-columns:80px 1fr 120px 100px 120px 48px;align-items:center;padding:14px 20px;border-bottom:1px solid #f5f3ef;cursor:pointer;transition:background 0.12s;}
+.pres-events-list-header{display:grid;grid-template-columns:100px 1fr 130px 180px 70px 36px;align-items:center;padding:10px 20px;background:#f8f6f2;border-bottom:2px solid #ede9e2;font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:#aaa;font-weight:800;}
+.pres-event-row{display:grid;grid-template-columns:100px 1fr 130px 180px 70px 36px;align-items:center;padding:14px 20px;border-bottom:1px solid #f5f3ef;cursor:pointer;transition:background 0.12s;}
 .pres-event-row:last-child{border-bottom:none;}
 .pres-event-row:hover{background:#fdf8f8;}
 .per-date{font-size:12px;font-weight:700;color:#888;}
@@ -916,7 +916,7 @@ select option{background:#fff;}
         </select>
       </div>
       <div class="card"><div class="table-wrap">
-        <table><thead><tr><th>Date</th><th>Type</th><th>Description</th><th>Montant CHF</th><th></th></tr></thead>
+        <table><thead><tr><th>Date</th><th>Type</th><th>Description</th><th>Montant CHF</th><th style='text-align:center;'>📎</th><th></th></tr></thead>
         <tbody id="compta-tbody"></tbody></table>
       </div></div>
     </div>
@@ -1161,10 +1161,31 @@ select option{background:#fff;}
       </div>
       <div class="form-group"><label>Montant (CHF) *</label><input id="c-montant" type="number" min="0" step="0.01" placeholder="0.00"></div>
       <div class="form-group full"><label>Description *</label><input id="c-desc" type="text"></div>
+      <div class="form-group full">
+        <label>Justificatif (PDF, image)</label>
+        <!-- Boutons fichier + photo -->
+        <div style="display:flex;gap:8px;margin-bottom:8px;">
+          <button type="button" class="btn btn-secondary" style="flex:1;gap:6px;" onclick="document.getElementById('c-file-input').click()">📎 Fichier</button>
+          <button type="button" class="btn btn-secondary" style="flex:1;gap:6px;" onclick="document.getElementById('c-camera-input').click()">📷 Photo</button>
+        </div>
+        <input type="file" id="c-file-input" accept=".pdf,.jpg,.jpeg,.png,.heic" style="display:none" onchange="handleComptaFileSelect(this)">
+        <input type="file" id="c-camera-input" accept="image/*" capture="environment" style="display:none" onchange="handleComptaFileSelect(this)">
+        <!-- Zone de drop + aperçu -->
+        <div id="c-file-zone" style="border:2px dashed #e0dbd2;border-radius:12px;padding:14px;text-align:center;transition:all 0.15s;background:#faf9f7;" ondragover="event.preventDefault();this.style.borderColor='#e63329'" ondragleave="this.style.borderColor='#e0dbd2'" ondrop="handleComptaFileDrop(event)">
+          <div id="c-file-label" style="font-size:12px;color:#aaa;">📎 Glissez un fichier ici ou utilisez les boutons ci-dessus</div>
+          <div id="c-file-preview" style="display:none;margin-top:8px;"></div>
+        </div>
+        <div id="c-file-progress" style="display:none;margin-top:8px;">
+          <div style="height:4px;background:#f0ede8;border-radius:4px;overflow:hidden;">
+            <div id="c-file-progress-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#e63329,#c0271e);border-radius:4px;transition:width 0.3s;"></div>
+          </div>
+          <div id="c-file-progress-txt" style="font-size:11px;color:#aaa;margin-top:4px;text-align:center;">Upload en cours...</div>
+        </div>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-compta')">Annuler</button>
-      <button class="btn btn-primary" onclick="saveCompta()">Enregistrer</button>
+      <button class="btn btn-primary" id="c-save-btn" onclick="saveCompta()">Enregistrer</button>
     </div>
   </div>
 </div>
@@ -1566,7 +1587,7 @@ function renderPresencesEventGrid(){
           <div class="per-bar"><div class="per-bar-fill" style="width:${pct}%;background:${col};"></div></div>
           <div class="per-count" style="color:${col};">${count}/${membres.length}</div>
         </div>
-        <div style="font-size:13px;font-weight:800;color:${col};">${pct}%</div>
+        <div style="font-size:13px;font-weight:800;color:${col};">${pct}&nbsp;%</div>
         <div class="per-arrow">›</div>
       </div>`;
     }).join('')}
@@ -1824,11 +1845,151 @@ function renderCompta(){
   const totalIn=compta.filter(c=>c.type==='recette').reduce((s,c)=>s+c.montant,0);
   const totalOut=compta.filter(c=>c.type==='depense').reduce((s,c)=>s+c.montant,0);
   document.getElementById('compta-summary').innerHTML=`<div class="stat-card"><div class="stat-label">Recettes</div><div class="stat-value amount-in">${totalIn.toFixed(2)}<span>CHF</span></div></div><div class="stat-card"><div class="stat-label">Dépenses</div><div class="stat-value amount-out">${totalOut.toFixed(2)}<span>CHF</span></div></div><div class="stat-card"><div class="stat-label">Solde</div><div class="stat-value amount-bal">${(totalIn-totalOut).toFixed(2)}<span>CHF</span></div></div>`;
-  document.getElementById('compta-tbody').innerHTML=list.map(c=>`<tr><td>${fmtDate(c.date)}</td><td><span class="badge ${c.type==='recette'?'badge-recette':'badge-depense'}">${c.type==='recette'?'Recette':'Dépense'}</span></td><td class="td-name">${c.description}</td><td class="${c.type==='recette'?'amount-in':'amount-out'}" style="font-weight:600">${c.type==='recette'?'+':'−'}${c.montant.toFixed(2)}</td><td><button class="btn-icon" onclick="editCompta(${c.id})">✏️</button><button class="btn-icon" onclick="deleteCompta(${c.id})">🗑️</button></td></tr>`).join('');
+  document.getElementById('compta-tbody').innerHTML=list.map(c=>`<tr>
+  <td>${fmtDate(c.date)}</td>
+  <td><span class="badge ${c.type==='recette'?'badge-recette':'badge-depense'}">${c.type==='recette'?'Recette':'Dépense'}</span></td>
+  <td class="td-name">${c.description}</td>
+  <td class="${c.type==='recette'?'amount-in':'amount-out'}" style="font-weight:600">${c.type==='recette'?'+':'−'}${c.montant.toFixed(2)}</td>
+  <td style="text-align:center;">
+    ${c.justificatifUrl
+      ? `<a href="${c.justificatifUrl}" target="_blank" title="${c.justificatifNom||'Justificatif'}" style="font-size:16px;text-decoration:none;">📎</a>`
+      : '<span style="color:#e0dbd2;font-size:14px;">—</span>'}
+  </td>
+  <td><button class="btn-icon" onclick="editCompta(${c.id})">✏️</button><button class="btn-icon" onclick="deleteCompta(${c.id})">🗑️</button></td>
+</tr>`).join('');
 }
-function openComptaModal(type){editingCompta=null;document.getElementById('modal-compta-title').textContent=type==='recette'?'Ajouter une recette':'Ajouter une dépense';document.getElementById('c-date').value=new Date().toISOString().slice(0,10);document.getElementById('c-type').value=type;document.getElementById('c-cat').value='Autre';document.getElementById('c-montant').value='';document.getElementById('c-desc').value='';document.getElementById('modal-compta').classList.add('open');}
-function editCompta(id){editingCompta=id;const c=compta.find(x=>x.id===id);document.getElementById('modal-compta-title').textContent="Modifier l'écriture";document.getElementById('c-date').value=c.date;document.getElementById('c-type').value=c.type;document.getElementById('c-cat').value=c.categorie;document.getElementById('c-montant').value=c.montant;document.getElementById('c-desc').value=c.description;document.getElementById('modal-compta').classList.add('open');}
-function saveCompta(){const montant=parseFloat(document.getElementById('c-montant').value);const desc=document.getElementById('c-desc').value.trim();if(!desc||isNaN(montant)||montant<=0){alert('Description et montant requis.');return;}const data={date:document.getElementById('c-date').value,type:document.getElementById('c-type').value,categorie:document.getElementById('c-cat').value,description:desc,montant};if(editingCompta){const i=compta.findIndex(c=>c.id===editingCompta);compta[i]={...compta[i],...data};}else compta.push({id:Math.max(0,...compta.map(c=>c.id))+1,...data});save('gef_compta',compta);closeModal('modal-compta');renderCompta();}
+function openComptaModal(type){
+  editingCompta=null;
+  _comptaFileUrl=null;
+  _comptaFileName=null;
+  document.getElementById('modal-compta-title').textContent=type==='recette'?'Ajouter une recette':'Ajouter une dépense';
+  document.getElementById('c-date').value=new Date().toISOString().slice(0,10);
+  document.getElementById('c-type').value=type;
+  document.getElementById('c-cat').value='Autre';
+  document.getElementById('c-montant').value='';
+  document.getElementById('c-desc').value='';
+  document.getElementById('c-file-input').value='';
+  document.getElementById('c-camera-input').value='';
+  document.getElementById('c-file-label').innerHTML='📎 Glissez un fichier ici ou utilisez les boutons ci-dessus';
+  document.getElementById('c-file-zone').style.borderColor='#e0dbd2';
+  document.getElementById('c-file-progress').style.display='none';
+  document.getElementById('c-file-preview').style.display='none';
+  document.getElementById('c-file-preview').innerHTML='';
+  document.getElementById('modal-compta').classList.add('open');
+}
+function editCompta(id){
+  editingCompta=id;
+  const c=compta.find(x=>x.id===id);
+  _comptaFileUrl=c.justificatifUrl||null;
+  _comptaFileName=c.justificatifNom||null;
+  document.getElementById('modal-compta-title').textContent="Modifier l'écriture";
+  document.getElementById('c-date').value=c.date;
+  document.getElementById('c-type').value=c.type;
+  document.getElementById('c-cat').value=c.categorie;
+  document.getElementById('c-montant').value=c.montant;
+  document.getElementById('c-desc').value=c.description;
+  document.getElementById('c-file-input').value='';
+  document.getElementById('c-file-progress').style.display='none';
+  if(c.justificatifUrl){
+    document.getElementById('c-file-label').innerHTML=`✅ <a href="${c.justificatifUrl}" target="_blank" style="color:#e63329;font-weight:600;">${c.justificatifNom||'Fichier joint'}</a> <span style="color:#ccc;cursor:pointer;margin-left:8px;" onclick="supprimerComptaFichier()">✕</span>`;
+  } else {
+    document.getElementById('c-file-label').innerHTML='📎 Cliquez ou glissez un fichier ici';
+  }
+  document.getElementById('modal-compta').classList.add('open');
+}
+// Variables pour le fichier compta en cours
+let _comptaFileUrl = null;
+let _comptaFileName = null;
+
+function handleComptaFileSelect(input){
+  const file = input.files[0];
+  if(!file) return;
+  // Aperçu image avant upload
+  if(file.type.startsWith('image/')){
+    const reader = new FileReader();
+    reader.onload = e => {
+      const prev = document.getElementById('c-file-preview');
+      prev.style.display = 'block';
+      prev.innerHTML = `<img src="${e.target.result}" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:contain;border:1px solid #ede9e2;">`;
+    };
+    reader.readAsDataURL(file);
+  }
+  uploadComptaFile(file);
+}
+function handleComptaFileDrop(e){
+  e.preventDefault();
+  document.getElementById('c-file-zone').style.borderColor='#e0dbd2';
+  const file = e.dataTransfer.files[0];
+  if(file) uploadComptaFile(file);
+}
+function supprimerComptaFichier(){
+  _comptaFileUrl=null;
+  _comptaFileName=null;
+  document.getElementById('c-file-input').value='';
+  document.getElementById('c-file-label').innerHTML='📎 Cliquez ou glissez un fichier ici';
+}
+function uploadComptaFile(file){
+  if(!firebase.storage){
+    alert('Firebase Storage non configuré.');
+    return;
+  }
+  const maxSize = 10*1024*1024;
+  if(file.size > maxSize){alert('Fichier trop lourd (max 10 Mo).');return;}
+  const ext = file.name.split('.').pop();
+  const path = `justificatifs/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+  const ref = firebase.storage().ref(path);
+  const task = ref.put(file);
+  document.getElementById('c-file-progress').style.display='block';
+  document.getElementById('c-save-btn').disabled=true;
+  document.getElementById('c-file-label').innerHTML=`⏳ Upload de <b>${file.name}</b>...`;
+  task.on('state_changed',
+    snap=>{
+      const pct=Math.round((snap.bytesTransferred/snap.totalBytes)*100);
+      document.getElementById('c-file-progress-bar').style.width=pct+'%';
+      document.getElementById('c-file-progress-txt').textContent=`Upload en cours... ${pct}%`;
+    },
+    err=>{
+      document.getElementById('c-save-btn').disabled=false;
+      document.getElementById('c-file-progress').style.display='none';
+      document.getElementById('c-file-label').innerHTML='❌ Erreur upload — réessayez';
+      console.error(err);
+    },
+    ()=>{
+      task.snapshot.ref.getDownloadURL().then(url=>{
+        _comptaFileUrl=url;
+        _comptaFileName=file.name;
+        document.getElementById('c-save-btn').disabled=false;
+        document.getElementById('c-file-progress').style.display='none';
+        document.getElementById('c-file-label').innerHTML=`✅ <a href="${url}" target="_blank" style="color:#e63329;font-weight:600;">${file.name}</a> <span style="color:#ccc;cursor:pointer;margin-left:8px;" onclick="supprimerComptaFichier()">✕</span>`;
+        document.getElementById('c-file-zone').style.borderColor='#16a34a';
+      });
+    }
+  );
+}
+function saveCompta(){
+  const montant=parseFloat(document.getElementById('c-montant').value);
+  const desc=document.getElementById('c-desc').value.trim();
+  if(!desc||isNaN(montant)||montant<=0){alert('Description et montant requis.');return;}
+  if(document.getElementById('c-save-btn').disabled){alert('Attendez la fin de l\'upload.');return;}
+  const data={
+    date:document.getElementById('c-date').value,
+    type:document.getElementById('c-type').value,
+    categorie:document.getElementById('c-cat').value,
+    description:desc,
+    montant,
+    justificatifUrl:_comptaFileUrl||null,
+    justificatifNom:_comptaFileName||null
+  };
+  if(editingCompta){
+    const i=compta.findIndex(c=>c.id===editingCompta);
+    compta[i]={...compta[i],...data};
+  } else {
+    compta.push({id:Math.max(0,...compta.map(c=>c.id))+1,...data});
+  }
+  save('gef_compta',compta);
+  closeModal('modal-compta');
+  renderCompta();
+}
 function deleteCompta(id){if(!confirm('Supprimer cette écriture ?'))return;compta=compta.filter(c=>c.id!==id);save('gef_compta',compta);renderCompta();}
 
 // ── STATISTIQUES ─────────────────────────────────────────────────
