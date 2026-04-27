@@ -448,12 +448,12 @@ select option{background:#fff;}
   .bottom-nav{display:flex;}
   body,#app{background:var(--bg);}
   #app{min-height:100vh;width:100%;overflow-x:hidden;}
-  .main{margin-left:0 !important;padding:70px 14px calc(var(--bottom-bar)+24px) !important;min-height:100vh;background:var(--bg);}
+  .main{margin-left:0 !important;padding:80px 14px calc(var(--bottom-bar)+24px) !important;min-height:100vh;background:var(--bg);}
 
   /* ─ Topbar ─ */
-  .topbar{height:60px;padding:0 16px;background:rgba(255,255,255,0.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);box-shadow:0 1px 0 var(--border);}
-  .topbar-title{font-size:17px;font-weight:600;font-family:'DM Serif Display',serif;}
-  .hamburger{padding:8px;border-radius:10px;}
+  .topbar{height:auto;min-height:60px;padding:env(safe-area-inset-top,12px) 16px 12px;padding-top:max(env(safe-area-inset-top),12px);background:rgba(255,255,255,0.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);box-shadow:0 1px 0 var(--border);}
+  .topbar-title{font-size:17px;font-weight:700;font-family:'DM Serif Display',serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:calc(100vw - 140px);}
+  .hamburger{padding:8px;border-radius:10px;flex-shrink:0;}
   .hamburger:active{background:var(--bg3);}
 
   /* ─ Bottom nav ─ */
@@ -507,7 +507,7 @@ select option{background:#fff;}
   .toolbar{gap:8px;margin-bottom:12px;flex-wrap:wrap;}
   .toolbar input{flex:1;min-width:100px;font-size:15px;padding:10px 14px;border-radius:12px;}
   .toolbar select{font-size:14px;padding:10px 12px;border-radius:12px;}
-  .btn-sm{padding:10px 16px;font-size:13px;border-radius:12px;font-weight:600;}
+  .btn-sm{padding:9px 14px;font-size:13px;border-radius:12px;font-weight:600;}
   .btn{border-radius:12px;}
   .btn-primary{box-shadow:0 3px 12px rgba(230,51,41,0.3);}
 
@@ -547,6 +547,12 @@ select option{background:#fff;}
   /* ─ Email ─ */
   #email-destinataires-list{gap:6px;}
   #email-destinataires-list > div{font-size:12px !important;padding:6px 12px !important;}
+
+  /* ─ Compta table ─ */
+  #page-compta .card{padding:0;overflow:hidden;}
+  #page-compta .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  #page-compta table{min-width:480px;}
+  #page-compta .toolbar{padding:12px 14px 0;}
 
   /* ─ Documents ─ */
   #doc-list [style*="display:flex"]{flex-wrap:wrap;gap:6px;}
@@ -678,7 +684,7 @@ select option{background:#fff;}
     <span class="topbar-title" id="topbar-title">Tableau de bord</span>
     <div style="display:flex;align-items:center;gap:8px;">
       <span id="sync-indicator" style="font-size:10px;color:var(--green);display:none;background:var(--green-light);border:1px solid #bbf7d0;padding:3px 8px;border-radius:20px;font-weight:600;">✓ Sync</span>
-      <button class="btn-logout" onclick="logout()" style="font-size:12px;padding:6px 12px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);">Quitter</button>
+      <button class="btn-logout" onclick="logout()" style="font-size:11px;padding:5px 10px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);flex-shrink:0;white-space:nowrap;">Quitter</button>
     </div>
   </div>
 
@@ -868,7 +874,7 @@ select option{background:#fff;}
     <div id="page-compta" class="page">
       <div class="page-header">
         <div class="page-header-left"><h2>Comptabilité</h2><p>Recettes et dépenses</p></div>
-        <button class="btn btn-secondary btn-sm" onclick="exportComptaCSV()">⬇️ CSV</button>
+        <button class="btn btn-secondary btn-sm" onclick="exportComptaCSV()" style="flex-shrink:0;">⬇️ CSV</button>
       </div>
       <div class="compta-summary" id="compta-summary"></div>
       <div class="toolbar">
@@ -1957,7 +1963,7 @@ function renderEmailDestinataires(){
     const hasEmail = !!m.email;
     return `<div onclick="emailToggle(${m.id})" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;border:1px solid ${sel?'var(--red)':'var(--border)'};background:${sel?'var(--red-light)':'var(--bg3)'};cursor:pointer;font-size:13px;transition:0.15s;">
       <span style="color:${sel?'var(--red)':'var(--text2)'};">${m.prenom} ${m.nom}</span>
-      ${!hasEmail ? '<span title="Pas d\'email" style="font-size:10px;">⚠️</span>' : ''}
+      ${!hasEmail ? '<span title="Pas d\'email" style="font-size:9px;color:#ddd;margin-left:2px;">●</span>' : ''}
       ${sel ? '<span style="color:var(--red);font-weight:700;">✓</span>' : ''}
     </div>`;
   }).join('');
