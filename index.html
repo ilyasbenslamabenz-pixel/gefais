@@ -18,13 +18,15 @@
   --green:#15803d;--green-light:#f0fdf4;
   --blue:#1d4ed8;--blue-light:#eff6ff;
   --purple:#7c3aed;--purple-light:#f5f3ff;
-  --sidebar:240px;--radius:12px;--radius-lg:18px;--radius-xl:24px;--bottom-bar:66px;
+  --sidebar:240px;--radius:12px;--radius-lg:18px;--radius-xl:24px;--bottom-bar:70px;
   --shadow:0 1px 4px rgba(0,0,0,0.06);
   --shadow-md:0 4px 16px rgba(0,0,0,0.08);
   --shadow-lg:0 8px 32px rgba(0,0,0,0.1);
 }
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+html{overflow-x:hidden;}
 h1,h2,h3{font-family:'DM Serif Display',serif;font-weight:400;}
+#app{overflow-x:hidden;max-width:100vw;}
 
 /* LOGIN */
 #login-screen{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;}
@@ -59,11 +61,15 @@ h1,h2,h3{font-family:'DM Serif Display',serif;font-weight:400;}
 .btn-logout:hover{color:var(--red);background:var(--red-light);}
 
 /* TOPBAR mobile */
-.topbar{display:none;position:fixed;top:0;left:0;right:0;height:56px;background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);z-index:40;align-items:center;padding:0 16px;gap:12px;}
+.topbar{display:none;position:fixed;top:0;left:0;right:0;height:58px;background:rgba(255,255,255,0.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:40;align-items:center;padding:0 14px;gap:10px;box-shadow:0 1px 8px rgba(0,0,0,0.06);}
+.topbar-logo{display:flex;align-items:center;gap:7px;flex:1;}
+.topbar-logo-dot{width:8px;height:8px;border-radius:50%;background:var(--red);}
+.topbar-logo-name{font-size:15px;font-weight:800;color:var(--text);letter-spacing:-0.3px;}
+.topbar-page{font-size:12px;color:var(--text3);font-weight:500;margin-left:2px;}
 .topbar-title{font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:var(--text);flex:1;letter-spacing:-0.2px;}
-.hamburger{background:none;border:none;color:var(--text2);cursor:pointer;padding:8px;border-radius:10px;display:flex;flex-direction:column;gap:4px;transition:background 0.15s;}
+.hamburger{background:none;border:none;color:var(--text2);cursor:pointer;padding:8px;border-radius:10px;display:flex;flex-direction:column;gap:4.5px;transition:background 0.15s;flex-shrink:0;}
 .hamburger:hover{background:var(--bg3);}
-.hamburger span{display:block;width:18px;height:1.5px;background:currentColor;border-radius:2px;}
+.hamburger span{display:block;width:18px;height:1.5px;background:currentColor;border-radius:2px;transition:all 0.2s;}
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.25);z-index:45;backdrop-filter:blur(2px);}
 .sidebar-overlay.open{display:block;}
 
@@ -439,14 +445,65 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 .tab{flex:1;padding:9px 8px;text-align:center;font-size:12px;font-weight:600;cursor:pointer;border-radius:9px;color:var(--text2);transition:all 0.2s;letter-spacing:0.1px;}
 .tab.active{background:var(--card);color:var(--red);box-shadow:var(--shadow-md);}
 
-/* ── MOBILE ── */
+/* ── PRÉSENCES REDESIGN ── */
+.pres-stats-band{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.pres-stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);}
+.pres-stat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.pres-stat-label{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;font-weight:700;margin-bottom:2px;}
+.pres-stat-val{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-0.5px;line-height:1.1;}
+
+.pres-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center;}
+.pres-toolbar input{flex:1;min-width:140px;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:var(--radius);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;}
+.pres-toolbar input:focus{border-color:var(--red);}
+.pres-toolbar select{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:9px 10px;border-radius:var(--radius);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;}
+.pres-view-toggle{display:flex;gap:3px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:3px;flex-shrink:0;}
+.pres-view-btn{background:none;border:none;padding:7px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--text2);transition:all 0.15s;white-space:nowrap;}
+.pres-view-btn.active{background:var(--card);color:var(--red);box-shadow:var(--shadow);}
+
+.pres-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
+.pres-card{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:16px;box-shadow:var(--shadow);transition:all 0.2s;}
+.pres-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.pres-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:8px;}
+.pres-card-name{font-size:14px;font-weight:700;color:var(--text);letter-spacing:-0.2px;}
+.pres-card-pct{font-size:26px;font-weight:900;letter-spacing:-1px;flex-shrink:0;}
+.pres-bar-wrap{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.pres-bar-track{flex:1;height:5px;background:var(--bg3);border-radius:4px;overflow:hidden;}
+.pres-bar-fill{height:100%;border-radius:4px;transition:width 0.7s cubic-bezier(0.4,0,0.2,1);}
+.pres-bar-label{font-size:11px;color:var(--text3);font-weight:600;flex-shrink:0;}
+.pres-dots-row{display:flex;gap:6px;flex-wrap:wrap;}
+.pres-dot-wrap{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;transition:transform 0.15s;}
+.pres-dot-wrap:hover{transform:scale(1.2);}
+.pres-dot{width:11px;height:11px;border-radius:50%;transition:all 0.2s;}
+.pres-dot-yes{background:var(--red);}
+.pres-dot-no{background:#d1d5db;}
+.pres-dot-label{font-size:8px;color:var(--text3);max-width:26px;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
 @media(max-width:768px){
   .sidebar{transform:translateX(-100%);}
   .sidebar.mobile-open{transform:translateX(0);box-shadow:4px 0 20px rgba(0,0,0,0.15);}
   .topbar{display:flex;}
   .bottom-nav{display:flex;}
   body,#app{background:var(--bg);}
-  .main{margin-left:0 !important;padding:66px 12px calc(var(--bottom-bar)+20px) !important;}
+  /* ⬇ Fix overflow horizontal global */
+  *{box-sizing:border-box;}
+  .main{margin-left:0 !important;padding:74px 12px calc(var(--bottom-bar) + env(safe-area-inset-bottom) + 16px) !important;max-width:100vw;overflow-x:hidden;}
+  .page{max-width:100%;overflow-x:hidden;}
+  .page-header{max-width:100%;overflow:hidden;}
+  .page-header-left p{white-space:normal;overflow:hidden;text-overflow:ellipsis;max-width:calc(100vw - 24px);}
+  .toolbar{max-width:100%;}
+
+  /* Présences mobile */
+  .pres-stats-band{grid-template-columns:repeat(3,1fr);gap:6px;}
+  .pres-stat-card{padding:10px 8px;gap:6px;border-radius:12px;flex-direction:column;align-items:flex-start;}
+  .pres-stat-icon{width:28px;height:28px;font-size:14px;border-radius:8px;}
+  .pres-stat-val{font-size:15px;}
+  .pres-stat-label{font-size:8px;}
+  .pres-toolbar{gap:6px;}
+  .pres-toolbar input,.pres-toolbar select{font-size:14px;padding:10px 12px;border-radius:10px;}
+  .pres-view-toggle{width:100%;}
+  .pres-view-btn{flex:1;text-align:center;padding:9px 8px;font-size:12px;}
+  .pres-cards-grid{grid-template-columns:1fr;}
+  .pres-card{border-radius:14px;padding:14px;}
+  .pres-card-pct{font-size:22px;}
 
   /* Page header */
   .page-header{margin-bottom:14px;flex-direction:column;align-items:flex-start;gap:8px;}
@@ -484,7 +541,10 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
   .kpi-card{padding:10px 12px;gap:8px;}
   .kpi-icon{width:30px;height:30px;font-size:15px;}
   .kpi-val{font-size:16px;}
-  #events-stats-row{grid-template-columns:1fr 1fr 1fr !important;}
+  #events-stats-row{display:flex !important;flex-direction:row !important;gap:0 !important;margin-bottom:12px;background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);grid-template-columns:unset !important;}
+  #events-stats-row .stat-card{flex:1;border:none;border-right:1px solid var(--border);border-radius:0;padding:10px 4px;box-shadow:none;text-align:center;min-width:0;}
+  #events-stats-row .stat-card:last-child{border-right:none;}
+  #events-stats-row .stat-card::before{display:none;}
 
   /* Présences inline : 1 colonne sur mobile */
   .presence-inline-grid{grid-template-columns:1fr 1fr;}
@@ -648,7 +708,13 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
     <button class="hamburger" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
     <span class="topbar-title" id="topbar-title">Tableau de bord</span>
     <button class="btn-logout" onclick="logout()">Quitter</button>
-    <span id="sync-indicator" style="font-size:11px;color:var(--green);display:none;">✓ Sync</span>
+    <span id="sync-indicator" style="font-size:11px;color:var(--green);display:none;cursor:default;"></span>
+  </div>
+  <!-- BANNIÈRE HORS LIGNE -->
+  <div id="offline-banner" style="display:none;background:#fffbeb;border-bottom:1.5px solid #fde68a;padding:8px 16px;font-size:12px;color:#92400e;align-items:center;gap:8px;position:fixed;top:58px;left:0;right:0;z-index:39;">
+    <span>📴</span>
+    <span style="flex:1;">Mode hors ligne — données locales uniquement.</span>
+    <button onclick="reconnectFirebase()" style="background:#f59e0b;color:#fff;border:none;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">Reconnecter</button>
   </div>
 
   <nav class="sidebar" id="sidebar">
@@ -799,11 +865,12 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
           <option value="">Tous</option><option value="Actif">Actif</option>
           <option value="Actif Suisse">Actif Suisse</option><option value="Passif">Passif</option>
         </select>
-        <select id="sort-membres" onchange="renderMembres()" style="width:130px;">
+        <select id="sort-membres" onchange="renderMembres()" style="width:140px;">
           <option value="prenom">Tri : Prénom</option>
           <option value="nom">Tri : Nom</option>
           <option value="type">Tri : Type</option>
           <option value="adhesion">Tri : Adhésion</option>
+          <option value="presence">Tri : Présence</option>
         </select>
         <button class="btn btn-secondary btn-sm" id="sort-dir-btn" onclick="toggleSortDir()" title="Inverser l'ordre">↑↓</button>
       </div>
@@ -822,14 +889,38 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
     <!-- PRÉSENCES -->
     <div id="page-presences" class="page">
       <div class="page-header">
-        <div class="page-header-left"><h2>Présences</h2><p>Cliquez sur un point pour modifier</p></div>
-        <button class="btn btn-secondary btn-sm" onclick="exportPresencesCSV()">⬇️ Export CSV</button>
+        <div class="page-header-left"><h2>Présences</h2><p>Touchez un point pour modifier</p></div>
+        <button class="btn btn-secondary btn-sm" onclick="exportPresencesCSV()">⬇️ CSV</button>
       </div>
-      <div class="card" style="overflow-x:auto;">
-        <table style="min-width:480px;">
-          <thead id="presence-thead"></thead>
-          <tbody id="presence-tbody"></tbody>
-        </table>
+
+      <!-- Stats présences : 3 colonnes fixes petites -->
+      <div id="presences-stats-band" class="pres-stats-band"></div>
+
+      <!-- Toolbar sur 2 lignes -->
+      <div class="pres-toolbar">
+        <input type="text" id="search-presences" placeholder="🔍 Rechercher…" oninput="renderPresences()">
+        <select id="filter-presences-type" onchange="renderPresences()">
+          <option value="">Tous les types</option>
+          <option value="Actif">Actif</option>
+          <option value="Actif Suisse">Actif Suisse</option>
+          <option value="Passif">Passif</option>
+        </select>
+        <div class="pres-view-toggle">
+          <button id="pres-view-cards" class="pres-view-btn active" onclick="setPresView('cards')">🃏 Cartes</button>
+          <button id="pres-view-table" class="pres-view-btn" onclick="setPresView('table')">📋 Tableau</button>
+        </div>
+      </div>
+
+      <!-- Vue cartes -->
+      <div id="presences-cards-view"></div>
+      <!-- Vue tableau -->
+      <div id="presences-table-view" style="display:none;">
+        <div class="card" style="overflow-x:auto;">
+          <table style="min-width:480px;">
+            <thead id="presence-thead"></thead>
+            <tbody id="presence-tbody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -1392,6 +1483,37 @@ function lsGet(key,def){try{const v=localStorage.getItem(key);return v?JSON.pars
 function lsSet(key,val){try{localStorage.setItem(key,JSON.stringify(val));}catch(e){}}
 let _firebaseOk=false;
 
+async function reconnectFirebase(){
+  const btn=document.querySelector('#offline-banner button');
+  if(btn){btn.textContent='⏳ Connexion…';btn.disabled=true;}
+  try{
+    const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents'];
+    const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000));
+    const docs=await Promise.race([Promise.all(keys.map(k=>db.collection('gef_data').doc(k).get())),timeout]);
+    _firebaseOk=true;
+    docs.forEach((d,i)=>{
+      const val=d.exists?d.data().value:null;
+      if(!val)return;
+      if(i===0)membres=val;
+      else if(i===1)events=val;
+      else if(i===2)presences=val;
+      else if(i===3)compta=val;
+      else if(i===4)cotisations=val;
+      else if(i===5)eventTypes=val;
+      else if(i===6)emailHistorique=val;
+      else if(i===7)documents_list=val;
+    });
+    setupListeners();
+    document.getElementById('offline-banner').style.display='none';
+    const s=document.getElementById('sync-indicator');
+    if(s){s.textContent='✓ Sync';s.style.color='var(--green)';s.style.display='inline';clearTimeout(s._t);s._t=setTimeout(()=>s.style.display='none',2000);}
+    renderDashboard();renderMembres();
+  }catch(e){
+    if(btn){btn.textContent='Reconnecter';btn.disabled=false;}
+    alert('Impossible de se connecter à Firebase. Vérifiez votre connexion internet.');
+  }
+}
+
 async function initApp(){
   document.getElementById('loading-overlay').style.display='flex';
   
@@ -1441,6 +1563,8 @@ async function initApp(){
     documents_list=lsGet('gef_documents',[]);
     const s=document.getElementById('sync-indicator');
     if(s){s.textContent='📴 Hors ligne';s.style.display='inline';s.style.color='var(--text3)';}
+    const banner=document.getElementById('offline-banner');
+    if(banner)banner.style.display='flex';
   }
   
   document.getElementById('loading-overlay').style.display='none';
@@ -1623,9 +1747,7 @@ function renderMembres(){
   const list=membres.filter(m=>(m.nom+' '+m.prenom).toLowerCase().includes(q)&&(!ft||m.type===ft));
   document.getElementById('membres-tbody').innerHTML=list.map(m=>`<tr><td class="td-name">${m.nom}</td><td>${m.prenom}</td><td>${m.role?`<span class="badge-role">${m.role}</span>`:''}</td><td>${badgeType(m.type)}</td><td style="color:var(--text3)">${m.email||'—'}</td><td style="color:var(--text3);font-size:12px">${m.adhesion?fmtDate(m.adhesion):'—'}</td><td><button class="btn-icon" onclick="editMember(${m.id})">✏️</button><button class="btn-icon" onclick="deleteMember(${m.id})">🗑️</button></td></tr>`).join('');
   document.getElementById('member-cards').innerHTML=list.map(m=>`<div class="member-card"><div class="member-card-header"><div><div class="member-card-name">${m.prenom} ${m.nom}</div></div><div><button class="btn-icon" onclick="editMember(${m.id})">✏️</button><button class="btn-icon" onclick="deleteMember(${m.id})">🗑️</button></div></div><div class="member-card-meta">${badgeType(m.type)}${m.role?`<span class="badge-role">${m.role}</span>`:''}</div>${m.email?`<div style="font-size:12px;color:var(--text3);">✉️ ${m.email}</div>`:''}${m.tel?`<div style="font-size:12px;color:var(--text3);margin-top:2px;">📞 ${m.tel}</div>`:''}</div>`).join('');
-  // Mettre à jour select messagerie
-  const sel=document.getElementById('msg-auteur');
-  if(sel){sel.innerHTML='<option value="">— Auteur —</option>'+membres.map(m=>`<option value="${m.prenom} ${m.nom}">${m.prenom} ${m.nom}</option>`).join('');}
+
 }
 function openMemberModal(){editingMembre=null;document.getElementById('modal-membre-title').textContent='Ajouter un membre';['nom','prenom','role','email','tel','notes','adhesion'].forEach(f=>document.getElementById('m-'+f).value='');document.getElementById('m-type').value='';document.getElementById('m-presence').value='0.8';document.getElementById('modal-membre').classList.add('open');}
 function editMember(id){editingMembre=id;const m=membres.find(x=>x.id===id);document.getElementById('modal-membre-title').textContent='Modifier le membre';document.getElementById('m-nom').value=m.nom;document.getElementById('m-prenom').value=m.prenom;document.getElementById('m-role').value=m.role||'';document.getElementById('m-type').value=m.type||'';document.getElementById('m-email').value=m.email||'';document.getElementById('m-tel').value=m.tel||'';document.getElementById('m-adhesion').value=m.adhesion||'';document.getElementById('m-presence').value=m.presence_attendue||0;document.getElementById('m-notes').value=m.notes||'';document.getElementById('modal-membre').classList.add('open');}
@@ -1640,14 +1762,194 @@ function saveMember(){
 function deleteMember(id){if(!confirm('Supprimer ce membre ?'))return;membres=membres.filter(m=>m.id!==id);cotisations=cotisations.filter(c=>c.membreId!==id);save('gef_membres',membres);save('gef_cotisations',cotisations);renderMembres();}
 
 // ── PRÉSENCES ────────────────────────────────────────────────────
+let _presView = 'cards';
+function setPresView(v){
+  _presView=v;
+  document.getElementById('presences-cards-view').style.display=v==='cards'?'block':'none';
+  document.getElementById('presences-table-view').style.display=v==='table'?'block':'none';
+  document.getElementById('pres-view-cards').className='pres-view-btn'+(v==='cards'?' active':'');
+  document.getElementById('pres-view-table').className='pres-view-btn'+(v==='table'?' active':'');
+}
+
 function renderPresences(){
   const evts=events.slice().sort((a,b)=>a.date.localeCompare(b.date));
-  document.getElementById('presence-thead').innerHTML=`<tr><th style="min-width:110px">Membre</th>${evts.map(e=>`<th class="event-header">${e.nom||e.type}<br><span style="font-size:9px;opacity:0.6">${fmtDate(e.date)}</span></th>`).join('')}<th>%</th></tr>`;
-  document.getElementById('presence-tbody').innerHTML=membres.map(m=>{const p=evts.filter(e=>presences[m.id+'_'+e.id]).length;const pct=evts.length>0?Math.round((p/evts.length)*100):0;return`<tr><td class="td-name" style="font-size:12px">${m.prenom} ${m.nom}</td>${evts.map(e=>`<td style="text-align:center;cursor:pointer;padding:10px 6px" onclick="togglePresence(${m.id},${e.id},this)"><span class="dot ${presences[m.id+'_'+e.id]?'dot-yes':'dot-no'}"></span></td>`).join('')}<td><div style="display:flex;align-items:center;gap:4px"><div class="pct-bar"><div class="pct-fill" style="width:${pct}%"></div></div><span style="font-size:10px;color:var(--text3)">${pct}%</span></div></td></tr>`;}).join('');
-}
-function togglePresence(mid,eid,td){const key=mid+'_'+eid;presences[key]=!presences[key];save('gef_presences',presences);td.innerHTML=`<span class="dot ${presences[key]?'dot-yes':'dot-no'}"></span>`;const p=events.filter(e=>presences[mid+'_'+e.id]).length;const pct=events.length>0?Math.round((p/events.length)*100):0;td.closest('tr').querySelector('td:last-child').innerHTML=`<div style="display:flex;align-items:center;gap:4px"><div class="pct-bar"><div class="pct-fill" style="width:${pct}%"></div></div><span style="font-size:10px;color:var(--text3)">${pct}%</span></div>`;}
+  const q=(document.getElementById('search-presences')?.value||'').toLowerCase();
+  const ft=document.getElementById('filter-presences-type')?.value||'';
+  const list=membres.filter(m=>(m.nom+' '+m.prenom).toLowerCase().includes(q)&&(!ft||m.type===ft));
 
-// ── ÉVÉNEMENTS ───────────────────────────────────────────────────
+  // Stats band
+  const statsEl=document.getElementById('presences-stats-band');
+  if(statsEl){
+    const totalPres=list.reduce((s,m)=>s+evts.filter(e=>presences[m.id+'_'+e.id]).length,0);
+    const possible=list.length*evts.length;
+    const avgPct=possible>0?Math.round(totalPres/possible*100):0;
+    const topMembre=list.map(m=>{const p=evts.filter(e=>presences[m.id+'_'+e.id]).length;return{name:m.prenom+' '+m.nom,p};}).sort((a,b)=>b.p-a.p)[0];
+    statsEl.innerHTML=`
+      <div class="pres-stat-card"><div class="pres-stat-icon" style="background:#fff1f0;">📅</div><div><div class="pres-stat-label">Événements</div><div class="pres-stat-val">${evts.length}</div></div></div>
+      <div class="pres-stat-card"><div class="pres-stat-icon" style="background:#f0fdf4;">📊</div><div><div class="pres-stat-label">Taux moyen</div><div class="pres-stat-val" style="color:${avgPct>=70?'var(--green)':avgPct>=40?'var(--gold)':'var(--red)'};">${avgPct}%</div></div></div>
+      <div class="pres-stat-card"><div class="pres-stat-icon" style="background:#eff6ff;">🏅</div><div><div class="pres-stat-label">Top présence</div><div class="pres-stat-val" style="font-size:14px;">${topMembre?topMembre.name:'—'}</div></div></div>
+    `;
+  }
+
+  // Vue CARTES
+  const cardsEl=document.getElementById('presences-cards-view');
+  if(cardsEl){
+    const sorted=list.map(m=>{const p=evts.filter(e=>presences[m.id+'_'+e.id]).length;const pct=evts.length>0?Math.round((p/evts.length)*100):0;return{...m,p,pct};}).sort((a,b)=>b.pct-a.pct);
+    cardsEl.innerHTML=`<div class="pres-cards-grid">${sorted.map((m,idx)=>{
+      const color=m.pct>=70?'var(--green)':m.pct>=40?'var(--gold)':'var(--red)';
+      const medal=idx===0&&m.pct>0?'🥇':idx===1&&m.pct>0?'🥈':idx===2&&m.pct>0?'🥉':'';
+      const dots=evts.map(e=>{
+        const isP=!!presences[m.id+'_'+e.id];
+        return`<div class="pres-dot-wrap" title="${e.nom||e.type} · ${fmtDate(e.date)}" onclick="togglePresenceCard(${m.id},${e.id},this)">
+          <div class="pres-dot ${isP?'pres-dot-yes':'pres-dot-no'}"></div>
+          <div class="pres-dot-label">${(e.nom||e.type).slice(0,6)}</div>
+        </div>`;
+      }).join('');
+      return`<div class="pres-card" data-id="${m.id}">
+        <div class="pres-card-top">
+          <div>
+            <div class="pres-card-name">${medal} ${m.prenom} ${m.nom}</div>
+            <div style="margin-top:3px;">${badgeType(m.type)}</div>
+          </div>
+          <div class="pres-card-pct" style="color:${color};">${m.pct}%</div>
+        </div>
+        <div class="pres-bar-wrap">
+          <div class="pres-bar-track"><div class="pres-bar-fill" style="width:${m.pct}%;background:${color};"></div></div>
+          <span class="pres-bar-label">${m.p}/${evts.length}</span>
+        </div>
+        <div class="pres-dots-row">${dots}</div>
+      </div>`;
+    }).join('')}</div>`;
+  }
+
+  // Vue TABLEAU
+  document.getElementById('presence-thead').innerHTML=`<tr><th style="min-width:120px">Membre</th><th>Type</th>${evts.map(e=>`<th class="event-header" title="${e.nom||e.type}">${(e.nom||e.type).slice(0,8)}<br><span style="font-size:9px;opacity:0.6">${fmtDate(e.date)}</span></th>`).join('')}<th>%</th></tr>`;
+  document.getElementById('presence-tbody').innerHTML=list.map(m=>{
+    const p=evts.filter(e=>presences[m.id+'_'+e.id]).length;
+    const pct=evts.length>0?Math.round((p/evts.length)*100):0;
+    const color=pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';
+    return`<tr>
+      <td class="td-name" style="font-size:12px;white-space:nowrap;">${m.prenom} ${m.nom}</td>
+      <td>${badgeType(m.type)}</td>
+      ${evts.map(e=>`<td style="text-align:center;cursor:pointer;padding:10px 6px" onclick="togglePresence(${m.id},${e.id},this)"><span class="dot ${presences[m.id+'_'+e.id]?'dot-yes':'dot-no'}"></span></td>`).join('')}
+      <td><div style="display:flex;align-items:center;gap:6px;min-width:80px;">
+        <div class="pct-bar"><div class="pct-fill" style="width:${pct}%;background:${color}"></div></div>
+        <span style="font-size:11px;font-weight:700;color:${color}">${pct}%</span>
+      </div></td>
+    </tr>`;
+  }).join('');
+
+  // Appliquer la vue active
+  setPresView(_presView);
+}
+
+function togglePresenceCard(mid,eid,dotEl){
+  const key=mid+'_'+eid;
+  presences[key]=!presences[key];
+  save('gef_presences',presences);
+  const dot=dotEl.querySelector('.pres-dot');
+  if(dot){dot.className='pres-dot '+(presences[key]?'pres-dot-yes':'pres-dot-no');}
+  // Mettre à jour pct sur la carte
+  const card=document.querySelector(`.pres-card[data-id="${mid}"]`);
+  if(card){
+    const evts=events.slice().sort((a,b)=>a.date.localeCompare(b.date));
+    const p=evts.filter(e=>presences[mid+'_'+e.id]).length;
+    const pct=evts.length>0?Math.round((p/evts.length)*100):0;
+    const color=pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';
+    const pctEl=card.querySelector('.pres-card-pct');
+    if(pctEl){pctEl.textContent=pct+'%';pctEl.style.color=color;}
+    const fill=card.querySelector('.pres-bar-fill');
+    if(fill){fill.style.width=pct+'%';fill.style.background=color;}
+    const lbl=card.querySelector('.pres-bar-label');
+    if(lbl)lbl.textContent=p+'/'+evts.length;
+  }
+}
+
+function togglePresence(mid,eid,td){
+  const key=mid+'_'+eid;
+  presences[key]=!presences[key];
+  save('gef_presences',presences);
+  td.innerHTML=`<span class="dot ${presences[key]?'dot-yes':'dot-no'}"></span>`;
+  const evts=events.slice().sort((a,b)=>a.date.localeCompare(b.date));
+  const p=evts.filter(e=>presences[mid+'_'+e.id]).length;
+  const pct=evts.length>0?Math.round((p/evts.length)*100):0;
+  const color=pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';
+  td.closest('tr').querySelector('td:last-child').innerHTML=`<div style="display:flex;align-items:center;gap:6px;min-width:80px;"><div class="pct-bar"><div class="pct-fill" style="width:${pct}%;background:${color}"></div></div><span style="font-size:11px;font-weight:700;color:${color}">${pct}%</span></div>`;
+}
+
+// ── MEMBRES ── TRI ────────────────────────────────────────────────
+let _sortDir=1;
+function toggleSortDir(){
+  _sortDir*=-1;
+  const btn=document.getElementById('sort-dir-btn');
+  if(btn)btn.textContent=_sortDir===1?'↑↓':'↓↑';
+  renderMembres();
+}
+function renderMembres(){
+  const q=(document.getElementById('search-membres').value||'').toLowerCase();
+  const ft=document.getElementById('filter-type').value;
+  const sortBy=document.getElementById('sort-membres')?.value||'prenom';
+  let list=membres.filter(m=>(m.nom+' '+m.prenom).toLowerCase().includes(q)&&(!ft||m.type===ft));
+
+  // Tri
+  list=list.slice().sort((a,b)=>{
+    let va,vb;
+    if(sortBy==='prenom'){va=a.prenom||'';vb=b.prenom||'';}
+    else if(sortBy==='nom'){va=a.nom||'';vb=b.nom||'';}
+    else if(sortBy==='type'){va=a.type||'';vb=b.type||'';}
+    else if(sortBy==='adhesion'){va=a.adhesion||'';vb=b.adhesion||'';}
+    else if(sortBy==='presence'){
+      const evts=events;
+      va=evts.length>0?events.filter(e=>presences[a.id+'_'+e.id]).length/evts.length:0;
+      vb=evts.length>0?events.filter(e=>presences[b.id+'_'+e.id]).length/evts.length:0;
+      return(vb-va)*_sortDir;
+    }
+    return va.localeCompare(vb)*_sortDir;
+  });
+
+  // Compter
+  const countEl=document.getElementById('membres-count');
+  if(countEl)countEl.textContent=`${list.length} membre${list.length>1?'s':''}`;
+
+  // Répartition chart
+  const chartEl=document.getElementById('membres-repartition-chart');
+  if(chartEl){
+    const actifs=membres.filter(m=>m.type==='Actif').length;
+    const suisses=membres.filter(m=>m.type==='Actif Suisse').length;
+    const passifs=membres.filter(m=>m.type==='Passif').length;
+    const autres=membres.filter(m=>!m.type).length;
+    const total=membres.length;
+    const types=[['Actif',actifs,'#e63329'],['Actif Suisse',suisses,'#c49a00'],['Passif',passifs,'#9ca3af'],['Autre',autres,'#e5e7eb']];
+    chartEl.innerHTML=`<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">`+
+      types.filter(t=>t[1]>0).map(t=>`
+        <div style="flex:${t[1]};min-width:32px;height:28px;background:${t[2]};border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;transition:flex 0.6s ease;" title="${t[0]}: ${t[1]}">
+          ${t[1]>1?t[1]:''}
+        </div>`).join('')+
+      `</div><div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;">`+
+      types.filter(t=>t[1]>0).map(t=>`<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);">
+        <div style="width:8px;height:8px;border-radius:50%;background:${t[2]};"></div>${t[0]}<span style="font-weight:700;color:var(--text);">${t[1]}</span>
+      </div>`).join('')+'</div>';
+  }
+
+  document.getElementById('membres-tbody').innerHTML=list.map(m=>`<tr>
+    <td class="td-name">${m.nom}</td><td>${m.prenom}</td>
+    <td>${m.role?`<span class="badge-role">${m.role}</span>`:''}</td>
+    <td>${badgeType(m.type)}</td>
+    <td style="color:var(--text3)">${m.email||'—'}</td>
+    <td style="color:var(--text3);font-size:12px">${m.adhesion?fmtDate(m.adhesion):'—'}</td>
+    <td><button class="btn-icon" onclick="editMember(${m.id})">✏️</button><button class="btn-icon" onclick="deleteMember(${m.id})">🗑️</button></td>
+  </tr>`).join('');
+
+  document.getElementById('member-cards').innerHTML=list.map(m=>`<div class="member-card">
+    <div class="member-card-header">
+      <div><div class="member-card-name">${m.prenom} ${m.nom}</div></div>
+      <div><button class="btn-icon" onclick="editMember(${m.id})">✏️</button><button class="btn-icon" onclick="deleteMember(${m.id})">🗑️</button></div>
+    </div>
+    <div class="member-card-meta">${badgeType(m.type)}${m.role?`<span class="badge-role">${m.role}</span>`:''}</div>
+    ${m.email?`<div style="font-size:12px;color:var(--text3);">✉️ ${m.email}</div>`:''}
+    ${m.tel?`<div style="font-size:12px;color:var(--text3);margin-top:2px;">📞 ${m.tel}</div>`:''}
+  </div>`).join('');
+}
 let _openEventId=null;
 
 function renderEvents(){
@@ -1948,17 +2250,187 @@ Le bureau de GE-Fais`;
 function copierEmail(){navigator.clipboard.writeText(document.getElementById('rappel-email-preview').textContent).then(()=>alert('Email copié dans le presse-papier !')).catch(()=>alert('Copiez manuellement le texte ci-dessus.'));}
 
 // ── COMPTA ───────────────────────────────────────────────────────
+// ── COMPTABILITÉ ─────────────────────────────────────────────────
+let _comptaAttachments = []; // pièces jointes en cours d'édition
+let _photoViewerSrc = '';
+
+function openComptaModal(type){
+  editingCompta=null;
+  _comptaAttachments=[];
+  document.getElementById('modal-compta-title').textContent=type==='recette'?'Nouvelle recette':'Nouvelle dépense';
+  document.getElementById('c-type').value=type;
+  document.getElementById('c-date').value=new Date().toISOString().slice(0,10);
+  document.getElementById('c-montant').value='';
+  document.getElementById('c-desc').value='';
+  document.getElementById('c-cat').value='Autre';
+  _renderAttachmentsPreview();
+  document.getElementById('modal-compta').classList.add('open');
+}
+
+function editCompta(id){
+  editingCompta=id;
+  const c=compta.find(x=>x.id===id);
+  if(!c)return;
+  _comptaAttachments=(c.attachments||[]).map(a=>({...a}));
+  document.getElementById('modal-compta-title').textContent='Modifier une écriture';
+  document.getElementById('c-type').value=c.type;
+  document.getElementById('c-date').value=c.date;
+  document.getElementById('c-montant').value=c.montant;
+  document.getElementById('c-desc').value=c.description;
+  document.getElementById('c-cat').value=c.categorie||'Autre';
+  _renderAttachmentsPreview();
+  document.getElementById('modal-compta').classList.add('open');
+}
+
+function comptaAjouterFichier(input){
+  const files=Array.from(input.files);
+  files.forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      _comptaAttachments.push({name:file.name,type:file.type,size:file.size,data:e.target.result});
+      _renderAttachmentsPreview();
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value='';
+}
+
+function comptaAjouterPhoto(input){
+  comptaAjouterFichier(input);
+}
+
+function _renderAttachmentsPreview(){
+  const preview=document.getElementById('c-attachments-preview');
+  const count=document.getElementById('c-attachments-count');
+  if(!preview)return;
+  if(!_comptaAttachments.length){
+    preview.innerHTML='';
+    if(count)count.style.display='none';
+    return;
+  }
+  preview.innerHTML=_comptaAttachments.map((a,i)=>{
+    const isImage=a.type&&a.type.startsWith('image/');
+    if(isImage){
+      return`<div style="position:relative;display:inline-block;">
+        <img src="${a.data}" class="attach-thumb" onclick="openPhotoViewer('${a.data}')" title="${a.name}">
+        <button onclick="_removeAttachment(${i})" style="position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">✕</button>
+      </div>`;
+    }
+    return`<div class="attach-file">
+      📄 ${a.name}<span style="color:var(--text3);font-size:11px;margin-left:4px;">${(a.size/1024).toFixed(0)}Ko</span>
+      <button onclick="_removeAttachment(${i})" class="attach-remove">✕</button>
+    </div>`;
+  }).join('');
+  if(count){
+    count.textContent=`${_comptaAttachments.length} pièce${_comptaAttachments.length>1?'s':''} jointe${_comptaAttachments.length>1?'s':''}`;
+    count.style.display='block';
+  }
+}
+
+function _removeAttachment(i){
+  _comptaAttachments.splice(i,1);
+  _renderAttachmentsPreview();
+}
+
+function openPhotoViewer(src){
+  _photoViewerSrc=src;
+  document.getElementById('photo-viewer-img').src=src;
+  document.getElementById('photo-viewer').classList.add('open');
+}
+function closePhotoViewer(){
+  document.getElementById('photo-viewer').classList.remove('open');
+  document.getElementById('photo-viewer-img').src='';
+}
+function telechargerPhoto(){
+  const a=document.createElement('a');
+  a.href=_photoViewerSrc;
+  a.download='justificatif.jpg';
+  a.click();
+}
+
+function saveCompta(){
+  const montant=parseFloat(document.getElementById('c-montant').value);
+  const desc=document.getElementById('c-desc').value.trim();
+  if(!desc||isNaN(montant)||montant<=0){alert('Description et montant requis.');return;}
+  const data={
+    date:document.getElementById('c-date').value,
+    type:document.getElementById('c-type').value,
+    categorie:document.getElementById('c-cat').value,
+    description:desc,
+    montant,
+    attachments:[..._comptaAttachments]
+  };
+  if(editingCompta){
+    const i=compta.findIndex(c=>c.id===editingCompta);
+    compta[i]={...compta[i],...data};
+  } else {
+    compta.push({id:Math.max(0,...compta.map(c=>c.id))+1,...data});
+  }
+  save('gef_compta',compta);
+  closeModal('modal-compta');
+  renderCompta();
+}
+
+function deleteCompta(id){
+  if(!confirm('Supprimer cette écriture ?'))return;
+  compta=compta.filter(c=>c.id!==id);
+  save('gef_compta',compta);
+  renderCompta();
+}
+
 function renderCompta(){
   const ft=document.getElementById('compta-filter-type').value;
   const list=compta.filter(c=>(!ft||c.type===ft)).sort((a,b)=>b.date.localeCompare(a.date));
   const totalIn=compta.filter(c=>c.type==='recette').reduce((s,c)=>s+c.montant,0);
   const totalOut=compta.filter(c=>c.type==='depense').reduce((s,c)=>s+c.montant,0);
-  document.getElementById('compta-summary').innerHTML=`<div class="stat-card"><div class="stat-label">Recettes</div><div class="stat-value amount-in">${totalIn.toFixed(2)}<span>CHF</span></div></div><div class="stat-card"><div class="stat-label">Dépenses</div><div class="stat-value amount-out">${totalOut.toFixed(2)}<span>CHF</span></div></div><div class="stat-card"><div class="stat-label">Solde</div><div class="stat-value amount-bal">${(totalIn-totalOut).toFixed(2)}<span>CHF</span></div></div>`;
-  document.getElementById('compta-tbody').innerHTML=list.map(c=>`<tr><td>${fmtDate(c.date)}</td><td><span class="badge ${c.type==='recette'?'badge-recette':'badge-depense'}">${c.type==='recette'?'Recette':'Dépense'}</span></td><td class="td-name">${c.description}</td><td class="${c.type==='recette'?'amount-in':'amount-out'}" style="font-weight:600">${c.type==='recette'?'+':'−'}${c.montant.toFixed(2)}</td><td><button class="btn-icon" onclick="editCompta(${c.id})">✏️</button><button class="btn-icon" onclick="deleteCompta(${c.id})">🗑️</button></td></tr>`).join('');
+  document.getElementById('compta-summary').innerHTML=`
+    <div class="stat-card"><div class="stat-label">Recettes</div><div class="stat-value amount-in">${totalIn.toFixed(2)}<span>CHF</span></div></div>
+    <div class="stat-card"><div class="stat-label">Dépenses</div><div class="stat-value amount-out">${totalOut.toFixed(2)}<span>CHF</span></div></div>
+    <div class="stat-card"><div class="stat-label">Solde</div><div class="stat-value amount-bal">${(totalIn-totalOut).toFixed(2)}<span>CHF</span></div></div>
+  `;
+  // Tableau desktop
+  document.getElementById('compta-tbody').innerHTML=list.map(c=>{
+    const atts=c.attachments||[];
+    const thumbs=atts.filter(a=>a.type&&a.type.startsWith('image/')).slice(0,3);
+    const justif=thumbs.length
+      ? thumbs.map(a=>`<img src="${a.data}" class="attach-thumb" style="width:32px;height:32px;border-radius:6px;object-fit:cover;cursor:pointer;" onclick="openPhotoViewer('${a.data}')" title="${a.name}">`).join('')
+      : (atts.length?`<span style="font-size:11px;color:var(--text3);">📎 ${atts.length}</span>`:'<span style="color:var(--border);">—</span>');
+    return`<tr>
+      <td>${fmtDate(c.date)}</td>
+      <td><span class="badge ${c.type==='recette'?'badge-recette':'badge-depense'}">${c.type==='recette'?'Recette':'Dépense'}</span></td>
+      <td class="td-name">${c.description}</td>
+      <td class="${c.type==='recette'?'amount-in':'amount-out'}" style="font-weight:600">${c.type==='recette'?'+':'−'}${c.montant.toFixed(2)}</td>
+      <td>${justif}</td>
+      <td style="white-space:nowrap"><button class="btn-icon" onclick="editCompta(${c.id})">✏️</button><button class="btn-icon" onclick="deleteCompta(${c.id})">🗑️</button></td>
+    </tr>`;
+  }).join('');
+  // Cartes mobile
+  const cards=document.getElementById('compta-cards');
+  if(cards) cards.innerHTML=list.map(c=>{
+    const atts=c.attachments||[];
+    const isIn=c.type==='recette';
+    return`<div class="compta-card">
+      <div class="compta-card-header">
+        <div>
+          <div style="font-weight:700;font-size:14px;color:var(--text);">${c.description}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px;">${c.categorie||''} · ${fmtDate(c.date)}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:18px;font-weight:800;color:${isIn?'var(--green)':'var(--red)'};">${isIn?'+':'−'}${c.montant.toFixed(2)} CHF</div>
+          <span class="badge ${isIn?'badge-recette':'badge-depense'}" style="font-size:10px;">${isIn?'Recette':'Dépense'}</span>
+        </div>
+      </div>
+      ${atts.length?`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;">
+        ${atts.filter(a=>a.type&&a.type.startsWith('image/')).map(a=>`<img src="${a.data}" class="attach-thumb" style="width:48px;height:48px;border-radius:8px;object-fit:cover;" onclick="openPhotoViewer('${a.data}')">`).join('')}
+        ${atts.filter(a=>!a.type||!a.type.startsWith('image/')).map(a=>`<div class="attach-file" style="font-size:11px;padding:5px 10px;">📄 ${a.name}</div>`).join('')}
+      </div>`:''}
+      <div style="display:flex;gap:6px;margin-top:10px;">
+        <button class="btn btn-sm btn-secondary" style="flex:1;" onclick="editCompta(${c.id})">✏️ Modifier</button>
+        <button class="btn-icon" onclick="deleteCompta(${c.id})">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
 }
-// openComptaModal et editCompta définis dans la section saveCompta
-function saveCompta(){const montant=parseFloat(document.getElementById('c-montant').value);const desc=document.getElementById('c-desc').value.trim();if(!desc||isNaN(montant)||montant<=0){alert('Description et montant requis.');return;}const data={date:document.getElementById('c-date').value,type:document.getElementById('c-type').value,categorie:document.getElementById('c-cat').value,description:desc,montant};if(editingCompta){const i=compta.findIndex(c=>c.id===editingCompta);compta[i]={...compta[i],...data};}else compta.push({id:Math.max(0,...compta.map(c=>c.id))+1,...data});save('gef_compta',compta);closeModal('modal-compta');renderCompta();}
-function deleteCompta(id){if(!confirm('Supprimer cette écriture ?'))return;compta=compta.filter(c=>c.id!==id);save('gef_compta',compta);renderCompta();}
 
 // ── STATISTIQUES ─────────────────────────────────────────────────
 function renderStatistiques(){
