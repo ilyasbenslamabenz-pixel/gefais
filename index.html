@@ -323,17 +323,68 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 /* LABEL SECTION */
 .presence-section-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;}
 
-/* HERO DASHBOARD */
-#dash-hero{box-shadow:0 6px 24px rgba(230,51,41,0.25);}
-.dash-quick-btn{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:8px 14px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:6px;transition:background 0.15s;white-space:nowrap;}
-.dash-quick-btn:hover{background:rgba(255,255,255,0.25);}
+/* ── HERO DASHBOARD ── */
+.dash-hero{
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#e63329 0%,#c0271e 60%,#a81f18 100%);
+  border-radius:22px;padding:28px 28px 24px;margin-bottom:18px;color:#fff;
+  box-shadow:0 8px 32px rgba(230,51,41,0.3);
+}
+.dash-hero-orb{position:absolute;border-radius:50%;pointer-events:none;}
+.dash-hero-orb1{width:220px;height:220px;background:rgba(255,255,255,0.06);top:-60px;right:-50px;}
+.dash-hero-orb2{width:120px;height:120px;background:rgba(255,255,255,0.08);bottom:-30px;right:80px;}
+.dash-hero-orb3{width:70px;height:70px;background:rgba(255,255,255,0.1);top:20px;right:160px;}
+.dash-hero-inner{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.dash-hero-eyebrow{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;opacity:0.65;margin-bottom:7px;}
+.dash-hero-greeting{font-size:22px;font-weight:800;margin-bottom:3px;letter-spacing:-0.3px;}
+.dash-hero-date{font-size:13px;opacity:0.72;margin-bottom:16px;font-weight:400;}
+.dash-hero-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.dash-quick-btn{background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.28);color:#fff;padding:8px 14px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:5px;transition:all 0.15s;white-space:nowrap;backdrop-filter:blur(4px);}
+.dash-quick-btn:hover{background:rgba(255,255,255,0.26);transform:translateY(-1px);}
+.dash-quick-btn:active{transform:scale(0.96);}
+.dash-hero-badge{flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(255,255,255,0.14);border:1.5px solid rgba(255,255,255,0.22);border-radius:18px;padding:14px 22px;backdrop-filter:blur(8px);text-align:center;min-width:80px;}
+.dash-hero-badge-num{font-size:36px;font-weight:900;letter-spacing:-2px;line-height:1;margin-bottom:2px;}
+.dash-hero-badge-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:0.7;}
 
-/* ALERTES DASHBOARD */
-.dash-alerte{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;font-size:13px;margin-bottom:8px;}
+/* ── KPI GRID ── */
+.dash-kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+.kpi-band-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);transition:all 0.2s;position:relative;overflow:hidden;}
+.kpi-band-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--red),#f87171);}
+.kpi-band-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.kpi-band-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.kpi-band-body{flex:1;min-width:0;}
+.kpi-band-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:3px;}
+.kpi-band-val{font-size:24px;font-weight:800;color:var(--text);letter-spacing:-0.5px;line-height:1.1;}
+.kpi-band-sub{font-size:10px;color:var(--text3);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+@keyframes kpiIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.kpi-animate{animation:kpiIn 0.4s ease both;}
+
+/* ── ALERTES ── */
+.dash-alerte{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;font-size:13px;margin-bottom:8px;font-weight:500;}
 .dash-alerte-warn{background:#fffbeb;border:1.5px solid #fde68a;color:#92400e;}
 .dash-alerte-danger{background:#fff1f0;border:1.5px solid #fecaca;color:#c0271e;}
 .dash-alerte-info{background:#eff6ff;border:1.5px solid #bfdbfe;color:#1e40af;}
 .dash-alerte-success{background:#f0fdf4;border:1.5px solid #bbf7d0;color:#166534;}
+
+/* ── DASHBOARD LAYOUT ── */
+.dash-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.dash-row-bottom{margin-top:14px;}
+.dash-col-stack{display:flex;flex-direction:column;gap:14px;}
+.dash-card-presence{}
+
+/* ── FINANCE CARD ── */
+.dash-finance-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:12px;margin-bottom:8px;}
+.dash-finance-in{background:#f0fdf4;border:1px solid #bbf7d0;}
+.dash-finance-out{background:#fff1f0;border:1px solid #ffd5d3;}
+.dash-finance-icon{font-size:18px;margin-right:8px;}
+.dash-finance-label{font-size:13px;color:var(--text2);flex:1;}
+.dash-finance-amount{font-weight:700;font-size:15px;}
+.dash-finance-divider{height:1px;background:var(--border);margin:12px 0;}
+.dash-finance-solde{display:flex;align-items:center;justify-content:space-between;padding:16px;border-radius:16px;}
+.dash-finance-solde-pos{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac;}
+.dash-finance-solde-neg{background:linear-gradient(135deg,#fff1f0,#fee2e2);border:1.5px solid #fca5a5;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
 /* PIÈCES JOINTES COMPTA */
 .attach-thumb{width:64px;height:64px;border-radius:10px;object-fit:cover;border:1.5px solid var(--border);cursor:pointer;transition:transform 0.15s;}
@@ -443,19 +494,33 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
   .event-row-actions{gap:6px;}
 
   /* Hero dashboard mobile */
-  #dash-hero{padding:16px 18px;border-radius:16px;margin-bottom:12px;}
-  #dash-hero-greeting{font-size:17px;}
-  #dash-hero-quick{gap:6px;margin-top:10px;}
-  .dash-quick-btn{padding:6px 10px;font-size:11px;}
+  .dash-hero{padding:18px 16px 16px;border-radius:18px;margin-bottom:14px;}
+  .dash-hero-greeting{font-size:18px;}
+  .dash-hero-date{font-size:12px;margin-bottom:12px;}
+  .dash-hero-actions{gap:6px;}
+  .dash-quick-btn{padding:7px 11px;font-size:11px;border-radius:9px;}
+  .dash-hero-badge{padding:10px 14px;border-radius:14px;min-width:66px;}
+  .dash-hero-badge-num{font-size:28px;}
 
   /* KPI band mobile — 2x2 */
-  #dash-kpi-band{grid-template-columns:1fr 1fr !important;gap:8px !important;}
-  .kpi-band-card{padding:11px 12px;gap:8px;border-radius:12px;}
-  .kpi-band-icon{width:32px;height:32px;border-radius:9px;font-size:16px;}
-  .kpi-band-val{font-size:18px;}
+  .dash-kpi-grid{grid-template-columns:1fr 1fr !important;gap:8px !important;margin-bottom:14px;}
+  .kpi-band-card{padding:12px;gap:8px;border-radius:13px;}
+  .kpi-band-icon{width:34px;height:34px;border-radius:10px;font-size:17px;}
+  .kpi-band-val{font-size:20px;}
+  .kpi-band-sub{font-size:9px;}
+
+  /* Dashboard rows -> single col */
+  .dash-row{grid-template-columns:1fr !important;}
+  .dash-row-bottom{margin-top:0;}
 
   /* Alertes mobile */
   .dash-alerte{font-size:12px;padding:10px 12px;border-radius:10px;}
+
+  /* Finance mobile */
+  .dash-finance-row{padding:10px 12px;}
+  .dash-finance-amount{font-size:14px;}
+  .dash-finance-solde{padding:12px 14px;}
+  .dash-finance-solde > div:last-child{font-size:20px !important;}
 
   /* Compta : table -> cartes mobile */
   .card .table-wrap table thead tr th:nth-child(5),
@@ -664,36 +729,41 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
     <!-- DASHBOARD -->
     <div id="page-dashboard" class="page active">
 
-      <!-- ① HERO -->
-      <div id="dash-hero" style="background:linear-gradient(135deg,#e63329 0%,#c0271e 100%);border-radius:20px;padding:22px 26px;margin-bottom:16px;color:#fff;position:relative;overflow:hidden;">
-        <div style="position:absolute;top:-30px;right:-20px;width:150px;height:150px;background:rgba(255,255,255,0.05);border-radius:50%;pointer-events:none;"></div>
-        <div style="position:relative;z-index:1;">
-          <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:0.7;margin-bottom:6px;">GE-FAIS · Espace de gestion</div>
-          <div style="font-size:20px;font-weight:700;margin-bottom:3px;" id="dash-hero-greeting">Bonjour 👋</div>
-          <div style="font-size:13px;opacity:0.75;margin-bottom:14px;" id="dash-hero-sub">Chargement…</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;" id="dash-hero-quick"></div>
+      <!-- HERO -->
+      <div class="dash-hero" id="dash-hero">
+        <div class="dash-hero-orb dash-hero-orb1"></div>
+        <div class="dash-hero-orb dash-hero-orb2"></div>
+        <div class="dash-hero-orb dash-hero-orb3"></div>
+        <div class="dash-hero-inner">
+          <div class="dash-hero-left">
+            <div class="dash-hero-eyebrow">GE-FAIS · Espace de gestion</div>
+            <div class="dash-hero-greeting" id="dash-hero-greeting">Bonjour 👋</div>
+            <div class="dash-hero-date" id="dash-hero-sub">Chargement…</div>
+            <div class="dash-hero-actions" id="dash-hero-quick"></div>
+          </div>
+          <div class="dash-hero-badge" id="dash-hero-badge">
+            <div class="dash-hero-badge-num" id="dash-hero-badge-num">—</div>
+            <div class="dash-hero-badge-label">membres</div>
+          </div>
         </div>
       </div>
 
-      <!-- ② KPI — chiffres clés en haut -->
-      <div id="dash-kpi-band" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;"></div>
+      <!-- KPI BAND -->
+      <div class="dash-kpi-grid" id="dash-kpi-band"></div>
 
-      <!-- ③ ALERTES -->
-      <div id="dash-alertes" style="margin-bottom:14px;"></div>
+      <!-- ALERTES -->
+      <div id="dash-alertes"></div>
 
-      <!-- ④ GRILLE graphiques + events -->
-      <div class="dash-grid" style="margin-bottom:14px;">
-        <div class="card">
+      <!-- ROW 1 -->
+      <div class="dash-row">
+        <div class="card dash-card-presence">
           <div class="card-title">🏅 Présence des membres</div>
           <div id="dash-presence-bars" class="gef-chart"></div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="dash-col-stack">
           <div class="card">
-            <div class="card-title">🍩 Répartition</div>
-            <div class="gef-donut-wrap">
-              <svg id="dash-donut" width="100" height="100" viewBox="0 0 120 120"></svg>
-              <div class="gef-donut-legend" id="dash-donut-legend"></div>
-            </div>
+            <div class="card-title">👥 Répartition</div>
+            <div id="dash-repartition"></div>
           </div>
           <div class="card">
             <div class="card-title">📆 Prochains événements</div>
@@ -702,15 +772,15 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
         </div>
       </div>
 
-      <!-- ⑤ Finances + événements -->
-      <div class="dash-grid">
+      <!-- ROW 2 -->
+      <div class="dash-row dash-row-bottom">
         <div class="card">
           <div class="card-title">📅 Participation par événement</div>
           <div id="dash-event-bars" class="gef-chart"></div>
         </div>
-        <div class="card">
+        <div class="card dash-finance-card">
           <div class="card-title">💰 Santé financière</div>
-          <div id="dash-finance-bars" class="gef-chart"></div>
+          <div id="dash-finance-summary"></div>
         </div>
       </div>
 
@@ -1301,6 +1371,7 @@ function setupListeners(){
   db.collection('gef_data').doc('gef_cotisations').onSnapshot(s=>{if(s.exists&&fromOther('gef_cotisations')){cotisations=s.data().value;rerender();}});
   db.collection('gef_data').doc('gef_event_types').onSnapshot(s=>{if(s.exists&&fromOther('gef_event_types'))eventTypes=s.data().value;});
   db.collection('gef_data').doc('gef_email_historique').onSnapshot(s=>{if(s.exists&&fromOther('gef_email_historique'))emailHistorique=s.data().value;});
+  db.collection('gef_data').doc('gef_documents').onSnapshot(s=>{if(s.exists&&fromOther('gef_documents')){documents_list=s.data().value;rerender();}});
 }
 
 function fmtDate(d){if(!d)return'—';const[y,m,day]=d.split('T')[0].split('-');return`${day}/${m}/${y}`;}
@@ -1316,13 +1387,12 @@ function badgeType(t){
 async function initApp(){
   document.getElementById('loading-overlay').style.display='flex';
   try{
-    const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique'];
-    const defaults=[DEFAULT_MEMBRES,DEFAULT_EVENTS,DEFAULT_PRESENCES,DEFAULT_COMPTA,buildDefaultCotisations(DEFAULT_MEMBRES),DEFAULT_EVENT_TYPES,[]];
+    const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents'];
+    const defaults=[DEFAULT_MEMBRES,DEFAULT_EVENTS,DEFAULT_PRESENCES,DEFAULT_COMPTA,buildDefaultCotisations(DEFAULT_MEMBRES),DEFAULT_EVENT_TYPES,[],[]];
     const docs=await Promise.all(keys.map(k=>db.collection('gef_data').doc(k).get()));
     const isNew=!docs[0].exists;
     docs.forEach((d,i)=>{
       const val=d.exists?d.data().value:defaults[i];
-      [membres,events,presences,compta,cotisations,eventTypes,emailHistorique][i]; // placeholder
       if(i===0)membres=val;
       else if(i===1)events=val;
       else if(i===2)presences=val;
@@ -1330,6 +1400,7 @@ async function initApp(){
       else if(i===4)cotisations=val;
       else if(i===5)eventTypes=val;
       else if(i===6)emailHistorique=val;
+      else if(i===7)documents_list=val;
     });
     if(isNew){keys.forEach((k,i)=>save(k,defaults[i]));}
     setupListeners();
@@ -1346,23 +1417,167 @@ function renderDashboard(){
   const actifs=membres.filter(m=>m.type==='Actif').length;
   const suisses=membres.filter(m=>m.type==='Actif Suisse').length;
   const passifs=membres.filter(m=>m.type==='Passif').length;
+  const autres=membres.filter(m=>!m.type).length;
   const total=membres.length;
   const totalIn=compta.filter(c=>c.type==='recette').reduce((s,c)=>s+c.montant,0);
   const totalOut=compta.filter(c=>c.type==='depense').reduce((s,c)=>s+c.montant,0);
+  const solde=totalIn-totalOut;
   const cotisPayees=cotisations.filter(c=>c.statut==='paye').length;
-  document.getElementById('dash-stats').innerHTML=`
-    <div class="stat-card"><div class="stat-label">Membres</div><div class="stat-value">${total}</div></div>
-    <div class="stat-card"><div class="stat-label">Actifs</div><div class="stat-value">${actifs+suisses}</div></div>
-    <div class="stat-card"><div class="stat-label">Cotisations</div><div class="stat-value">${cotisPayees}<span>/ ${cotisations.length}</span></div></div>
-    <div class="stat-card"><div class="stat-label">Solde</div><div class="stat-value">${(totalIn-totalOut).toFixed(0)}<span>CHF</span></div></div>
-  `;
-  const bars=membres.map(m=>{const p=events.filter(e=>presences[m.id+'_'+e.id]).length;return{name:m.prenom+' '+m.nom,pct:events.length>0?Math.round((p/events.length)*100):0};}).sort((a,b)=>b.pct-a.pct).slice(0,8);
-  document.getElementById('dash-presence-bars').innerHTML=bars.map(b=>`<div class="progress-row"><div class="progress-label">${b.name}</div><div class="progress-track"><div class="progress-bar" style="width:${b.pct}%;background:${b.pct>=70?'#e63329':b.pct>=40?'#c49a00':'#d1d5db'}"></div></div><div class="progress-pct">${b.pct}%</div></div>`).join('');
-  const types=[['Actif',actifs,'#e63329'],['Actif Suisse',suisses,'#c49a00'],['Passif',passifs,'#9ca3af'],['Autre',total-actifs-suisses-passifs,'#e5e7eb']];
-  document.getElementById('dash-repartition').innerHTML=types.filter(t=>t[1]>0).map(t=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);"><div style="display:flex;align-items:center;gap:8px;"><div style="width:8px;height:8px;border-radius:50%;background:${t[2]}"></div><span style="font-size:13px;color:var(--text2)">${t[0]}</span></div><span style="font-weight:500;">${t[1]}</span></div>`).join('');
+  const cotisTotal=cotisations.length;
   const today=new Date().toISOString().slice(0,10);
-  const upcoming=events.filter(e=>e.date>=today).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,4);
-  document.getElementById('dash-events').innerHTML=upcoming.length?upcoming.map(e=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);"><span class="event-chip ${e.type==='Maraude'?'event-chip-maraude':e.type==='Réunion'?'event-chip-reunion':'event-chip-autre'}">${e.type}</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;">${e.nom||e.type}</span><span style="font-size:11px;color:var(--text3);">${fmtDate(e.date)}</span></div>`).join(''):'<p style="color:var(--text3);font-size:13px;">Aucun événement à venir.</p>';
+  const h=new Date().getHours();
+  const greet=h<6?'Bonne nuit 🌙':h<12?'Bonjour 👋':h<18?'Bon après-midi ☀️':'Bonsoir 🌇';
+
+  // HERO
+  const el_g=document.getElementById('dash-hero-greeting');
+  const el_s=document.getElementById('dash-hero-sub');
+  const el_q=document.getElementById('dash-hero-quick');
+  const el_b=document.getElementById('dash-hero-badge-num');
+  if(el_g)el_g.textContent=greet;
+  const dateStr=new Date().toLocaleDateString('fr-CH',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  if(el_s)el_s.textContent=dateStr;
+  if(el_b)el_b.textContent=total;
+  if(el_q)el_q.innerHTML=`
+    <button class="dash-quick-btn" onclick="navTo('membres','Membres');setTimeout(openMemberModal,100)">＋ Membre</button>
+    <button class="dash-quick-btn" onclick="navTo('evenements','Événements');setTimeout(openEventModal,100)">＋ Événement</button>
+    <button class="dash-quick-btn" onclick="navTo('cotisations','Cotisations')">💳 Cotisations</button>
+  `;
+
+  // KPI BAND
+  const kpiEl=document.getElementById('dash-kpi-band');
+  if(kpiEl)kpiEl.innerHTML=`
+    <div class="kpi-band-card kpi-animate" style="animation-delay:0s">
+      <div class="kpi-band-icon" style="background:#fff1f0;">👥</div>
+      <div class="kpi-band-body">
+        <div class="kpi-band-label">Total membres</div>
+        <div class="kpi-band-val">${total}</div>
+        <div class="kpi-band-sub">${actifs+suisses} actifs · ${passifs} passifs</div>
+      </div>
+    </div>
+    <div class="kpi-band-card kpi-animate" style="animation-delay:0.06s">
+      <div class="kpi-band-icon" style="background:#fffbeb;">⚡</div>
+      <div class="kpi-band-body">
+        <div class="kpi-band-label">Membres actifs</div>
+        <div class="kpi-band-val">${actifs+suisses}</div>
+        <div class="kpi-band-sub">${actifs} actifs · ${suisses} suisses</div>
+      </div>
+    </div>
+    <div class="kpi-band-card kpi-animate" style="animation-delay:0.12s">
+      <div class="kpi-band-icon" style="background:${solde>=0?'#f0fdf4':'#fff1f0'};">${solde>=0?'💚':'🔴'}</div>
+      <div class="kpi-band-body">
+        <div class="kpi-band-label">Solde financier</div>
+        <div class="kpi-band-val" style="color:${solde>=0?'var(--green)':'var(--red)'};">${solde>=0?'+':''}${solde.toFixed(0)}<span style="font-size:12px;font-weight:400;color:var(--text3);margin-left:3px;">CHF</span></div>
+        <div class="kpi-band-sub">${totalIn.toFixed(0)} CHF recettes</div>
+      </div>
+    </div>
+    <div class="kpi-band-card kpi-animate" style="animation-delay:0.18s">
+      <div class="kpi-band-icon" style="background:${cotisPayees===cotisTotal&&cotisTotal>0?'#f0fdf4':'#eff6ff'};">${cotisPayees===cotisTotal&&cotisTotal>0?'✅':'💳'}</div>
+      <div class="kpi-band-body">
+        <div class="kpi-band-label">Cotisations</div>
+        <div class="kpi-band-val">${cotisPayees}<span style="font-size:15px;font-weight:400;color:var(--text3);">/${cotisTotal}</span></div>
+        <div class="kpi-band-sub">${cotisTotal-cotisPayees} en attente</div>
+      </div>
+    </div>
+  `;
+
+  // ALERTES
+  const alertesEl=document.getElementById('dash-alertes');
+  if(alertesEl){
+    const alertes=[];
+    const upcoming7=events.filter(e=>{const d=new Date(e.date);const diff=(d-new Date())/86400000;return diff>=0&&diff<=7;});
+    if(upcoming7.length)alertes.push({type:'info',icon:'📅',msg:`${upcoming7.length} événement(s) dans les 7 prochains jours : ${upcoming7.map(e=>e.nom||e.type).join(', ')}`});
+    const impayees=cotisations.filter(c=>c.statut==='impaye'&&c.montant>0).length;
+    if(impayees>0)alertes.push({type:'warn',icon:'💳',msg:`${impayees} cotisation(s) toujours en attente de paiement`});
+    else if(cotisTotal>0)alertes.push({type:'success',icon:'🎉',msg:'Toutes les cotisations sont à jour !'});
+    alertesEl.innerHTML=alertes.map(a=>`<div class="dash-alerte dash-alerte-${a.type}"><span style="font-size:16px;">${a.icon}</span><span>${a.msg}</span></div>`).join('');
+    alertesEl.style.marginBottom=alertes.length?'14px':'0';
+  }
+
+  // PRESENCE BARS
+  const pbEl=document.getElementById('dash-presence-bars');
+  if(pbEl){
+    const bars=membres.map(m=>{const p=events.filter(e=>presences[m.id+'_'+e.id]).length;return{name:m.prenom+' '+m.nom,pct:events.length>0?Math.round((p/events.length)*100):0};}).sort((a,b)=>b.pct-a.pct).slice(0,8);
+    pbEl.innerHTML=bars.length?bars.map((b,i)=>`
+      <div class="progress-row" style="animation:fadeUp 0.4s ease both;animation-delay:${i*0.05}s">
+        <div class="progress-label">${b.name}</div>
+        <div class="progress-track"><div class="progress-bar" style="width:${b.pct}%;background:${b.pct>=70?'#e63329':b.pct>=40?'#c49a00':'#d1d5db'}"></div></div>
+        <div class="progress-pct">${b.pct}%</div>
+      </div>`).join(''):'<p style="color:var(--text3);font-size:13px;text-align:center;padding:16px 0;">Aucun événement enregistré.</p>';
+  }
+
+  // REPARTITION
+  const repEl=document.getElementById('dash-repartition');
+  if(repEl){
+    const types=[['Actif',actifs,'#e63329'],['Actif Suisse',suisses,'#c49a00'],['Passif',passifs,'#9ca3af'],['Autre',autres,'#e5e7eb']];
+    const totalNonZero=types.filter(t=>t[1]>0).reduce((s,t)=>s+t[1],0);
+    repEl.innerHTML=types.filter(t=>t[1]>0).map(t=>`
+      <div style="margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+          <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);">
+            <div style="width:9px;height:9px;border-radius:50%;background:${t[2]};flex-shrink:0;"></div>${t[0]}
+          </div>
+          <span style="font-weight:700;font-size:13px;color:var(--text);">${t[1]}</span>
+        </div>
+        <div style="height:4px;background:var(--bg3);border-radius:4px;overflow:hidden;">
+          <div style="height:100%;width:${totalNonZero>0?Math.round(t[1]/totalNonZero*100):0}%;background:${t[2]};border-radius:4px;transition:width 0.8s ease;"></div>
+        </div>
+      </div>`).join('');
+  }
+
+  // EVENTS
+  const evEl=document.getElementById('dash-events');
+  if(evEl){
+    const upcoming=events.filter(e=>e.date>=today).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,4);
+    evEl.innerHTML=upcoming.length?upcoming.map(e=>{
+      const chipCls=e.type==='Maraude'?'event-chip-maraude':e.type==='Réunion'?'event-chip-reunion':'event-chip-autre';
+      const jours=Math.round((new Date(e.date)-new Date())/86400000);
+      const label=jours===0?'<span style="color:var(--green);font-weight:700;font-size:11px;">Aujourd\'hui</span>':jours===1?'<span style="color:var(--gold);font-weight:700;font-size:11px;">Demain</span>':`<span style="font-size:11px;color:var(--text3);">${fmtDate(e.date)}</span>`;
+      return`<div style="display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--border);">
+        <span class="event-chip ${chipCls}" style="font-size:10px;padding:2px 7px;">${e.type}</span>
+        <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:500;color:var(--text);">${e.nom||e.type}</span>
+        ${label}
+      </div>`;
+    }).join(''):'<div style="text-align:center;padding:18px 0;color:var(--text3);font-size:13px;">Aucun événement à venir</div>';
+  }
+
+  // EVENT PARTICIPATION BARS
+  const ebEl=document.getElementById('dash-event-bars');
+  if(ebEl){
+    const evtBars=events.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,6).map(e=>{
+      const c=membres.filter(m=>presences[m.id+'_'+e.id]).length;
+      const pct=membres.length>0?Math.round((c/membres.length)*100):0;
+      return{label:(e.nom||e.type).slice(0,22),pct,count:c};
+    });
+    ebEl.innerHTML=evtBars.length?evtBars.map(b=>`
+      <div class="progress-row">
+        <div class="progress-label">${b.label}</div>
+        <div class="progress-track"><div class="progress-bar" style="width:${b.pct}%;background:${b.pct>=70?'var(--green)':b.pct>=40?'var(--gold)':'var(--red)'}"></div></div>
+        <div class="progress-pct">${b.count}</div>
+      </div>`).join(''):'<p style="color:var(--text3);font-size:13px;">Aucun événement.</p>';
+  }
+
+  // FINANCES
+  const finEl=document.getElementById('dash-finance-summary');
+  if(finEl)finEl.innerHTML=`
+    <div class="dash-finance-row dash-finance-in">
+      <div class="dash-finance-icon">⬆️</div>
+      <div class="dash-finance-label">Recettes</div>
+      <div class="dash-finance-amount amount-in">+${totalIn.toFixed(2)} CHF</div>
+    </div>
+    <div class="dash-finance-row dash-finance-out">
+      <div class="dash-finance-icon">⬇️</div>
+      <div class="dash-finance-label">Dépenses</div>
+      <div class="dash-finance-amount amount-out">−${totalOut.toFixed(2)} CHF</div>
+    </div>
+    <div class="dash-finance-divider"></div>
+    <div class="dash-finance-solde ${solde>=0?'dash-finance-solde-pos':'dash-finance-solde-neg'}">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:18px;">${solde>=0?'📈':'📉'}</span>
+        <span style="font-weight:700;font-size:14px;color:var(--text);">Solde final</span>
+      </div>
+      <div style="font-size:24px;font-weight:800;letter-spacing:-0.5px;color:${solde>=0?'var(--green)':'var(--red)'};">${solde>=0?'+':''}${solde.toFixed(2)}<span style="font-size:13px;font-weight:400;color:var(--text3);margin-left:4px;">CHF</span></div>
+    </div>
+  `;
 }
 
 // ── MEMBRES ──────────────────────────────────────────────────────
@@ -1973,7 +2188,7 @@ function exportRapportTxt(){
 }
 
 // ── DOCUMENTS ────────────────────────────────────────────────────
-let documents_list = load('gef_documents', []);
+let documents_list = [];
 
 function ajouterDocuments(input){
   const files = Array.from(input.files);
