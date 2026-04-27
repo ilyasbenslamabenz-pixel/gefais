@@ -266,35 +266,62 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 .kpi-band-val{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.5px;line-height:1;}
 .kpi-band-sub{font-size:10px;color:var(--text3);margin-top:2px;}
 
-/* ÉVÉNEMENTS ACCORDÉON */
-.event-row{background:var(--card);border:1.5px solid var(--border);border-radius:16px;margin-bottom:10px;overflow:hidden;transition:box-shadow 0.2s,border-color 0.2s;}
-.event-row:hover{box-shadow:var(--shadow-md);}
-.event-row.open{border-color:var(--red);}
-.event-row-header{display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;user-select:none;-webkit-user-select:none;transition:background 0.15s;}
-.event-row-header:active{background:var(--bg3);}
+/* ── ÉVÉNEMENTS ACCORDÉON ── */
+.events-month-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;padding:12px 4px 6px;display:flex;align-items:center;gap:10px;}
+.events-month-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.events-stats-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.events-stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);}
+.events-stat-icon{font-size:20px;}
+.events-stat-val{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-0.5px;}
+.events-stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;font-weight:600;}
+.event-row{background:var(--card);border:1.5px solid var(--border);border-radius:20px;margin-bottom:12px;overflow:hidden;transition:all 0.2s;}
+.event-row:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.event-row.open{border-color:var(--red);box-shadow:0 4px 20px rgba(230,51,41,0.1);}
+
+/* HEADER */
+.event-row-header{display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;user-select:none;-webkit-user-select:none;}
+.event-row-header:active{opacity:0.85;}
 .event-row-meta{flex:1;min-width:0;}
-.event-row-title{font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;}
-.event-row-sub{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.event-row-title{font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:5px;letter-spacing:-0.2px;}
+.event-row-sub{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+
+/* COMPTEUR PRÉSENCES */
 .event-row-pct{display:flex;align-items:center;gap:8px;flex-shrink:0;}
-.event-row-pct-bar{width:64px;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
-.event-row-pct-fill{height:100%;border-radius:3px;transition:width 0.6s ease;}
-.event-row-chevron{color:var(--text3);font-size:18px;flex-shrink:0;transition:transform 0.25s;}
-.event-row.open .event-row-chevron{transform:rotate(180deg);}
-.event-row-body{display:none;border-top:1.5px solid var(--border);padding:16px 18px;background:var(--bg3);}
-.event-row.open .event-row-body{display:block;}
+.event-row-pct-ring{position:relative;width:46px;height:46px;flex-shrink:0;}
+.event-row-pct-ring svg{transform:rotate(-90deg);}
+.event-row-pct-ring-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--text);}
 
-/* Actions événement dans l'accordéon */
-.event-row-actions{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+/* CHEVRON */
+.event-row-chevron{width:28px;height:28px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--text3);flex-shrink:0;transition:all 0.25s;}
+.event-row.open .event-row-chevron{background:var(--red-light);border-color:var(--red);color:var(--red);transform:rotate(180deg);}
 
-/* Grille présences dans accordéon */
-.presence-inline-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;}
-.presence-inline-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--card);cursor:pointer;transition:all 0.15s;}
-.presence-inline-item:hover{border-color:var(--text3);}
-.presence-inline-item.present{background:var(--green-light);border-color:#86efac;}
+/* CORPS */
+.event-row-body{display:none;border-top:1.5px solid var(--border);padding:18px 18px;background:var(--bg3);}
+.event-row.open .event-row-body{display:block;animation:slideDown 0.2s ease;}
+@keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+
+/* ACTIONS */
+.event-row-actions{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+
+/* STATS MINI dans le corps */
+.event-body-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+.event-body-stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;text-align:center;}
+.event-body-stat-val{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-0.5px;}
+.event-body-stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;font-weight:600;margin-top:2px;}
+
+/* GRILLE PRÉSENCES */
+.presence-inline-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;}
+.presence-inline-item{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);cursor:pointer;transition:all 0.15s;-webkit-user-select:none;}
+.presence-inline-item:hover{border-color:var(--text3);background:var(--bg2);}
+.presence-inline-item:active{transform:scale(0.96);}
+.presence-inline-item.present{background:#f0fdf4;border-color:#86efac;}
+.pi-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:transparent;flex-shrink:0;transition:all 0.18s;background:var(--bg3);}
 .presence-inline-item.present .pi-check{background:var(--green);border-color:var(--green);color:#fff;}
-.pi-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;transition:all 0.15s;}
-.pi-name{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.pi-type{font-size:10px;color:var(--text3);}
+.pi-name{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2;}
+.pi-type{font-size:10px;color:var(--text3);margin-top:1px;}
+
+/* LABEL SECTION */
+.presence-section-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;}
 
 /* HERO DASHBOARD */
 #dash-hero{box-shadow:0 6px 24px rgba(230,51,41,0.25);}
@@ -490,12 +517,21 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
   .topbar-title{font-size:18px;}
 
   /* Événements accordéon mobile */
-  .event-row-header{padding:14px 14px;}
+  .event-row{border-radius:16px;margin-bottom:10px;}
+  .event-row-header{padding:13px 14px;gap:10px;}
   .event-row-title{font-size:14px;}
-  .event-row-actions{flex-wrap:wrap;gap:6px;}
-  .event-row-actions .btn{flex:1;min-width:110px;justify-content:center;}
+  .event-row-pct-ring{width:40px;height:40px;}
+  .event-row-pct-ring svg{width:40px;height:40px;}
+  .event-row-pct-ring-val{font-size:10px;}
+  .event-body-stats{grid-template-columns:repeat(3,1fr);gap:6px;}
+  .event-body-stat{padding:8px 6px;}
+  .event-body-stat-val{font-size:18px;}
+  .event-row-actions{gap:6px;}
+  .event-row-actions .btn{flex:1;min-width:0;justify-content:center;font-size:11px;padding:7px 8px;}
   .presence-inline-grid{grid-template-columns:1fr 1fr !important;gap:6px;}
-  .pi-name{font-size:12px;}
+  .presence-inline-item{padding:9px 10px;}
+  .pi-name{font-size:11px;}
+  .event-row-body{padding:14px;}
 
   /* Email page */
   #email-destinataires-list{gap:6px;}
@@ -742,6 +778,8 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
           <option value="">Tous les types</option>
         </select>
       </div>
+      <!-- Stats rapides -->
+      <div class="events-stats-bar" id="events-stats-bar"></div>
       <!-- Liste accordéon -->
       <div id="events-list"></div>
     </div>
@@ -1410,7 +1448,7 @@ function renderEvents(){
   let html='';
   Object.entries(byMonth).sort((a,b)=>b[0].localeCompare(a[0])).forEach(([key,evts])=>{
     const [y,m]=key.split('-');
-    html+=`<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;padding:8px 4px 6px;margin-top:4px;">${moisNoms[parseInt(m)]} ${y}</div>`;
+    html+=`<div class="events-month-label">${moisNoms[parseInt(m)]} ${y}</div>`;
     evts.forEach(e=>{
       const count=membres.filter(mb=>presences[mb.id+'_'+e.id]).length;
       const pct=membres.length>0?Math.round((count/membres.length)*100):0;
