@@ -44,9 +44,9 @@ h1,h2,h3{font-family:'DM Serif Display',serif;font-weight:400;}
 .login-sub{font-size:13px;color:rgba(255,255,255,0.4);letter-spacing:0.3px;margin-top:-8px;}
 .login-label{display:block;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:10px;text-align:left;}
 .login-input-wrap{position:relative;margin-bottom:16px;}
-.login-input-wrap input{width:100%;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);color:#fff;padding:16px 20px;border-radius:14px;font-size:20px;font-family:'DM Sans',sans-serif;outline:none;text-align:center;letter-spacing:8px;transition:all 0.2s;caret-color:var(--red);}
-.login-input-wrap input::placeholder{letter-spacing:2px;font-size:13px;color:rgba(255,255,255,0.25);}
-.login-input-wrap input:focus{border-color:rgba(230,51,41,0.6);background:rgba(230,51,41,0.06);box-shadow:0 0 0 4px rgba(230,51,41,0.1);}
+.login-input-wrap input{width:100%;background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.2);color:#fff;padding:16px 20px;border-radius:14px;font-size:26px;font-family:'DM Sans',sans-serif;outline:none;text-align:center;letter-spacing:10px;transition:all 0.2s;caret-color:#ffd580;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);}
+.login-input-wrap input::placeholder{letter-spacing:1px;font-size:13px;color:rgba(255,255,255,0.35);font-style:italic;}
+.login-input-wrap input:focus{border-color:rgba(255,213,128,0.6);background:rgba(255,255,255,0.13);box-shadow:0 0 0 4px rgba(255,213,128,0.12),inset 0 1px 0 rgba(255,255,255,0.08);}
 .login-btn{width:100%;background:linear-gradient(135deg,#e63329,#c0271e);color:#fff;border:none;padding:16px;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:0.5px;transition:all 0.2s;box-shadow:0 8px 24px rgba(230,51,41,0.4),inset 0 1px 0 rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;gap:8px;}
 .login-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(230,51,41,0.5),inset 0 1px 0 rgba(255,255,255,0.15);}
 .login-btn:active{transform:scale(0.98);box-shadow:0 4px 12px rgba(230,51,41,0.3);}
@@ -342,6 +342,58 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 
 /* LABEL SECTION */
 .presence-section-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;}
+
+/* ── DONS & PAIEMENTS ── */
+.don-hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#e63329,#c0271e);border-radius:20px;padding:24px 24px 22px;margin-bottom:20px;color:#fff;}
+.don-hero-orb1{position:absolute;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.07);top:-60px;right:-40px;pointer-events:none;}
+.don-hero-orb2{position:absolute;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,0.09);bottom:-20px;right:80px;pointer-events:none;}
+.don-hero-inner{position:relative;z-index:1;display:flex;align-items:center;gap:18px;}
+.don-hero-icon{font-size:42px;flex-shrink:0;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.2));}
+.don-hero-title{font-size:20px;font-weight:800;letter-spacing:-0.3px;margin-bottom:5px;}
+.don-hero-sub{font-size:13px;opacity:0.82;line-height:1.5;}
+.don-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.don-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:22px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:16px;}
+.don-card-header{display:flex;flex-direction:column;gap:4px;}
+.don-badge{display:inline-flex;align-items:center;font-size:10px;font-weight:800;letter-spacing:2px;padding:3px 10px;border-radius:20px;width:fit-content;margin-bottom:4px;}
+.don-badge-twint{background:#00b0f0;color:#fff;}
+.don-badge-bank{background:#1a1a2e;color:#fff;}
+.don-card-title{font-size:16px;font-weight:700;color:var(--text);}
+.don-card-sub{font-size:12px;color:var(--text3);}
+.don-qr-zone{display:flex;align-items:center;justify-content:center;min-height:200px;border:2px dashed var(--border);border-radius:16px;overflow:hidden;background:var(--bg3);transition:border-color 0.2s;}
+.don-qr-placeholder{display:flex;flex-direction:column;align-items:center;gap:8px;padding:24px;}
+.don-qr-icon{font-size:36px;opacity:0.5;}
+.don-qr-text{font-size:14px;font-weight:600;color:var(--text2);}
+.don-qr-hint{font-size:11px;color:var(--text3);}
+.don-upload-btn{display:inline-flex;align-items:center;gap:6px;background:var(--red);color:#fff;border:none;padding:9px 16px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:4px;transition:all 0.15s;}
+.don-upload-btn:hover{background:var(--red2);transform:translateY(-1px);}
+.don-qr-img{width:100%;max-width:240px;height:auto;cursor:zoom-in;display:block;margin:auto;padding:12px;}
+.don-card-footer{display:flex;gap:8px;flex-wrap:wrap;}
+.don-action-btn{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all 0.15s;}
+.don-action-primary{background:var(--red);color:#fff;}
+.don-action-primary:hover{background:var(--red2);}
+.don-action-secondary{background:var(--bg3);color:var(--text2);border:1px solid var(--border);}
+.don-action-secondary:hover{background:var(--border);}
+.don-info-box{border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;}
+.don-info-twint{background:#e6f7ff;border:1.5px solid #bae6fd;}
+.don-info-bank{background:#f8fafc;border:1.5px solid var(--border);}
+.don-info-row{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap;}
+.don-info-lbl{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;min-width:80px;padding-top:2px;flex-shrink:0;}
+.don-info-val{font-size:13px;color:var(--text);font-weight:500;flex:1;cursor:pointer;border-radius:6px;padding:2px 6px;transition:background 0.15s;}
+.don-info-val:hover{background:rgba(230,51,41,0.08);}
+.don-edit-hint{font-size:10px;opacity:0.4;}
+.don-editable-row{flex-direction:column;gap:4px;align-items:flex-start;}
+.don-field-input{width:100%;background:var(--card);border:1.5px solid var(--red);color:var(--text);padding:8px 10px;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;margin-top:2px;}
+.don-copy-btn{display:inline-flex;align-items:center;gap:6px;background:var(--red);color:#fff;border:none;padding:9px 16px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;align-self:flex-start;margin-top:4px;transition:all 0.15s;}
+.don-copy-btn:hover{background:var(--red2);}
+.don-note{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text3);background:var(--bg3);border-radius:12px;padding:12px 16px;}
+@media(max-width:768px){
+  .don-grid{grid-template-columns:1fr;}
+  .don-hero-inner{flex-direction:column;text-align:center;gap:10px;}
+  .don-hero-icon{font-size:32px;}
+  .don-hero-title{font-size:17px;}
+  .don-qr-zone{min-height:160px;}
+  .don-info-lbl{min-width:60px;}
+}
 
 /* ── HERO DASHBOARD ── */
 .dash-hero{
@@ -978,7 +1030,7 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
       <!-- Champ mot de passe -->
       <label class="login-label">Mot de passe</label>
       <div class="login-input-wrap">
-        <input type="password" id="login-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkLogin()">
+        <input type="password" id="login-input" placeholder="Entrez le mot de passe" onkeydown="if(event.key==='Enter')checkLogin()">
       </div>
 
       <!-- Bouton -->
@@ -1066,6 +1118,9 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
       </div>
       <div class="nav-item" id="nav-rapport" onclick="showPage('rapport',this,'Rapport annuel')">
         <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Rapport
+      </div>
+      <div class="nav-item" id="nav-dons" onclick="showPage('dons',this,'Dons & Paiements')">
+        <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Dons & Paiements
       </div>
     </div>
     <div class="sidebar-footer"><span>v3.1 · 2025–2026</span><button class="btn-logout" onclick="logout()">Déconnexion</button></div>
@@ -1454,6 +1509,131 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
       <div id="rapport-content"></div>
     </div>
 
+    <!-- DONS & PAIEMENTS -->
+    <div id="page-dons" class="page">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h2>Dons & Paiements</h2>
+          <p>Moyens de paiement acceptés par GE-FAIS</p>
+        </div>
+      </div>
+
+      <!-- Intro card -->
+      <div class="don-hero">
+        <div class="don-hero-orb1"></div>
+        <div class="don-hero-orb2"></div>
+        <div class="don-hero-inner">
+          <div class="don-hero-icon">💛</div>
+          <div>
+            <div class="don-hero-title">Soutenez GE-FAIS</div>
+            <div class="don-hero-sub">Chaque don compte et nous aide à poursuivre nos actions solidaires. Merci pour votre soutien !</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grille des moyens de paiement -->
+      <div class="don-grid">
+
+        <!-- TWINT -->
+        <div class="don-card">
+          <div class="don-card-header">
+            <div class="don-badge don-badge-twint">TWINT</div>
+            <div class="don-card-title">Paiement par TWINT</div>
+            <div class="don-card-sub">Scannez le QR code avec l'app TWINT</div>
+          </div>
+          <div class="don-qr-zone" id="don-twint-zone">
+            <div class="don-qr-placeholder" id="don-twint-placeholder">
+              <div class="don-qr-icon">📱</div>
+              <div class="don-qr-text">QR Code TWINT</div>
+              <div class="don-qr-hint">À ajouter</div>
+              <label class="don-upload-btn">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Importer le QR code
+                <input type="file" accept="image/*" onchange="donUploadQR(this,'twint')" style="display:none;">
+              </label>
+            </div>
+            <img id="don-twint-img" class="don-qr-img" src="" alt="QR TWINT" style="display:none;" onclick="donViewQR('twint')">
+          </div>
+          <div class="don-card-footer">
+            <button class="don-action-btn don-action-secondary" onclick="donRemoveQR('twint')" id="don-twint-remove" style="display:none;">🗑️ Supprimer</button>
+            <label class="don-action-btn don-action-primary">
+              <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Changer l'image
+              <input type="file" accept="image/*" onchange="donUploadQR(this,'twint')" style="display:none;">
+            </label>
+          </div>
+          <div class="don-info-box don-info-twint">
+            <div class="don-info-row"><span class="don-info-lbl">Application</span><span class="don-info-val">TWINT (iOS & Android)</span></div>
+            <div class="don-info-row"><span class="don-info-lbl">Comment faire</span><span class="don-info-val">Ouvrez TWINT → Scanner → Pointer la caméra sur le QR</span></div>
+          </div>
+        </div>
+
+        <!-- VIREMENT BANCAIRE -->
+        <div class="don-card">
+          <div class="don-card-header">
+            <div class="don-badge don-badge-bank">VIREMENT</div>
+            <div class="don-card-title">Virement bancaire</div>
+            <div class="don-card-sub">Scannez le QR code ou utilisez les coordonnées ci-dessous</div>
+          </div>
+          <div class="don-qr-zone" id="don-bank-zone">
+            <div class="don-qr-placeholder" id="don-bank-placeholder">
+              <div class="don-qr-icon">🏦</div>
+              <div class="don-qr-text">QR Code bancaire</div>
+              <div class="don-qr-hint">À ajouter</div>
+              <label class="don-upload-btn">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Importer le QR code
+                <input type="file" accept="image/*" onchange="donUploadQR(this,'bank')" style="display:none;">
+              </label>
+            </div>
+            <img id="don-bank-img" class="don-qr-img" src="" alt="QR Bancaire" style="display:none;" onclick="donViewQR('bank')">
+          </div>
+          <div class="don-card-footer">
+            <button class="don-action-btn don-action-secondary" onclick="donRemoveQR('bank')" id="don-bank-remove" style="display:none;">🗑️ Supprimer</button>
+            <label class="don-action-btn don-action-primary">
+              <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Changer l'image
+              <input type="file" accept="image/*" onchange="donUploadQR(this,'bank')" style="display:none;">
+            </label>
+          </div>
+          <!-- Coordonnées bancaires éditables -->
+          <div class="don-info-box don-info-bank">
+            <div class="don-info-row don-editable-row">
+              <span class="don-info-lbl">IBAN</span>
+              <span class="don-info-val" id="don-iban-val" onclick="donEditField('iban')">CH•• •••• •••• •••• •••• • <span class="don-edit-hint">✏️</span></span>
+              <input type="text" class="don-field-input" id="don-iban-input" placeholder="CH56 0483 5012 3456 7800 9" onblur="donSaveField('iban')" onkeydown="if(event.key==='Enter')donSaveField('iban')" style="display:none;">
+            </div>
+            <div class="don-info-row don-editable-row">
+              <span class="don-info-lbl">Bénéficiaire</span>
+              <span class="don-info-val" id="don-benef-val" onclick="donEditField('benef')">Association GE-FAIS <span class="don-edit-hint">✏️</span></span>
+              <input type="text" class="don-field-input" id="don-benef-input" placeholder="Association GE-FAIS" onblur="donSaveField('benef')" onkeydown="if(event.key==='Enter')donSaveField('benef')" style="display:none;">
+            </div>
+            <div class="don-info-row don-editable-row">
+              <span class="don-info-lbl">Banque</span>
+              <span class="don-info-val" id="don-banque-val" onclick="donEditField('banque')">— <span class="don-edit-hint">✏️</span></span>
+              <input type="text" class="don-field-input" id="don-banque-input" placeholder="PostFinance, UBS…" onblur="donSaveField('banque')" onkeydown="if(event.key==='Enter')donSaveField('banque')" style="display:none;">
+            </div>
+            <div class="don-info-row don-editable-row">
+              <span class="don-info-lbl">Message</span>
+              <span class="don-info-val" id="don-message-val" onclick="donEditField('message')">Don GE-FAIS <span class="don-edit-hint">✏️</span></span>
+              <input type="text" class="don-field-input" id="don-message-input" placeholder="Don GE-FAIS" onblur="donSaveField('message')" onkeydown="if(event.key==='Enter')donSaveField('message')" style="display:none;">
+            </div>
+            <button class="don-copy-btn" onclick="donCopyIBAN()">
+              <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <span id="don-copy-label">Copier l'IBAN</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Note bas de page -->
+      <div class="don-note">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Les QR codes sont stockés localement sur cet appareil. Cliquez sur un champ pour le modifier.
+      </div>
+    </div>
+
     <!-- ═══ ACTIVITÉS — VUE D'ENSEMBLE ═══ -->
     <div id="page-activites" class="page">
       <div class="page-header">
@@ -1776,7 +1956,7 @@ function showPage(name,el,title){
   el.classList.add('active');
   document.getElementById('topbar-title').textContent=title;
   closeSidebar();
-  const _staticMap={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport};
+  const _staticMap={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport,dons:renderDons};
   if(_staticMap[name])_staticMap[name]();
 
 }
@@ -1982,7 +2162,7 @@ function save(key,value){
     db.collection('gef_data').doc(key).set({value:value}).then(()=>{
       _showSaveStatus('saved','Sauvegardé');
       const p=document.querySelector('.page.active')?.id?.replace('page-','');
-      const map={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport};
+      const map={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport,dons:renderDons};
       map[p]?.();
     }).catch(e=>{console.warn('Firebase save error:',e);_showSaveStatus('saved','Sauvé localement');});
   }catch(e){console.warn('Firebase unavailable:',e);_showSaveStatus('saved','Sauvé localement');}
@@ -2008,7 +2188,7 @@ function setupListeners(){
   let currentPage=()=>document.querySelector('.page.active')?.id?.replace('page-','');
   const rerender=()=>{
     const p=currentPage();
-    const map={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport};
+    const map={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport,dons:renderDons};
     map[p]?.();
   };
   // On ignore les snapshots dans les 3 secondes suivant notre propre sauvegarde
@@ -3567,6 +3747,97 @@ function openEventModalType(type){
       t.value=type;
     }
   },100);
+}
+
+// ── DONS & PAIEMENTS ──────────────────────────────────────────────
+const _donData = lsGet('gef_don_data', {
+  twint: null,
+  bank: null,
+  iban: 'CH•• •••• •••• •••• •••• •',
+  benef: 'Association GE-FAIS',
+  banque: '',
+  message: 'Don GE-FAIS'
+});
+
+function renderDons() {
+  // Restaurer QR TWINT
+  if (_donData.twint) {
+    document.getElementById('don-twint-img').src = _donData.twint;
+    document.getElementById('don-twint-img').style.display = 'block';
+    document.getElementById('don-twint-placeholder').style.display = 'none';
+    document.getElementById('don-twint-remove').style.display = 'inline-flex';
+  }
+  // Restaurer QR Bank
+  if (_donData.bank) {
+    document.getElementById('don-bank-img').src = _donData.bank;
+    document.getElementById('don-bank-img').style.display = 'block';
+    document.getElementById('don-bank-placeholder').style.display = 'none';
+    document.getElementById('don-bank-remove').style.display = 'inline-flex';
+  }
+  // Restaurer champs bancaires
+  const fields = ['iban', 'benef', 'banque', 'message'];
+  fields.forEach(f => {
+    const el = document.getElementById('don-' + f + '-val');
+    if (el && _donData[f]) el.innerHTML = _donData[f] + ' <span class="don-edit-hint">✏️</span>';
+  });
+}
+
+function donUploadQR(input, type) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    _donData[type] = e.target.result;
+    lsSet('gef_don_data', _donData);
+    document.getElementById('don-' + type + '-img').src = e.target.result;
+    document.getElementById('don-' + type + '-img').style.display = 'block';
+    document.getElementById('don-' + type + '-placeholder').style.display = 'none';
+    document.getElementById('don-' + type + '-remove').style.display = 'inline-flex';
+  };
+  reader.readAsDataURL(file);
+}
+
+function donRemoveQR(type) {
+  _donData[type] = null;
+  lsSet('gef_don_data', _donData);
+  document.getElementById('don-' + type + '-img').style.display = 'none';
+  document.getElementById('don-' + type + '-img').src = '';
+  document.getElementById('don-' + type + '-placeholder').style.display = 'flex';
+  document.getElementById('don-' + type + '-remove').style.display = 'none';
+}
+
+function donViewQR(type) {
+  const src = _donData[type];
+  if (!src) return;
+  document.getElementById('photo-viewer-img').src = src;
+  document.getElementById('photo-viewer').style.display = 'flex';
+}
+
+function donEditField(field) {
+  document.getElementById('don-' + field + '-val').style.display = 'none';
+  const input = document.getElementById('don-' + field + '-input');
+  input.value = _donData[field] || '';
+  input.style.display = 'block';
+  input.focus();
+}
+
+function donSaveField(field) {
+  const input = document.getElementById('don-' + field + '-input');
+  _donData[field] = input.value.trim() || _donData[field];
+  lsSet('gef_don_data', _donData);
+  input.style.display = 'none';
+  const val = document.getElementById('don-' + field + '-val');
+  val.innerHTML = (_donData[field] || '—') + ' <span class="don-edit-hint">✏️</span>';
+  val.style.display = '';
+}
+
+function donCopyIBAN() {
+  const iban = _donData.iban || '';
+  navigator.clipboard.writeText(iban).then(() => {
+    const lbl = document.getElementById('don-copy-label');
+    lbl.textContent = '✓ Copié !';
+    setTimeout(() => lbl.textContent = "Copier l'IBAN", 2000);
+  });
 }
 
 document.querySelectorAll('.modal-overlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');});});
