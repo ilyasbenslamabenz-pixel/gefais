@@ -352,6 +352,100 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 .dash-hero-badge-num{font-size:36px;font-weight:900;letter-spacing:-2px;line-height:1;margin-bottom:2px;}
 .dash-hero-badge-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:0.7;}
 
+/* ── NEW PREMIUM DASHBOARD ── */
+.dh-hero{
+  position:relative;overflow:hidden;border-radius:24px;
+  padding:36px 36px 30px;margin-bottom:20px;color:#fff;
+  background:#1a0a09;
+  box-shadow:0 20px 60px rgba(230,51,41,0.2),0 4px 16px rgba(0,0,0,0.2);
+}
+.dh-hero-bg{position:absolute;inset:0;z-index:0;}
+.dh-mesh-1{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(230,51,41,0.65) 0%,transparent 65%);top:-220px;left:-120px;filter:blur(70px);}
+.dh-mesh-2{position:absolute;width:450px;height:450px;border-radius:50%;background:radial-gradient(circle,rgba(192,39,30,0.45) 0%,transparent 70%);bottom:-180px;right:-80px;filter:blur(90px);}
+.dh-mesh-3{position:absolute;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(196,154,0,0.4) 0%,transparent 70%);top:10px;right:180px;filter:blur(70px);}
+.dh-noise{position:absolute;inset:0;opacity:0.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");background-size:200px;}
+.dh-hero-content{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+.dh-hero-left{flex:1;min-width:0;}
+.dh-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(230,51,41,0.18);border:1px solid rgba(230,51,41,0.3);border-radius:100px;padding:4px 14px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.75);margin-bottom:14px;backdrop-filter:blur(8px);}
+.dh-greeting{font-family:'DM Sans',sans-serif;font-size:38px;font-weight:900;letter-spacing:-1.5px;line-height:1.05;margin-bottom:6px;background:linear-gradient(135deg,#fff 0%,#ffd580 60%,#ffb347 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.dh-date{font-size:13px;color:rgba(255,255,255,0.55);font-weight:400;margin-bottom:20px;letter-spacing:0.2px;}
+.dh-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.dash-quick-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.9);padding:9px 16px;border-radius:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:5px;transition:all 0.2s;white-space:nowrap;backdrop-filter:blur(8px);}
+.dash-quick-btn:hover{background:rgba(255,255,255,0.2);transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,0.2);}
+.dash-quick-btn:active{transform:scale(0.97);}
+.dh-hero-right{flex-shrink:0;}
+.dh-stat-bubble{display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);border-radius:24px;padding:20px 28px;backdrop-filter:blur(16px);text-align:center;min-width:100px;position:relative;}
+.dh-stat-bubble::before{content:'';position:absolute;inset:0;border-radius:24px;background:linear-gradient(135deg,rgba(255,255,255,0.06),transparent);pointer-events:none;}
+.dh-bubble-num{font-family:'DM Sans',sans-serif;font-size:48px;font-weight:900;letter-spacing:-3px;line-height:1;color:#fff;margin-bottom:4px;}
+.dh-bubble-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.5);}
+
+/* KPI ROW */
+.dh-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+.dh-kpi-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px 20px;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:all 0.25s;cursor:default;}
+.dh-kpi-card:hover{box-shadow:var(--shadow-md);transform:translateY(-3px);}
+.dh-kpi-accent{position:absolute;top:0;left:0;right:0;height:3px;border-radius:0;}
+.dh-kpi-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.dh-kpi-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.dh-kpi-trend{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:0.5px;}
+.dh-kpi-val{font-family:'DM Sans',sans-serif;font-size:30px;font-weight:900;color:var(--text);letter-spacing:-1px;line-height:1;margin-bottom:3px;}
+.dh-kpi-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;}
+.dh-kpi-sub{font-size:11px;color:var(--text3);margin-top:6px;padding-top:8px;border-top:1px solid var(--border);}
+@keyframes kpiSlide{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.dh-kpi-card{animation:kpiSlide 0.5s ease both;}
+.dh-kpi-card:nth-child(1){animation-delay:0.05s;}
+.dh-kpi-card:nth-child(2){animation-delay:0.1s;}
+.dh-kpi-card:nth-child(3){animation-delay:0.15s;}
+.dh-kpi-card:nth-child(4){animation-delay:0.2s;}
+
+/* DASHBOARD BODY GRID */
+.dh-grid{display:grid;grid-template-columns:1.5fr 1fr;grid-template-rows:auto;gap:14px;}
+.dh-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:22px;box-shadow:var(--shadow);transition:box-shadow 0.2s;}
+.dh-card:hover{box-shadow:var(--shadow-md);}
+.dh-card-wide{grid-column:1/2;grid-row:1/3;}
+.dh-card-finance{grid-column:1/3;}
+.dh-card-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.dh-card-icon{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.dh-card-title{font-size:14px;font-weight:700;color:var(--text);letter-spacing:-0.2px;}
+.dh-card-sub{font-size:11px;color:var(--text3);margin-top:1px;font-weight:500;}
+
+/* Alertes */
+.dash-alerte{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;font-size:13px;margin-bottom:8px;font-weight:500;}
+.dash-alerte-warn{background:#fffbeb;border:1.5px solid #fde68a;color:#92400e;}
+.dash-alerte-danger{background:#fff1f0;border:1.5px solid #fecaca;color:#c0271e;}
+.dash-alerte-info{background:#eff6ff;border:1.5px solid #bfdbfe;color:#1e40af;}
+.dash-alerte-success{background:#f0fdf4;border:1.5px solid #bbf7d0;color:#166534;}
+
+/* Finance card redesign */
+.dh-finance-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.dh-finance-item{border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;}
+.dh-finance-in{background:#f0fdf4;border:1.5px solid #bbf7d0;}
+.dh-finance-out{background:#fff1f0;border:1.5px solid #ffd5d3;}
+.dh-finance-bal-pos{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac;}
+.dh-finance-bal-neg{background:linear-gradient(135deg,#fff1f0,#fee2e2);border:1.5px solid #fca5a5;}
+.dh-finance-lbl{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;}
+.dh-finance-amt{font-size:20px;font-weight:800;letter-spacing:-0.5px;font-family:'DM Sans',sans-serif;}
+
+/* Responsive dashboard */
+@media(max-width:900px){
+  .dh-kpi-row{grid-template-columns:1fr 1fr;}
+  .dh-grid{grid-template-columns:1fr;}
+  .dh-card-wide{grid-column:1;grid-row:auto;}
+  .dh-card-finance{grid-column:1;}
+  .dh-finance-grid{grid-template-columns:1fr;}
+  .dh-greeting{font-size:26px;}
+  .dh-bubble-num{font-size:36px;}
+  .dh-hero{padding:24px 20px 20px;}
+  .dh-stat-bubble{padding:14px 18px;}
+}
+@media(max-width:600px){
+  .dh-kpi-row{grid-template-columns:1fr 1fr;gap:8px;}
+  .dh-kpi-val{font-size:24px;}
+  .dh-hero-content{flex-direction:column;gap:16px;}
+  .dh-hero-right{width:100%;display:flex;justify-content:center;}
+  .dh-stat-bubble{flex-direction:row;gap:12px;padding:12px 20px;width:100%;justify-content:center;}
+  .dh-bubble-num{font-size:28px;margin-bottom:0;}
+}
+
 /* ── KPI GRID ── */
 .dash-kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
 .kpi-band-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);transition:all 0.2s;position:relative;overflow:hidden;}
@@ -921,61 +1015,100 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
     <!-- DASHBOARD -->
     <div id="page-dashboard" class="page active">
 
-      <!-- HERO -->
-      <div class="dash-hero" id="dash-hero">
-        <div class="dash-hero-orb dash-hero-orb1"></div>
-        <div class="dash-hero-orb dash-hero-orb2"></div>
-        <div class="dash-hero-orb dash-hero-orb3"></div>
-        <div class="dash-hero-inner">
-          <div class="dash-hero-left">
-            <div class="dash-hero-eyebrow">GE-FAIS · Espace de gestion</div>
-            <div class="dash-hero-greeting" id="dash-hero-greeting">Bonjour 👋</div>
-            <div class="dash-hero-date" id="dash-hero-sub">Chargement…</div>
-            <div class="dash-hero-actions" id="dash-hero-quick"></div>
+      <!-- HERO PREMIUM -->
+      <div class="dh-hero">
+        <div class="dh-hero-bg">
+          <div class="dh-mesh-1"></div>
+          <div class="dh-mesh-2"></div>
+          <div class="dh-mesh-3"></div>
+          <div class="dh-noise"></div>
+        </div>
+        <div class="dh-hero-content">
+          <div class="dh-hero-left">
+            <div class="dh-pill">GE-FAIS · Tableau de bord</div>
+            <h1 class="dh-greeting" id="dash-hero-greeting">Bonjour 👋</h1>
+            <p class="dh-date" id="dash-hero-sub">Chargement…</p>
+            <div class="dh-actions" id="dash-hero-quick"></div>
           </div>
-          <div class="dash-hero-badge" id="dash-hero-badge">
-            <div class="dash-hero-badge-num" id="dash-hero-badge-num">—</div>
-            <div class="dash-hero-badge-label">membres</div>
+          <div class="dh-hero-right">
+            <div class="dh-stat-bubble" id="dash-hero-badge">
+              <div class="dh-bubble-num" id="dash-hero-badge-num">—</div>
+              <div class="dh-bubble-label">membres actifs</div>
+            </div>
           </div>
         </div>
       </div>
-
-      <!-- KPI BAND -->
-      <div class="dash-kpi-grid" id="dash-kpi-band"></div>
 
       <!-- ALERTES -->
-      <div id="dash-alertes"></div>
+      <div id="dash-alertes" style="margin-bottom:4px;"></div>
 
-      <!-- ROW 1 -->
-      <div class="dash-row">
-        <div class="card dash-card-presence">
-          <div class="card-title">🏅 Présence des membres</div>
-          <div id="dash-presence-bars" class="gef-chart"></div>
-        </div>
-        <div class="dash-col-stack">
-          <div class="card">
-            <div class="card-title">👥 Répartition</div>
-            <div id="dash-repartition"></div>
+      <!-- KPI CARDS -->
+      <div class="dh-kpi-row" id="dash-kpi-band"></div>
+
+      <!-- BODY GRID -->
+      <div class="dh-grid">
+
+        <!-- Présence membres -->
+        <div class="dh-card dh-card-wide">
+          <div class="dh-card-header">
+            <div class="dh-card-icon" style="background:linear-gradient(135deg,#e63329,#f87171);">🏅</div>
+            <div>
+              <div class="dh-card-title">Présence des membres</div>
+              <div class="dh-card-sub">Taux par personne</div>
+            </div>
           </div>
-          <div class="card">
-            <div class="card-title">📆 Prochains événements</div>
-            <div id="dash-events"></div>
+          <div id="dash-presence-bars" class="gef-chart" style="margin-top:4px;"></div>
+        </div>
+
+        <!-- Prochains événements -->
+        <div class="dh-card">
+          <div class="dh-card-header">
+            <div class="dh-card-icon" style="background:linear-gradient(135deg,#1d4ed8,#60a5fa);">📆</div>
+            <div>
+              <div class="dh-card-title">Prochains événements</div>
+              <div class="dh-card-sub">À venir</div>
+            </div>
           </div>
+          <div id="dash-events" style="margin-top:4px;"></div>
         </div>
-      </div>
 
-      <!-- ROW 2 -->
-      <div class="dash-row dash-row-bottom">
-        <div class="card">
-          <div class="card-title">📅 Participation par événement</div>
-          <div id="dash-event-bars" class="gef-chart"></div>
+        <!-- Répartition membres -->
+        <div class="dh-card">
+          <div class="dh-card-header">
+            <div class="dh-card-icon" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);">👥</div>
+            <div>
+              <div class="dh-card-title">Répartition</div>
+              <div class="dh-card-sub">Types de membres</div>
+            </div>
+          </div>
+          <div id="dash-repartition" style="margin-top:8px;"></div>
         </div>
-        <div class="card dash-finance-card">
-          <div class="card-title">💰 Santé financière</div>
-          <div id="dash-finance-summary"></div>
-        </div>
-      </div>
 
+        <!-- Participation événements -->
+        <div class="dh-card">
+          <div class="dh-card-header">
+            <div class="dh-card-icon" style="background:linear-gradient(135deg,#b8860b,#fbbf24);">📊</div>
+            <div>
+              <div class="dh-card-title">Participation</div>
+              <div class="dh-card-sub">Par événement</div>
+            </div>
+          </div>
+          <div id="dash-event-bars" class="gef-chart" style="margin-top:4px;"></div>
+        </div>
+
+        <!-- Santé financière -->
+        <div class="dh-card dh-card-finance">
+          <div class="dh-card-header">
+            <div class="dh-card-icon" style="background:linear-gradient(135deg,#15803d,#4ade80);">💰</div>
+            <div>
+              <div class="dh-card-title">Santé financière</div>
+              <div class="dh-card-sub">Recettes · Dépenses · Solde</div>
+            </div>
+          </div>
+          <div id="dash-finance-summary" style="margin-top:8px;"></div>
+        </div>
+
+      </div>
     </div>
 
     <!-- MEMBRES -->
@@ -1820,6 +1953,9 @@ let cotisations=buildDefaultCotisations(DEFAULT_MEMBRES);
 let eventTypes=DEFAULT_EVENT_TYPES;
 let emailHistorique=[];
 let editingMembre=null,editingEvent=null,editingCompta=null,editingCotisation=null,currentEventId=null;
+let _openEventId=null;
+let documents_list=[];
+let ag_notes=[];
 const _lastSave={};
 
 // Listeners temps réel
@@ -1984,40 +2120,48 @@ function renderDashboard(){
     <button class="dash-quick-btn" onclick="navTo('cotisations','Cotisations')">💳 Cotisations</button>
   `;
 
-  // KPI BAND
+  // KPI BAND — nouveau design premium
   const kpiEl=document.getElementById('dash-kpi-band');
   if(kpiEl)kpiEl.innerHTML=`
-    <div class="kpi-band-card kpi-animate" style="animation-delay:0s">
-      <div class="kpi-band-icon" style="background:#fff1f0;">👥</div>
-      <div class="kpi-band-body">
-        <div class="kpi-band-label">Total membres</div>
-        <div class="kpi-band-val">${total}</div>
-        <div class="kpi-band-sub">${actifs+suisses} actifs · ${passifs} passifs</div>
+    <div class="dh-kpi-card">
+      <div class="dh-kpi-accent" style="background:linear-gradient(90deg,#e63329,#f87171);"></div>
+      <div class="dh-kpi-top">
+        <div class="dh-kpi-icon" style="background:#fff1f0;">👥</div>
+        <span class="dh-kpi-trend" style="background:#fff1f0;color:#c0271e;">${actifs+suisses} actifs</span>
       </div>
+      <div class="dh-kpi-val">${total}</div>
+      <div class="dh-kpi-label">Membres</div>
+      <div class="dh-kpi-sub">${passifs} passif${passifs>1?'s':''} · ${autres} sans type</div>
     </div>
-    <div class="kpi-band-card kpi-animate" style="animation-delay:0.06s">
-      <div class="kpi-band-icon" style="background:#fffbeb;">⚡</div>
-      <div class="kpi-band-body">
-        <div class="kpi-band-label">Membres actifs</div>
-        <div class="kpi-band-val">${actifs+suisses}</div>
-        <div class="kpi-band-sub">${actifs} actifs · ${suisses} suisses</div>
+    <div class="dh-kpi-card">
+      <div class="dh-kpi-accent" style="background:linear-gradient(90deg,#7c3aed,#a78bfa);"></div>
+      <div class="dh-kpi-top">
+        <div class="dh-kpi-icon" style="background:#f5f3ff;">📅</div>
+        <span class="dh-kpi-trend" style="background:#f5f3ff;color:#7c3aed;">${aVenir} à venir</span>
       </div>
+      <div class="dh-kpi-val">${events.length}</div>
+      <div class="dh-kpi-label">Événements</div>
+      <div class="dh-kpi-sub">${events.length-aVenir} passé${events.length-aVenir>1?'s':''}</div>
     </div>
-    <div class="kpi-band-card kpi-animate" style="animation-delay:0.12s">
-      <div class="kpi-band-icon" style="background:${solde>=0?'#f0fdf4':'#fff1f0'};">${solde>=0?'💚':'🔴'}</div>
-      <div class="kpi-band-body">
-        <div class="kpi-band-label">Solde financier</div>
-        <div class="kpi-band-val" style="color:${solde>=0?'var(--green)':'var(--red)'};">${solde>=0?'+':''}${solde.toFixed(0)}<span style="font-size:12px;font-weight:400;color:var(--text3);margin-left:3px;">CHF</span></div>
-        <div class="kpi-band-sub">${totalIn.toFixed(0)} CHF recettes</div>
+    <div class="dh-kpi-card">
+      <div class="dh-kpi-accent" style="background:linear-gradient(90deg,${solde>=0?'#15803d,#4ade80':'#e63329,#f87171'});"></div>
+      <div class="dh-kpi-top">
+        <div class="dh-kpi-icon" style="background:${solde>=0?'#f0fdf4':'#fff1f0'};">${solde>=0?'📈':'📉'}</div>
+        <span class="dh-kpi-trend" style="background:${solde>=0?'#f0fdf4':'#fff1f0'};color:${solde>=0?'#15803d':'#c0271e'};">${solde>=0?'+':''}${solde.toFixed(0)} CHF</span>
       </div>
+      <div class="dh-kpi-val" style="color:${solde>=0?'var(--green)':'var(--red)'};">${solde>=0?'+':''}${solde.toFixed(0)}</div>
+      <div class="dh-kpi-label">Solde</div>
+      <div class="dh-kpi-sub">${totalIn.toFixed(0)} recettes · ${totalOut.toFixed(0)} dépenses</div>
     </div>
-    <div class="kpi-band-card kpi-animate" style="animation-delay:0.18s">
-      <div class="kpi-band-icon" style="background:${cotisPayees===cotisTotal&&cotisTotal>0?'#f0fdf4':'#eff6ff'};">${cotisPayees===cotisTotal&&cotisTotal>0?'✅':'💳'}</div>
-      <div class="kpi-band-body">
-        <div class="kpi-band-label">Cotisations</div>
-        <div class="kpi-band-val">${cotisPayees}<span style="font-size:15px;font-weight:400;color:var(--text3);">/${cotisTotal}</span></div>
-        <div class="kpi-band-sub">${cotisTotal-cotisPayees} en attente</div>
+    <div class="dh-kpi-card">
+      <div class="dh-kpi-accent" style="background:linear-gradient(90deg,#b8860b,#fbbf24);"></div>
+      <div class="dh-kpi-top">
+        <div class="dh-kpi-icon" style="background:#fffbeb;">${cotisPayees===cotisTotal&&cotisTotal>0?'✅':'💳'}</div>
+        <span class="dh-kpi-trend" style="background:${cotisPayees===cotisTotal&&cotisTotal>0?'#f0fdf4':'#fffbeb'};color:${cotisPayees===cotisTotal&&cotisTotal>0?'#15803d':'#92400e'};">${cotisTotal-cotisPayees} en attente</span>
       </div>
+      <div class="dh-kpi-val">${cotisPayees}<span style="font-size:16px;font-weight:400;color:var(--text3);">/${cotisTotal}</span></div>
+      <div class="dh-kpi-label">Cotisations</div>
+      <div class="dh-kpi-sub">${cotisTotal>0?Math.round(cotisPayees/cotisTotal*100):0}% réglées</div>
     </div>
   `;
 
@@ -2097,26 +2241,22 @@ function renderDashboard(){
       </div>`).join(''):'<p style="color:var(--text3);font-size:13px;">Aucun événement.</p>';
   }
 
-  // FINANCES
+  // FINANCES — nouveau design grille
   const finEl=document.getElementById('dash-finance-summary');
   if(finEl)finEl.innerHTML=`
-    <div class="dash-finance-row dash-finance-in">
-      <div class="dash-finance-icon">⬆️</div>
-      <div class="dash-finance-label">Recettes</div>
-      <div class="dash-finance-amount amount-in">+${totalIn.toFixed(2)} CHF</div>
-    </div>
-    <div class="dash-finance-row dash-finance-out">
-      <div class="dash-finance-icon">⬇️</div>
-      <div class="dash-finance-label">Dépenses</div>
-      <div class="dash-finance-amount amount-out">−${totalOut.toFixed(2)} CHF</div>
-    </div>
-    <div class="dash-finance-divider"></div>
-    <div class="dash-finance-solde ${solde>=0?'dash-finance-solde-pos':'dash-finance-solde-neg'}">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span style="font-size:18px;">${solde>=0?'📈':'📉'}</span>
-        <span style="font-weight:700;font-size:14px;color:var(--text);">Solde final</span>
+    <div class="dh-finance-grid">
+      <div class="dh-finance-item dh-finance-in">
+        <div class="dh-finance-lbl">Recettes</div>
+        <div class="dh-finance-amt amount-in">+${totalIn.toFixed(2)} <span style="font-size:13px;font-weight:500;">CHF</span></div>
       </div>
-      <div style="font-size:24px;font-weight:800;letter-spacing:-0.5px;color:${solde>=0?'var(--green)':'var(--red)'};">${solde>=0?'+':''}${solde.toFixed(2)}<span style="font-size:13px;font-weight:400;color:var(--text3);margin-left:4px;">CHF</span></div>
+      <div class="dh-finance-item dh-finance-out">
+        <div class="dh-finance-lbl">Dépenses</div>
+        <div class="dh-finance-amt amount-out">−${totalOut.toFixed(2)} <span style="font-size:13px;font-weight:500;">CHF</span></div>
+      </div>
+      <div class="dh-finance-item ${solde>=0?'dh-finance-bal-pos':'dh-finance-bal-neg'}">
+        <div class="dh-finance-lbl">Solde final</div>
+        <div class="dh-finance-amt" style="color:${solde>=0?'var(--green)':'var(--red)'};">${solde>=0?'+':''}${solde.toFixed(2)} <span style="font-size:13px;font-weight:500;">CHF</span></div>
+      </div>
     </div>
   `;
 }
@@ -2771,7 +2911,28 @@ function renderCompta(){
     <div class="stat-card"><div class="stat-label">Dépenses</div><div class="stat-value amount-out">${totalOut.toFixed(2)}<span>CHF</span></div></div>
     <div class="stat-card"><div class="stat-label">Solde</div><div class="stat-value amount-bal">${(totalIn-totalOut).toFixed(2)}<span>CHF</span></div></div>
   `;
-  // Tableau desktop
+  // Graphique évolution par mois
+  const chartEl=document.getElementById('compta-chart');
+  if(chartEl){
+    const byMonth={};
+    compta.forEach(c=>{const m=c.date.slice(0,7);if(!byMonth[m])byMonth[m]={in:0,out:0};byMonth[m][c.type==='recette'?'in':'out']+=c.montant;});
+    const months=Object.keys(byMonth).sort();
+    const maxVal=Math.max(...months.map(m=>Math.max(byMonth[m].in,byMonth[m].out)),1);
+    chartEl.innerHTML=months.length?months.map(m=>{
+      const [y,mo]=m.split('-');
+      const mois=['','Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+      const pIn=Math.round(byMonth[m].in/maxVal*100);
+      const pOut=Math.round(byMonth[m].out/maxVal*100);
+      return`<div class="chart-bar-row">
+        <div class="chart-bar-label">${mois[parseInt(mo)]} ${y.slice(2)}</div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:3px;">
+          <div class="chart-bar-track" style="height:14px;"><div class="chart-bar-fill" style="width:${pIn}%;background:var(--green);height:100%;">${pIn>15?'+'+byMonth[m].in.toFixed(0):''}</div></div>
+          <div class="chart-bar-track" style="height:14px;"><div class="chart-bar-fill" style="width:${pOut}%;background:var(--red);height:100%;">${pOut>15?'−'+byMonth[m].out.toFixed(0):''}</div></div>
+        </div>
+        <div class="chart-bar-val" style="color:${byMonth[m].in-byMonth[m].out>=0?'var(--green)':'var(--red)'};">${byMonth[m].in-byMonth[m].out>=0?'+':''}${(byMonth[m].in-byMonth[m].out).toFixed(0)}</div>
+      </div>`;
+    }).join(''):'<p style="color:var(--text3);font-size:13px;text-align:center;padding:16px 0;">Aucune écriture enregistrée.</p>';
+  }
   document.getElementById('compta-tbody').innerHTML=list.map(c=>{
     const atts=c.attachments||[];
     const thumbs=atts.filter(a=>a.type&&a.type.startsWith('image/')).slice(0,3);
@@ -3107,7 +3268,6 @@ function exportRapportTxt(){
 }
 
 // ── DOCUMENTS ────────────────────────────────────────────────────
-let documents_list = [];
 let _currentFolder = null; // null = racine
 
 function creerDossier(){
@@ -3319,8 +3479,6 @@ function renderDocuments(){
 }
 
 // ── SECTIONS DYNAMIQUES ──────────────────────────────────────────
-// ag_notes local storage
-let ag_notes=lsGet('gef_ag_notes',[]);
 
 // ── RENDU D'UNE SECTION ───────────────────────────────────────────
 function renderSection(secId){
