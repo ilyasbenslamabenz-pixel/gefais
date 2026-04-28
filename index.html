@@ -2240,6 +2240,7 @@ function setupListeners(){
   db.collection('gef_data').doc('gef_email_historique').onSnapshot(s=>{if(s.exists&&fromOther('gef_email_historique'))emailHistorique=s.data().value;});
   db.collection('gef_data').doc('gef_documents').onSnapshot(s=>{if(s.exists&&fromOther('gef_documents')){documents_list=s.data().value;rerender();}});
   db.collection('gef_data').doc('gef_event_subpages').onSnapshot(s=>{if(s.exists&&fromOther('gef_event_subpages')){event_subpages=s.data().value;renderEvents();}});
+  db.collection('gef_data').doc('gef_don_data').onSnapshot(s=>{if(s.exists&&fromOther('gef_don_data')){Object.assign(_donData,s.data().value);lsSet('gef_don_data',_donData);_donApplyUI();}});
 }
 
 function fmtDate(d){if(!d)return'—';const[y,m,day]=d.split('T')[0].split('-');return`${day}/${m}/${y}`;}
@@ -2261,7 +2262,7 @@ async function reconnectFirebase(){
   const btn=document.querySelector('#offline-banner button');
   if(btn){btn.textContent='⏳ Connexion…';btn.disabled=true;}
   try{
-    const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents','gef_event_subpages'];
+    const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents','gef_event_subpages','gef_don_data'];
     const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000));
     const docs=await Promise.race([Promise.all(keys.map(k=>db.collection('gef_data').doc(k).get())),timeout]);
     _firebaseOk=true;
@@ -2277,6 +2278,7 @@ async function reconnectFirebase(){
       else if(i===6)emailHistorique=val;
       else if(i===7)documents_list=val;
       else if(i===8)event_subpages=val;
+      else if(i===9&&val){Object.assign(_donData,val);lsSet('gef_don_data',_donData);_donApplyUI();}
     });
     setupListeners();
     document.getElementById('offline-banner').style.display='none';
@@ -2297,8 +2299,8 @@ async function initApp(){
   const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),5000));
   
   try{
-    const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents','gef_event_subpages'];
-    const defaults=[DEFAULT_MEMBRES,DEFAULT_EVENTS,DEFAULT_PRESENCES,DEFAULT_COMPTA,buildDefaultCotisations(DEFAULT_MEMBRES),DEFAULT_EVENT_TYPES,[],[],DEFAULT_EVENT_SUBPAGES];
+    const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents','gef_event_subpages','gef_don_data'];
+    const defaults=[DEFAULT_MEMBRES,DEFAULT_EVENTS,DEFAULT_PRESENCES,DEFAULT_COMPTA,buildDefaultCotisations(DEFAULT_MEMBRES),DEFAULT_EVENT_TYPES,[],[],DEFAULT_EVENT_SUBPAGES,null];
     
     const docs=await Promise.race([
       Promise.all(keys.map(k=>db.collection('gef_data').doc(k).get())),
@@ -2317,9 +2319,11 @@ async function initApp(){
       else if(i===5)eventTypes=val;
       else if(i===6)emailHistorique=val;
       else if(i===7)documents_list=val;
+      else if(i===8)event_subpages=val;
+      else if(i===9&&val){Object.assign(_donData,val);lsSet('gef_don_data',_donData);}
     });
     ag_notes=lsGet('gef_ag_notes',[]);
-    event_subpages=lsGet('gef_event_subpages',DEFAULT_EVENT_SUBPAGES);
+    if(!docs[8].exists)event_subpages=lsGet('gef_event_subpages',DEFAULT_EVENT_SUBPAGES);
     // Sauvegarder aussi dans localStorage comme cache
     membres&&lsSet('gef_membres',membres);
     events&&lsSet('gef_events',events);
@@ -2341,6 +2345,8 @@ async function initApp(){
     documents_list=lsGet('gef_documents',[]);
     ag_notes=lsGet('gef_ag_notes',[]);
     event_subpages=lsGet('gef_event_subpages',DEFAULT_EVENT_SUBPAGES);
+    const cachedDon=lsGet('gef_don_data',null);
+    if(cachedDon)Object.assign(_donData,cachedDon);
     const s=document.getElementById('sync-indicator');
     if(s){s.textContent='📴 Hors ligne';s.style.display='inline';s.style.color='var(--text3)';}
     const banner=document.getElementById('offline-banner');
@@ -3838,51 +3844,81 @@ const _donData = lsGet('gef_don_data', {
   message: 'Don GE-FAIS'
 });
 
-function renderDons() {
-  // Restaurer QR TWINT
-  if (_donData.twint) {
-    document.getElementById('don-twint-img').src = _donData.twint;
-    document.getElementById('don-twint-img').style.display = 'block';
-    document.getElementById('don-twint-placeholder').style.display = 'none';
-    document.getElementById('don-twint-remove').style.display = 'inline-flex';
+function _donSave() {
+  save('gef_don_data', _donData);
+}
+
+function _donApplyUI() {
+  // QR TWINT
+  const twintImg = document.getElementById('don-twint-img');
+  const twintPh  = document.getElementById('don-twint-placeholder');
+  const twintRm  = document.getElementById('don-twint-remove');
+  if (twintImg && _donData.twint) {
+    twintImg.src = _donData.twint;
+    twintImg.style.display = 'block';
+    if (twintPh) twintPh.style.display = 'none';
+    if (twintRm) twintRm.style.display = 'inline-flex';
+  } else if (twintImg) {
+    twintImg.style.display = 'none';
+    if (twintPh) twintPh.style.display = 'flex';
+    if (twintRm) twintRm.style.display = 'none';
   }
-  // Restaurer QR Bank
-  if (_donData.bank) {
-    document.getElementById('don-bank-img').src = _donData.bank;
-    document.getElementById('don-bank-img').style.display = 'block';
-    document.getElementById('don-bank-placeholder').style.display = 'none';
-    document.getElementById('don-bank-remove').style.display = 'inline-flex';
+  // QR Bank
+  const bankImg = document.getElementById('don-bank-img');
+  const bankPh  = document.getElementById('don-bank-placeholder');
+  const bankRm  = document.getElementById('don-bank-remove');
+  if (bankImg && _donData.bank) {
+    bankImg.src = _donData.bank;
+    bankImg.style.display = 'block';
+    if (bankPh) bankPh.style.display = 'none';
+    if (bankRm) bankRm.style.display = 'inline-flex';
+  } else if (bankImg) {
+    bankImg.style.display = 'none';
+    if (bankPh) bankPh.style.display = 'flex';
+    if (bankRm) bankRm.style.display = 'none';
   }
-  // Restaurer champs bancaires
-  const fields = ['iban', 'benef', 'banque', 'message'];
-  fields.forEach(f => {
+  // Champs texte
+  ['iban','benef','banque','message'].forEach(f => {
     const el = document.getElementById('don-' + f + '-val');
     if (el && _donData[f]) el.innerHTML = _donData[f] + ' <span class="don-edit-hint">✏️</span>';
   });
 }
 
+function renderDons() {
+  _donApplyUI();
+}
+
 function donUploadQR(input, type) {
   const file = input.files[0];
   if (!file) return;
+  // Resize avant upload Firebase (max 800px, qualité 0.82)
+  const img = new Image();
   const reader = new FileReader();
-  reader.onload = e => {
-    _donData[type] = e.target.result;
-    lsSet('gef_don_data', _donData);
-    document.getElementById('don-' + type + '-img').src = e.target.result;
-    document.getElementById('don-' + type + '-img').style.display = 'block';
-    document.getElementById('don-' + type + '-placeholder').style.display = 'none';
-    document.getElementById('don-' + type + '-remove').style.display = 'inline-flex';
+  reader.onload = ev => {
+    img.onload = () => {
+      const MAX = 800;
+      let w = img.width, h = img.height;
+      if (w > MAX || h > MAX) {
+        const r = Math.min(MAX/w, MAX/h);
+        w = Math.round(w*r); h = Math.round(h*r);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+      _donData[type] = dataUrl;
+      _donSave();
+      _donApplyUI();
+    };
+    img.src = ev.target.result;
   };
   reader.readAsDataURL(file);
 }
 
 function donRemoveQR(type) {
   _donData[type] = null;
-  lsSet('gef_don_data', _donData);
-  document.getElementById('don-' + type + '-img').style.display = 'none';
-  document.getElementById('don-' + type + '-img').src = '';
-  document.getElementById('don-' + type + '-placeholder').style.display = 'flex';
-  document.getElementById('don-' + type + '-remove').style.display = 'none';
+  _donSave();
+  _donApplyUI();
 }
 
 function donViewQR(type) {
@@ -3902,12 +3938,13 @@ function donEditField(field) {
 
 function donSaveField(field) {
   const input = document.getElementById('don-' + field + '-input');
-  _donData[field] = input.value.trim() || _donData[field];
-  lsSet('gef_don_data', _donData);
+  const val = input.value.trim();
+  if (val) _donData[field] = val;
+  _donSave();
   input.style.display = 'none';
-  const val = document.getElementById('don-' + field + '-val');
-  val.innerHTML = (_donData[field] || '—') + ' <span class="don-edit-hint">✏️</span>';
-  val.style.display = '';
+  const el = document.getElementById('don-' + field + '-val');
+  el.innerHTML = (_donData[field] || '—') + ' <span class="don-edit-hint">✏️</span>';
+  el.style.display = '';
 }
 
 function donCopyIBAN() {
