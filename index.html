@@ -689,9 +689,20 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 .top3-pct{font-size:20px;font-weight:800;}
 
 /* ── KPI MINI MEMBRES ── */
-.kpi-mini{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 10px;text-align:center;box-shadow:var(--shadow);}
-.kpi-mini-val{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-0.5px;}
-.kpi-mini-lbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;font-weight:700;margin-top:2px;}
+/* ── KPI MEMBRES ── */
+.kpi-mini-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.kpi-mini-total{background:linear-gradient(135deg,#e63329,#c0271e);border-radius:18px;padding:20px 24px;display:flex;align-items:center;gap:16px;box-shadow:0 8px 24px rgba(230,51,41,0.25);margin-bottom:14px;color:#fff;position:relative;overflow:hidden;}
+.kpi-mini-total::before{content:'';position:absolute;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.07);top:-30px;right:-20px;}
+.kpi-mini-total::after{content:'';position:absolute;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,0.09);bottom:-15px;right:60px;}
+.kmt-num{font-size:52px;font-weight:900;letter-spacing:-3px;line-height:1;position:relative;z-index:1;}
+.kmt-info{position:relative;z-index:1;}
+.kmt-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;opacity:0.7;margin-bottom:4px;}
+.kmt-title{font-size:20px;font-weight:800;letter-spacing:-0.3px;}
+.kmt-sub{font-size:12px;opacity:0.7;margin-top:3px;}
+.kpi-mini{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 12px;text-align:center;box-shadow:var(--shadow);transition:all 0.2s;}
+.kpi-mini:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.kpi-mini-val{font-size:26px;font-weight:900;color:var(--text);letter-spacing:-1px;line-height:1;}
+.kpi-mini-lbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;font-weight:700;margin-top:4px;}
 
 /* ── DOCUMENTS DOSSIERS ── */
 .docs-grid{margin-bottom:14px;}
@@ -852,8 +863,12 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
   .dash-hero-badge{padding:10px 14px;border-radius:14px;min-width:66px;align-self:flex-start;}
   .dash-hero-badge-num{font-size:28px;}
 
-  /* FIX BUG 1: membres-kpi 5 cols → 3 cols mobile */
-  #membres-kpi{grid-template-columns:repeat(3,1fr) !important;gap:6px !important;}
+  /* FIX BUG 1: membres-kpi 4 cols → 2x2 mobile */
+  #membres-kpi{grid-template-columns:repeat(2,1fr) !important;gap:8px !important;}
+  .kpi-mini-total{padding:16px 18px;border-radius:14px;}
+  .kmt-num{font-size:38px;}
+  .kmt-title{font-size:16px;}
+  .kmt-sub{font-size:11px;}
 
   /* FIX BUG 2: stats-kpi-row 3 cols → 1 colonne */
   #stats-kpi-row{grid-template-columns:1fr !important;gap:8px !important;}
@@ -1217,7 +1232,17 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
         </div>
       </div>
       <!-- KPI membres -->
-      <div id="membres-kpi" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px;"></div>
+      <!-- Total hero -->
+      <div class="kpi-mini-total" id="membres-kpi-total">
+        <div class="kmt-num" id="membres-kpi-num">—</div>
+        <div class="kmt-info">
+          <div class="kmt-label">GE-FAIS</div>
+          <div class="kmt-title">Membres au total</div>
+          <div class="kmt-sub" id="membres-kpi-sub">Chargement…</div>
+        </div>
+      </div>
+      <!-- KPI secondaires -->
+      <div id="membres-kpi" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;"></div>
       <div class="toolbar">
         <input type="text" placeholder="Rechercher…" id="search-membres" oninput="renderMembres()">
         <select id="filter-type" onchange="renderMembres()" style="width:130px;">
@@ -2484,12 +2509,16 @@ function renderMembres(){
   const subEl=document.getElementById('membres-header-sub');
   if(subEl)subEl.textContent=`${actifs} actifs · ${suisses} actifs suisses · ${passifs} passifs`;
 
+  const numEl=document.getElementById('membres-kpi-num');
+  const kpiSubEl=document.getElementById('membres-kpi-sub');
+  if(numEl) numEl.textContent=total;
+  if(kpiSubEl) kpiSubEl.textContent=`${actifs+suisses} actif${actifs+suisses>1?'s':''} · ${passifs} passif${passifs>1?'s':''}`;
+
   const kpiEl=document.getElementById('membres-kpi');
   if(kpiEl){
     const avgPres=events.length>0&&membres.length>0?Math.round(membres.reduce((s,m)=>s+events.filter(e=>presences[m.id+'_'+e.id]).length,0)/(membres.length*events.length)*100):0;
     const avecEmail=membres.filter(m=>m.email).length;
     kpiEl.innerHTML=`
-      <div class="kpi-mini"><div class="kpi-mini-val" style="color:var(--red);">${total}</div><div class="kpi-mini-lbl">Total</div></div>
       <div class="kpi-mini"><div class="kpi-mini-val">${actifs+suisses}</div><div class="kpi-mini-lbl">Actifs</div></div>
       <div class="kpi-mini"><div class="kpi-mini-val">${passifs}</div><div class="kpi-mini-lbl">Passifs</div></div>
       <div class="kpi-mini"><div class="kpi-mini-val" style="color:${avgPres>=70?'var(--green)':avgPres>=40?'var(--gold)':'var(--red)'};">${avgPres}%</div><div class="kpi-mini-lbl">Présence moy.</div></div>
