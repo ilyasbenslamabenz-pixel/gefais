@@ -874,15 +874,6 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
       <div class="nav-item" id="nav-evenements" onclick="showPage('evenements',this,'Événements')">
         <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Événements
       </div>
-      <div class="nav-item nav-sub" id="nav-activites" onclick="showPage('activites',this,'Activités')">
-        <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Vue d'ensemble
-      </div>
-      <!-- Sous-pages dynamiques (générées depuis event_subpages) -->
-      <div id="nav-sections-container"></div>
-      <div class="nav-sub-add" onclick="openNewSubpage()">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" width="13" height="13"><path d="M12 5v14M5 12h14"/></svg>
-        Ajouter une sous-page
-      </div>
       <div class="nav-section">Finances</div>
       <div class="nav-item" id="nav-cotisations" onclick="showPage('cotisations',this,'Cotisations')">
         <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Cotisations
@@ -916,9 +907,6 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
     </div>
     <div class="bottom-nav-item" id="bnav-membres" onclick="navTo('membres','Membres')">
       <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Membres</span>
-    </div>
-    <div class="bottom-nav-item" id="bnav-activites" onclick="navTo('activites','Activités')">
-      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg><span>Activités</span>
     </div>
     <div class="bottom-nav-item" id="bnav-evenements" onclick="navTo('evenements','Événements')">
       <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Agenda</span>
@@ -1074,11 +1062,7 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
       </div>
       <!-- Stats globales -->
       <div id="events-stats-row" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;"></div>
-      <!-- Barre d'onglets sous-pages -->
-      <div class="evsp-tab-bar" id="evsp-tab-bar">
-        <!-- Généré dynamiquement -->
-      </div>
-      <!-- Contenu de l'onglet actif -->
+      <!-- Liste des événements -->
       <div id="evsp-content"></div>
     </div>
 
@@ -1616,7 +1600,7 @@ function showPage(name,el,title){
   el.classList.add('active');
   document.getElementById('topbar-title').textContent=title;
   closeSidebar();
-  const _staticMap={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport,activites:renderActivites};
+  const _staticMap={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport};
   if(_staticMap[name])_staticMap[name]();
 
 }
@@ -1706,8 +1690,6 @@ function saveSubpage(){
   closeModal('modal-subpage');
   renderManageSubpages();
   renderEvents();
-  renderActivites();
-  _updateSidebarSubpages();
 }
 
 function openNewSubpage(){
@@ -1745,8 +1727,6 @@ function deleteSubpage(id){
   save('gef_event_subpages',event_subpages);
   renderManageSubpages();
   renderEvents();
-  renderActivites();
-  _updateSidebarSubpages();
 }
 
 function selectSpColor(color,el){
@@ -1789,13 +1769,7 @@ function renderManageSubpages(){
 }
 
 function _updateSidebarSubpages(){
-  const container=document.getElementById('nav-sections-container');
-  if(!container)return;
-  container.innerHTML=event_subpages.filter(sp=>!sp.isDefault).map(sp=>`
-    <div class="nav-item nav-sub" id="nav-sp-${sp.id}" onclick="goToSubpage(${sp.id})">
-      <span style="width:8px;height:8px;border-radius:50%;background:${sp.couleur};display:inline-block;flex-shrink:0;margin-right:2px;"></span>
-      ${sp.emoji} ${sp.nom}
-    </div>`).join('');
+  // Sous-pages désactivées - no-op
 }
 
 function navToSubpage(id){
@@ -1832,7 +1806,7 @@ function save(key,value){
     db.collection('gef_data').doc(key).set({value:value}).then(()=>{
       _showSaveStatus('saved','Sauvegardé');
       const p=document.querySelector('.page.active')?.id?.replace('page-','');
-      const map={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport,activites:renderActivites};
+      const map={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport};
       map[p]?.();
     }).catch(e=>{console.warn('Firebase save error:',e);_showSaveStatus('saved','Sauvé localement');});
   }catch(e){console.warn('Firebase unavailable:',e);_showSaveStatus('saved','Sauvé localement');}
@@ -1855,7 +1829,7 @@ function setupListeners(){
   let currentPage=()=>document.querySelector('.page.active')?.id?.replace('page-','');
   const rerender=()=>{
     const p=currentPage();
-    const map={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport,activites:renderActivites};
+    const map={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport};
     map[p]?.();
   };
   // On ignore les snapshots dans les 3 secondes suivant notre propre sauvegarde
@@ -2462,65 +2436,30 @@ function renderEvents(){
   // Stats globales
   const statsEl=document.getElementById('events-stats-row');
   if(statsEl){
-    // Compter par sous-pages non-défaut
-    const customSps=event_subpages.filter(s=>!s.isDefault).slice(0,2);
     statsEl.innerHTML=`
       <div class="stat-card" style="padding:12px 14px;">
         <div class="stat-label">Total</div><div class="stat-value" style="font-size:22px;">${totalAll}</div>
         <div style="font-size:10px;color:var(--text3);margin-top:2px;">${aVenir} à venir</div>
       </div>
-      ${customSps.map(sp=>{
-        const cnt=events.filter(e=>sp.types.length===0||sp.types.includes(e.type)).length;
-        return`<div class="stat-card" style="padding:12px 14px;">
-          <div class="stat-label">${sp.emoji} ${sp.nom}</div>
-          <div class="stat-value" style="font-size:22px;color:${sp.couleur};">${cnt}</div>
-        </div>`;
-      }).join('')}
-      ${customSps.length<2?'<div class="stat-card" style="padding:12px 14px;"><div class="stat-label">Types</div><div class="stat-value" style="font-size:22px;">${eventTypes.length}</div></div>':''}
+      <div class="stat-card" style="padding:12px 14px;">
+        <div class="stat-label">Types</div><div class="stat-value" style="font-size:22px;">${eventTypes.length}</div>
+      </div>
+      <div class="stat-card" style="padding:12px 14px;">
+        <div class="stat-label">Passés</div><div class="stat-value" style="font-size:22px;">${totalAll-aVenir}</div>
+      </div>
     `;
   }
 
-  // Barre d'onglets
-  const tabBar=document.getElementById('evsp-tab-bar');
-  if(tabBar){
-    tabBar.innerHTML=event_subpages.map(sp=>`
-      <button class="evsp-tab${_activeSubpage===sp.id?' active':''}" onclick="setActiveSubpage(${sp.id})">
-        <div class="evsp-tab-dot" style="background:${sp.couleur};"></div>
-        ${sp.emoji} ${sp.nom}
-      </button>`).join('')+
-      `<button class="evsp-tab evsp-tab-manage" onclick="openManageSubpages()" title="Gérer les sous-pages">⚙️</button>`;
-  }
-
-  // Contenu de l'onglet actif
-  const sp=event_subpages.find(s=>s.id===_activeSubpage)||event_subpages[0];
-  const filtered=sp.types.length===0?events:events.filter(e=>sp.types.includes(e.type));
-  const aVenirSp=filtered.filter(e=>e.date>=today).length;
-  const totalPres=filtered.reduce((s,e)=>s+membres.filter(m=>presences[m.id+'_'+e.id]).length,0);
-  const avgPct=filtered.length>0&&membres.length>0?Math.round(totalPres/(filtered.length*membres.length)*100):0;
-
+  // Afficher tous les événements directement
   const content=document.getElementById('evsp-content');
   if(content){
-    content.innerHTML=`
-      <div class="evsp-section-kpi">
-        <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:${sp.couleur}22;">${sp.emoji}</div>
-          <div><div class="stat-kpi-label">Total</div><div class="stat-kpi-val">${filtered.length}</div></div></div>
-        <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:#eff6ff;">🔜</div>
-          <div><div class="stat-kpi-label">À venir</div><div class="stat-kpi-val" style="color:${sp.couleur};">${aVenirSp}</div></div></div>
-        <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:${avgPct>=70?'#f0fdf4':'#fffbeb'};">📊</div>
-          <div><div class="stat-kpi-label">Présence moy.</div><div class="stat-kpi-val" style="color:${avgPct>=70?'var(--green)':avgPct>=40?'var(--gold)':'var(--red)'};">${avgPct}%</div></div></div>
-      </div>
-      <div id="events-list">${_buildEventListHTML(filtered)}</div>`;
+    content.innerHTML=`<div id="events-list">${_buildEventListHTML(events)}</div>`;
   }
 }
 
 function setActiveSubpage(id){
   _activeSubpage=id;
   renderEvents();
-  // Scroll l'onglet actif en vue
-  setTimeout(()=>{
-    const tab=document.querySelector(`.evsp-tab.active`);
-    if(tab)tab.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
-  },50);
 }
 
 function toggleEventRow(eid){
@@ -3383,117 +3322,9 @@ function renderDocuments(){
 // ag_notes local storage
 let ag_notes=lsGet('gef_ag_notes',[]);
 
-    // Ajouter nav item dans la sidebar
-    const navItem=document.createElement('div');
-    navItem.className='nav-item nav-sub';
-    navItem.id='nav-'+sec.id;
-    navItem.innerHTML=`<span style="font-size:14px;margin-right:2px;">${sec.emoji}</span>${sec.nom}`;
-    navItem.onclick=()=>navTo(sec.id,sec.nom);
-    navContainer.appendChild(navItem);
-  });
-
-  // Mettre à jour la map de rendu
-  _updateRenderMap();
-}
-
-function _updateRenderMap(){
-  // Nothing needed — showPage uses the map but we'll handle dynamic sections via a catch-all
-}
-
 // ── RENDU D'UNE SECTION ───────────────────────────────────────────
 function renderSection(secId){
-  const sec=custom_sections.find(s=>s.id===secId);
-  if(!sec)return;
-  const evts=events.filter(e=>e.type&&e.type.toLowerCase()===sec.eventType.toLowerCase());
-  const today=new Date().toISOString().slice(0,10);
-  const past=evts.filter(e=>e.date<today).length;
-  const aVenir=evts.filter(e=>e.date>=today).length;
-  const totalPres=evts.reduce((s,e)=>s+membres.filter(m=>presences[m.id+'_'+e.id]).length,0);
-  const avgPct=evts.length>0&&membres.length>0?Math.round(totalPres/(evts.length*membres.length)*100):0;
-
-  // Sub
-  const subEl=document.getElementById('sub-'+secId);
-  if(subEl)subEl.textContent=`${evts.length} événement${evts.length>1?'s':''} · ${aVenir} à venir · ${avgPct}% présence moy.`;
-
-  // KPI
-  const kpiEl=document.getElementById('kpi-'+secId);
-  if(kpiEl)kpiEl.innerHTML=`
-    <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:#f8f9fb;">📅</div><div><div class="stat-kpi-label">Total</div><div class="stat-kpi-val">${evts.length}</div></div></div>
-    <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:#eff6ff;">🔜</div><div><div class="stat-kpi-label">À venir</div><div class="stat-kpi-val" style="color:${sec.color};">${aVenir}</div></div></div>
-    <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:${avgPct>=70?'#f0fdf4':'#fffbeb'};">${avgPct>=70?'✅':'📊'}</div><div><div class="stat-kpi-label">Présence moy.</div><div class="stat-kpi-val" style="color:${avgPct>=70?'var(--green)':avgPct>=40?'var(--gold)':'var(--red)'};">${avgPct}%</div></div></div>`;
-
-  // Chart participation
-  const chartEl=document.getElementById('chart-'+secId);
-  if(chartEl){
-    const data=evts.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,10).map(e=>{
-      const c=membres.filter(m=>presences[m.id+'_'+e.id]).length;
-      const pct=membres.length>0?Math.round((c/membres.length)*100):0;
-      return{label:(e.nom||e.type).slice(0,20),val:pct,count:c};
-    });
-    chartEl.innerHTML=data.length?data.map((d,i)=>`
-      <div class="chart-bar-row" style="animation:fadeUp 0.3s ease both;animation-delay:${i*0.04}s;">
-        <div class="chart-bar-label">${d.label}</div>
-        <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${d.val}%;background:${d.val>=70?'var(--green)':d.val>=40?'var(--gold)':'var(--red)'};">${d.val>10?d.val+'%':''}</div></div>
-        <div class="chart-bar-val">${d.count}</div>
-      </div>`).join(''):'<p style="color:var(--text3);font-size:13px;text-align:center;padding:16px 0;">Aucun événement · Créez un événement de type «${sec.eventType}»</p>';
-  }
-
-  // Top membres
-  const topEl=document.getElementById('top-'+secId);
-  if(topEl){
-    const data=membres.map(m=>{
-      const p=evts.filter(e=>presences[m.id+'_'+e.id]).length;
-      const pct=evts.length>0?Math.round((p/evts.length)*100):0;
-      return{name:m.prenom+' '+m.nom,p,pct};
-    }).sort((a,b)=>b.pct-a.pct).filter(d=>d.p>0).slice(0,8);
-    const medals=['🥇','🥈','🥉'];
-    topEl.innerHTML=data.length?data.map((d,i)=>`
-      <div class="chart-bar-row"><div class="chart-bar-label">${medals[i]||''} ${d.name}</div>
-        <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${d.pct}%;background:${d.pct>=70?'var(--green)':d.pct>=40?'var(--gold)':'var(--red)'};">${d.pct>15?d.pct+'%':''}</div></div>
-        <div class="chart-bar-val">${d.pct}%</div></div>`).join(''):
-      '<p style="color:var(--text3);font-size:13px;text-align:center;padding:16px 0;">Aucune présence enregistrée</p>';
-  }
-
-  // Notes (section AG)
-  const notesEl=document.getElementById('notes-'+secId);
-  if(notesEl){
-    const notes=ag_notes.filter(n=>!n.secId||n.secId===secId);
-    notesEl.innerHTML=notes.length?notes.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(n=>`
-      <div class="act-note-item">
-        <div class="act-note-text">${n.texte}</div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
-          <div class="act-note-date">${fmtDate(n.date)}</div>
-          <button class="btn-icon" onclick="supprimerNoteSection(${n.id})">🗑️</button>
-        </div>
-      </div>`).join(''):'<p style="color:var(--text3);font-size:13px;">Aucune note pour le moment.</p>';
-  }
-
-  // Liste événements
-  const listEl=document.getElementById('list-'+secId);
-  if(listEl){
-    const sorted=evts.slice().sort((a,b)=>b.date.localeCompare(a.date));
-    listEl.innerHTML=sorted.length?sorted.map(e=>{
-      const count=membres.filter(m=>presences[m.id+'_'+e.id]).length;
-      const pct=membres.length>0?Math.round((count/membres.length)*100):0;
-      const color=pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';
-      const isPast=e.date<today;
-      const presents=membres.filter(m=>presences[m.id+'_'+e.id]);
-      return`<div class="act-event-card">
-        <div class="act-event-header">
-          <div><div class="act-event-title">${e.nom||e.type}</div>
-            <div class="act-event-date">${fmtDate(e.date)} · ${isPast?'<span style="color:var(--text3);">Passé</span>':'<span style="color:var(--green);font-weight:600;">À venir</span>'}</div>
-          </div>
-          <div style="text-align:right;">
-            <div class="act-event-pct" style="color:${color};">${pct}%</div>
-            <div style="font-size:11px;color:var(--text3);">${count}/${membres.length}</div>
-          </div>
-        </div>
-        <div class="act-event-bar"><div class="act-event-fill" style="width:${pct}%;background:${color};"></div></div>
-        <div class="act-event-members">${presents.map(m=>`<div class="act-member-dot" style="background:${color};" title="${m.prenom} ${m.nom}"></div>`).join('')}</div>
-        ${e.notes?`<div style="margin-top:8px;font-size:12px;color:var(--text2);background:var(--bg3);border-radius:8px;padding:8px 10px;">📝 ${e.notes}</div>`:''}
-      </div>`;
-    }).join(''):'<div style="text-align:center;padding:32px 0;color:var(--text3);font-size:13px;">Aucun événement de type «${sec.eventType}». Créez-en un !</div>';
-  }
+  // Sections dynamiques désactivées - no-op
 }
 
 // ── NOTES SECTIONS ───────────────────────────────────────────────
@@ -3517,87 +3348,9 @@ function supprimerNoteSection(noteId){
 function ajouterNoteAG(){ajouterNoteSection('sec-ag');}
 function supprimerNoteAG(id){supprimerNoteSection(id);}
 
-// ── RENDER ACTIVITÉS (page d'ensemble) ───────────────────────────
-// ── ACTIVITÉS — VUE D'ENSEMBLE (source unique: event_subpages) ────
+// ── RENDER ACTIVITÉS ─────────────────────────────────────────────
 function renderActivites(){
-  const today=new Date().toISOString().slice(0,10);
-  const allEvts=events;
-  const totalPres=allEvts.reduce((s,e)=>s+membres.filter(m=>presences[m.id+'_'+e.id]).length,0);
-  const avgPct=allEvts.length>0&&membres.length>0?Math.round(totalPres/(allEvts.length*membres.length)*100):0;
-  const aVenir=allEvts.filter(e=>e.date>=today).length;
-  const customSps=event_subpages.filter(sp=>!sp.isDefault);
-
-  // Sous-titre
-  const sub=document.getElementById('activites-sub');
-  if(sub)sub.textContent=`${allEvts.length} événements · ${customSps.length} sous-page${customSps.length>1?'s':''} · ${avgPct}% présence moy.`;
-
-  // KPI
-  const kpiEl=document.getElementById('activites-kpi');
-  if(kpiEl)kpiEl.innerHTML=`
-    <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:#fff9eb;">📅</div><div><div class="stat-kpi-label">Événements</div><div class="stat-kpi-val">${allEvts.length}</div></div></div>
-    <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:#eff6ff;">🔜</div><div><div class="stat-kpi-label">À venir</div><div class="stat-kpi-val" style="color:var(--red);">${aVenir}</div></div></div>
-    <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:${avgPct>=70?'#f0fdf4':'#fffbeb'};">📊</div><div><div class="stat-kpi-label">Présence globale</div><div class="stat-kpi-val" style="color:${avgPct>=70?'var(--green)':avgPct>=40?'var(--gold)':'var(--red)'};">${avgPct}%</div></div></div>`;
-
-  // Cartes sous-pages — générées depuis event_subpages
-  const grid=document.getElementById('activites-sections-grid');
-  if(grid){
-    grid.innerHTML=customSps.map(sp=>{
-      const spEvts=sp.types.length===0?events:events.filter(e=>sp.types.includes(e.type));
-      const next=spEvts.filter(e=>e.date>=today).sort((a,b)=>a.date.localeCompare(b.date))[0];
-      const pres=spEvts.reduce((s,e)=>s+membres.filter(m=>presences[m.id+'_'+e.id]).length,0);
-      const avg=spEvts.length>0&&membres.length>0?Math.round(pres/(spEvts.length*membres.length)*100):0;
-      return`<div class="act-section-card" onclick="goToSubpage(${sp.id})" style="border-left:4px solid ${sp.couleur};">
-        <div class="act-card-icon" style="font-size:28px;background:${sp.couleur}22;width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${sp.emoji}</div>
-        <div class="act-card-body">
-          <div class="act-card-title">${sp.nom}</div>
-          <div class="act-card-count" style="color:${sp.couleur};">${spEvts.length}</div>
-          <div class="act-card-sub">${next?'Prochain : '+fmtDate(next.date):'Aucun à venir'} · ${avg}% présence</div>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;">
-          <button class="btn-icon" title="Modifier" onclick="event.stopPropagation();editSubpage(${sp.id})">✏️</button>
-          <div class="act-card-arrow" style="color:var(--text3);">›</div>
-        </div>
-      </div>`;
-    }).join('')||`<div style="text-align:center;padding:24px 0;color:var(--text3);">
-      <div style="font-size:32px;margin-bottom:8px;">📂</div>
-      <div style="font-weight:600;color:var(--text2);">Aucune sous-page créée</div>
-      <div style="font-size:12px;margin-top:4px;">Cliquez sur "Créer une sous-page" pour commencer</div>
-    </div>`;
-  }
-
-  // Graphique global
-  const chartEl=document.getElementById('activites-participation-chart');
-  if(chartEl){
-    const data=allEvts.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8).map(e=>{
-      const c=membres.filter(m=>presences[m.id+'_'+e.id]).length;
-      const pct=membres.length>0?Math.round((c/membres.length)*100):0;
-      const sp=event_subpages.find(s=>s.types.includes(e.type));
-      return{label:(e.nom||e.type).slice(0,18),val:pct,count:c,color:sp?.couleur||'var(--red)'};
-    });
-    chartEl.innerHTML=data.length?data.map((d,i)=>`
-      <div class="chart-bar-row" style="animation:fadeUp 0.3s ease both;animation-delay:${i*0.03}s;">
-        <div class="chart-bar-label">${d.label}</div>
-        <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${d.val}%;background:${d.val>=70?'var(--green)':d.val>=40?'var(--gold)':'var(--red)'};">${d.val>10?d.val+'%':''}</div></div>
-        <div class="chart-bar-val">${d.count}</div>
-      </div>`).join(''):'<p style="color:var(--text3);font-size:13px;text-align:center;padding:16px 0;">Aucun événement enregistré</p>';
-  }
-
-  // Prochaines activités
-  const upcomingEl=document.getElementById('activites-upcoming');
-  if(upcomingEl){
-    const upcoming=allEvts.filter(e=>e.date>=today).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);
-    upcomingEl.innerHTML=upcoming.length?upcoming.map(e=>{
-      const sp=event_subpages.find(s=>s.types.includes(e.type))||{couleur:'var(--red)',emoji:'📅'};
-      const jours=Math.round((new Date(e.date)-new Date())/86400000);
-      const badge=jours===0?'<span style="color:var(--green);font-weight:700;font-size:11px;">Aujourd\'hui</span>':jours===1?'<span style="color:var(--gold);font-weight:700;font-size:11px;">Demain</span>':`<span style="font-size:11px;color:var(--text3);">${jours}j</span>`;
-      return`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">
-        <div style="width:36px;height:36px;border-radius:10px;background:${sp.couleur}22;display:flex;align-items:center;justify-content:center;font-size:16px;">${sp.emoji}</div>
-        <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${e.nom||e.type}</div>
-          <div style="font-size:11px;color:var(--text3);">${fmtDate(e.date)} · ${e.type}</div></div>
-        ${badge}
-      </div>`;
-    }).join(''):'<div style="text-align:center;padding:20px 0;color:var(--text3);">Aucune activité prévue</div>';
-  }
+  // Page Activités désactivée - no-op
 }
 
 // Navigation depuis une carte Activités → Événements sur le bon onglet
