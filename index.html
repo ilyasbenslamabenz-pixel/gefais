@@ -2258,6 +2258,7 @@ let editingMembre=null,editingEvent=null,editingCompta=null,editingCotisation=nu
 let _openEventId=null;
 let documents_list=[];
 let ag_notes=[];
+const _donData=lsGet('gef_don_data',{twint:null,bank:null,iban:'CH•• •••• •••• •••• •••• •',benef:'Association GE-FAIS',banque:'',message:'Don GE-FAIS'});
 const _lastSave={};
 
 // Listeners temps réel
@@ -3954,15 +3955,6 @@ function openEventModalType(type){
 }
 
 // ── DONS & PAIEMENTS ──────────────────────────────────────────────
-const _donData = lsGet('gef_don_data', {
-  twint: null,
-  bank: null,
-  iban: 'CH•• •••• •••• •••• •••• •',
-  benef: 'Association GE-FAIS',
-  banque: '',
-  message: 'Don GE-FAIS'
-});
-
 function _donSave() {
   save('gef_don_data', _donData);
 }
