@@ -852,8 +852,8 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
   .dash-hero-badge{padding:10px 14px;border-radius:14px;min-width:66px;align-self:flex-start;}
   .dash-hero-badge-num{font-size:28px;}
 
-  /* FIX BUG 1: membres-kpi 4 cols → 2x2 */
-  #membres-kpi{grid-template-columns:repeat(2,1fr) !important;gap:6px !important;}
+  /* FIX BUG 1: membres-kpi 5 cols → 3 cols mobile */
+  #membres-kpi{grid-template-columns:repeat(3,1fr) !important;gap:6px !important;}
 
   /* FIX BUG 2: stats-kpi-row 3 cols → 1 colonne */
   #stats-kpi-row{grid-template-columns:1fr !important;gap:8px !important;}
@@ -1217,7 +1217,7 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
         </div>
       </div>
       <!-- KPI membres -->
-      <div id="membres-kpi" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;"></div>
+      <div id="membres-kpi" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px;"></div>
       <div class="toolbar">
         <input type="text" placeholder="Rechercher…" id="search-membres" oninput="renderMembres()">
         <select id="filter-type" onchange="renderMembres()" style="width:130px;">
@@ -2489,6 +2489,7 @@ function renderMembres(){
     const avgPres=events.length>0&&membres.length>0?Math.round(membres.reduce((s,m)=>s+events.filter(e=>presences[m.id+'_'+e.id]).length,0)/(membres.length*events.length)*100):0;
     const avecEmail=membres.filter(m=>m.email).length;
     kpiEl.innerHTML=`
+      <div class="kpi-mini"><div class="kpi-mini-val" style="color:var(--red);">${total}</div><div class="kpi-mini-lbl">Total</div></div>
       <div class="kpi-mini"><div class="kpi-mini-val">${actifs+suisses}</div><div class="kpi-mini-lbl">Actifs</div></div>
       <div class="kpi-mini"><div class="kpi-mini-val">${passifs}</div><div class="kpi-mini-lbl">Passifs</div></div>
       <div class="kpi-mini"><div class="kpi-mini-val" style="color:${avgPres>=70?'var(--green)':avgPres>=40?'var(--gold)':'var(--red)'};">${avgPres}%</div><div class="kpi-mini-lbl">Présence moy.</div></div>
