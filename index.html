@@ -727,8 +727,8 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
   *{max-width:100%;}
 
   /* Présences mobile */
-  .pres-stats-band{grid-template-columns:repeat(3,1fr);gap:6px;}
-  .pres-stat-card{padding:10px 8px;gap:6px;border-radius:12px;flex-direction:column;align-items:flex-start;}
+  .pres-stats-band{display:flex;flex-wrap:wrap;gap:6px;}
+  .pres-stat-card{flex:1;min-width:calc(50% - 3px);padding:10px 8px;gap:6px;border-radius:12px;flex-direction:column;align-items:flex-start;}
   .pres-stat-icon{width:28px;height:28px;font-size:14px;border-radius:8px;}
   .pres-stat-val{font-size:15px;}
   .pres-stat-label{font-size:8px;}
@@ -790,12 +790,24 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 
   /* Hero dashboard mobile */
   .dash-hero{padding:18px 16px 16px;border-radius:18px;margin-bottom:14px;}
+  /* FIX BUG 3: flex-wrap pour éviter overflow du badge */
+  .dash-hero-inner{flex-wrap:wrap;gap:12px;}
+  .dash-hero-left{flex:1;min-width:180px;}
   .dash-hero-greeting{font-size:18px;}
   .dash-hero-date{font-size:12px;margin-bottom:12px;}
   .dash-hero-actions{gap:6px;}
   .dash-quick-btn{padding:7px 11px;font-size:11px;border-radius:9px;}
-  .dash-hero-badge{padding:10px 14px;border-radius:14px;min-width:66px;}
+  .dash-hero-badge{padding:10px 14px;border-radius:14px;min-width:66px;align-self:flex-start;}
   .dash-hero-badge-num{font-size:28px;}
+
+  /* FIX BUG 1: membres-kpi 4 cols → 2x2 */
+  #membres-kpi{grid-template-columns:repeat(2,1fr) !important;gap:6px !important;}
+
+  /* FIX BUG 2: stats-kpi-row 3 cols → 1 colonne */
+  #stats-kpi-row{grid-template-columns:1fr !important;gap:8px !important;}
+
+  /* FIX: activites-kpi 3 cols → 1 col */
+  #activites-kpi{grid-template-columns:1fr !important;gap:8px !important;}
 
   /* KPI band mobile — 2x2 */
   .dash-kpi-grid{grid-template-columns:1fr 1fr !important;gap:8px !important;margin-bottom:14px;}
@@ -826,7 +838,10 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
   /* Graphiques 2 colonnes -> 1 colonne sur mobile */
   #tab-presences-stat > div:first-child,
   #tab-cotis-stat > div:first-child{grid-template-columns:1fr !important;}
-  .gef-bar-label,.gef-bar-label-sm{width:90px;}
+  /* FIX BUG 4: chart-bar-label trop large → réduit */
+  .chart-bar-label{width:70px;font-size:10px;}
+  .chart-bar-fill{font-size:10px;}
+  .chart-bar-val{font-size:11px;min-width:24px;}
 
   /* Membres */
   .table-membres{display:none;}
@@ -834,6 +849,13 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
   .member-card{border-radius:12px;padding:14px;}
   .cotis-table{display:none;}
   .cotis-cards{display:flex;flex-direction:column;gap:8px;}
+
+  /* FIX BUG 6: docs-folders-row minmax 140px trop large sur 320px */
+  .docs-folders-row{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;}
+
+  /* FIX BUG 7: top3 min-width 120px → stack vertical */
+  #stat-top3{flex-direction:column !important;gap:8px !important;}
+  .top3-card{min-width:unset;width:100%;}
 
   /* Toolbar */
   .toolbar{gap:6px;margin-bottom:10px;flex-wrap:wrap;}
@@ -896,6 +918,11 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
   /* Email page */
   #email-destinataires-list{gap:6px;}
   #email-destinataires-list > div{font-size:12px !important;padding:5px 10px !important;}
+
+  /* FIX: login card padding sur petits écrans */
+  .login-card{padding:28px 18px 24px;}
+  .login-brand{font-size:22px;}
+  .dh-bubble-num{font-size:32px;}
 }
 </style>
 </head>
