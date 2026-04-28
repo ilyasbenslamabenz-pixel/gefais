@@ -390,7 +390,60 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 .dash-finance-solde-pos{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac;}
 .dash-finance-solde-neg{background:linear-gradient(135deg,#fff1f0,#fee2e2);border:1.5px solid #fca5a5;}
 
+/* ── SOUS-PAGES ÉVÉNEMENTS ── */
+.evsp-tab-bar{display:flex;gap:0;overflow-x:auto;margin-bottom:14px;background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.evsp-tab-bar::-webkit-scrollbar{display:none;}
+.evsp-tab{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text2);white-space:nowrap;transition:all 0.2s;border:none;background:none;font-family:'DM Sans',sans-serif;flex-shrink:0;}
+.evsp-tab.active{background:var(--card);color:var(--text);box-shadow:var(--shadow);}
+.evsp-tab-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.evsp-tab-add{font-size:18px;padding:6px 12px;color:var(--text3);}
+.evsp-tab-manage{font-size:11px;padding:6px 10px;color:var(--text3);}
+
+/* Sous-page content */
+.evsp-section-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+
+/* Modal sous-pages */
+.sp-color-pick{width:28px;height:28px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all 0.15s;flex-shrink:0;}
+.sp-color-pick.selected{border-color:var(--text);transform:scale(1.15);}
+.manage-sp-row{display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:10px 14px;}
+.manage-sp-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.manage-sp-name{flex:1;font-size:13px;font-weight:600;color:var(--text);}
+.manage-sp-types{font-size:11px;color:var(--text3);}
+
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ── ACTIVITÉS PAGES ── */
+.nav-sub{padding-left:28px !important;font-size:12px !important;}
+.nav-sub-add{display:flex;align-items:center;gap:6px;padding:7px 12px 7px 28px;font-size:11px;color:var(--text3);cursor:pointer;border-radius:8px;transition:all 0.15s;border:1.5px dashed var(--border);margin:4px 8px;font-family:'DM Sans',sans-serif;}
+.nav-sub-add:hover{color:var(--red);border-color:var(--red);background:var(--red-light);}
+.act-cards-grid{display:grid;grid-template-columns:1fr;gap:12px;}
+.act-add-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border:2px dashed var(--border);border-radius:14px;background:none;color:var(--text3);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;margin-top:10px;}
+.act-add-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-light);}
+.act-section-card{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all 0.2s;box-shadow:var(--shadow);position:relative;}
+.act-section-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.act-section-card:hover .act-card-edit{opacity:1;}
+.act-card-icon{font-size:30px;flex-shrink:0;width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;}
+.act-card-body{flex:1;min-width:0;}
+.act-card-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.act-card-count{font-size:24px;font-weight:900;color:var(--text);letter-spacing:-1px;line-height:1.1;}
+.act-card-sub{font-size:11px;color:var(--text3);margin-top:3px;}
+.act-card-arrow{font-size:22px;color:var(--text3);font-weight:300;flex-shrink:0;}
+.act-card-edit{position:absolute;top:10px;right:38px;opacity:0;transition:opacity 0.15s;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:4px 8px;font-size:12px;cursor:pointer;}
+.act-event-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);}
+.act-event-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;gap:10px;}
+.act-event-title{font-size:14px;font-weight:700;color:var(--text);}
+.act-event-date{font-size:11px;color:var(--text3);margin-top:2px;}
+.act-event-pct{font-size:22px;font-weight:800;flex-shrink:0;}
+.act-event-bar{height:5px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-bottom:8px;}
+.act-event-fill{height:100%;border-radius:4px;transition:width 0.6s ease;}
+.act-event-members{display:flex;gap:4px;flex-wrap:wrap;}
+.act-member-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.act-note-item{background:var(--bg3);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.act-note-text{font-size:13px;color:var(--text);flex:1;}
+.act-note-date{font-size:10px;color:var(--text3);white-space:nowrap;}
+/* Section modal color chips */
+.sec-color-chip{width:28px;height:28px;border-radius:50%;cursor:pointer;transition:all 0.15s;border:2px solid transparent;}
+.sec-color-chip.selected{border-color:#fff;box-shadow:0 0 0 3px currentColor,0 0 0 5px var(--border);transform:scale(1.1);}
 
 /* PIÈCES JOINTES COMPTA */
 .attach-thumb{width:64px;height:64px;border-radius:10px;object-fit:cover;border:1.5px solid var(--border);cursor:pointer;transition:transform 0.15s;}
@@ -445,7 +498,68 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 .tab{flex:1;padding:9px 8px;text-align:center;font-size:12px;font-weight:600;cursor:pointer;border-radius:9px;color:var(--text2);transition:all 0.2s;letter-spacing:0.1px;}
 .tab.active{background:var(--card);color:var(--red);box-shadow:var(--shadow-md);}
 
-/* ── PRÉSENCES REDESIGN ── */
+/* ── CLASSEMENT PRÉSENCES ── */
+.pres-group{margin-bottom:14px;border-radius:16px;overflow:hidden;border:1.5px solid var(--border);box-shadow:var(--shadow);}
+.pres-group-header{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;font-size:12px;font-weight:700;}
+.pres-rank-row{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card);border-top:1px solid var(--border);transition:background 0.15s;}
+.pres-rank-row:hover{background:var(--bg2);}
+.pres-rank-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;letter-spacing:-0.5px;}
+.pres-rank-info{flex:1;min-width:0;}
+.pres-rank-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:5px;display:flex;align-items:center;flex-wrap:wrap;gap:4px;}
+.pres-dots-mini{display:flex;gap:4px;flex-wrap:wrap;}
+.pres-dot-mini{width:9px;height:9px;border-radius:50%;cursor:pointer;transition:transform 0.15s;}
+.pres-dot-mini:hover{transform:scale(1.4);}
+.pres-dot-mini-yes{background:var(--red);}
+.pres-dot-mini-no{background:#d1d5db;}
+.pres-rank-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;min-width:56px;}
+.pres-rank-pct{font-size:16px;font-weight:800;letter-spacing:-0.5px;}
+.pres-rank-bar{width:52px;height:4px;background:var(--bg3);border-radius:4px;overflow:hidden;}
+.pres-rank-fill{height:100%;border-radius:4px;transition:width 0.6s ease;}
+.pres-rank-count{font-size:10px;color:var(--text3);}
+
+/* ── STATISTIQUES ── */
+.stat-kpi-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);}
+.stat-kpi-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.stat-kpi-label{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;font-weight:700;margin-bottom:3px;}
+.stat-kpi-val{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.5px;}
+.stat-section-title{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;padding-left:2px;}
+.top3-card{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:10px;flex:1;min-width:120px;}
+.top3-medal{font-size:24px;}
+.top3-name{flex:1;font-size:13px;font-weight:600;color:var(--text);}
+.top3-pct{font-size:20px;font-weight:800;}
+
+/* ── KPI MINI MEMBRES ── */
+.kpi-mini{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 10px;text-align:center;box-shadow:var(--shadow);}
+.kpi-mini-val{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-0.5px;}
+.kpi-mini-lbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;font-weight:700;margin-top:2px;}
+
+/* ── DOCUMENTS DOSSIERS ── */
+.docs-grid{margin-bottom:14px;}
+.docs-section-title{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+.docs-folders-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:4px;}
+.doc-folder-card{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:14px 12px;cursor:pointer;transition:all 0.2s;text-align:center;position:relative;}
+.doc-folder-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);border-color:var(--gold);}
+.doc-folder-icon{font-size:32px;margin-bottom:6px;}
+.doc-folder-name{font-size:13px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.doc-folder-count{font-size:10px;color:var(--text3);margin-top:3px;}
+.doc-folder-actions{position:absolute;top:6px;right:6px;display:none;gap:2px;}
+.doc-folder-card:hover .doc-folder-actions{display:flex;}
+.docs-files-list{display:flex;flex-direction:column;gap:6px;}
+.doc-file-row{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;transition:all 0.15s;}
+.doc-file-row:hover{box-shadow:var(--shadow);border-color:var(--red);}
+.doc-file-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.doc-file-info{flex:1;min-width:0;}
+.doc-file-name{font-size:13px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.doc-file-meta{font-size:11px;color:var(--text3);margin-top:2px;}
+.doc-file-actions{display:flex;gap:4px;flex-shrink:0;}
+#drop-zone{border:2px dashed var(--border);border-radius:16px;padding:24px;text-align:center;color:var(--text3);font-size:13px;margin-top:12px;transition:all 0.2s;cursor:pointer;}
+#drop-zone:hover,#drop-zone.drag-over{border-color:var(--red);background:var(--red-light);}
+
+/* ── STATUT SAUVEGARDE ── */
+#save-status{position:fixed;bottom:calc(var(--bottom-bar) + 8px);right:12px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:11px;font-weight:600;display:none;align-items:center;gap:6px;box-shadow:var(--shadow-md);z-index:50;transition:all 0.3s;}
+#save-status.saving{display:flex;color:var(--gold);}
+#save-status.saved{display:flex;color:var(--green);}
+#save-status.error{display:flex;color:var(--red);}
 .pres-stats-band{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
 .pres-stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);}
 .pres-stat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
@@ -482,14 +596,27 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
   .sidebar.mobile-open{transform:translateX(0);box-shadow:4px 0 20px rgba(0,0,0,0.15);}
   .topbar{display:flex;}
   .bottom-nav{display:flex;}
-  body,#app{background:var(--bg);}
-  /* ⬇ Fix overflow horizontal global */
-  *{box-sizing:border-box;}
-  .main{margin-left:0 !important;padding:74px 12px calc(var(--bottom-bar) + env(safe-area-inset-bottom) + 16px) !important;max-width:100vw;overflow-x:hidden;}
-  .page{max-width:100%;overflow-x:hidden;}
-  .page-header{max-width:100%;overflow:hidden;}
-  .page-header-left p{white-space:normal;overflow:hidden;text-overflow:ellipsis;max-width:calc(100vw - 24px);}
-  .toolbar{max-width:100%;}
+  body,html{background:var(--bg);overflow-x:hidden;max-width:100vw;}
+  /* ══ FIX OVERFLOW HORIZONTAL GLOBAL ══ */
+  #app{overflow-x:hidden;max-width:100vw;width:100vw;position:relative;}
+  .main{
+    margin-left:0 !important;
+    padding:82px 12px calc(var(--bottom-bar) + env(safe-area-inset-bottom) + 16px) !important;
+    width:100vw !important;
+    max-width:100vw !important;
+    overflow-x:hidden !important;
+    box-sizing:border-box !important;
+  }
+  .page{max-width:100%;overflow:hidden;box-sizing:border-box;}
+  .page-header{max-width:100%;overflow:hidden;box-sizing:border-box;}
+  .page-header-left p{
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    max-width:calc(100vw - 100px);
+  }
+  .toolbar{max-width:100%;box-sizing:border-box;overflow:hidden;}
+  .card{box-sizing:border-box;max-width:100%;}
+  /* Éviter tout élément plus large que l'écran */
+  *{max-width:100%;}
 
   /* Présences mobile */
   .pres-stats-band{grid-template-columns:repeat(3,1fr);gap:6px;}
@@ -694,7 +821,7 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
     </div>
     <h2>GE-FAIS</h2>
     <p>Entrez le mot de passe pour accéder à l'espace de gestion</p>
-    <input type="password" id="login-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkLogin()">
+    <input type="password" id="login-input" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')checkLogin()">
     <button onclick="checkLogin()">Accéder →</button>
     <div class="login-error" id="login-error">Mot de passe incorrect.</div>
   </div>
@@ -711,11 +838,13 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
     <span id="sync-indicator" style="font-size:11px;color:var(--green);display:none;cursor:default;"></span>
   </div>
   <!-- BANNIÈRE HORS LIGNE -->
-  <div id="offline-banner" style="display:none;background:#fffbeb;border-bottom:1.5px solid #fde68a;padding:8px 16px;font-size:12px;color:#92400e;align-items:center;gap:8px;position:fixed;top:58px;left:0;right:0;z-index:39;">
+  <div id="offline-banner" style="display:none;background:#fffbeb;border-bottom:1.5px solid #fde68a;padding:10px 16px;font-size:12px;color:#92400e;align-items:center;gap:8px;position:fixed;top:58px;left:0;right:0;z-index:38;">
     <span>📴</span>
-    <span style="flex:1;">Mode hors ligne — données locales uniquement.</span>
-    <button onclick="reconnectFirebase()" style="background:#f59e0b;color:#fff;border:none;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">Reconnecter</button>
+    <span style="flex:1;">Mode hors ligne — données locales.</span>
+    <button onclick="reconnectFirebase()" style="background:#f59e0b;color:#fff;border:none;padding:5px 10px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">Reconnecter</button>
   </div>
+  <!-- WIDGET STATUT SAUVEGARDE -->
+  <div id="save-status"><span id="save-status-icon"></span><span id="save-status-text"></span></div>
 
   <nav class="sidebar" id="sidebar">
     <div class="logo">
@@ -744,6 +873,15 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
       </div>
       <div class="nav-item" id="nav-evenements" onclick="showPage('evenements',this,'Événements')">
         <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Événements
+      </div>
+      <div class="nav-item nav-sub" id="nav-activites" onclick="showPage('activites',this,'Activités')">
+        <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Vue d'ensemble
+      </div>
+      <!-- Sous-pages dynamiques (générées depuis event_subpages) -->
+      <div id="nav-sections-container"></div>
+      <div class="nav-sub-add" onclick="openNewSubpage()">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" width="13" height="13"><path d="M12 5v14M5 12h14"/></svg>
+        Ajouter une sous-page
       </div>
       <div class="nav-section">Finances</div>
       <div class="nav-item" id="nav-cotisations" onclick="showPage('cotisations',this,'Cotisations')">
@@ -779,14 +917,14 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
     <div class="bottom-nav-item" id="bnav-membres" onclick="navTo('membres','Membres')">
       <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Membres</span>
     </div>
+    <div class="bottom-nav-item" id="bnav-activites" onclick="navTo('activites','Activités')">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg><span>Activités</span>
+    </div>
     <div class="bottom-nav-item" id="bnav-evenements" onclick="navTo('evenements','Événements')">
-      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Événements</span>
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Agenda</span>
     </div>
     <div class="bottom-nav-item" id="bnav-cotisations" onclick="navTo('cotisations','Cotisations')">
       <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span>Cotisations</span>
-    </div>
-    <div class="bottom-nav-item" id="bnav-messagerie" onclick="navTo('messagerie','Emails')">
-      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span>Emails</span>
     </div>
   </div>
 
@@ -855,11 +993,18 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
     <!-- MEMBRES -->
     <div id="page-membres" class="page">
       <div class="page-header">
-        <div class="page-header-left"><h2>Membres</h2><p>Gérez la liste des membres · <span id="membres-count" style="color:var(--red);font-weight:600;"></span></p></div>
-        <button class="btn btn-secondary btn-sm" onclick="exportMembresCSV()">⬇️ Export CSV</button>
+        <div class="page-header-left">
+          <h2>Membres <span id="membres-count" style="font-size:13px;font-weight:700;color:var(--red);background:var(--red-light);padding:2px 9px;border-radius:20px;margin-left:6px;vertical-align:middle;"></span></h2>
+          <p id="membres-header-sub">Actifs · Passifs · Suisses</p>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-primary btn-sm" onclick="openMemberModal()">+ Ajouter</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportMembresCSV()">⬇️</button>
+        </div>
       </div>
+      <!-- KPI membres -->
+      <div id="membres-kpi" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;"></div>
       <div class="toolbar">
-        <button class="btn btn-primary btn-sm" onclick="openMemberModal()">+ Ajouter</button>
         <input type="text" placeholder="Rechercher…" id="search-membres" oninput="renderMembres()">
         <select id="filter-type" onchange="renderMembres()" style="width:130px;">
           <option value="">Tous</option><option value="Actif">Actif</option>
@@ -870,7 +1015,7 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
           <option value="nom">Tri : Nom</option>
           <option value="type">Tri : Type</option>
           <option value="adhesion">Tri : Adhésion</option>
-          <option value="presence">Tri : Présence</option>
+          <option value="presence">Tri : Présence ↓</option>
         </select>
         <button class="btn btn-secondary btn-sm" id="sort-dir-btn" onclick="toggleSortDir()" title="Inverser l'ordre">↑↓</button>
       </div>
@@ -889,14 +1034,12 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
     <!-- PRÉSENCES -->
     <div id="page-presences" class="page">
       <div class="page-header">
-        <div class="page-header-left"><h2>Présences</h2><p>Touchez un point pour modifier</p></div>
+        <div class="page-header-left"><h2>Présences</h2><p id="pres-header-sub">Touchez un point pour modifier</p></div>
         <button class="btn btn-secondary btn-sm" onclick="exportPresencesCSV()">⬇️ CSV</button>
       </div>
-
-      <!-- Stats présences : 3 colonnes fixes petites -->
+      <!-- Stats band -->
       <div id="presences-stats-band" class="pres-stats-band"></div>
-
-      <!-- Toolbar sur 2 lignes -->
+      <!-- Toolbar -->
       <div class="pres-toolbar">
         <input type="text" id="search-presences" placeholder="🔍 Rechercher…" oninput="renderPresences()">
         <select id="filter-presences-type" onchange="renderPresences()">
@@ -906,13 +1049,12 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
           <option value="Passif">Passif</option>
         </select>
         <div class="pres-view-toggle">
-          <button id="pres-view-cards" class="pres-view-btn active" onclick="setPresView('cards')">🃏 Cartes</button>
+          <button id="pres-view-rank" class="pres-view-btn active" onclick="setPresView('rank')">🏆 Classement</button>
           <button id="pres-view-table" class="pres-view-btn" onclick="setPresView('table')">📋 Tableau</button>
         </div>
       </div>
-
-      <!-- Vue cartes -->
-      <div id="presences-cards-view"></div>
+      <!-- Vue classement -->
+      <div id="presences-rank-view"></div>
       <!-- Vue tableau -->
       <div id="presences-table-view" style="display:none;">
         <div class="card" style="overflow-x:auto;">
@@ -927,22 +1069,17 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
     <!-- ÉVÉNEMENTS -->
     <div id="page-evenements" class="page">
       <div class="page-header">
-        <div class="page-header-left"><h2>Événements</h2><p>Cliquez sur un événement pour voir les présences</p></div>
-      </div>
-      <!-- Stats événements -->
-      <div id="events-stats-row" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;"></div>
-      <!-- Toolbar -->
-      <div class="toolbar">
+        <div class="page-header-left"><h2>Événements</h2><p id="events-header-sub">Gérez et suivez vos événements</p></div>
         <button class="btn btn-primary btn-sm" onclick="openEventModal()">+ Ajouter</button>
-        <button class="btn btn-secondary btn-sm" onclick="openTypesModal()">⚙️ Types</button>
-        <select id="events-filter-type" onchange="renderEvents()" style="width:130px;">
-          <option value="">Tous les types</option>
-        </select>
       </div>
-      <!-- Stats rapides -->
-      <div class="events-stats-bar" id="events-stats-bar"></div>
-      <!-- Liste accordéon -->
-      <div id="events-list"></div>
+      <!-- Stats globales -->
+      <div id="events-stats-row" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;"></div>
+      <!-- Barre d'onglets sous-pages -->
+      <div class="evsp-tab-bar" id="evsp-tab-bar">
+        <!-- Généré dynamiquement -->
+      </div>
+      <!-- Contenu de l'onglet actif -->
+      <div id="evsp-content"></div>
     </div>
 
     <!-- COTISATIONS -->
@@ -1002,32 +1139,37 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 
     <!-- STATISTIQUES -->
     <div id="page-statistiques" class="page">
-      <div class="page-header"><div class="page-header-left"><h2>Statistiques</h2><p>Analyses et graphiques</p></div></div>
+      <div class="page-header">
+        <div class="page-header-left"><h2>Statistiques</h2><p id="stats-header-sub">Vue d'ensemble de l'association</p></div>
+      </div>
+      <!-- KPI globaux stats -->
+      <div id="stats-kpi-row" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;"></div>
       <div class="tabs">
-        <div class="tab active" onclick="switchTab('tab-presences-stat',this)">Présences</div>
-        <div class="tab" onclick="switchTab('tab-cotis-stat',this)">Cotisations</div>
-        <div class="tab" onclick="switchTab('tab-events-stat',this)">Événements</div>
+        <div class="tab active" onclick="switchTab('tab-presences-stat',this)">🏅 Présences</div>
+        <div class="tab" onclick="switchTab('tab-cotis-stat',this)">💳 Cotisations</div>
+        <div class="tab" onclick="switchTab('tab-events-stat',this)">📅 Événements</div>
       </div>
       <div id="tab-presences-stat">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
-          <div class="card"><div class="card-title">🏅 Présence par membre</div><div id="stat-presence-chart" class="gef-chart"></div></div>
-          <div class="card"><div class="card-title">📅 Présence par événement</div><div id="stat-event-chart" class="gef-chart"></div></div>
-        </div>
-        <div class="card"><div class="card-title">🔥 Top 3 membres les plus présents</div><div id="stat-top3" style="display:flex;gap:16px;flex-wrap:wrap;padding:8px 0;"></div></div>
+        <div class="stat-section-title">Classement des membres</div>
+        <div class="card" style="margin-bottom:14px;"><div id="stat-presence-chart" class="gef-chart"></div></div>
+        <div class="stat-section-title">Participation par événement</div>
+        <div class="card"><div id="stat-event-chart" class="gef-chart"></div></div>
+        <div class="card" style="margin-top:14px;"><div class="card-title">🔥 Podium</div><div id="stat-top3" style="display:flex;gap:12px;flex-wrap:wrap;padding:4px 0;"></div></div>
       </div>
       <div id="tab-cotis-stat" style="display:none;">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-          <div class="card"><div class="card-title">💳 Statut cotisations 2026</div><div id="stat-cotis-chart" class="gef-chart"></div></div>
-          <div class="card"><div class="card-title">🍩 Répartition paiements</div>
-            <div class="gef-donut-wrap" style="justify-content:center;">
-              <svg id="stat-cotis-donut" width="120" height="120" viewBox="0 0 120 120"></svg>
-              <div class="gef-donut-legend" id="stat-cotis-donut-legend"></div>
-            </div>
+        <div class="stat-section-title">Statut des cotisations</div>
+        <div class="card" style="margin-bottom:14px;"><div id="stat-cotis-chart" class="gef-chart"></div></div>
+        <div class="card">
+          <div class="card-title">🍩 Répartition</div>
+          <div class="gef-donut-wrap" style="justify-content:center;">
+            <svg id="stat-cotis-donut" width="120" height="120" viewBox="0 0 120 120"></svg>
+            <div class="gef-donut-legend" id="stat-cotis-donut-legend"></div>
           </div>
         </div>
       </div>
       <div id="tab-events-stat" style="display:none;">
-        <div class="card"><div class="card-title">📊 Participation par type d'événement</div><div id="stat-type-chart" class="gef-chart"></div></div>
+        <div class="stat-section-title">Par type d'événement</div>
+        <div class="card"><div id="stat-type-chart" class="gef-chart"></div></div>
       </div>
     </div>
 
@@ -1110,16 +1252,26 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
     <!-- DOCUMENTS -->
     <div id="page-documents" class="page">
       <div class="page-header">
-        <div class="page-header-left"><h2>Documents</h2><p>Partagez et gérez les documents de l'association</p></div>
-        <label class="btn btn-primary btn-sm" style="cursor:pointer;">
-          + Ajouter un document
-          <input type="file" id="doc-file-input" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.jpg,.png,.zip" style="display:none;" onchange="ajouterDocuments(this)">
-        </label>
+        <div class="page-header-left">
+          <h2>Documents</h2>
+          <p id="docs-header-sub">Chargement…</p>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-secondary btn-sm" onclick="creerDossier()">📁 Dossier</button>
+          <label class="btn btn-primary btn-sm" style="cursor:pointer;">
+            + Document
+            <input type="file" id="doc-file-input" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.jpg,.png,.zip" style="display:none;" onchange="ajouterDocuments(this)">
+          </label>
+        </div>
       </div>
-      <!-- Filtres -->
-      <div class="toolbar">
-        <input type="text" placeholder="Rechercher un document…" id="search-docs" oninput="renderDocuments()" style="max-width:260px;">
-        <select id="filter-doc-cat" onchange="renderDocuments()" style="width:150px;">
+      <!-- Breadcrumb navigation -->
+      <div id="docs-breadcrumb" style="display:flex;align-items:center;gap:6px;margin-bottom:12px;flex-wrap:wrap;"></div>
+      <!-- Stats docs -->
+      <div id="docs-stats" style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;"></div>
+      <!-- Toolbar -->
+      <div class="toolbar" style="margin-bottom:14px;">
+        <input type="text" placeholder="🔍 Rechercher…" id="search-docs" oninput="renderDocuments()" style="flex:1;">
+        <select id="filter-doc-cat" onchange="renderDocuments()" style="width:140px;">
           <option value="">Toutes catégories</option>
           <option value="Réunion">Réunion</option>
           <option value="Finance">Finance</option>
@@ -1128,20 +1280,13 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
           <option value="Autre">Autre</option>
         </select>
       </div>
-      <!-- Stats docs -->
-      <div id="docs-stats" style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;"></div>
-      <!-- Liste documents desktop -->
-      <div class="card table-membres"><div class="table-wrap">
-        <table><thead><tr><th>Nom</th><th>Catégorie</th><th>Taille</th><th>Ajouté par</th><th>Date</th><th></th></tr></thead>
-        <tbody id="docs-tbody"></tbody></table>
-      </div></div>
-      <!-- Cartes mobile -->
-      <div class="member-cards" id="docs-cards"></div>
+      <!-- Grille fichiers et dossiers -->
+      <div id="docs-grid" class="docs-grid"></div>
       <!-- Zone drag & drop -->
-      <div id="drop-zone" style="border:2px dashed var(--border);border-radius:16px;padding:32px;text-align:center;color:var(--text3);font-size:13px;margin-top:8px;transition:all 0.2s;cursor:pointer;" onclick="document.getElementById('doc-file-input').click()">
-        <div style="font-size:32px;margin-bottom:8px;">📁</div>
-        <div style="font-weight:600;color:var(--text2);margin-bottom:4px;">Glissez vos fichiers ici</div>
-        <div style="font-size:12px;">ou cliquez pour sélectionner</div>
+      <div id="drop-zone" onclick="document.getElementById('doc-file-input').click()">
+        <div style="font-size:28px;margin-bottom:6px;">📂</div>
+        <div style="font-weight:600;color:var(--text2);font-size:13px;">Glissez vos fichiers ici</div>
+        <div style="font-size:11px;margin-top:2px;">ou cliquez pour sélectionner</div>
       </div>
     </div>
 
@@ -1154,7 +1299,80 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
       <div id="rapport-content"></div>
     </div>
 
+    <!-- ═══ ACTIVITÉS — VUE D'ENSEMBLE ═══ -->
+    <div id="page-activites" class="page">
+      <div class="page-header">
+        <div class="page-header-left"><h2>Activités</h2><p id="activites-sub">Vue récapitulative de toutes les activités</p></div>
+      </div>
+      <!-- KPI globaux -->
+      <div id="activites-kpi" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;"></div>
+      <!-- Cartes dynamiques des sous-pages -->
+      <div id="activites-sections-grid" class="act-cards-grid"></div>
+      <!-- Bouton ajouter section -->
+      <button class="act-add-btn" onclick="openNewSubpage()">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg>
+        Créer une sous-page
+      </button>
+      <!-- Synthèse présences -->
+      <div class="card" style="margin-top:16px;">
+        <div class="card-title">📊 Taux de participation global</div>
+        <div id="activites-participation-chart" class="gef-chart"></div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <div class="card-title">📅 Prochaines activités</div>
+        <div id="activites-upcoming"></div>
+      </div>
+    </div>
+
+    <!-- Pages dynamiques des sections -->
+    <div id="dynamic-section-pages"></div>
+
   </main>
+</div>
+
+<!-- ═══ MODAL SECTION ═══ -->
+<div class="modal-overlay" id="modal-section">
+  <div class="modal">
+    <h3 id="modal-section-title">Nouvelle sous-page</h3>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Emoji</label>
+        <input id="sec-emoji" type="text" placeholder="🤝" maxlength="4" style="font-size:24px;text-align:center;width:80px;">
+      </div>
+      <div class="form-group">
+        <label>Nom de la sous-page *</label>
+        <input id="sec-nom" type="text" placeholder="ex: Maraudes, Foyer, Sport…">
+      </div>
+      <div class="form-group">
+        <label>Type d'événement filtré *</label>
+        <input id="sec-type" type="text" placeholder="ex: Maraude, Réunion, Sport…" list="sec-type-list">
+        <datalist id="sec-type-list"></datalist>
+      </div>
+      <div class="form-group">
+        <label>Couleur</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;" id="sec-colors">
+          <div class="sec-color-chip" data-color="#e63329" style="background:#e63329;" onclick="selectSectionColor('#e63329',this)"></div>
+          <div class="sec-color-chip" data-color="#c49a00" style="background:#c49a00;" onclick="selectSectionColor('#c49a00',this)"></div>
+          <div class="sec-color-chip" data-color="#2563eb" style="background:#2563eb;" onclick="selectSectionColor('#2563eb',this)"></div>
+          <div class="sec-color-chip" data-color="#7c3aed" style="background:#7c3aed;" onclick="selectSectionColor('#7c3aed',this)"></div>
+          <div class="sec-color-chip" data-color="#16a34a" style="background:#16a34a;" onclick="selectSectionColor('#16a34a',this)"></div>
+          <div class="sec-color-chip" data-color="#0891b2" style="background:#0891b2;" onclick="selectSectionColor('#0891b2',this)"></div>
+          <div class="sec-color-chip" data-color="#ea580c" style="background:#ea580c;" onclick="selectSectionColor('#ea580c',this)"></div>
+          <div class="sec-color-chip" data-color="#db2777" style="background:#db2777;" onclick="selectSectionColor('#db2777',this)"></div>
+        </div>
+        <input type="hidden" id="sec-color" value="#c49a00">
+      </div>
+      <div class="form-group full">
+        <label>Description (optionnel)</label>
+        <input id="sec-desc" type="text" placeholder="ex: Suivi des maraudes solidaires">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="sec-delete-btn" style="display:none;color:var(--red);border-color:var(--red);" onclick="deleteSection()">Supprimer</button>
+      <button class="btn btn-secondary" onclick="closeModal('modal-section')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveSection()">Enregistrer</button>
+    </div>
+  </div>
 </div>
 
 <!-- MODAL MEMBRE -->
@@ -1240,20 +1458,13 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 
       <!-- Boutons upload -->
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
-        <!-- Fichier classique -->
         <label class="btn btn-secondary btn-sm" style="cursor:pointer;">
           📎 Fichier
           <input type="file" id="c-fichier" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" style="display:none;" onchange="comptaAjouterFichier(this)">
         </label>
-        <!-- Appareil photo mobile -->
         <label class="btn btn-secondary btn-sm" style="cursor:pointer;" id="c-photo-btn">
           📷 Photo
           <input type="file" id="c-photo" accept="image/*" capture="environment" style="display:none;" onchange="comptaAjouterPhoto(this)">
-        </label>
-        <!-- Caméra frontale -->
-        <label class="btn btn-secondary btn-sm" style="cursor:pointer;">
-          🤳 Selfie
-          <input type="file" id="c-photo-front" accept="image/*" capture="user" style="display:none;" onchange="comptaAjouterPhoto(this)">
         </label>
       </div>
 
@@ -1277,6 +1488,53 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 </div>
 
 <!-- MODAL TYPES ÉVÉNEMENTS -->
+<div class="modal-overlay" id="modal-subpage">
+  <div class="modal">
+    <h3 id="modal-subpage-title">Nouvelle sous-page</h3>
+    <div class="form-grid">
+      <div class="form-group"><label>Emoji</label>
+        <input type="text" id="sp-emoji" maxlength="2" placeholder="🏠" style="width:60px;">
+      </div>
+      <div class="form-group"><label>Nom de la sous-page</label>
+        <input type="text" id="sp-nom" placeholder="Ex: Soirées, Permanences…">
+      </div>
+      <div class="form-group full"><label>Couleur</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;" id="sp-colors">
+          <div class="sp-color-pick" data-color="#e63329" style="background:#e63329;" onclick="selectSpColor('#e63329',this)"></div>
+          <div class="sp-color-pick" data-color="#c49a00" style="background:#c49a00;" onclick="selectSpColor('#c49a00',this)"></div>
+          <div class="sp-color-pick" data-color="#2563eb" style="background:#2563eb;" onclick="selectSpColor('#2563eb',this)"></div>
+          <div class="sp-color-pick" data-color="#7c3aed" style="background:#7c3aed;" onclick="selectSpColor('#7c3aed',this)"></div>
+          <div class="sp-color-pick" data-color="#16a34a" style="background:#16a34a;" onclick="selectSpColor('#16a34a',this)"></div>
+          <div class="sp-color-pick" data-color="#0891b2" style="background:#0891b2;" onclick="selectSpColor('#0891b2',this)"></div>
+          <div class="sp-color-pick" data-color="#ea580c" style="background:#ea580c;" onclick="selectSpColor('#ea580c',this)"></div>
+          <div class="sp-color-pick" data-color="#9ca3af" style="background:#9ca3af;" onclick="selectSpColor('#9ca3af',this)"></div>
+        </div>
+        <input type="hidden" id="sp-couleur" value="#e63329">
+      </div>
+      <div class="form-group full"><label>Types d'événements inclus</label>
+        <p style="font-size:11px;color:var(--text3);margin-bottom:8px;">Sélectionnez quels types d'événements apparaissent dans cette sous-page.</p>
+        <div id="sp-types-checks" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-subpage')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveSubpage()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-manage-subpages">
+  <div class="modal">
+    <h3>📑 Gérer les sous-pages</h3>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:16px;">Créez et organisez vos sous-pages pour les Événements.</p>
+    <div id="manage-sp-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
+    <button class="btn btn-primary btn-sm" onclick="openNewSubpage()">+ Nouvelle sous-page</button>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-manage-subpages')">Fermer</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modal-types">
   <div class="modal">
     <h3>⚙️ Types d'événements</h3>
@@ -1358,7 +1616,9 @@ function showPage(name,el,title){
   el.classList.add('active');
   document.getElementById('topbar-title').textContent=title;
   closeSidebar();
-  ({dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,rapport:renderRapport})[name]?.();
+  const _staticMap={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport,activites:renderActivites};
+  if(_staticMap[name])_staticMap[name]();
+
 }
 function navTo(name,title){
   document.querySelectorAll('.bottom-nav-item').forEach(i=>i.classList.remove('active'));
@@ -1414,6 +1674,135 @@ const DEFAULT_MESSAGES=[];
 
 function buildDefaultCotisations(m){return m.map(x=>({membreId:x.id,annee:2026,montant:x.type==='Actif'?50:x.type==='Actif Suisse'?30:0,statut:'impaye',datePaiement:'',notes:''}));}
 
+// ── SOUS-PAGES ÉVÉNEMENTS ─────────────────────────────────────────
+const DEFAULT_EVENT_SUBPAGES=[
+  {id:1,nom:'Tous',emoji:'📅',couleur:'#e63329',types:[],isDefault:true},
+  {id:2,nom:'Maraudes',emoji:'🤝',couleur:'#c49a00',types:['Maraude']},
+  {id:3,nom:'Foyer',emoji:'🏠',couleur:'#2563eb',types:['Foyer']},
+  {id:4,nom:'Assemblée Générale',emoji:'📋',couleur:'#7c3aed',types:['AG','Assemblée','Réunion générale']},
+  {id:5,nom:'Réunions',emoji:'🗣️',couleur:'#e63329',types:['Réunion']},
+];
+let event_subpages=DEFAULT_EVENT_SUBPAGES;
+let _activeSubpage=1; // id de l'onglet actif
+let _editingSubpage=null;
+let _spSelectedColor='#e63329';
+
+function saveSubpage(){
+  const nom=document.getElementById('sp-nom').value.trim();
+  const emoji=document.getElementById('sp-emoji').value.trim()||'📅';
+  const couleur=document.getElementById('sp-couleur').value||'#e63329';
+  const checks=document.querySelectorAll('#sp-types-checks input[type=checkbox]:checked');
+  const types=[...checks].map(c=>c.value);
+  if(!nom){alert('Nom requis.');return;}
+  if(_editingSubpage){
+    const sp=event_subpages.find(s=>s.id===_editingSubpage);
+    if(sp){sp.nom=nom;sp.emoji=emoji;sp.couleur=couleur;sp.types=types;}
+  } else {
+    const newId=Math.max(0,...event_subpages.map(s=>s.id))+1;
+    event_subpages.push({id:newId,nom,emoji,couleur,types});
+    _activeSubpage=newId;
+  }
+  save('gef_event_subpages',event_subpages);
+  closeModal('modal-subpage');
+  renderManageSubpages();
+  renderEvents();
+  renderActivites();
+  _updateSidebarSubpages();
+}
+
+function openNewSubpage(){
+  _editingSubpage=null;_spSelectedColor='#e63329';
+  document.getElementById('modal-subpage-title').textContent='Nouvelle sous-page';
+  document.getElementById('sp-nom').value='';
+  document.getElementById('sp-emoji').value='';
+  document.getElementById('sp-couleur').value='#e63329';
+  _renderSpTypeChecks([]);
+  document.querySelectorAll('.sp-color-pick').forEach(el=>el.classList.remove('selected'));
+  document.querySelector('.sp-color-pick[data-color="#e63329"]')?.classList.add('selected');
+  closeModal('modal-manage-subpages');
+  document.getElementById('modal-subpage').classList.add('open');
+}
+
+function editSubpage(id){
+  const sp=event_subpages.find(s=>s.id===id);
+  if(!sp)return;
+  _editingSubpage=id;_spSelectedColor=sp.couleur;
+  document.getElementById('modal-subpage-title').textContent='Modifier la sous-page';
+  document.getElementById('sp-nom').value=sp.nom;
+  document.getElementById('sp-emoji').value=sp.emoji;
+  document.getElementById('sp-couleur').value=sp.couleur;
+  _renderSpTypeChecks(sp.types);
+  document.querySelectorAll('.sp-color-pick').forEach(el=>el.classList.remove('selected'));
+  document.querySelector(`.sp-color-pick[data-color="${sp.couleur}"]`)?.classList.add('selected');
+  closeModal('modal-manage-subpages');
+  document.getElementById('modal-subpage').classList.add('open');
+}
+
+function deleteSubpage(id){
+  if(!confirm('Supprimer cette sous-page ?'))return;
+  event_subpages=event_subpages.filter(s=>s.id!==id);
+  if(_activeSubpage===id)_activeSubpage=1;
+  save('gef_event_subpages',event_subpages);
+  renderManageSubpages();
+  renderEvents();
+  renderActivites();
+  _updateSidebarSubpages();
+}
+
+function selectSpColor(color,el){
+  _spSelectedColor=color;
+  document.getElementById('sp-couleur').value=color;
+  document.querySelectorAll('.sp-color-pick').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function _renderSpTypeChecks(selected){
+  const el=document.getElementById('sp-types-checks');
+  if(!el)return;
+  el.innerHTML=eventTypes.map(t=>`
+    <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 10px;">
+      <input type="checkbox" value="${t}" ${selected.includes(t)?'checked':''} style="accent-color:var(--red);">
+      ${t}
+    </label>`).join('');
+}
+
+function openManageSubpages(){
+  renderManageSubpages();
+  document.getElementById('modal-manage-subpages').classList.add('open');
+}
+
+function renderManageSubpages(){
+  const el=document.getElementById('manage-sp-list');
+  if(!el)return;
+  el.innerHTML=event_subpages.map(sp=>`
+    <div class="manage-sp-row">
+      <div class="manage-sp-dot" style="background:${sp.couleur};"></div>
+      <div style="font-size:16px;">${sp.emoji}</div>
+      <div style="flex:1;min-width:0;">
+        <div class="manage-sp-name">${sp.nom}</div>
+        <div class="manage-sp-types">${sp.types.length?sp.types.join(', '):'Tous les types'}</div>
+      </div>
+      ${sp.isDefault?'<span style="font-size:10px;color:var(--text3);padding:0 4px;">défaut</span>':
+        `<button class="btn-icon" onclick="editSubpage(${sp.id})">✏️</button>
+         <button class="btn-icon" onclick="deleteSubpage(${sp.id})">🗑️</button>`}
+    </div>`).join('');
+}
+
+function _updateSidebarSubpages(){
+  const container=document.getElementById('nav-sections-container');
+  if(!container)return;
+  container.innerHTML=event_subpages.filter(sp=>!sp.isDefault).map(sp=>`
+    <div class="nav-item nav-sub" id="nav-sp-${sp.id}" onclick="goToSubpage(${sp.id})">
+      <span style="width:8px;height:8px;border-radius:50%;background:${sp.couleur};display:inline-block;flex-shrink:0;margin-right:2px;"></span>
+      ${sp.emoji} ${sp.nom}
+    </div>`).join('');
+}
+
+function navToSubpage(id){
+  _activeSubpage=id;
+  navTo('evenements','Événements');
+}
+
 const DEFAULT_EVENT_TYPES=['Réunion','Maraude','Formation','Sortie','Permanence','Autre'];
 
 // ── FIREBASE ─────────────────────────────────────────────────────
@@ -1421,19 +1810,32 @@ const firebaseConfig={apiKey:"AIzaSyD7DeDaEEPIpbeR9fCfDBXVPzYeyFm04Ns",authDomai
 try{firebase.initializeApp(firebaseConfig);}catch(e){console.warn('Firebase init:',e);}
 let db;try{db=firebase.firestore();}catch(e){console.warn('Firestore:',e);db=null;}
 
+function _showSaveStatus(state,text){
+  const el=document.getElementById('save-status');
+  const icon=document.getElementById('save-status-icon');
+  const txt=document.getElementById('save-status-text');
+  if(!el)return;
+  clearTimeout(el._hide);
+  el.className='';
+  void el.offsetWidth;
+  el.className=state;
+  if(icon)icon.textContent=state==='saving'?'💾':state==='saved'?'✓':'✕';
+  if(txt)txt.textContent=text;
+  if(state!=='saving')el._hide=setTimeout(()=>{el.className='';el.style.display='';},2000);
+}
+
 function save(key,value){
-  // Toujours sauvegarder en localStorage comme cache local
   lsSet(key,value);
   _lastSave[key]=Date.now();
+  _showSaveStatus('saving','Sauvegarde…');
   try{
     db.collection('gef_data').doc(key).set({value:value}).then(()=>{
-      const s=document.getElementById('sync-indicator');
-      if(s){s.textContent='✓ Sync';s.style.color='var(--green)';s.style.display='inline';clearTimeout(s._t);s._t=setTimeout(()=>s.style.display='none',1500);}
+      _showSaveStatus('saved','Sauvegardé');
       const p=document.querySelector('.page.active')?.id?.replace('page-','');
-      const map={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport};
+      const map={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport,activites:renderActivites};
       map[p]?.();
-    }).catch(e=>{console.warn('Firebase save error:',e);});
-  }catch(e){console.warn('Firebase unavailable:',e);}
+    }).catch(e=>{console.warn('Firebase save error:',e);_showSaveStatus('saved','Sauvé localement');});
+  }catch(e){console.warn('Firebase unavailable:',e);_showSaveStatus('saved','Sauvé localement');}
 }
 
 let membres=DEFAULT_MEMBRES;
@@ -1453,7 +1855,7 @@ function setupListeners(){
   let currentPage=()=>document.querySelector('.page.active')?.id?.replace('page-','');
   const rerender=()=>{
     const p=currentPage();
-    const map={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport};
+    const map={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport,activites:renderActivites};
     map[p]?.();
   };
   // On ignore les snapshots dans les 3 secondes suivant notre propre sauvegarde
@@ -1466,6 +1868,7 @@ function setupListeners(){
   db.collection('gef_data').doc('gef_event_types').onSnapshot(s=>{if(s.exists&&fromOther('gef_event_types'))eventTypes=s.data().value;});
   db.collection('gef_data').doc('gef_email_historique').onSnapshot(s=>{if(s.exists&&fromOther('gef_email_historique'))emailHistorique=s.data().value;});
   db.collection('gef_data').doc('gef_documents').onSnapshot(s=>{if(s.exists&&fromOther('gef_documents')){documents_list=s.data().value;rerender();}});
+  db.collection('gef_data').doc('gef_event_subpages').onSnapshot(s=>{if(s.exists&&fromOther('gef_event_subpages')){event_subpages=s.data().value;renderEvents();}});
 }
 
 function fmtDate(d){if(!d)return'—';const[y,m,day]=d.split('T')[0].split('-');return`${day}/${m}/${y}`;}
@@ -1487,7 +1890,7 @@ async function reconnectFirebase(){
   const btn=document.querySelector('#offline-banner button');
   if(btn){btn.textContent='⏳ Connexion…';btn.disabled=true;}
   try{
-    const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents'];
+    const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents','gef_event_subpages'];
     const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000));
     const docs=await Promise.race([Promise.all(keys.map(k=>db.collection('gef_data').doc(k).get())),timeout]);
     _firebaseOk=true;
@@ -1502,12 +1905,14 @@ async function reconnectFirebase(){
       else if(i===5)eventTypes=val;
       else if(i===6)emailHistorique=val;
       else if(i===7)documents_list=val;
+      else if(i===8)event_subpages=val;
     });
     setupListeners();
     document.getElementById('offline-banner').style.display='none';
+    document.querySelector('.main').style.paddingTop='';
     const s=document.getElementById('sync-indicator');
     if(s){s.textContent='✓ Sync';s.style.color='var(--green)';s.style.display='inline';clearTimeout(s._t);s._t=setTimeout(()=>s.style.display='none',2000);}
-    renderDashboard();renderMembres();
+    renderDashboard();renderMembres();renderEvents();
   }catch(e){
     if(btn){btn.textContent='Reconnecter';btn.disabled=false;}
     alert('Impossible de se connecter à Firebase. Vérifiez votre connexion internet.');
@@ -1521,8 +1926,8 @@ async function initApp(){
   const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),5000));
   
   try{
-    const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents'];
-    const defaults=[DEFAULT_MEMBRES,DEFAULT_EVENTS,DEFAULT_PRESENCES,DEFAULT_COMPTA,buildDefaultCotisations(DEFAULT_MEMBRES),DEFAULT_EVENT_TYPES,[],[]];
+    const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents','gef_event_subpages'];
+    const defaults=[DEFAULT_MEMBRES,DEFAULT_EVENTS,DEFAULT_PRESENCES,DEFAULT_COMPTA,buildDefaultCotisations(DEFAULT_MEMBRES),DEFAULT_EVENT_TYPES,[],[],DEFAULT_EVENT_SUBPAGES];
     
     const docs=await Promise.race([
       Promise.all(keys.map(k=>db.collection('gef_data').doc(k).get())),
@@ -1561,10 +1966,12 @@ async function initApp(){
     eventTypes=lsGet('gef_event_types',DEFAULT_EVENT_TYPES);
     emailHistorique=lsGet('gef_email_historique',[]);
     documents_list=lsGet('gef_documents',[]);
+    ag_notes=lsGet('gef_ag_notes',[]);
+    event_subpages=lsGet('gef_event_subpages',DEFAULT_EVENT_SUBPAGES);
     const s=document.getElementById('sync-indicator');
     if(s){s.textContent='📴 Hors ligne';s.style.display='inline';s.style.color='var(--text3)';}
     const banner=document.getElementById('offline-banner');
-    if(banner)banner.style.display='flex';
+    if(banner){banner.style.display='flex';document.querySelector('.main').style.paddingTop='128px';}
   }
   
   document.getElementById('loading-overlay').style.display='none';
@@ -1660,7 +2067,7 @@ function renderDashboard(){
     pbEl.innerHTML=bars.length?bars.map((b,i)=>`
       <div class="progress-row" style="animation:fadeUp 0.4s ease both;animation-delay:${i*0.05}s">
         <div class="progress-label">${b.name}</div>
-        <div class="progress-track"><div class="progress-bar" style="width:${b.pct}%;background:${b.pct>=70?'#e63329':b.pct>=40?'#c49a00':'#d1d5db'}"></div></div>
+        <div class="progress-track"><div class="progress-bar" style="width:${b.pct}%;background:${b.pct>=70?'var(--green)':b.pct>=40?'var(--gold)':'var(--red)'}"></div></div>
         <div class="progress-pct">${b.pct}%</div>
       </div>`).join(''):'<p style="color:var(--text3);font-size:13px;text-align:center;padding:16px 0;">Aucun événement enregistré.</p>';
   }
@@ -1742,156 +2149,14 @@ function renderDashboard(){
 
 // ── MEMBRES ──────────────────────────────────────────────────────
 function renderMembres(){
-  const q=(document.getElementById('search-membres').value||'').toLowerCase();
-  const ft=document.getElementById('filter-type').value;
-  const list=membres.filter(m=>(m.nom+' '+m.prenom).toLowerCase().includes(q)&&(!ft||m.type===ft));
-  document.getElementById('membres-tbody').innerHTML=list.map(m=>`<tr><td class="td-name">${m.nom}</td><td>${m.prenom}</td><td>${m.role?`<span class="badge-role">${m.role}</span>`:''}</td><td>${badgeType(m.type)}</td><td style="color:var(--text3)">${m.email||'—'}</td><td style="color:var(--text3);font-size:12px">${m.adhesion?fmtDate(m.adhesion):'—'}</td><td><button class="btn-icon" onclick="editMember(${m.id})">✏️</button><button class="btn-icon" onclick="deleteMember(${m.id})">🗑️</button></td></tr>`).join('');
-  document.getElementById('member-cards').innerHTML=list.map(m=>`<div class="member-card"><div class="member-card-header"><div><div class="member-card-name">${m.prenom} ${m.nom}</div></div><div><button class="btn-icon" onclick="editMember(${m.id})">✏️</button><button class="btn-icon" onclick="deleteMember(${m.id})">🗑️</button></div></div><div class="member-card-meta">${badgeType(m.type)}${m.role?`<span class="badge-role">${m.role}</span>`:''}</div>${m.email?`<div style="font-size:12px;color:var(--text3);">✉️ ${m.email}</div>`:''}${m.tel?`<div style="font-size:12px;color:var(--text3);margin-top:2px;">📞 ${m.tel}</div>`:''}</div>`).join('');
-
-}
-function openMemberModal(){editingMembre=null;document.getElementById('modal-membre-title').textContent='Ajouter un membre';['nom','prenom','role','email','tel','notes','adhesion'].forEach(f=>document.getElementById('m-'+f).value='');document.getElementById('m-type').value='';document.getElementById('m-presence').value='0.8';document.getElementById('modal-membre').classList.add('open');}
-function editMember(id){editingMembre=id;const m=membres.find(x=>x.id===id);document.getElementById('modal-membre-title').textContent='Modifier le membre';document.getElementById('m-nom').value=m.nom;document.getElementById('m-prenom').value=m.prenom;document.getElementById('m-role').value=m.role||'';document.getElementById('m-type').value=m.type||'';document.getElementById('m-email').value=m.email||'';document.getElementById('m-tel').value=m.tel||'';document.getElementById('m-adhesion').value=m.adhesion||'';document.getElementById('m-presence').value=m.presence_attendue||0;document.getElementById('m-notes').value=m.notes||'';document.getElementById('modal-membre').classList.add('open');}
-function saveMember(){
-  const nom=document.getElementById('m-nom').value.trim(),prenom=document.getElementById('m-prenom').value.trim();
-  if(!nom||!prenom){alert('Nom et prénom requis.');return;}
-  const data={nom,prenom,role:document.getElementById('m-role').value,type:document.getElementById('m-type').value,email:document.getElementById('m-email').value,tel:document.getElementById('m-tel').value,adhesion:document.getElementById('m-adhesion').value,presence_attendue:parseFloat(document.getElementById('m-presence').value),notes:document.getElementById('m-notes').value};
-  if(editingMembre){const i=membres.findIndex(m=>m.id===editingMembre);membres[i]={...membres[i],...data};}
-  else{const newId=Math.max(0,...membres.map(m=>m.id))+1;const anneeEnCours=new Date().getFullYear();membres.push({id:newId,...data});cotisations.push({membreId:newId,annee:anneeEnCours,montant:data.type==='Actif'?50:data.type==='Actif Suisse'?30:0,statut:'impaye',datePaiement:'',notes:''});save('gef_cotisations',cotisations);}
-  save('gef_membres',membres);closeModal('modal-membre');renderMembres();
-}
-function deleteMember(id){if(!confirm('Supprimer ce membre ?'))return;membres=membres.filter(m=>m.id!==id);cotisations=cotisations.filter(c=>c.membreId!==id);save('gef_membres',membres);save('gef_cotisations',cotisations);renderMembres();}
-
-// ── PRÉSENCES ────────────────────────────────────────────────────
-let _presView = 'cards';
-function setPresView(v){
-  _presView=v;
-  document.getElementById('presences-cards-view').style.display=v==='cards'?'block':'none';
-  document.getElementById('presences-table-view').style.display=v==='table'?'block':'none';
-  document.getElementById('pres-view-cards').className='pres-view-btn'+(v==='cards'?' active':'');
-  document.getElementById('pres-view-table').className='pres-view-btn'+(v==='table'?' active':'');
-}
-
-function renderPresences(){
-  const evts=events.slice().sort((a,b)=>a.date.localeCompare(b.date));
-  const q=(document.getElementById('search-presences')?.value||'').toLowerCase();
-  const ft=document.getElementById('filter-presences-type')?.value||'';
-  const list=membres.filter(m=>(m.nom+' '+m.prenom).toLowerCase().includes(q)&&(!ft||m.type===ft));
-
-  // Stats band
-  const statsEl=document.getElementById('presences-stats-band');
-  if(statsEl){
-    const totalPres=list.reduce((s,m)=>s+evts.filter(e=>presences[m.id+'_'+e.id]).length,0);
-    const possible=list.length*evts.length;
-    const avgPct=possible>0?Math.round(totalPres/possible*100):0;
-    const topMembre=list.map(m=>{const p=evts.filter(e=>presences[m.id+'_'+e.id]).length;return{name:m.prenom+' '+m.nom,p};}).sort((a,b)=>b.p-a.p)[0];
-    statsEl.innerHTML=`
-      <div class="pres-stat-card"><div class="pres-stat-icon" style="background:#fff1f0;">📅</div><div><div class="pres-stat-label">Événements</div><div class="pres-stat-val">${evts.length}</div></div></div>
-      <div class="pres-stat-card"><div class="pres-stat-icon" style="background:#f0fdf4;">📊</div><div><div class="pres-stat-label">Taux moyen</div><div class="pres-stat-val" style="color:${avgPct>=70?'var(--green)':avgPct>=40?'var(--gold)':'var(--red)'};">${avgPct}%</div></div></div>
-      <div class="pres-stat-card"><div class="pres-stat-icon" style="background:#eff6ff;">🏅</div><div><div class="pres-stat-label">Top présence</div><div class="pres-stat-val" style="font-size:14px;">${topMembre?topMembre.name:'—'}</div></div></div>
-    `;
-  }
-
-  // Vue CARTES
-  const cardsEl=document.getElementById('presences-cards-view');
-  if(cardsEl){
-    const sorted=list.map(m=>{const p=evts.filter(e=>presences[m.id+'_'+e.id]).length;const pct=evts.length>0?Math.round((p/evts.length)*100):0;return{...m,p,pct};}).sort((a,b)=>b.pct-a.pct);
-    cardsEl.innerHTML=`<div class="pres-cards-grid">${sorted.map((m,idx)=>{
-      const color=m.pct>=70?'var(--green)':m.pct>=40?'var(--gold)':'var(--red)';
-      const medal=idx===0&&m.pct>0?'🥇':idx===1&&m.pct>0?'🥈':idx===2&&m.pct>0?'🥉':'';
-      const dots=evts.map(e=>{
-        const isP=!!presences[m.id+'_'+e.id];
-        return`<div class="pres-dot-wrap" title="${e.nom||e.type} · ${fmtDate(e.date)}" onclick="togglePresenceCard(${m.id},${e.id},this)">
-          <div class="pres-dot ${isP?'pres-dot-yes':'pres-dot-no'}"></div>
-          <div class="pres-dot-label">${(e.nom||e.type).slice(0,6)}</div>
-        </div>`;
-      }).join('');
-      return`<div class="pres-card" data-id="${m.id}">
-        <div class="pres-card-top">
-          <div>
-            <div class="pres-card-name">${medal} ${m.prenom} ${m.nom}</div>
-            <div style="margin-top:3px;">${badgeType(m.type)}</div>
-          </div>
-          <div class="pres-card-pct" style="color:${color};">${m.pct}%</div>
-        </div>
-        <div class="pres-bar-wrap">
-          <div class="pres-bar-track"><div class="pres-bar-fill" style="width:${m.pct}%;background:${color};"></div></div>
-          <span class="pres-bar-label">${m.p}/${evts.length}</span>
-        </div>
-        <div class="pres-dots-row">${dots}</div>
-      </div>`;
-    }).join('')}</div>`;
-  }
-
-  // Vue TABLEAU
-  document.getElementById('presence-thead').innerHTML=`<tr><th style="min-width:120px">Membre</th><th>Type</th>${evts.map(e=>`<th class="event-header" title="${e.nom||e.type}">${(e.nom||e.type).slice(0,8)}<br><span style="font-size:9px;opacity:0.6">${fmtDate(e.date)}</span></th>`).join('')}<th>%</th></tr>`;
-  document.getElementById('presence-tbody').innerHTML=list.map(m=>{
-    const p=evts.filter(e=>presences[m.id+'_'+e.id]).length;
-    const pct=evts.length>0?Math.round((p/evts.length)*100):0;
-    const color=pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';
-    return`<tr>
-      <td class="td-name" style="font-size:12px;white-space:nowrap;">${m.prenom} ${m.nom}</td>
-      <td>${badgeType(m.type)}</td>
-      ${evts.map(e=>`<td style="text-align:center;cursor:pointer;padding:10px 6px" onclick="togglePresence(${m.id},${e.id},this)"><span class="dot ${presences[m.id+'_'+e.id]?'dot-yes':'dot-no'}"></span></td>`).join('')}
-      <td><div style="display:flex;align-items:center;gap:6px;min-width:80px;">
-        <div class="pct-bar"><div class="pct-fill" style="width:${pct}%;background:${color}"></div></div>
-        <span style="font-size:11px;font-weight:700;color:${color}">${pct}%</span>
-      </div></td>
-    </tr>`;
-  }).join('');
-
-  // Appliquer la vue active
-  setPresView(_presView);
-}
-
-function togglePresenceCard(mid,eid,dotEl){
-  const key=mid+'_'+eid;
-  presences[key]=!presences[key];
-  save('gef_presences',presences);
-  const dot=dotEl.querySelector('.pres-dot');
-  if(dot){dot.className='pres-dot '+(presences[key]?'pres-dot-yes':'pres-dot-no');}
-  // Mettre à jour pct sur la carte
-  const card=document.querySelector(`.pres-card[data-id="${mid}"]`);
-  if(card){
-    const evts=events.slice().sort((a,b)=>a.date.localeCompare(b.date));
-    const p=evts.filter(e=>presences[mid+'_'+e.id]).length;
-    const pct=evts.length>0?Math.round((p/evts.length)*100):0;
-    const color=pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';
-    const pctEl=card.querySelector('.pres-card-pct');
-    if(pctEl){pctEl.textContent=pct+'%';pctEl.style.color=color;}
-    const fill=card.querySelector('.pres-bar-fill');
-    if(fill){fill.style.width=pct+'%';fill.style.background=color;}
-    const lbl=card.querySelector('.pres-bar-label');
-    if(lbl)lbl.textContent=p+'/'+evts.length;
-  }
-}
-
-function togglePresence(mid,eid,td){
-  const key=mid+'_'+eid;
-  presences[key]=!presences[key];
-  save('gef_presences',presences);
-  td.innerHTML=`<span class="dot ${presences[key]?'dot-yes':'dot-no'}"></span>`;
-  const evts=events.slice().sort((a,b)=>a.date.localeCompare(b.date));
-  const p=evts.filter(e=>presences[mid+'_'+e.id]).length;
-  const pct=evts.length>0?Math.round((p/evts.length)*100):0;
-  const color=pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';
-  td.closest('tr').querySelector('td:last-child').innerHTML=`<div style="display:flex;align-items:center;gap:6px;min-width:80px;"><div class="pct-bar"><div class="pct-fill" style="width:${pct}%;background:${color}"></div></div><span style="font-size:11px;font-weight:700;color:${color}">${pct}%</span></div>`;
-}
-
-// ── MEMBRES ── TRI ────────────────────────────────────────────────
-let _sortDir=1;
-function toggleSortDir(){
-  _sortDir*=-1;
-  const btn=document.getElementById('sort-dir-btn');
-  if(btn)btn.textContent=_sortDir===1?'↑↓':'↓↑';
-  renderMembres();
-}
-function renderMembres(){
-  const q=(document.getElementById('search-membres').value||'').toLowerCase();
-  const ft=document.getElementById('filter-type').value;
+  const q=(document.getElementById('search-membres')?.value||'').toLowerCase();
+  const ft=document.getElementById('filter-type')?.value||'';
   const sortBy=document.getElementById('sort-membres')?.value||'prenom';
+  const actifs=membres.filter(m=>m.type==='Actif').length;
+  const suisses=membres.filter(m=>m.type==='Actif Suisse').length;
+  const passifs=membres.filter(m=>m.type==='Passif').length;
   let list=membres.filter(m=>(m.nom+' '+m.prenom).toLowerCase().includes(q)&&(!ft||m.type===ft));
 
-  // Tri
   list=list.slice().sort((a,b)=>{
     let va,vb;
     if(sortBy==='prenom'){va=a.prenom||'';vb=b.prenom||'';}
@@ -1899,36 +2164,37 @@ function renderMembres(){
     else if(sortBy==='type'){va=a.type||'';vb=b.type||'';}
     else if(sortBy==='adhesion'){va=a.adhesion||'';vb=b.adhesion||'';}
     else if(sortBy==='presence'){
-      const evts=events;
-      va=evts.length>0?events.filter(e=>presences[a.id+'_'+e.id]).length/evts.length:0;
-      vb=evts.length>0?events.filter(e=>presences[b.id+'_'+e.id]).length/evts.length:0;
+      va=events.length>0?events.filter(e=>presences[a.id+'_'+e.id]).length/events.length:0;
+      vb=events.length>0?events.filter(e=>presences[b.id+'_'+e.id]).length/events.length:0;
       return(vb-va)*_sortDir;
     }
     return va.localeCompare(vb)*_sortDir;
   });
 
-  // Compter
   const countEl=document.getElementById('membres-count');
-  if(countEl)countEl.textContent=`${list.length} membre${list.length>1?'s':''}`;
+  if(countEl)countEl.textContent=`${list.length}`;
+  const subEl=document.getElementById('membres-header-sub');
+  if(subEl)subEl.textContent=`${actifs} actifs · ${suisses} actifs suisses · ${passifs} passifs`;
 
-  // Répartition chart
+  const kpiEl=document.getElementById('membres-kpi');
+  if(kpiEl){
+    const avgPres=events.length>0&&membres.length>0?Math.round(membres.reduce((s,m)=>s+events.filter(e=>presences[m.id+'_'+e.id]).length,0)/(membres.length*events.length)*100):0;
+    const avecEmail=membres.filter(m=>m.email).length;
+    kpiEl.innerHTML=`
+      <div class="kpi-mini"><div class="kpi-mini-val">${actifs+suisses}</div><div class="kpi-mini-lbl">Actifs</div></div>
+      <div class="kpi-mini"><div class="kpi-mini-val">${passifs}</div><div class="kpi-mini-lbl">Passifs</div></div>
+      <div class="kpi-mini"><div class="kpi-mini-val" style="color:${avgPres>=70?'var(--green)':avgPres>=40?'var(--gold)':'var(--red)'};">${avgPres}%</div><div class="kpi-mini-lbl">Présence moy.</div></div>
+      <div class="kpi-mini"><div class="kpi-mini-val">${avecEmail}</div><div class="kpi-mini-lbl">Avec email</div></div>`;
+  }
+
   const chartEl=document.getElementById('membres-repartition-chart');
   if(chartEl){
-    const actifs=membres.filter(m=>m.type==='Actif').length;
-    const suisses=membres.filter(m=>m.type==='Actif Suisse').length;
-    const passifs=membres.filter(m=>m.type==='Passif').length;
-    const autres=membres.filter(m=>!m.type).length;
     const total=membres.length;
-    const types=[['Actif',actifs,'#e63329'],['Actif Suisse',suisses,'#c49a00'],['Passif',passifs,'#9ca3af'],['Autre',autres,'#e5e7eb']];
+    const types=[['Actif',actifs,'#e63329'],['Actif Suisse',suisses,'#c49a00'],['Passif',passifs,'#9ca3af'],['Autre',total-actifs-suisses-passifs,'#e5e7eb']];
     chartEl.innerHTML=`<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">`+
-      types.filter(t=>t[1]>0).map(t=>`
-        <div style="flex:${t[1]};min-width:32px;height:28px;background:${t[2]};border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;transition:flex 0.6s ease;" title="${t[0]}: ${t[1]}">
-          ${t[1]>1?t[1]:''}
-        </div>`).join('')+
-      `</div><div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;">`+
-      types.filter(t=>t[1]>0).map(t=>`<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);">
-        <div style="width:8px;height:8px;border-radius:50%;background:${t[2]};"></div>${t[0]}<span style="font-weight:700;color:var(--text);">${t[1]}</span>
-      </div>`).join('')+'</div>';
+      types.filter(t=>t[1]>0).map(t=>`<div style="flex:${t[1]};min-width:28px;height:26px;background:${t[2]};border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;" title="${t[0]}: ${t[1]}">${t[1]>1?t[1]:''}</div>`).join('')+
+      `</div><div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;">`+
+      types.filter(t=>t[1]>0).map(t=>`<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);"><div style="width:8px;height:8px;border-radius:50%;background:${t[2]};"></div>${t[0]} <span style="font-weight:700;color:var(--text);">${t[1]}</span></div>`).join('')+`</div>`;
   }
 
   document.getElementById('membres-tbody').innerHTML=list.map(m=>`<tr>
@@ -1950,54 +2216,179 @@ function renderMembres(){
     ${m.tel?`<div style="font-size:12px;color:var(--text3);margin-top:2px;">📞 ${m.tel}</div>`:''}
   </div>`).join('');
 }
-let _openEventId=null;
+function openMemberModal(){editingMembre=null;document.getElementById('modal-membre-title').textContent='Ajouter un membre';['nom','prenom','role','email','tel','notes','adhesion'].forEach(f=>document.getElementById('m-'+f).value='');document.getElementById('m-type').value='';document.getElementById('m-presence').value='0.8';document.getElementById('modal-membre').classList.add('open');}
+function editMember(id){editingMembre=id;const m=membres.find(x=>x.id===id);document.getElementById('modal-membre-title').textContent='Modifier le membre';document.getElementById('m-nom').value=m.nom;document.getElementById('m-prenom').value=m.prenom;document.getElementById('m-role').value=m.role||'';document.getElementById('m-type').value=m.type||'';document.getElementById('m-email').value=m.email||'';document.getElementById('m-tel').value=m.tel||'';document.getElementById('m-adhesion').value=m.adhesion||'';document.getElementById('m-presence').value=m.presence_attendue||0;document.getElementById('m-notes').value=m.notes||'';document.getElementById('modal-membre').classList.add('open');}
+function saveMember(){
+  const nom=document.getElementById('m-nom').value.trim(),prenom=document.getElementById('m-prenom').value.trim();
+  if(!nom||!prenom){alert('Nom et prénom requis.');return;}
+  const data={nom,prenom,role:document.getElementById('m-role').value,type:document.getElementById('m-type').value,email:document.getElementById('m-email').value,tel:document.getElementById('m-tel').value,adhesion:document.getElementById('m-adhesion').value,presence_attendue:parseFloat(document.getElementById('m-presence').value),notes:document.getElementById('m-notes').value};
+  if(editingMembre){const i=membres.findIndex(m=>m.id===editingMembre);membres[i]={...membres[i],...data};}
+  else{const newId=Math.max(0,...membres.map(m=>m.id))+1;const anneeEnCours=new Date().getFullYear();membres.push({id:newId,...data});cotisations.push({membreId:newId,annee:anneeEnCours,montant:data.type==='Actif'?50:data.type==='Actif Suisse'?30:0,statut:'impaye',datePaiement:'',notes:''});save('gef_cotisations',cotisations);}
+  save('gef_membres',membres);closeModal('modal-membre');renderMembres();
+}
+function deleteMember(id){if(!confirm('Supprimer ce membre ?'))return;membres=membres.filter(m=>m.id!==id);cotisations=cotisations.filter(c=>c.membreId!==id);save('gef_membres',membres);save('gef_cotisations',cotisations);renderMembres();}
 
-function renderEvents(){
-  const filterType=document.getElementById('events-filter-type')?.value||'';
+// ── PRÉSENCES ────────────────────────────────────────────────────
+let _presView = 'rank';
+function setPresView(v){
+  _presView=v;
+  document.getElementById('presences-rank-view').style.display=v==='rank'?'block':'none';
+  document.getElementById('presences-table-view').style.display=v==='table'?'block':'none';
+  document.getElementById('pres-view-rank').className='pres-view-btn'+(v==='rank'?' active':'');
+  document.getElementById('pres-view-table').className='pres-view-btn'+(v==='table'?' active':'');
+}
 
-  // Peupler le filtre types
-  const sel=document.getElementById('events-filter-type');
-  if(sel&&sel.options.length<=1){
-    const types=[...new Set(events.map(e=>e.type))];
-    sel.innerHTML='<option value="">Tous les types</option>'+types.map(t=>`<option value="${t}">${t}</option>`).join('');
+function renderPresences(){
+  const evts=events.slice().sort((a,b)=>a.date.localeCompare(b.date));
+  const q=(document.getElementById('search-presences')?.value||'').toLowerCase();
+  const ft=document.getElementById('filter-presences-type')?.value||'';
+  const list=membres.filter(m=>(m.nom+' '+m.prenom).toLowerCase().includes(q)&&(!ft||m.type===ft));
+
+  // Header sub
+  const sub=document.getElementById('pres-header-sub');
+  if(sub)sub.textContent=`${list.length} membres · ${evts.length} événements`;
+
+  // Stats band
+  const statsEl=document.getElementById('presences-stats-band');
+  if(statsEl){
+    const totalPres=list.reduce((s,m)=>s+evts.filter(e=>presences[m.id+'_'+e.id]).length,0);
+    const possible=list.length*evts.length;
+    const avgPct=possible>0?Math.round(totalPres/possible*100):0;
+    const top=list.map(m=>({name:m.prenom+' '+m.nom,p:evts.filter(e=>presences[m.id+'_'+e.id]).length})).sort((a,b)=>b.p-a.p)[0];
+    const perfect=list.filter(m=>evts.length>0&&evts.every(e=>presences[m.id+'_'+e.id])).length;
+    statsEl.innerHTML=`
+      <div class="pres-stat-card"><div class="pres-stat-icon" style="background:#eff6ff;">📅</div><div><div class="pres-stat-label">Événements</div><div class="pres-stat-val">${evts.length}</div></div></div>
+      <div class="pres-stat-card"><div class="pres-stat-icon" style="background:${avgPct>=70?'#f0fdf4':'#fffbeb'};">${avgPct>=70?'📈':'📊'}</div><div><div class="pres-stat-label">Taux moyen</div><div class="pres-stat-val" style="color:${avgPct>=70?'var(--green)':avgPct>=40?'var(--gold)':'var(--red)'};">${avgPct}%</div></div></div>
+      <div class="pres-stat-card"><div class="pres-stat-icon" style="background:#fff9eb;">🏅</div><div><div class="pres-stat-label">100% présent</div><div class="pres-stat-val">${perfect}</div></div></div>
+    `;
   }
 
-  const sorted=events.slice().sort((a,b)=>b.date.localeCompare(a.date));
-  const filtered=filterType?sorted.filter(e=>e.type===filterType):sorted;
+  // VUE CLASSEMENT
+  const rankEl=document.getElementById('presences-rank-view');
+  if(rankEl){
+    const ranked=list.map(m=>{
+      const p=evts.filter(e=>presences[m.id+'_'+e.id]).length;
+      const pct=evts.length>0?Math.round((p/evts.length)*100):0;
+      return{...m,p,pct};
+    }).sort((a,b)=>b.pct-a.pct);
 
-  // Stats en haut
-  const total=events.length;
-  const maraudes=events.filter(e=>e.type==='Maraude').length;
-  const reunions=events.filter(e=>e.type==='Réunion').length;
+    // Séparer par zone
+    const top=ranked.filter(m=>m.pct>=70);
+    const mid=ranked.filter(m=>m.pct>=40&&m.pct<70);
+    const low=ranked.filter(m=>m.pct<40);
+
+    const renderGroup=(title,icon,color,bg,list)=>list.length===0?'':
+      `<div class="pres-group">
+        <div class="pres-group-header" style="background:${bg};border-left:3px solid ${color};">
+          <span>${icon} ${title}</span>
+          <span style="font-size:11px;font-weight:700;color:${color};">${list.length} membre${list.length>1?'s':''}</span>
+        </div>
+        ${list.map((m,idx)=>{
+          const medal=m.pct===100?'🥇':m.pct>=80?'🥈':m.pct>=70?'🥉':'';
+          const initials=(m.prenom[0]||'')+(m.nom[0]||'');
+          const dots=evts.map(e=>{
+            const isP=!!presences[m.id+'_'+e.id];
+            return`<span class="pres-dot-mini ${isP?'pres-dot-mini-yes':'pres-dot-mini-no'}" 
+              title="${e.nom||e.type} · ${fmtDate(e.date)}"
+              onclick="togglePresenceRank(${m.id},${e.id},this)"></span>`;
+          }).join('');
+          return`<div class="pres-rank-row" data-mid="${m.id}">
+            <div class="pres-rank-avatar" style="background:${color};">${initials}</div>
+            <div class="pres-rank-info">
+              <div class="pres-rank-name">${medal} ${m.prenom} ${m.nom} <span style="margin-left:4px;">${badgeType(m.type)}</span></div>
+              <div class="pres-dots-mini">${dots}</div>
+            </div>
+            <div class="pres-rank-right">
+              <div class="pres-rank-pct" style="color:${color};">${m.pct}%</div>
+              <div class="pres-rank-bar"><div class="pres-rank-fill" style="width:${m.pct}%;background:${color};"></div></div>
+              <div class="pres-rank-count">${m.p}/${evts.length}</div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`;
+
+    rankEl.innerHTML=
+      renderGroup('Excellente présence','🟢','var(--green)','#f0fdf4',top)+
+      renderGroup('Présence moyenne','🟡','var(--gold)','#fffbeb',mid)+
+      renderGroup('Présence faible','🔴','var(--red)','#fff1f0',low)+
+      (ranked.length===0?'<div style="text-align:center;padding:32px;color:var(--text3);">Aucun membre</div>':'');
+  }
+
+  // VUE TABLEAU
+  document.getElementById('presence-thead').innerHTML=`<tr><th style="min-width:120px">Membre</th><th>Type</th>${evts.map(e=>`<th class="event-header" title="${e.nom||e.type}">${(e.nom||e.type).slice(0,8)}<br><span style="font-size:9px;opacity:0.6">${fmtDate(e.date)}</span></th>`).join('')}<th>%</th></tr>`;
+  document.getElementById('presence-tbody').innerHTML=list.map(m=>{
+    const p=evts.filter(e=>presences[m.id+'_'+e.id]).length;
+    const pct=evts.length>0?Math.round((p/evts.length)*100):0;
+    const color=pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';
+    return`<tr>
+      <td class="td-name" style="font-size:12px;white-space:nowrap;">${m.prenom} ${m.nom}</td>
+      <td>${badgeType(m.type)}</td>
+      ${evts.map(e=>`<td style="text-align:center;cursor:pointer;padding:10px 6px" onclick="togglePresence(${m.id},${e.id},this)"><span class="dot ${presences[m.id+'_'+e.id]?'dot-yes':'dot-no'}"></span></td>`).join('')}
+      <td><div style="display:flex;align-items:center;gap:6px;min-width:80px;">
+        <div class="pct-bar"><div class="pct-fill" style="width:${pct}%;background:${color}"></div></div>
+        <span style="font-size:11px;font-weight:700;color:${color}">${pct}%</span>
+      </div></td>
+    </tr>`;
+  }).join('');
+  setPresView(_presView);
+}
+
+function togglePresenceRank(mid,eid,dotEl){
+  const key=mid+'_'+eid;
+  presences[key]=!presences[key];
+  save('gef_presences',presences);
+  dotEl.className='pres-dot-mini '+(presences[key]?'pres-dot-mini-yes':'pres-dot-mini-no');
+  // Recalculer le % de la ligne
+  const row=document.querySelector(`.pres-rank-row[data-mid="${mid}"]`);
+  if(row){
+    const evts=events.slice().sort((a,b)=>a.date.localeCompare(b.date));
+    const p=evts.filter(e=>presences[mid+'_'+e.id]).length;
+    const pct=evts.length>0?Math.round((p/evts.length)*100):0;
+    const color=pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';
+    const pctEl=row.querySelector('.pres-rank-pct');
+    if(pctEl){pctEl.textContent=pct+'%';pctEl.style.color=color;}
+    const fill=row.querySelector('.pres-rank-fill');
+    if(fill){fill.style.width=pct+'%';fill.style.background=color;}
+    const cnt=row.querySelector('.pres-rank-count');
+    if(cnt)cnt.textContent=p+'/'+evts.length;
+  }
+}
+
+function togglePresenceCard(mid,eid,dotEl){togglePresenceRank(mid,eid,dotEl);}
+
+function togglePresence(mid,eid,td){
+  const key=mid+'_'+eid;
+  presences[key]=!presences[key];
+  save('gef_presences',presences);
+  td.innerHTML=`<span class="dot ${presences[key]?'dot-yes':'dot-no'}"></span>`;
+  const evts=events.slice().sort((a,b)=>a.date.localeCompare(b.date));
+  const p=evts.filter(e=>presences[mid+'_'+e.id]).length;
+  const pct=evts.length>0?Math.round((p/evts.length)*100):0;
+  const color=pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';
+  td.closest('tr').querySelector('td:last-child').innerHTML=`<div style="display:flex;align-items:center;gap:6px;min-width:80px;"><div class="pct-bar"><div class="pct-fill" style="width:${pct}%;background:${color}"></div></div><span style="font-size:11px;font-weight:700;color:${color}">${pct}%</span></div>`;
+}
+
+
+
+// ── MEMBRES ── TRI ────────────────────────────────────────────────
+let _sortDir=1;
+function toggleSortDir(){
+  _sortDir*=-1;
+  const btn=document.getElementById('sort-dir-btn');
+  if(btn)btn.textContent=_sortDir===1?'↑↓':'↓↑';
+  renderMembres();
+}
+
+function _buildEventListHTML(filtered){
   const today=new Date().toISOString().slice(0,10);
-  const aVenir=events.filter(e=>e.date>=today).length;
-  document.getElementById('events-stats-row').innerHTML=`
-    <div class="stat-card" style="padding:12px 14px;">
-      <div class="stat-label">Total</div>
-      <div class="stat-value" style="font-size:22px;">${total}</div>
-      <div style="font-size:10px;color:var(--text3);margin-top:2px;">${aVenir} à venir</div>
-    </div>
-    <div class="stat-card" style="padding:12px 14px;">
-      <div class="stat-label">Maraudes</div>
-      <div class="stat-value" style="font-size:22px;color:var(--gold);">${maraudes}</div>
-    </div>
-    <div class="stat-card" style="padding:12px 14px;">
-      <div class="stat-label">Réunions</div>
-      <div class="stat-value" style="font-size:22px;color:var(--red);">${reunions}</div>
-    </div>
-  `;
-
-  // Grouper par mois
   const byMonth={};
-  filtered.forEach(e=>{
+  filtered.slice().sort((a,b)=>b.date.localeCompare(a.date)).forEach(e=>{
     const [y,m]=e.date.split('-');
     const key=`${y}-${m}`;
     if(!byMonth[key])byMonth[key]=[];
     byMonth[key].push(e);
   });
-
   const moisNoms=['','Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
-
   let html='';
   Object.entries(byMonth).sort((a,b)=>b[0].localeCompare(a[0])).forEach(([key,evts])=>{
     const [y,m]=key.split('-');
@@ -2008,40 +2399,29 @@ function renderEvents(){
       const isOpen=_openEventId===e.id;
       const isPast=e.date<today;
       const joursRestantsEvt=isPast?-1:Math.round((new Date(e.date)-new Date())/86400000);
+      // Trouver la couleur de la sous-page correspondante
+      const sp=event_subpages.find(s=>s.types.includes(e.type));
       const chipCls=e.type==='Maraude'?'event-chip-maraude':e.type==='Réunion'?'event-chip-reunion':'event-chip-autre';
       const barColor=pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';
-
-      // Corps présences inline
+      const eventIcon=event_subpages.find(s=>s.types.includes(e.type))?.emoji||(e.type==='Maraude'?'🤝':e.type==='Réunion'?'📋':'📌');
       const presencesHtml=membres.map(mb=>{
         const p=!!presences[mb.id+'_'+e.id];
         return`<div class="presence-inline-item ${p?'present':''}" onclick="togglePresenceInline(${mb.id},${e.id},this)">
           <div class="pi-check">${p?'✓':''}</div>
-          <div style="min-width:0;">
-            <div class="pi-name">${mb.prenom} ${mb.nom}</div>
-            <div class="pi-type">${mb.type||'—'}</div>
-          </div>
+          <div style="min-width:0;"><div class="pi-name">${mb.prenom} ${mb.nom}</div><div class="pi-type">${mb.type||'—'}</div></div>
         </div>`;
       }).join('');
-
       html+=`<div class="event-row${isOpen?' open':''}" id="event-row-${e.id}">
-        <!-- HEADER cliquable -->
         <div class="event-row-header" onclick="toggleEventRow(${e.id})">
-          <!-- Icône -->
-          <div style="width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;background:${e.type==='Maraude'?'#fffbeb':e.type==='Réunion'?'#fff1f0':'var(--bg3)'};">
-            ${e.type==='Maraude'?'🤝':e.type==='Réunion'?'📋':'📌'}
-          </div>
-          <!-- Infos -->
+          <div style="width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;background:${sp?sp.couleur+'22':'var(--bg3)'};">${eventIcon}</div>
           <div class="event-row-meta">
             <div class="event-row-title">${e.nom||e.type}</div>
             <div class="event-row-sub">
               <span class="event-chip ${chipCls}" style="font-size:10px;padding:2px 7px;">${e.type}</span>
               <span>${fmtDate(e.date)}</span>
-              ${isPast
-                ?'<span style="color:var(--text3);">· Passé</span>'
-                :`<span style="color:var(--green);font-weight:700;">· ${joursRestantsEvt===0?'Auj.':joursRestantsEvt===1?'Demain':'Dans '+joursRestantsEvt+'j'}</span>`}
+              ${isPast?'<span style="color:var(--text3);">· Passé</span>':`<span style="color:var(--green);font-weight:700;">· ${joursRestantsEvt===0?'Auj.':joursRestantsEvt===1?'Demain':'Dans '+joursRestantsEvt+'j'}</span>`}
             </div>
           </div>
-          <!-- Compteur présences -->
           <div class="event-row-pct">
             <div style="text-align:right;">
               <div style="font-size:14px;font-weight:800;color:${barColor};">${count}<span style="font-size:11px;font-weight:400;color:var(--text3);">/${membres.length}</span></div>
@@ -2049,13 +2429,9 @@ function renderEvents(){
             </div>
             <div style="font-size:10px;color:var(--text3);width:28px;text-align:right;">${pct}%</div>
           </div>
-          <!-- Chevron animé -->
           <div class="event-row-chevron" style="font-size:18px;color:var(--text3);transition:transform 0.25s;${isOpen?'transform:rotate(180deg)':''}">⌄</div>
         </div>
-
-        <!-- CORPS accordéon -->
         <div class="event-row-body" id="event-body-${e.id}">
-          <!-- Actions rapides -->
           <div class="event-row-actions">
             <button class="btn btn-sm btn-green" onclick="toggleAllPresencesInline(${e.id},true);event.stopPropagation()">✓ Tous présents</button>
             <button class="btn btn-sm btn-secondary" onclick="toggleAllPresencesInline(${e.id},false);event.stopPropagation()">✗ Tous absents</button>
@@ -2063,20 +2439,88 @@ function renderEvents(){
             <button class="btn btn-sm btn-secondary" style="color:var(--red);" onclick="deleteEvent(${e.id});event.stopPropagation()">🗑️ Supprimer</button>
           </div>
           ${e.commentaires?`<div style="font-size:13px;color:var(--text2);background:var(--bg3);border-radius:10px;padding:10px 14px;margin-bottom:14px;border:1px solid var(--border);display:flex;gap:8px;align-items:flex-start;"><span>💬</span><span>${e.commentaires}</span></div>`:''}
-          <!-- Label -->
           <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;">
-            <span>Présences</span>
-            <span style="font-size:11px;font-weight:600;color:${barColor};">${count} / ${membres.length}</span>
+            <span>Présences</span><span style="font-size:11px;font-weight:600;color:${barColor};">${count} / ${membres.length}</span>
           </div>
-          <!-- Grille présences -->
           <div class="presence-inline-grid" id="presence-grid-${e.id}">${presencesHtml}</div>
         </div>
       </div>`;
     });
   });
+  return html||'<p style="color:var(--text3);text-align:center;padding:32px 0;font-size:14px;">Aucun événement pour cette catégorie.<br><button class="btn btn-primary btn-sm" style="margin-top:10px;" onclick="openEventModal()">+ Ajouter un événement</button></p>';
+}
 
-  if(!html)html='<p style="color:var(--text3);text-align:center;padding:32px 0;font-size:14px;">Aucun événement</p>';
-  document.getElementById('events-list').innerHTML=html;
+function renderEvents(){
+  const today=new Date().toISOString().slice(0,10);
+  const totalAll=events.length;
+  const aVenir=events.filter(e=>e.date>=today).length;
+
+  // Header
+  const sub=document.getElementById('events-header-sub');
+  if(sub)sub.textContent=`${totalAll} événement${totalAll>1?'s':''} · ${aVenir} à venir`;
+
+  // Stats globales
+  const statsEl=document.getElementById('events-stats-row');
+  if(statsEl){
+    // Compter par sous-pages non-défaut
+    const customSps=event_subpages.filter(s=>!s.isDefault).slice(0,2);
+    statsEl.innerHTML=`
+      <div class="stat-card" style="padding:12px 14px;">
+        <div class="stat-label">Total</div><div class="stat-value" style="font-size:22px;">${totalAll}</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px;">${aVenir} à venir</div>
+      </div>
+      ${customSps.map(sp=>{
+        const cnt=events.filter(e=>sp.types.length===0||sp.types.includes(e.type)).length;
+        return`<div class="stat-card" style="padding:12px 14px;">
+          <div class="stat-label">${sp.emoji} ${sp.nom}</div>
+          <div class="stat-value" style="font-size:22px;color:${sp.couleur};">${cnt}</div>
+        </div>`;
+      }).join('')}
+      ${customSps.length<2?'<div class="stat-card" style="padding:12px 14px;"><div class="stat-label">Types</div><div class="stat-value" style="font-size:22px;">${eventTypes.length}</div></div>':''}
+    `;
+  }
+
+  // Barre d'onglets
+  const tabBar=document.getElementById('evsp-tab-bar');
+  if(tabBar){
+    tabBar.innerHTML=event_subpages.map(sp=>`
+      <button class="evsp-tab${_activeSubpage===sp.id?' active':''}" onclick="setActiveSubpage(${sp.id})">
+        <div class="evsp-tab-dot" style="background:${sp.couleur};"></div>
+        ${sp.emoji} ${sp.nom}
+      </button>`).join('')+
+      `<button class="evsp-tab evsp-tab-manage" onclick="openManageSubpages()" title="Gérer les sous-pages">⚙️</button>`;
+  }
+
+  // Contenu de l'onglet actif
+  const sp=event_subpages.find(s=>s.id===_activeSubpage)||event_subpages[0];
+  const filtered=sp.types.length===0?events:events.filter(e=>sp.types.includes(e.type));
+  const aVenirSp=filtered.filter(e=>e.date>=today).length;
+  const totalPres=filtered.reduce((s,e)=>s+membres.filter(m=>presences[m.id+'_'+e.id]).length,0);
+  const avgPct=filtered.length>0&&membres.length>0?Math.round(totalPres/(filtered.length*membres.length)*100):0;
+
+  const content=document.getElementById('evsp-content');
+  if(content){
+    content.innerHTML=`
+      <div class="evsp-section-kpi">
+        <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:${sp.couleur}22;">${sp.emoji}</div>
+          <div><div class="stat-kpi-label">Total</div><div class="stat-kpi-val">${filtered.length}</div></div></div>
+        <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:#eff6ff;">🔜</div>
+          <div><div class="stat-kpi-label">À venir</div><div class="stat-kpi-val" style="color:${sp.couleur};">${aVenirSp}</div></div></div>
+        <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:${avgPct>=70?'#f0fdf4':'#fffbeb'};">📊</div>
+          <div><div class="stat-kpi-label">Présence moy.</div><div class="stat-kpi-val" style="color:${avgPct>=70?'var(--green)':avgPct>=40?'var(--gold)':'var(--red)'};">${avgPct}%</div></div></div>
+      </div>
+      <div id="events-list">${_buildEventListHTML(filtered)}</div>`;
+  }
+}
+
+function setActiveSubpage(id){
+  _activeSubpage=id;
+  renderEvents();
+  // Scroll l'onglet actif en vue
+  setTimeout(()=>{
+    const tab=document.querySelector(`.evsp-tab.active`);
+    if(tab)tab.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  },50);
 }
 
 function toggleEventRow(eid){
@@ -2434,26 +2878,54 @@ function renderCompta(){
 
 // ── STATISTIQUES ─────────────────────────────────────────────────
 function renderStatistiques(){
-  // Présences par membre
-  const presData=membres.map(m=>{const p=events.filter(e=>presences[m.id+'_'+e.id]).length;return{label:m.prenom+' '+m.nom,val:events.length>0?Math.round((p/events.length)*100):0};}).sort((a,b)=>b.val-a.val);
-  document.getElementById('stat-presence-chart').innerHTML=presData.map(d=>`<div class="chart-bar-row"><div class="chart-bar-label">${d.label}</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:${d.val}%;background:${d.val>=70?'#e63329':d.val>=40?'#c49a00':'#d1d5db'}">${d.val>10?d.val+'%':''}</div></div><div class="chart-bar-val">${d.val}%</div></div>`).join('');
-  // Présences par événement
-  const evData=events.map(e=>{const c=membres.filter(m=>presences[m.id+'_'+e.id]).length;const pct=membres.length>0?Math.round((c/membres.length)*100):0;return{label:e.nom||e.type,val:pct,count:c};}).sort((a,b)=>b.val-a.val);
-  document.getElementById('stat-event-chart').innerHTML=evData.map(d=>`<div class="chart-bar-row"><div class="chart-bar-label">${d.label}</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:${d.val}%;background:#e63329">${d.val>10?d.val+'%':''}</div></div><div class="chart-bar-val">${d.count}</div></div>`).join('');
-  // Cotisations
-  const annee=2026;const payees=cotisations.filter(c=>c.annee===annee&&c.statut==='paye').length;const total=cotisations.filter(c=>c.annee===annee).length;
-  document.getElementById('stat-cotis-chart').innerHTML=`
-    <div class="chart-bar-row"><div class="chart-bar-label">Payées</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:${total>0?Math.round(payees/total*100):0}%;background:#16a34a">${payees}</div></div><div class="chart-bar-val">${total>0?Math.round(payees/total*100):0}%</div></div>
-    <div class="chart-bar-row"><div class="chart-bar-label">En attente</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:${total>0?Math.round((total-payees)/total*100):0}%;background:#e63329">${total-payees}</div></div><div class="chart-bar-val">${total>0?Math.round((total-payees)/total*100):0}%</div></div>
-  `;
-  // Par type d'événement
-  document.getElementById('stat-type-chart').innerHTML=eventTypes.map(type=>{
-    const evs=events.filter(e=>e.type===type);if(!evs.length)return'';
-    const avgPct=evs.length>0?Math.round(evs.map(e=>{const c=membres.filter(m=>presences[m.id+'_'+e.id]).length;return membres.length>0?c/membres.length*100:0;}).reduce((a,b)=>a+b,0)/evs.length):0;
-    return`<div class="chart-bar-row"><div class="chart-bar-label">${type} (${evs.length})</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:${avgPct}%;background:${type==='Maraude'?'#c49a00':'#e63329'}">${avgPct>10?avgPct+'%':''}</div></div><div class="chart-bar-val">${avgPct}%</div></div>`;
-  }).join('');
-}
+  const totalPres=membres.length*events.length>0?Math.round(membres.reduce((s,m)=>s+events.filter(e=>presences[m.id+'_'+e.id]).length,0)/(membres.length*events.length)*100):0;
+  const cotisPayees=cotisations.filter(c=>c.statut==='paye').length;
+  const cotisTotal=cotisations.length;
+  const totalIn=compta.filter(c=>c.type==='recette').reduce((s,c)=>s+c.montant,0);
+  const totalOut=compta.filter(c=>c.type==='depense').reduce((s,c)=>s+c.montant,0);
+  const solde=totalIn-totalOut;
 
+  // Header sub + KPI
+  const sub=document.getElementById('stats-header-sub');
+  if(sub)sub.textContent=`${membres.length} membres · ${events.length} événements · ${cotisPayees}/${cotisTotal} cotisations`;
+  const kpiEl=document.getElementById('stats-kpi-row');
+  if(kpiEl)kpiEl.innerHTML=`
+    <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:#fff1f0;">📊</div><div><div class="stat-kpi-label">Taux présence</div><div class="stat-kpi-val" style="color:${totalPres>=70?'var(--green)':totalPres>=40?'var(--gold)':'var(--red)'};">${totalPres}%</div></div></div>
+    <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:#eff6ff;">💳</div><div><div class="stat-kpi-label">Cotisations</div><div class="stat-kpi-val">${cotisPayees}<span style="font-size:13px;color:var(--text3);">/${cotisTotal}</span></div></div></div>
+    <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:${solde>=0?'#f0fdf4':'#fff1f0'};">${solde>=0?'💚':'🔴'}</div><div><div class="stat-kpi-label">Solde</div><div class="stat-kpi-val" style="color:${solde>=0?'var(--green)':'var(--red)'};">${solde>=0?'+':''}${solde.toFixed(0)} <span style="font-size:10px;font-weight:400;color:var(--text3);">CHF</span></div></div></div>
+  `;
+
+  // Présence par membre
+  const presData=membres.map(m=>{const p=events.filter(e=>presences[m.id+'_'+e.id]).length;return{label:m.prenom+' '+m.nom,val:events.length>0?Math.round((p/events.length)*100):0};}).sort((a,b)=>b.val-a.val);
+  document.getElementById('stat-presence-chart').innerHTML=presData.map((d,i)=>`<div class="chart-bar-row" style="animation:fadeUp 0.3s ease both;animation-delay:${i*0.02}s;"><div class="chart-bar-label">${d.label}</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:${d.val}%;background:${d.val>=70?'var(--green)':d.val>=40?'var(--gold)':'var(--red)'};">${d.val>15?d.val+'%':''}</div></div><div class="chart-bar-val" style="color:${d.val>=70?'var(--green)':d.val>=40?'var(--gold)':'var(--red)'};">${d.val}%</div></div>`).join('');
+
+  // Présences par événement
+  const evData=events.map(e=>{const c=membres.filter(m=>presences[m.id+'_'+e.id]).length;const pct=membres.length>0?Math.round((c/membres.length)*100):0;return{label:(e.nom||e.type).slice(0,22),val:pct,count:c};}).sort((a,b)=>b.val-a.val);
+  document.getElementById('stat-event-chart').innerHTML=evData.map((d,i)=>`<div class="chart-bar-row" style="animation:fadeUp 0.3s ease both;animation-delay:${i*0.03}s;"><div class="chart-bar-label">${d.label}</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:${d.val}%;background:var(--red);">${d.val>15?d.val+'%':''}</div></div><div class="chart-bar-val">${d.count}</div></div>`).join('');
+
+  // Top 3
+  const medals=['🥇','🥈','🥉'];
+  document.getElementById('stat-top3').innerHTML=presData.slice(0,3).map((d,i)=>`<div class="top3-card"><div class="top3-medal">${medals[i]}</div><div class="top3-name">${d.label}</div><div class="top3-pct" style="color:${d.val>=70?'var(--green)':d.val>=40?'var(--gold)':'var(--red)'};">${d.val}%</div></div>`).join('');
+
+  // Cotisations
+  const payees=cotisations.filter(c=>c.statut==='paye').length;
+  const impayees=cotisations.filter(c=>c.statut==='impaye').length;
+  const exos=cotisations.filter(c=>c.statut==='exonere').length;
+  const maxC=Math.max(payees,impayees,exos,1);
+  document.getElementById('stat-cotis-chart').innerHTML=[['Payées',payees,'var(--green)'],['Impayées',impayees,'var(--red)'],['Exonérées',exos,'var(--text3)']].map(b=>`<div class="chart-bar-row"><div class="chart-bar-label">${b[0]}</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:${Math.round(b[1]/maxC*100)}%;background:${b[2]};">${b[1]||''}</div></div><div class="chart-bar-val" style="color:${b[2]};">${b[1]}</div></div>`).join('');
+
+  // Donut cotisations
+  const dTotal=Math.max(payees+impayees+exos,1);
+  const donutData=[['Payées',payees,'#22c55e'],['Impayées',impayees,'#e63329'],['Exonérées',exos,'#9ca3af']];
+  const svgEl=document.getElementById('stat-cotis-donut');
+  if(svgEl){let off=0;const r=46,cx=60,cy=60,sw=20;svgEl.innerHTML=donutData.map(d=>{if(!d[1])return'';const pct=d[1]/dTotal;const dash=pct*2*Math.PI*r;const gap=(1-pct)*2*Math.PI*r;const s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${d[2]}" stroke-width="${sw}" stroke-dasharray="${dash} ${gap}" stroke-dashoffset="${-off*2*Math.PI*r}" transform="rotate(-90 ${cx} ${cy})"/>`;off+=pct;return s;}).join('');}
+  const legEl=document.getElementById('stat-cotis-donut-legend');
+  if(legEl)legEl.innerHTML=donutData.map(d=>`<div style="display:flex;align-items:center;gap:6px;font-size:12px;"><div style="width:8px;height:8px;border-radius:50%;background:${d[2]};"></div>${d[0]}: <strong>${d[1]}</strong></div>`).join('');
+
+  // Événements par type
+  const typeEl=document.getElementById('stat-type-chart');
+  if(typeEl){const types=[...new Set(events.map(e=>e.type))];const data=types.map(t=>{const evs=events.filter(e=>e.type===t);const avg=evs.length>0&&membres.length>0?Math.round(evs.reduce((s,e)=>s+membres.filter(m=>presences[m.id+'_'+e.id]).length,0)/(evs.length*membres.length)*100):0;return{label:t,count:evs.length,avg};}).sort((a,b)=>b.count-a.count);const maxT=Math.max(...data.map(d=>d.count),1);typeEl.innerHTML=data.map(d=>`<div class="chart-bar-row"><div class="chart-bar-label">${d.label}</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:${Math.round(d.count/maxT*100)}%;background:var(--red);">${d.count||''}</div></div><div class="chart-bar-val">${d.count} · <span style="color:var(--text3);font-size:10px;">${d.avg}%</span></div></div>`).join('');}
+}
 // ── EMAILS ───────────────────────────────────────────────────────
 let emailSelectionnes = new Set();
 let emailFichiers = [];
@@ -2697,138 +3169,454 @@ function exportRapportTxt(){
 
 // ── DOCUMENTS ────────────────────────────────────────────────────
 let documents_list = [];
+let _currentFolder = null; // null = racine
+
+function creerDossier(){
+  const nom=prompt('Nom du dossier :');
+  if(!nom||!nom.trim())return;
+  const folder={
+    id:Date.now()+Math.random(),
+    type:'folder',
+    nom:nom.trim(),
+    date:new Date().toISOString().slice(0,10),
+    parentId:_currentFolder,
+    ajoutePar:'Moi'
+  };
+  documents_list.push(folder);
+  save('gef_documents',documents_list);
+  renderDocuments();
+}
+
+function ouvrirDossier(id){
+  _currentFolder=id;
+  renderDocuments();
+}
+
+function renommerDossier(id){
+  const f=documents_list.find(d=>d.id===id);
+  if(!f)return;
+  const nom=prompt('Nouveau nom :',f.nom);
+  if(!nom||!nom.trim())return;
+  f.nom=nom.trim();
+  save('gef_documents',documents_list);
+  renderDocuments();
+}
 
 function ajouterDocuments(input){
-  const files = Array.from(input.files);
-  files.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const doc = {
-        id: Date.now() + Math.random(),
-        nom: file.name,
-        taille: file.size,
-        type: file.type,
-        categorie: detectCategorie(file.name),
-        date: new Date().toISOString().slice(0,10),
-        ajoutePar: 'Moi',
-        data: e.target.result
+  const files=Array.from(input.files);
+  files.forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const doc={
+        id:Date.now()+Math.random(),
+        type:'file',
+        nom:file.name,
+        taille:file.size,
+        mimeType:file.type,
+        categorie:detectCategorie(file.name),
+        date:new Date().toISOString().slice(0,10),
+        ajoutePar:'Moi',
+        parentId:_currentFolder,
+        data:e.target.result
       };
       documents_list.push(doc);
-      save('gef_documents', documents_list);
+      save('gef_documents',documents_list);
       renderDocuments();
     };
     reader.readAsDataURL(file);
   });
-  input.value = '';
+  input.value='';
 }
 
 function detectCategorie(nom){
-  const n = nom.toLowerCase();
-  if(n.includes('reunion') || n.includes('réunion') || n.includes('ag')) return 'Réunion';
-  if(n.includes('budget') || n.includes('compta') || n.includes('finance')) return 'Finance';
-  if(n.includes('maraude')) return 'Maraude';
-  if(n.includes('statut')) return 'Statuts';
-  return 'Autre';
+  const n=nom.toLowerCase();
+  if(n.includes('reunion')||n.includes('réunion')||n.includes('ag'))return'Réunion';
+  if(n.includes('budget')||n.includes('compta')||n.includes('finance'))return'Finance';
+  if(n.includes('maraude'))return'Maraude';
+  if(n.includes('statut'))return'Statuts';
+  return'Autre';
 }
 
 function formatSize(bytes){
-  if(bytes < 1024) return bytes + ' o';
-  if(bytes < 1048576) return Math.round(bytes/1024) + ' Ko';
-  return (bytes/1048576).toFixed(1) + ' Mo';
+  if(bytes<1024)return bytes+' o';
+  if(bytes<1048576)return Math.round(bytes/1024)+' Ko';
+  return(bytes/1048576).toFixed(1)+' Mo';
 }
 
-function docIcon(type, nom){
-  const ext = nom.split('.').pop().toLowerCase();
-  if(['pdf'].includes(ext)) return {icon:'📄', cls:'doc-icon-pdf'};
-  if(['jpg','jpeg','png','gif','webp'].includes(ext)) return {icon:'🖼️', cls:'doc-icon-img'};
-  if(['xls','xlsx','csv'].includes(ext)) return {icon:'📊', cls:'doc-icon-xls'};
-  if(['ppt','pptx'].includes(ext)) return {icon:'📊', cls:'doc-icon-ppt'};
-  if(['doc','docx'].includes(ext)) return {icon:'📝', cls:'doc-icon-default'};
-  return {icon:'📁', cls:'doc-icon-default'};
+function docIcon(nom){
+  const ext=(nom||'').split('.').pop().toLowerCase();
+  if(ext==='pdf')return{icon:'📄',color:'#e63329'};
+  if(['jpg','jpeg','png','gif','webp'].includes(ext))return{icon:'🖼️',color:'#7c3aed'};
+  if(['xls','xlsx','csv'].includes(ext))return{icon:'📊',color:'#16a34a'};
+  if(['ppt','pptx'].includes(ext))return{icon:'📊',color:'#ea580c'};
+  if(['doc','docx'].includes(ext))return{icon:'📝',color:'#2563eb'};
+  if(['zip','rar'].includes(ext))return{icon:'📦',color:'#92400e'};
+  return{icon:'📎',color:'var(--text3)'};
 }
 
 function telechargerDoc(id){
-  const doc = documents_list.find(d => d.id === id);
-  if(!doc) return;
-  const a = document.createElement('a');
-  a.href = doc.data;
-  a.download = doc.nom;
-  a.click();
+  const doc=documents_list.find(d=>d.id===id);
+  if(!doc)return;
+  const a=document.createElement('a');
+  a.href=doc.data;a.download=doc.nom;a.click();
 }
 
 function supprimerDoc(id){
-  if(!confirm('Supprimer ce document ?')) return;
-  documents_list = documents_list.filter(d => d.id !== id);
-  save('gef_documents', documents_list);
+  const doc=documents_list.find(d=>d.id===id);
+  if(!doc)return;
+  if(doc.type==='folder'){
+    const count=documents_list.filter(d=>d.parentId===id).length;
+    if(count>0&&!confirm(`Ce dossier contient ${count} élément(s). Supprimer quand même ?`))return;
+    // Supprimer récursivement
+    const toDelete=[id];
+    const collectChildren=(pid)=>{documents_list.filter(d=>d.parentId===pid).forEach(d=>{toDelete.push(d.id);if(d.type==='folder')collectChildren(d.id);});};
+    collectChildren(id);
+    documents_list=documents_list.filter(d=>!toDelete.includes(d.id));
+  } else {
+    if(!confirm('Supprimer ce document ?'))return;
+    documents_list=documents_list.filter(d=>d.id!==id);
+  }
+  save('gef_documents',documents_list);
   renderDocuments();
 }
 
 function renderDocuments(){
-  const q = (document.getElementById('search-docs')?.value || '').toLowerCase();
-  const cat = document.getElementById('filter-doc-cat')?.value || '';
-  const list = documents_list.filter(d =>
-    d.nom.toLowerCase().includes(q) && (!cat || d.categorie === cat)
-  );
+  const q=(document.getElementById('search-docs')?.value||'').toLowerCase();
+  const cat=document.getElementById('filter-doc-cat')?.value||'';
+
+  // Items dans le dossier courant
+  const inFolder=documents_list.filter(d=>d.parentId===_currentFolder);
+  const list=inFolder.filter(d=>{
+    if(d.type==='folder')return d.nom.toLowerCase().includes(q);
+    return d.nom.toLowerCase().includes(q)&&(!cat||d.categorie===cat);
+  });
+
+  // Breadcrumb
+  const bcEl=document.getElementById('docs-breadcrumb');
+  if(bcEl){
+    const crumbs=[{id:null,nom:'📁 Tous les documents'}];
+    let cur=_currentFolder;
+    const path=[];
+    while(cur){const f=documents_list.find(d=>d.id===cur&&d.type==='folder');if(!f)break;path.unshift({id:f.id,nom:f.nom});cur=f.parentId;}
+    const all=[...crumbs,...path];
+    bcEl.innerHTML=all.map((c,i)=>`
+      <span onclick="ouvrirDossier(${JSON.stringify(c.id)})" style="cursor:pointer;font-size:12px;font-weight:${i===all.length-1?'700':'500'};color:${i===all.length-1?'var(--text)':'var(--red)'};padding:4px 8px;border-radius:8px;background:${i===all.length-1?'var(--bg3)':'transparent'};">${c.nom}</span>
+      ${i<all.length-1?'<span style="color:var(--text3);font-size:12px;">›</span>':''}
+    `).join('');
+  }
+
   // Stats
-  const statsEl = document.getElementById('docs-stats');
+  const statsEl=document.getElementById('docs-stats');
   if(statsEl){
-    const total = documents_list.length;
-    const totalSize = documents_list.reduce((s,d)=>s+d.taille,0);
-    statsEl.innerHTML = `
-      <span class="badge badge-doc">${total} document${total>1?'s':''}</span>
-      <span class="badge badge-none">${formatSize(totalSize)} total</span>
+    const total=documents_list.filter(d=>d.type==='file').length;
+    const folders=documents_list.filter(d=>d.type==='folder').length;
+    const totalSize=documents_list.filter(d=>d.type==='file').reduce((s,d)=>s+(d.taille||0),0);
+    const sub=document.getElementById('docs-header-sub');
+    if(sub)sub.textContent=`${total} document${total>1?'s':''} · ${folders} dossier${folders>1?'s':''} · ${formatSize(totalSize)}`;
+    statsEl.innerHTML=`
+      <span class="badge" style="background:var(--bg3);color:var(--text2);font-size:11px;">📄 ${total} doc${total>1?'s':''}</span>
+      <span class="badge" style="background:var(--bg3);color:var(--text2);font-size:11px;">📁 ${folders} dossier${folders>1?'s':''}</span>
+      <span class="badge" style="background:var(--bg3);color:var(--text2);font-size:11px;">${formatSize(totalSize)}</span>
     `;
   }
-  // Tableau desktop
-  const tbody = document.getElementById('docs-tbody');
-  if(tbody){
-    tbody.innerHTML = list.length ? list.map(d => {
-      const ic = docIcon(d.type, d.nom);
-      return `<tr>
-        <td><div style="display:flex;align-items:center;gap:10px;">
-          <div class="doc-icon ${ic.cls}" style="width:30px;height:30px;font-size:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;">${ic.icon}</div>
-          <span class="td-name" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;">${d.nom}</span>
-        </div></td>
-        <td><span class="badge badge-doc">${d.categorie}</span></td>
-        <td style="color:var(--text3)">${formatSize(d.taille)}</td>
-        <td style="color:var(--text3)">${d.ajoutePar||'—'}</td>
-        <td style="color:var(--text3)">${fmtDate(d.date)}</td>
-        <td style="display:flex;gap:4px;">
-          <button class="btn-icon" onclick="telechargerDoc(${d.id})" title="Télécharger">⬇️</button>
-          <button class="btn-icon" onclick="supprimerDoc(${d.id})" title="Supprimer">🗑️</button>
-        </td>
-      </tr>`;
-    }).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:24px;">Aucun document</td></tr>';
+
+  // Grille
+  const grid=document.getElementById('docs-grid');
+  if(!grid)return;
+  const folders_in=list.filter(d=>d.type==='folder');
+  const files_in=list.filter(d=>d.type!=='folder');
+
+  let html='';
+  if(folders_in.length){
+    html+=`<div class="docs-section-title">📁 Dossiers</div>
+    <div class="docs-folders-row">
+      ${folders_in.map(f=>{
+        const count=documents_list.filter(d=>d.parentId===f.id).length;
+        return`<div class="doc-folder-card" onclick="ouvrirDossier(${f.id})">
+          <div class="doc-folder-icon">📁</div>
+          <div class="doc-folder-name">${f.nom}</div>
+          <div class="doc-folder-count">${count} élément${count>1?'s':''}</div>
+          <div class="doc-folder-actions" onclick="event.stopPropagation()">
+            <button class="btn-icon" onclick="renommerDossier(${f.id})" title="Renommer">✏️</button>
+            <button class="btn-icon" onclick="supprimerDoc(${f.id})" title="Supprimer">🗑️</button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
   }
-  // Cartes mobile
-  const cards = document.getElementById('docs-cards');
-  if(cards){
-    cards.innerHTML = list.length ? list.map(d => {
-      const ic = docIcon(d.type, d.nom);
-      return `<div class="doc-card">
-        <div class="doc-icon ${ic.cls}" style="width:44px;height:44px;font-size:22px;border-radius:12px;display:flex;align-items:center;justify-content:center;">${ic.icon}</div>
-        <div style="flex:1;min-width:0;">
-          <div class="doc-name">${d.nom}</div>
-          <div class="doc-meta">${d.categorie} · ${formatSize(d.taille)} · ${fmtDate(d.date)}</div>
+
+  if(files_in.length){
+    html+=`<div class="docs-section-title" style="margin-top:${folders_in.length?'16px':'0'};">📄 Fichiers</div>
+    <div class="docs-files-list">
+      ${files_in.map(d=>{
+        const ic=docIcon(d.nom);
+        return`<div class="doc-file-row">
+          <div class="doc-file-icon" style="background:${ic.color}22;color:${ic.color};">${ic.icon}</div>
+          <div class="doc-file-info">
+            <div class="doc-file-name">${d.nom}</div>
+            <div class="doc-file-meta">${d.categorie} · ${formatSize(d.taille)} · ${fmtDate(d.date)}</div>
+          </div>
+          <div class="doc-file-actions">
+            <button class="btn-icon" onclick="telechargerDoc(${d.id})" title="Télécharger">⬇️</button>
+            <button class="btn-icon" onclick="supprimerDoc(${d.id})" title="Supprimer">🗑️</button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  if(!folders_in.length&&!files_in.length){
+    html='<div style="text-align:center;padding:40px 0;color:var(--text3);"><div style="font-size:36px;margin-bottom:10px;">📂</div><div style="font-weight:600;color:var(--text2);">Dossier vide</div><div style="font-size:12px;margin-top:4px;">Ajoutez un document ou un dossier</div></div>';
+  }
+  grid.innerHTML=html;
+
+  // Drag & drop
+  const dz=document.getElementById('drop-zone');
+  if(dz){
+    dz.ondragover=(e)=>{e.preventDefault();dz.classList.add('drag-over');};
+    dz.ondragleave=()=>dz.classList.remove('drag-over');
+    dz.ondrop=(e)=>{e.preventDefault();dz.classList.remove('drag-over');ajouterDocuments({files:e.dataTransfer.files});};
+  }
+}
+
+// ── SECTIONS DYNAMIQUES ──────────────────────────────────────────
+// ag_notes local storage
+let ag_notes=lsGet('gef_ag_notes',[]);
+
+    // Ajouter nav item dans la sidebar
+    const navItem=document.createElement('div');
+    navItem.className='nav-item nav-sub';
+    navItem.id='nav-'+sec.id;
+    navItem.innerHTML=`<span style="font-size:14px;margin-right:2px;">${sec.emoji}</span>${sec.nom}`;
+    navItem.onclick=()=>navTo(sec.id,sec.nom);
+    navContainer.appendChild(navItem);
+  });
+
+  // Mettre à jour la map de rendu
+  _updateRenderMap();
+}
+
+function _updateRenderMap(){
+  // Nothing needed — showPage uses the map but we'll handle dynamic sections via a catch-all
+}
+
+// ── RENDU D'UNE SECTION ───────────────────────────────────────────
+function renderSection(secId){
+  const sec=custom_sections.find(s=>s.id===secId);
+  if(!sec)return;
+  const evts=events.filter(e=>e.type&&e.type.toLowerCase()===sec.eventType.toLowerCase());
+  const today=new Date().toISOString().slice(0,10);
+  const past=evts.filter(e=>e.date<today).length;
+  const aVenir=evts.filter(e=>e.date>=today).length;
+  const totalPres=evts.reduce((s,e)=>s+membres.filter(m=>presences[m.id+'_'+e.id]).length,0);
+  const avgPct=evts.length>0&&membres.length>0?Math.round(totalPres/(evts.length*membres.length)*100):0;
+
+  // Sub
+  const subEl=document.getElementById('sub-'+secId);
+  if(subEl)subEl.textContent=`${evts.length} événement${evts.length>1?'s':''} · ${aVenir} à venir · ${avgPct}% présence moy.`;
+
+  // KPI
+  const kpiEl=document.getElementById('kpi-'+secId);
+  if(kpiEl)kpiEl.innerHTML=`
+    <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:#f8f9fb;">📅</div><div><div class="stat-kpi-label">Total</div><div class="stat-kpi-val">${evts.length}</div></div></div>
+    <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:#eff6ff;">🔜</div><div><div class="stat-kpi-label">À venir</div><div class="stat-kpi-val" style="color:${sec.color};">${aVenir}</div></div></div>
+    <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:${avgPct>=70?'#f0fdf4':'#fffbeb'};">${avgPct>=70?'✅':'📊'}</div><div><div class="stat-kpi-label">Présence moy.</div><div class="stat-kpi-val" style="color:${avgPct>=70?'var(--green)':avgPct>=40?'var(--gold)':'var(--red)'};">${avgPct}%</div></div></div>`;
+
+  // Chart participation
+  const chartEl=document.getElementById('chart-'+secId);
+  if(chartEl){
+    const data=evts.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,10).map(e=>{
+      const c=membres.filter(m=>presences[m.id+'_'+e.id]).length;
+      const pct=membres.length>0?Math.round((c/membres.length)*100):0;
+      return{label:(e.nom||e.type).slice(0,20),val:pct,count:c};
+    });
+    chartEl.innerHTML=data.length?data.map((d,i)=>`
+      <div class="chart-bar-row" style="animation:fadeUp 0.3s ease both;animation-delay:${i*0.04}s;">
+        <div class="chart-bar-label">${d.label}</div>
+        <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${d.val}%;background:${d.val>=70?'var(--green)':d.val>=40?'var(--gold)':'var(--red)'};">${d.val>10?d.val+'%':''}</div></div>
+        <div class="chart-bar-val">${d.count}</div>
+      </div>`).join(''):'<p style="color:var(--text3);font-size:13px;text-align:center;padding:16px 0;">Aucun événement · Créez un événement de type «${sec.eventType}»</p>';
+  }
+
+  // Top membres
+  const topEl=document.getElementById('top-'+secId);
+  if(topEl){
+    const data=membres.map(m=>{
+      const p=evts.filter(e=>presences[m.id+'_'+e.id]).length;
+      const pct=evts.length>0?Math.round((p/evts.length)*100):0;
+      return{name:m.prenom+' '+m.nom,p,pct};
+    }).sort((a,b)=>b.pct-a.pct).filter(d=>d.p>0).slice(0,8);
+    const medals=['🥇','🥈','🥉'];
+    topEl.innerHTML=data.length?data.map((d,i)=>`
+      <div class="chart-bar-row"><div class="chart-bar-label">${medals[i]||''} ${d.name}</div>
+        <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${d.pct}%;background:${d.pct>=70?'var(--green)':d.pct>=40?'var(--gold)':'var(--red)'};">${d.pct>15?d.pct+'%':''}</div></div>
+        <div class="chart-bar-val">${d.pct}%</div></div>`).join(''):
+      '<p style="color:var(--text3);font-size:13px;text-align:center;padding:16px 0;">Aucune présence enregistrée</p>';
+  }
+
+  // Notes (section AG)
+  const notesEl=document.getElementById('notes-'+secId);
+  if(notesEl){
+    const notes=ag_notes.filter(n=>!n.secId||n.secId===secId);
+    notesEl.innerHTML=notes.length?notes.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(n=>`
+      <div class="act-note-item">
+        <div class="act-note-text">${n.texte}</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+          <div class="act-note-date">${fmtDate(n.date)}</div>
+          <button class="btn-icon" onclick="supprimerNoteSection(${n.id})">🗑️</button>
         </div>
-        <div style="display:flex;gap:4px;flex-shrink:0;">
-          <button class="btn-icon" onclick="telechargerDoc(${d.id})">⬇️</button>
-          <button class="btn-icon" onclick="supprimerDoc(${d.id})">🗑️</button>
+      </div>`).join(''):'<p style="color:var(--text3);font-size:13px;">Aucune note pour le moment.</p>';
+  }
+
+  // Liste événements
+  const listEl=document.getElementById('list-'+secId);
+  if(listEl){
+    const sorted=evts.slice().sort((a,b)=>b.date.localeCompare(a.date));
+    listEl.innerHTML=sorted.length?sorted.map(e=>{
+      const count=membres.filter(m=>presences[m.id+'_'+e.id]).length;
+      const pct=membres.length>0?Math.round((count/membres.length)*100):0;
+      const color=pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';
+      const isPast=e.date<today;
+      const presents=membres.filter(m=>presences[m.id+'_'+e.id]);
+      return`<div class="act-event-card">
+        <div class="act-event-header">
+          <div><div class="act-event-title">${e.nom||e.type}</div>
+            <div class="act-event-date">${fmtDate(e.date)} · ${isPast?'<span style="color:var(--text3);">Passé</span>':'<span style="color:var(--green);font-weight:600;">À venir</span>'}</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="act-event-pct" style="color:${color};">${pct}%</div>
+            <div style="font-size:11px;color:var(--text3);">${count}/${membres.length}</div>
+          </div>
+        </div>
+        <div class="act-event-bar"><div class="act-event-fill" style="width:${pct}%;background:${color};"></div></div>
+        <div class="act-event-members">${presents.map(m=>`<div class="act-member-dot" style="background:${color};" title="${m.prenom} ${m.nom}"></div>`).join('')}</div>
+        ${e.notes?`<div style="margin-top:8px;font-size:12px;color:var(--text2);background:var(--bg3);border-radius:8px;padding:8px 10px;">📝 ${e.notes}</div>`:''}
+      </div>`;
+    }).join(''):'<div style="text-align:center;padding:32px 0;color:var(--text3);font-size:13px;">Aucun événement de type «${sec.eventType}». Créez-en un !</div>';
+  }
+}
+
+// ── NOTES SECTIONS ───────────────────────────────────────────────
+function ajouterNoteSection(secId){
+  const texte=prompt('Note / ordre du jour :');
+  if(!texte||!texte.trim())return;
+  ag_notes.push({id:Date.now(),texte:texte.trim(),date:new Date().toISOString().slice(0,10),secId});
+  lsSet('gef_ag_notes',ag_notes);
+  save('gef_ag_notes',ag_notes);
+  renderSection(secId);
+}
+function supprimerNoteSection(noteId){
+  if(!confirm('Supprimer cette note ?'))return;
+  ag_notes=ag_notes.filter(n=>n.id!==noteId);
+  lsSet('gef_ag_notes',ag_notes);
+  save('gef_ag_notes',ag_notes);
+  const p=document.querySelector('.page.active')?.id?.replace('page-','');
+  if(p)renderSection(p);
+}
+// Compatibilité avec l'ancien code
+function ajouterNoteAG(){ajouterNoteSection('sec-ag');}
+function supprimerNoteAG(id){supprimerNoteSection(id);}
+
+// ── RENDER ACTIVITÉS (page d'ensemble) ───────────────────────────
+// ── ACTIVITÉS — VUE D'ENSEMBLE (source unique: event_subpages) ────
+function renderActivites(){
+  const today=new Date().toISOString().slice(0,10);
+  const allEvts=events;
+  const totalPres=allEvts.reduce((s,e)=>s+membres.filter(m=>presences[m.id+'_'+e.id]).length,0);
+  const avgPct=allEvts.length>0&&membres.length>0?Math.round(totalPres/(allEvts.length*membres.length)*100):0;
+  const aVenir=allEvts.filter(e=>e.date>=today).length;
+  const customSps=event_subpages.filter(sp=>!sp.isDefault);
+
+  // Sous-titre
+  const sub=document.getElementById('activites-sub');
+  if(sub)sub.textContent=`${allEvts.length} événements · ${customSps.length} sous-page${customSps.length>1?'s':''} · ${avgPct}% présence moy.`;
+
+  // KPI
+  const kpiEl=document.getElementById('activites-kpi');
+  if(kpiEl)kpiEl.innerHTML=`
+    <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:#fff9eb;">📅</div><div><div class="stat-kpi-label">Événements</div><div class="stat-kpi-val">${allEvts.length}</div></div></div>
+    <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:#eff6ff;">🔜</div><div><div class="stat-kpi-label">À venir</div><div class="stat-kpi-val" style="color:var(--red);">${aVenir}</div></div></div>
+    <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:${avgPct>=70?'#f0fdf4':'#fffbeb'};">📊</div><div><div class="stat-kpi-label">Présence globale</div><div class="stat-kpi-val" style="color:${avgPct>=70?'var(--green)':avgPct>=40?'var(--gold)':'var(--red)'};">${avgPct}%</div></div></div>`;
+
+  // Cartes sous-pages — générées depuis event_subpages
+  const grid=document.getElementById('activites-sections-grid');
+  if(grid){
+    grid.innerHTML=customSps.map(sp=>{
+      const spEvts=sp.types.length===0?events:events.filter(e=>sp.types.includes(e.type));
+      const next=spEvts.filter(e=>e.date>=today).sort((a,b)=>a.date.localeCompare(b.date))[0];
+      const pres=spEvts.reduce((s,e)=>s+membres.filter(m=>presences[m.id+'_'+e.id]).length,0);
+      const avg=spEvts.length>0&&membres.length>0?Math.round(pres/(spEvts.length*membres.length)*100):0;
+      return`<div class="act-section-card" onclick="goToSubpage(${sp.id})" style="border-left:4px solid ${sp.couleur};">
+        <div class="act-card-icon" style="font-size:28px;background:${sp.couleur}22;width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${sp.emoji}</div>
+        <div class="act-card-body">
+          <div class="act-card-title">${sp.nom}</div>
+          <div class="act-card-count" style="color:${sp.couleur};">${spEvts.length}</div>
+          <div class="act-card-sub">${next?'Prochain : '+fmtDate(next.date):'Aucun à venir'} · ${avg}% présence</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;">
+          <button class="btn-icon" title="Modifier" onclick="event.stopPropagation();editSubpage(${sp.id})">✏️</button>
+          <div class="act-card-arrow" style="color:var(--text3);">›</div>
         </div>
       </div>`;
-    }).join('') : '<p style="text-align:center;color:var(--text3);padding:20px 0;">Aucun document</p>';
+    }).join('')||`<div style="text-align:center;padding:24px 0;color:var(--text3);">
+      <div style="font-size:32px;margin-bottom:8px;">📂</div>
+      <div style="font-weight:600;color:var(--text2);">Aucune sous-page créée</div>
+      <div style="font-size:12px;margin-top:4px;">Cliquez sur "Créer une sous-page" pour commencer</div>
+    </div>`;
   }
-  // Drag & drop
-  const dz = document.getElementById('drop-zone');
-  if(dz){
-    dz.ondragover = (e) => { e.preventDefault(); dz.classList.add('drag-over'); };
-    dz.ondragleave = () => dz.classList.remove('drag-over');
-    dz.ondrop = (e) => {
-      e.preventDefault(); dz.classList.remove('drag-over');
-      const dt = { files: e.dataTransfer.files };
-      ajouterDocuments(dt);
-    };
+
+  // Graphique global
+  const chartEl=document.getElementById('activites-participation-chart');
+  if(chartEl){
+    const data=allEvts.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8).map(e=>{
+      const c=membres.filter(m=>presences[m.id+'_'+e.id]).length;
+      const pct=membres.length>0?Math.round((c/membres.length)*100):0;
+      const sp=event_subpages.find(s=>s.types.includes(e.type));
+      return{label:(e.nom||e.type).slice(0,18),val:pct,count:c,color:sp?.couleur||'var(--red)'};
+    });
+    chartEl.innerHTML=data.length?data.map((d,i)=>`
+      <div class="chart-bar-row" style="animation:fadeUp 0.3s ease both;animation-delay:${i*0.03}s;">
+        <div class="chart-bar-label">${d.label}</div>
+        <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${d.val}%;background:${d.val>=70?'var(--green)':d.val>=40?'var(--gold)':'var(--red)'};">${d.val>10?d.val+'%':''}</div></div>
+        <div class="chart-bar-val">${d.count}</div>
+      </div>`).join(''):'<p style="color:var(--text3);font-size:13px;text-align:center;padding:16px 0;">Aucun événement enregistré</p>';
   }
+
+  // Prochaines activités
+  const upcomingEl=document.getElementById('activites-upcoming');
+  if(upcomingEl){
+    const upcoming=allEvts.filter(e=>e.date>=today).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);
+    upcomingEl.innerHTML=upcoming.length?upcoming.map(e=>{
+      const sp=event_subpages.find(s=>s.types.includes(e.type))||{couleur:'var(--red)',emoji:'📅'};
+      const jours=Math.round((new Date(e.date)-new Date())/86400000);
+      const badge=jours===0?'<span style="color:var(--green);font-weight:700;font-size:11px;">Aujourd\'hui</span>':jours===1?'<span style="color:var(--gold);font-weight:700;font-size:11px;">Demain</span>':`<span style="font-size:11px;color:var(--text3);">${jours}j</span>`;
+      return`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">
+        <div style="width:36px;height:36px;border-radius:10px;background:${sp.couleur}22;display:flex;align-items:center;justify-content:center;font-size:16px;">${sp.emoji}</div>
+        <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${e.nom||e.type}</div>
+          <div style="font-size:11px;color:var(--text3);">${fmtDate(e.date)} · ${e.type}</div></div>
+        ${badge}
+      </div>`;
+    }).join(''):'<div style="text-align:center;padding:20px 0;color:var(--text3);">Aucune activité prévue</div>';
+  }
+}
+
+// Navigation depuis une carte Activités → Événements sur le bon onglet
+function goToSubpage(spId){
+  _activeSubpage=spId;
+  navTo('evenements','Événements');
+}
+
+function openEventModalType(type){
+  openEventModal();
+  setTimeout(()=>{
+    const t=document.getElementById('e-type');
+    if(t){
+      let found=false;
+      Array.from(t.options).forEach(o=>{if(o.value===type)found=true;});
+      if(!found){const opt=document.createElement('option');opt.value=type;opt.text=type;t.add(opt);}
+      t.value=type;
+    }
+  },100);
 }
 
 document.querySelectorAll('.modal-overlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');});});
