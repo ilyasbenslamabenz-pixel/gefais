@@ -29,16 +29,30 @@ h1,h2,h3{font-family:'DM Serif Display',serif;font-weight:400;}
 #app{overflow-x:hidden;max-width:100vw;}
 
 /* LOGIN */
-#login-screen{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;}
-.login-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-xl);padding:44px 36px;width:100%;max-width:360px;text-align:center;box-shadow:var(--shadow-lg);}
-.login-box h2{font-size:26px;margin-bottom:6px;letter-spacing:-0.3px;}
-.login-box p{color:var(--text3);font-size:13px;margin-bottom:28px;line-height:1.6;}
-.login-box input{width:100%;background:var(--bg3);border:1.5px solid var(--border);color:var(--text);padding:14px 16px;border-radius:var(--radius);font-size:18px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:14px;text-align:center;letter-spacing:6px;transition:border-color 0.2s;}
-.login-box input:focus{border-color:var(--red);background:#fff;}
-.login-box button{width:100%;background:var(--red);color:#fff;border:none;padding:14px;border-radius:var(--radius);font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:0.3px;transition:background 0.2s,transform 0.1s;}
-.login-box button:hover{background:var(--red2);}
-.login-box button:active{transform:scale(0.98);}
-.login-error{color:var(--red);font-size:12px;margin-top:10px;display:none;}
+#login-screen{position:fixed;inset:0;z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden;background:#12040a;}
+.login-bg{position:absolute;inset:0;z-index:0;}
+.login-orb-1{position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(230,51,41,0.55) 0%,transparent 65%);top:-250px;left:-200px;filter:blur(80px);}
+.login-orb-2{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(196,154,0,0.45) 0%,transparent 65%);bottom:-200px;right:-150px;filter:blur(90px);}
+.login-orb-3{position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(192,39,30,0.35) 0%,transparent 70%);bottom:100px;left:100px;filter:blur(60px);}
+.login-noise{position:absolute;inset:0;opacity:0.035;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:180px;}
+.login-box{position:relative;z-index:1;width:100%;max-width:400px;text-align:center;animation:loginIn 0.6s cubic-bezier(0.34,1.56,0.64,1) both;}
+@keyframes loginIn{from{opacity:0;transform:translateY(32px) scale(0.95)}to{opacity:1;transform:none}}
+.login-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:28px;padding:44px 40px 40px;backdrop-filter:blur(24px);box-shadow:0 40px 80px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.08);}
+.login-logo{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:32px;}
+.login-logo-badge{width:72px;height:72px;border-radius:22px;background:linear-gradient(135deg,rgba(230,51,41,0.2),rgba(196,154,0,0.15));border:1px solid rgba(230,51,41,0.3);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(230,51,41,0.25);}
+.login-brand{font-family:'DM Sans',sans-serif;font-size:28px;font-weight:900;letter-spacing:-0.5px;background:linear-gradient(135deg,#fff 0%,#ffd580 60%,#ffb347 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.login-sub{font-size:13px;color:rgba(255,255,255,0.4);letter-spacing:0.3px;margin-top:-8px;}
+.login-label{display:block;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:10px;text-align:left;}
+.login-input-wrap{position:relative;margin-bottom:16px;}
+.login-input-wrap input{width:100%;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);color:#fff;padding:16px 20px;border-radius:14px;font-size:20px;font-family:'DM Sans',sans-serif;outline:none;text-align:center;letter-spacing:8px;transition:all 0.2s;caret-color:var(--red);}
+.login-input-wrap input::placeholder{letter-spacing:2px;font-size:13px;color:rgba(255,255,255,0.25);}
+.login-input-wrap input:focus{border-color:rgba(230,51,41,0.6);background:rgba(230,51,41,0.06);box-shadow:0 0 0 4px rgba(230,51,41,0.1);}
+.login-btn{width:100%;background:linear-gradient(135deg,#e63329,#c0271e);color:#fff;border:none;padding:16px;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:0.5px;transition:all 0.2s;box-shadow:0 8px 24px rgba(230,51,41,0.4),inset 0 1px 0 rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;gap:8px;}
+.login-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(230,51,41,0.5),inset 0 1px 0 rgba(255,255,255,0.15);}
+.login-btn:active{transform:scale(0.98);box-shadow:0 4px 12px rgba(230,51,41,0.3);}
+.login-error-msg{color:#ff6b6b;font-size:12px;margin-top:12px;display:none;align-items:center;justify-content:center;gap:6px;padding:10px;background:rgba(230,51,41,0.1);border:1px solid rgba(230,51,41,0.2);border-radius:10px;}
+.login-footer{margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2);letter-spacing:0.5px;}
+@keyframes loginShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
 
 /* APP */
 #app{display:flex;min-height:100vh;}
@@ -902,22 +916,58 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 
 <!-- LOGIN -->
 <div id="login-screen">
+  <!-- Fond animé -->
+  <div class="login-bg">
+    <div class="login-orb-1"></div>
+    <div class="login-orb-2"></div>
+    <div class="login-orb-3"></div>
+    <div class="login-noise"></div>
+  </div>
+
   <div class="login-box">
-    <div style="margin-bottom:18px;">
-      <svg width="52" height="52" viewBox="0 0 40 40" fill="none">
-        <circle cx="20" cy="5" r="3" fill="#1a1a1a"/><circle cx="28" cy="8" r="2.5" fill="#1a1a1a"/>
-        <circle cx="34" cy="15" r="2" fill="#1a1a1a"/><circle cx="36" cy="23" r="2" fill="#1a1a1a"/>
-        <circle cx="33" cy="31" r="2" fill="#1a1a1a"/><circle cx="27" cy="37" r="2" fill="#1a1a1a"/>
-        <circle cx="20" cy="39" r="2" fill="#1a1a1a"/><circle cx="13" cy="37" r="2" fill="#1a1a1a"/>
-        <circle cx="7" cy="31" r="2.5" fill="#1a1a1a"/><circle cx="6" cy="22" r="3" fill="#e63329"/>
-        <circle cx="8" cy="13" r="3.5" fill="#c49a00"/><circle cx="14" cy="7" r="2.5" fill="#1a1a1a"/>
-      </svg>
+    <div class="login-card">
+      <!-- Logo -->
+      <div class="login-logo">
+        <div class="login-logo-badge">
+          <svg width="42" height="42" viewBox="0 0 40 40" fill="none">
+            <circle cx="20" cy="5" r="3" fill="rgba(255,255,255,0.6)"/>
+            <circle cx="28" cy="8" r="2.5" fill="rgba(255,255,255,0.5)"/>
+            <circle cx="34" cy="15" r="2" fill="rgba(255,255,255,0.4)"/>
+            <circle cx="36" cy="23" r="2" fill="rgba(255,255,255,0.4)"/>
+            <circle cx="33" cy="31" r="2" fill="rgba(255,255,255,0.4)"/>
+            <circle cx="27" cy="37" r="2" fill="rgba(255,255,255,0.5)"/>
+            <circle cx="20" cy="39" r="2" fill="rgba(255,255,255,0.6)"/>
+            <circle cx="13" cy="37" r="2" fill="rgba(255,255,255,0.5)"/>
+            <circle cx="7" cy="31" r="2.5" fill="rgba(255,255,255,0.4)"/>
+            <circle cx="6" cy="22" r="3" fill="#e63329"/>
+            <circle cx="8" cy="13" r="3.5" fill="#c49a00"/>
+            <circle cx="14" cy="7" r="2.5" fill="rgba(255,255,255,0.6)"/>
+          </svg>
+        </div>
+        <div class="login-brand">GE-FAIS</div>
+        <div class="login-sub">Espace de gestion</div>
+      </div>
+
+      <!-- Champ mot de passe -->
+      <label class="login-label">Mot de passe</label>
+      <div class="login-input-wrap">
+        <input type="password" id="login-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkLogin()">
+      </div>
+
+      <!-- Bouton -->
+      <button class="login-btn" onclick="checkLogin()">
+        Accéder
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+
+      <!-- Erreur -->
+      <div class="login-error-msg" id="login-error">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Mot de passe incorrect
+      </div>
     </div>
-    <h2>GE-FAIS</h2>
-    <p>Entrez le mot de passe pour accéder à l'espace de gestion</p>
-    <input type="password" id="login-input" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')checkLogin()">
-    <button onclick="checkLogin()">Accéder →</button>
-    <div class="login-error" id="login-error">Mot de passe incorrect.</div>
+
+    <div class="login-footer">GE-FAIS · v3.1 · 2025–2026</div>
   </div>
 </div>
 
@@ -1015,100 +1065,61 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
     <!-- DASHBOARD -->
     <div id="page-dashboard" class="page active">
 
-      <!-- HERO PREMIUM -->
-      <div class="dh-hero">
-        <div class="dh-hero-bg">
-          <div class="dh-mesh-1"></div>
-          <div class="dh-mesh-2"></div>
-          <div class="dh-mesh-3"></div>
-          <div class="dh-noise"></div>
-        </div>
-        <div class="dh-hero-content">
-          <div class="dh-hero-left">
-            <div class="dh-pill">GE-FAIS · Tableau de bord</div>
-            <h1 class="dh-greeting" id="dash-hero-greeting">Bonjour 👋</h1>
-            <p class="dh-date" id="dash-hero-sub">Chargement…</p>
-            <div class="dh-actions" id="dash-hero-quick"></div>
+      <!-- HERO -->
+      <div class="dash-hero" id="dash-hero">
+        <div class="dash-hero-orb dash-hero-orb1"></div>
+        <div class="dash-hero-orb dash-hero-orb2"></div>
+        <div class="dash-hero-orb dash-hero-orb3"></div>
+        <div class="dash-hero-inner">
+          <div class="dash-hero-left">
+            <div class="dash-hero-eyebrow">GE-FAIS · Espace de gestion</div>
+            <div class="dash-hero-greeting" id="dash-hero-greeting">Bonjour 👋</div>
+            <div class="dash-hero-date" id="dash-hero-sub">Chargement…</div>
+            <div class="dash-hero-actions" id="dash-hero-quick"></div>
           </div>
-          <div class="dh-hero-right">
-            <div class="dh-stat-bubble" id="dash-hero-badge">
-              <div class="dh-bubble-num" id="dash-hero-badge-num">—</div>
-              <div class="dh-bubble-label">membres actifs</div>
-            </div>
+          <div class="dash-hero-badge" id="dash-hero-badge">
+            <div class="dash-hero-badge-num" id="dash-hero-badge-num">—</div>
+            <div class="dash-hero-badge-label">membres</div>
           </div>
         </div>
       </div>
+
+      <!-- KPI BAND -->
+      <div class="dash-kpi-grid" id="dash-kpi-band"></div>
 
       <!-- ALERTES -->
-      <div id="dash-alertes" style="margin-bottom:4px;"></div>
+      <div id="dash-alertes"></div>
 
-      <!-- KPI CARDS -->
-      <div class="dh-kpi-row" id="dash-kpi-band"></div>
-
-      <!-- BODY GRID -->
-      <div class="dh-grid">
-
-        <!-- Présence membres -->
-        <div class="dh-card dh-card-wide">
-          <div class="dh-card-header">
-            <div class="dh-card-icon" style="background:linear-gradient(135deg,#e63329,#f87171);">🏅</div>
-            <div>
-              <div class="dh-card-title">Présence des membres</div>
-              <div class="dh-card-sub">Taux par personne</div>
-            </div>
-          </div>
-          <div id="dash-presence-bars" class="gef-chart" style="margin-top:4px;"></div>
+      <!-- ROW 1 -->
+      <div class="dash-row">
+        <div class="card dash-card-presence">
+          <div class="card-title">🏅 Présence des membres</div>
+          <div id="dash-presence-bars" class="gef-chart"></div>
         </div>
-
-        <!-- Prochains événements -->
-        <div class="dh-card">
-          <div class="dh-card-header">
-            <div class="dh-card-icon" style="background:linear-gradient(135deg,#1d4ed8,#60a5fa);">📆</div>
-            <div>
-              <div class="dh-card-title">Prochains événements</div>
-              <div class="dh-card-sub">À venir</div>
-            </div>
+        <div class="dash-col-stack">
+          <div class="card">
+            <div class="card-title">👥 Répartition</div>
+            <div id="dash-repartition"></div>
           </div>
-          <div id="dash-events" style="margin-top:4px;"></div>
-        </div>
-
-        <!-- Répartition membres -->
-        <div class="dh-card">
-          <div class="dh-card-header">
-            <div class="dh-card-icon" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);">👥</div>
-            <div>
-              <div class="dh-card-title">Répartition</div>
-              <div class="dh-card-sub">Types de membres</div>
-            </div>
+          <div class="card">
+            <div class="card-title">📆 Prochains événements</div>
+            <div id="dash-events"></div>
           </div>
-          <div id="dash-repartition" style="margin-top:8px;"></div>
         </div>
-
-        <!-- Participation événements -->
-        <div class="dh-card">
-          <div class="dh-card-header">
-            <div class="dh-card-icon" style="background:linear-gradient(135deg,#b8860b,#fbbf24);">📊</div>
-            <div>
-              <div class="dh-card-title">Participation</div>
-              <div class="dh-card-sub">Par événement</div>
-            </div>
-          </div>
-          <div id="dash-event-bars" class="gef-chart" style="margin-top:4px;"></div>
-        </div>
-
-        <!-- Santé financière -->
-        <div class="dh-card dh-card-finance">
-          <div class="dh-card-header">
-            <div class="dh-card-icon" style="background:linear-gradient(135deg,#15803d,#4ade80);">💰</div>
-            <div>
-              <div class="dh-card-title">Santé financière</div>
-              <div class="dh-card-sub">Recettes · Dépenses · Solde</div>
-            </div>
-          </div>
-          <div id="dash-finance-summary" style="margin-top:8px;"></div>
-        </div>
-
       </div>
+
+      <!-- ROW 2 -->
+      <div class="dash-row dash-row-bottom">
+        <div class="card">
+          <div class="card-title">📅 Participation par événement</div>
+          <div id="dash-event-bars" class="gef-chart"></div>
+        </div>
+        <div class="card dash-finance-card">
+          <div class="card-title">💰 Santé financière</div>
+          <div id="dash-finance-summary"></div>
+        </div>
+      </div>
+
     </div>
 
     <!-- MEMBRES -->
@@ -1708,14 +1719,19 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 <script>
 const MOT_DE_PASSE="gefais2025";
 function checkLogin(){
-  if(document.getElementById('login-input').value===MOT_DE_PASSE){
+  const input=document.getElementById('login-input');
+  const err=document.getElementById('login-error');
+  if(input.value===MOT_DE_PASSE){
     sessionStorage.setItem('gef_auth','ok');
     document.getElementById('login-screen').style.display='none';
     document.getElementById('app').style.display='flex';
     initApp();
   } else {
-    document.getElementById('login-error').style.display='block';
-    document.getElementById('login-input').value='';
+    err.style.display='flex';
+    input.value='';
+    input.style.borderColor='rgba(230,51,41,0.8)';
+    input.style.animation='loginShake 0.4s ease';
+    setTimeout(()=>{input.style.animation='';input.style.borderColor='';},500);
   }
 }
 function logout(){sessionStorage.removeItem('gef_auth');location.reload();}
@@ -2120,48 +2136,40 @@ function renderDashboard(){
     <button class="dash-quick-btn" onclick="navTo('cotisations','Cotisations')">💳 Cotisations</button>
   `;
 
-  // KPI BAND — nouveau design premium
+  // KPI BAND
   const kpiEl=document.getElementById('dash-kpi-band');
   if(kpiEl)kpiEl.innerHTML=`
-    <div class="dh-kpi-card">
-      <div class="dh-kpi-accent" style="background:linear-gradient(90deg,#e63329,#f87171);"></div>
-      <div class="dh-kpi-top">
-        <div class="dh-kpi-icon" style="background:#fff1f0;">👥</div>
-        <span class="dh-kpi-trend" style="background:#fff1f0;color:#c0271e;">${actifs+suisses} actifs</span>
+    <div class="kpi-band-card kpi-animate" style="animation-delay:0s">
+      <div class="kpi-band-icon" style="background:#fff1f0;">👥</div>
+      <div class="kpi-band-body">
+        <div class="kpi-band-label">Total membres</div>
+        <div class="kpi-band-val">${total}</div>
+        <div class="kpi-band-sub">${actifs+suisses} actifs · ${passifs} passifs</div>
       </div>
-      <div class="dh-kpi-val">${total}</div>
-      <div class="dh-kpi-label">Membres</div>
-      <div class="dh-kpi-sub">${passifs} passif${passifs>1?'s':''} · ${autres} sans type</div>
     </div>
-    <div class="dh-kpi-card">
-      <div class="dh-kpi-accent" style="background:linear-gradient(90deg,#7c3aed,#a78bfa);"></div>
-      <div class="dh-kpi-top">
-        <div class="dh-kpi-icon" style="background:#f5f3ff;">📅</div>
-        <span class="dh-kpi-trend" style="background:#f5f3ff;color:#7c3aed;">${aVenir} à venir</span>
+    <div class="kpi-band-card kpi-animate" style="animation-delay:0.06s">
+      <div class="kpi-band-icon" style="background:#fffbeb;">⚡</div>
+      <div class="kpi-band-body">
+        <div class="kpi-band-label">Membres actifs</div>
+        <div class="kpi-band-val">${actifs+suisses}</div>
+        <div class="kpi-band-sub">${actifs} actifs · ${suisses} suisses</div>
       </div>
-      <div class="dh-kpi-val">${events.length}</div>
-      <div class="dh-kpi-label">Événements</div>
-      <div class="dh-kpi-sub">${events.length-aVenir} passé${events.length-aVenir>1?'s':''}</div>
     </div>
-    <div class="dh-kpi-card">
-      <div class="dh-kpi-accent" style="background:linear-gradient(90deg,${solde>=0?'#15803d,#4ade80':'#e63329,#f87171'});"></div>
-      <div class="dh-kpi-top">
-        <div class="dh-kpi-icon" style="background:${solde>=0?'#f0fdf4':'#fff1f0'};">${solde>=0?'📈':'📉'}</div>
-        <span class="dh-kpi-trend" style="background:${solde>=0?'#f0fdf4':'#fff1f0'};color:${solde>=0?'#15803d':'#c0271e'};">${solde>=0?'+':''}${solde.toFixed(0)} CHF</span>
+    <div class="kpi-band-card kpi-animate" style="animation-delay:0.12s">
+      <div class="kpi-band-icon" style="background:${solde>=0?'#f0fdf4':'#fff1f0'};">${solde>=0?'💚':'🔴'}</div>
+      <div class="kpi-band-body">
+        <div class="kpi-band-label">Solde financier</div>
+        <div class="kpi-band-val" style="color:${solde>=0?'var(--green)':'var(--red)'};">${solde>=0?'+':''}${solde.toFixed(0)}<span style="font-size:12px;font-weight:400;color:var(--text3);margin-left:3px;">CHF</span></div>
+        <div class="kpi-band-sub">${totalIn.toFixed(0)} CHF recettes</div>
       </div>
-      <div class="dh-kpi-val" style="color:${solde>=0?'var(--green)':'var(--red)'};">${solde>=0?'+':''}${solde.toFixed(0)}</div>
-      <div class="dh-kpi-label">Solde</div>
-      <div class="dh-kpi-sub">${totalIn.toFixed(0)} recettes · ${totalOut.toFixed(0)} dépenses</div>
     </div>
-    <div class="dh-kpi-card">
-      <div class="dh-kpi-accent" style="background:linear-gradient(90deg,#b8860b,#fbbf24);"></div>
-      <div class="dh-kpi-top">
-        <div class="dh-kpi-icon" style="background:#fffbeb;">${cotisPayees===cotisTotal&&cotisTotal>0?'✅':'💳'}</div>
-        <span class="dh-kpi-trend" style="background:${cotisPayees===cotisTotal&&cotisTotal>0?'#f0fdf4':'#fffbeb'};color:${cotisPayees===cotisTotal&&cotisTotal>0?'#15803d':'#92400e'};">${cotisTotal-cotisPayees} en attente</span>
+    <div class="kpi-band-card kpi-animate" style="animation-delay:0.18s">
+      <div class="kpi-band-icon" style="background:${cotisPayees===cotisTotal&&cotisTotal>0?'#f0fdf4':'#eff6ff'};">${cotisPayees===cotisTotal&&cotisTotal>0?'✅':'💳'}</div>
+      <div class="kpi-band-body">
+        <div class="kpi-band-label">Cotisations</div>
+        <div class="kpi-band-val">${cotisPayees}<span style="font-size:15px;font-weight:400;color:var(--text3);">/${cotisTotal}</span></div>
+        <div class="kpi-band-sub">${cotisTotal-cotisPayees} en attente</div>
       </div>
-      <div class="dh-kpi-val">${cotisPayees}<span style="font-size:16px;font-weight:400;color:var(--text3);">/${cotisTotal}</span></div>
-      <div class="dh-kpi-label">Cotisations</div>
-      <div class="dh-kpi-sub">${cotisTotal>0?Math.round(cotisPayees/cotisTotal*100):0}% réglées</div>
     </div>
   `;
 
@@ -2241,22 +2249,26 @@ function renderDashboard(){
       </div>`).join(''):'<p style="color:var(--text3);font-size:13px;">Aucun événement.</p>';
   }
 
-  // FINANCES — nouveau design grille
+  // FINANCES
   const finEl=document.getElementById('dash-finance-summary');
   if(finEl)finEl.innerHTML=`
-    <div class="dh-finance-grid">
-      <div class="dh-finance-item dh-finance-in">
-        <div class="dh-finance-lbl">Recettes</div>
-        <div class="dh-finance-amt amount-in">+${totalIn.toFixed(2)} <span style="font-size:13px;font-weight:500;">CHF</span></div>
+    <div class="dash-finance-row dash-finance-in">
+      <div class="dash-finance-icon">⬆️</div>
+      <div class="dash-finance-label">Recettes</div>
+      <div class="dash-finance-amount amount-in">+${totalIn.toFixed(2)} CHF</div>
+    </div>
+    <div class="dash-finance-row dash-finance-out">
+      <div class="dash-finance-icon">⬇️</div>
+      <div class="dash-finance-label">Dépenses</div>
+      <div class="dash-finance-amount amount-out">−${totalOut.toFixed(2)} CHF</div>
+    </div>
+    <div class="dash-finance-divider"></div>
+    <div class="dash-finance-solde ${solde>=0?'dash-finance-solde-pos':'dash-finance-solde-neg'}">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:18px;">${solde>=0?'📈':'📉'}</span>
+        <span style="font-weight:700;font-size:14px;color:var(--text);">Solde final</span>
       </div>
-      <div class="dh-finance-item dh-finance-out">
-        <div class="dh-finance-lbl">Dépenses</div>
-        <div class="dh-finance-amt amount-out">−${totalOut.toFixed(2)} <span style="font-size:13px;font-weight:500;">CHF</span></div>
-      </div>
-      <div class="dh-finance-item ${solde>=0?'dh-finance-bal-pos':'dh-finance-bal-neg'}">
-        <div class="dh-finance-lbl">Solde final</div>
-        <div class="dh-finance-amt" style="color:${solde>=0?'var(--green)':'var(--red)'};">${solde>=0?'+':''}${solde.toFixed(2)} <span style="font-size:13px;font-weight:500;">CHF</span></div>
-      </div>
+      <div style="font-size:24px;font-weight:800;letter-spacing:-0.5px;color:${solde>=0?'var(--green)':'var(--red)'};">${solde>=0?'+':''}${solde.toFixed(2)}<span style="font-size:13px;font-weight:400;color:var(--text3);margin-left:4px;">CHF</span></div>
     </div>
   `;
 }
