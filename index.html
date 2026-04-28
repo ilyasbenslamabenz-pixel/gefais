@@ -344,6 +344,10 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 .presence-section-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;}
 
 @keyframes spin{to{transform:rotate(360deg)}}
+.fab-item{background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 16px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:var(--shadow-md);white-space:nowrap;transition:all 0.15s;}
+.fab-item:hover{background:var(--bg3);transform:translateX(-4px);}
+@keyframes toastIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+#sync-toast.show{display:flex;animation:toastIn 0.25s ease;}
 
 /* ── DONS & PAIEMENTS ── */
 .don-hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#e63329,#c0271e);border-radius:20px;padding:24px 24px 22px;margin-bottom:20px;color:#fff;}
@@ -769,6 +773,7 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
   .sidebar.mobile-open{transform:translateX(0);box-shadow:4px 0 20px rgba(0,0,0,0.15);}
   .topbar{display:flex;}
   .bottom-nav{display:flex;}
+  #fab-add{display:flex;}
   body,html{background:var(--bg);overflow-x:hidden;max-width:100vw;}
   /* ══ FIX OVERFLOW HORIZONTAL GLOBAL ══ */
   #app{overflow-x:hidden;max-width:100vw;width:100vw;position:relative;}
@@ -1143,11 +1148,12 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
       </div>
     </div>
     <div class="sidebar-footer">
-      <div style="display:flex;gap:4px;">
+      <div style="display:flex;gap:4px;flex-wrap:wrap;">
         <button onclick="openGlobalSearch()" style="background:none;border:1px solid var(--border);color:var(--text3);cursor:pointer;padding:5px 8px;border-radius:8px;font-size:11px;display:flex;align-items:center;gap:4px;transition:0.15s;" title="Ctrl+K">
           <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg> Recherche
         </button>
         <button id="theme-toggle-sidebar" onclick="toggleTheme()" style="background:none;border:1px solid var(--border);color:var(--text3);cursor:pointer;padding:5px 8px;border-radius:8px;font-size:13px;transition:0.15s;" title="Thème">🌙</button>
+        <button onclick="openPresentationMode()" style="background:none;border:1px solid var(--border);color:var(--text3);cursor:pointer;padding:5px 8px;border-radius:8px;font-size:11px;transition:0.15s;" title="Mode présentation">📊 AG</button>
       </div>
       <button class="btn-logout" onclick="logout()">Déconnexion</button>
     </div>
@@ -1284,6 +1290,7 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
         <tbody id="membres-tbody"></tbody></table>
       </div></div>
       <div class="member-cards" id="member-cards"></div>
+      <div id="membres-pagination"></div>
     </div>
 
     <!-- PRÉSENCES -->
@@ -1329,6 +1336,26 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
       </div>
       <!-- Stats globales -->
       <div id="events-stats-row" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;"></div>
+      <!-- Filtres événements -->
+      <div class="toolbar" style="margin-bottom:12px;">
+        <input type="text" placeholder="Rechercher…" id="search-events" oninput="renderEvents()" style="flex:1;min-width:100px;">
+        <select id="filter-events-type" onchange="renderEvents()" style="width:130px;">
+          <option value="">Tous les types</option>
+        </select>
+        <select id="filter-events-period" onchange="renderEvents()" style="width:140px;">
+          <option value="">Toute période</option>
+          <option value="month">Ce mois-ci</option>
+          <option value="year">Cette année</option>
+          <option value="past">Passés</option>
+          <option value="upcoming">À venir</option>
+        </select>
+        <select id="sort-events" onchange="renderEvents()" style="width:140px;">
+          <option value="date_desc">Date ↓ récent</option>
+          <option value="date_asc">Date ↑ ancien</option>
+          <option value="pres_desc">Présence ↓</option>
+          <option value="name_asc">Nom A→Z</option>
+        </select>
+      </div>
       <!-- Liste des événements -->
       <div id="evsp-content"></div>
     </div>
@@ -1340,6 +1367,7 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
           <button class="btn btn-secondary btn-sm" onclick="exportCotisCSV()">⬇️ Export CSV</button>
           <button class="btn btn-blue btn-sm" onclick="openRappelModal()">📧 Rappel email</button>
+          <button class="btn btn-gold btn-sm" onclick="genererCotisationsAnnee()">⚡ Générer année</button>
         </div>
       </div>
       <div class="stats-grid" id="cotis-stats" style="grid-template-columns:repeat(3,1fr);"></div>
@@ -2369,6 +2397,8 @@ async function initApp(){
   document.getElementById('loading-overlay').style.display='none';
   renderDashboard();
   renderMembres();
+  _populateCotisAnneeSel();
+  _checkCotisationsAnnee();
 }
 
 // ── DASHBOARD ────────────────────────────────────────────────────
@@ -2628,7 +2658,21 @@ function renderMembres(){
       types.filter(t=>t[1]>0).map(t=>`<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);"><div style="width:8px;height:8px;border-radius:50%;background:${t[2]};"></div>${t[0]} <span style="font-weight:700;color:var(--text);">${t[1]}</span></div>`).join('')+`</div>`;
   }
 
-  document.getElementById('membres-tbody').innerHTML=list.map(m=>{
+  const PAGE_SIZE_M=25;
+  const totalM=list.length;
+  const totalPagesM=Math.ceil(totalM/PAGE_SIZE_M);
+  renderMembres._page=Math.min(renderMembres._page||0,Math.max(0,totalPagesM-1));
+  const pageM=renderMembres._page;
+  const paged=list.slice(pageM*PAGE_SIZE_M,(pageM+1)*PAGE_SIZE_M);
+
+  const paginationM=totalPagesM>1?`
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;">
+      <button class="btn btn-secondary btn-sm" onclick="memPage(-1)" ${pageM===0?'disabled':''}>← Précédent</button>
+      <span style="font-size:12px;color:var(--text2);">${pageM+1} / ${totalPagesM} · ${totalM} membres</span>
+      <button class="btn btn-secondary btn-sm" onclick="memPage(1)" ${pageM>=totalPagesM-1?'disabled':''}>Suivant →</button>
+    </div>`:'';
+
+  document.getElementById('membres-tbody').innerHTML=paged.map(m=>{
     const isNew=m.createdAt&&(new Date()-new Date(m.createdAt))<30*86400000;
     return`<tr>
     <td class="td-name">${m.nom}${isNew?` <span style="background:rgba(34,197,94,0.2);color:#4ade80;font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;margin-left:4px;letter-spacing:0.5px;">NOUVEAU</span>`:''}</td><td>${m.prenom}</td>
@@ -2639,7 +2683,7 @@ function renderMembres(){
     <td><button class="btn-icon" onclick="editMember(${m.id})">✏️</button><button class="btn-icon" onclick="deleteMember(${m.id})">🗑️</button></td>
   </tr>`;}).join('');
 
-  document.getElementById('member-cards').innerHTML=list.map(m=>{
+  document.getElementById('member-cards').innerHTML=paged.map(m=>{
     const isNew=m.createdAt&&(new Date()-new Date(m.createdAt))<30*86400000;
     return`<div class="member-card">
     <div class="member-card-header">
@@ -2650,7 +2694,12 @@ function renderMembres(){
     ${m.email?`<div style="font-size:12px;color:var(--text3);">✉️ ${m.email}</div>`:''}
     ${m.tel?`<div style="font-size:12px;color:var(--text3);margin-top:2px;">📞 ${m.tel}</div>`:''}
   </div>`;}).join('');
+
+  // Pagination controls (append after table)
+  const paginEl=document.getElementById('membres-pagination');
+  if(paginEl)paginEl.innerHTML=paginationM;
 }
+function memPage(dir){renderMembres._page=(renderMembres._page||0)+dir;renderMembres();}
 function openMemberModal(){editingMembre=null;document.getElementById('modal-membre-title').textContent='Ajouter un membre';['nom','prenom','role','email','tel','notes','adhesion'].forEach(f=>document.getElementById('m-'+f).value='');document.getElementById('m-type').value='';document.getElementById('m-presence').value='0.8';document.getElementById('modal-membre').classList.add('open');}
 function editMember(id){editingMembre=id;const m=membres.find(x=>x.id===id);document.getElementById('modal-membre-title').textContent='Modifier le membre';document.getElementById('m-nom').value=m.nom;document.getElementById('m-prenom').value=m.prenom;document.getElementById('m-role').value=m.role||'';document.getElementById('m-type').value=m.type||'';document.getElementById('m-email').value=m.email||'';document.getElementById('m-tel').value=m.tel||'';document.getElementById('m-adhesion').value=m.adhesion||'';document.getElementById('m-presence').value=m.presence_attendue||0;document.getElementById('m-notes').value=m.notes||'';document.getElementById('modal-membre').classList.add('open');}
 function saveMember(){
@@ -2898,14 +2947,49 @@ function _buildEventListHTML(filtered){
 
 function renderEvents(){
   const today=new Date().toISOString().slice(0,10);
+  const q=(document.getElementById('search-events')?.value||'').toLowerCase();
+  const filterType=document.getElementById('filter-events-type')?.value||'';
+  const filterPeriod=document.getElementById('filter-events-period')?.value||'';
+  const sortBy=document.getElementById('sort-events')?.value||'date_desc';
+
+  // Populate type dropdown
+  const typeEl=document.getElementById('filter-events-type');
+  if(typeEl&&typeEl.options.length<=1){
+    eventTypes.forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;typeEl.appendChild(o);});
+  }
+
+  // Filter
+  let filtered=events.filter(e=>{
+    if(q&&!(e.nom||e.type||'').toLowerCase().includes(q))return false;
+    if(filterType&&e.type!==filterType)return false;
+    if(filterPeriod==='month'){const now=new Date();const m=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;if(!e.date.startsWith(m))return false;}
+    if(filterPeriod==='year'&&!e.date.startsWith(new Date().getFullYear()+''))return false;
+    if(filterPeriod==='past'&&e.date>=today)return false;
+    if(filterPeriod==='upcoming'&&e.date<today)return false;
+    return true;
+  });
+
+  // Sort
+  filtered=filtered.slice().sort((a,b)=>{
+    if(sortBy==='date_asc')return a.date.localeCompare(b.date);
+    if(sortBy==='date_desc')return b.date.localeCompare(a.date);
+    if(sortBy==='name_asc')return(a.nom||a.type).localeCompare(b.nom||b.type);
+    if(sortBy==='pres_desc'){
+      const pa=membres.length>0?membres.filter(m=>presences[m.id+'_'+a.id]).length/membres.length:0;
+      const pb=membres.length>0?membres.filter(m=>presences[m.id+'_'+b.id]).length/membres.length:0;
+      return pb-pa;
+    }
+    return b.date.localeCompare(a.date);
+  });
+
   const totalAll=events.length;
   const aVenir=events.filter(e=>e.date>=today).length;
 
   // Header
   const sub=document.getElementById('events-header-sub');
-  if(sub)sub.textContent=`${totalAll} événement${totalAll>1?'s':''} · ${aVenir} à venir`;
+  if(sub)sub.textContent=`${filtered.length}${filtered.length!==totalAll?' / '+totalAll:''} événement${totalAll>1?'s':''} · ${aVenir} à venir`;
 
-  // Stats globales
+  // Stats
   const statsEl=document.getElementById('events-stats-row');
   if(statsEl){
     statsEl.innerHTML=`
@@ -2922,12 +3006,28 @@ function renderEvents(){
     `;
   }
 
-  // Afficher tous les événements directement
+  // Pagination
+  const PAGE_SIZE=20;
+  const totalPages=Math.ceil(filtered.length/PAGE_SIZE);
+  if(typeof renderEvents._page==='undefined'||q||filterType||filterPeriod||sortBy)renderEvents._page=renderEvents._page||0;
+  const page=Math.min(renderEvents._page||0,Math.max(0,totalPages-1));
+  renderEvents._page=page;
+  const paged=filtered.slice(page*PAGE_SIZE,(page+1)*PAGE_SIZE);
+
+  const paginationHTML=totalPages>1?`
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;padding-top:12px;border-top:1px solid var(--border);">
+      <button class="btn btn-secondary btn-sm" onclick="evPage(-1)" ${page===0?'disabled':''}>← Précédent</button>
+      <span style="font-size:13px;color:var(--text2);">${page+1} / ${totalPages}</span>
+      <button class="btn btn-secondary btn-sm" onclick="evPage(1)" ${page>=totalPages-1?'disabled':''}>Suivant →</button>
+    </div>`:'';
+
   const content=document.getElementById('evsp-content');
   if(content){
-    content.innerHTML=`<div id="events-list">${_buildEventListHTML(events)}</div>`;
+    content.innerHTML=`<div id="events-list">${_buildEventListHTML(paged)}</div>${paginationHTML}`;
+    if(!filtered.length)content.innerHTML='<div style="text-align:center;padding:48px 0;color:var(--text3);font-size:14px;">Aucun événement trouvé</div>';
   }
 }
+function evPage(dir){renderEvents._page=(renderEvents._page||0)+dir;renderEvents();}
 
 function setActiveSubpage(id){
   _activeSubpage=id;
@@ -4110,13 +4210,135 @@ function selectSectionColor(c,el){selectSpColor(c,el);}
 function deleteSection(){deleteSubpage(_editingSubpage);}
 function saveSection(){saveSubpage();}
 
+// ── FAB ───────────────────────────────────────────────────────────
+let _fabOpen=false;
+function openFAB(){_fabOpen=!_fabOpen;const m=document.getElementById('fab-menu');const b=document.getElementById('fab-add');if(_fabOpen){m.style.display='flex';b.style.transform='rotate(45deg)';}else{m.style.display='none';b.style.transform='';}}
+function closeFAB(){_fabOpen=false;const m=document.getElementById('fab-menu');if(m)m.style.display='none';const b=document.getElementById('fab-add');if(b)b.style.transform='';}
+document.addEventListener('click',e=>{if(_fabOpen&&!e.target.closest('#fab-add')&&!e.target.closest('#fab-menu'))closeFAB();});
+
+// ── TOAST ─────────────────────────────────────────────────────────
+let _toastTimer=null;
+function showToast(msg,icon){
+  icon=icon||'✅';
+  const t=document.getElementById('sync-toast');const m=document.getElementById('sync-toast-msg');const ic=document.getElementById('sync-toast-icon');
+  if(!t||!m||!ic)return;
+  m.textContent=msg;ic.textContent=icon;
+  t.style.display='flex';t.style.animation='toastIn 0.25s ease';
+  clearTimeout(_toastTimer);_toastTimer=setTimeout(()=>{t.style.display='none';},3000);
+}
+
+// ── FIREBASE SYNC NOTIFICATION ────────────────────────────────────
+function rerender(){
+  const p=document.querySelector('.page.active')?.id?.replace('page-','');
+  const map={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport,dons:renderDons};
+  if(p&&map[p])map[p]();
+  showToast('Synchronisé depuis un autre appareil','🔄');
+}
+
+// ── GÉNÉRATION COTISATIONS ────────────────────────────────────────
+function genererCotisationsAnnee(){
+  const cur=new Date().getFullYear();
+  const anneeStr=prompt('Générer les cotisations pour quelle année ?',cur);
+  const annee=parseInt(anneeStr);
+  if(!annee||isNaN(annee))return;
+  let created=0;
+  membres.forEach(m=>{
+    if(!cotisations.find(c=>c.membreId===m.id&&c.annee===annee)){
+      cotisations.push({membreId:m.id,annee,montant:m.type==='Actif'?50:m.type==='Actif Suisse'?30:0,statut:'impaye',datePaiement:'',notes:''});
+      created++;
+    }
+  });
+  if(!created){showToast('Toutes les cotisations '+annee+' existent déjà','ℹ️');return;}
+  save('gef_cotisations',cotisations);
+  _populateCotisAnneeSel();
+  const sel=document.getElementById('cotis-filter-annee');if(sel)sel.value=annee;
+  renderCotisations();
+  showToast(created+' cotisation'+(created>1?'s':'')+' '+annee+' générée'+(created>1?'s':'!'),'✅');
+}
+
+function _checkCotisationsAnnee(){
+  const annee=new Date().getFullYear();
+  if(membres.length>0&&!cotisations.find(c=>c.annee===annee))
+    setTimeout(()=>showToast('Cotisations '+annee+' non générées — cliquez ⚡ Générer année','⚠️'),2000);
+}
+
+function _populateCotisAnneeSel(){
+  const sel=document.getElementById('cotis-filter-annee');if(!sel)return;
+  const annees=[...new Set(cotisations.map(c=>c.annee))].sort((a,b)=>b-a);
+  const cur=new Date().getFullYear();
+  if(!annees.includes(cur))annees.unshift(cur);
+  sel.innerHTML=annees.map(a=>`<option value="${a}" ${a===cur?'selected':''}>${a}</option>`).join('');
+}
+
+// ── MODE PRÉSENTATION ─────────────────────────────────────────────
+function openPresentationMode(){
+  const modal=document.getElementById('modal-presentation');if(!modal)return;
+  const today=new Date().toISOString().slice(0,10);
+  const actifs=membres.filter(m=>m.type==='Actif').length;
+  const suisses=membres.filter(m=>m.type==='Actif Suisse').length;
+  const passifs=membres.filter(m=>m.type==='Passif').length;
+  const aVenir=events.filter(e=>e.date>=today).length;
+  const totalIn=compta.filter(c=>c.type==='recette').reduce((s,c)=>s+c.montant,0);
+  const totalOut=compta.filter(c=>c.type==='depense').reduce((s,c)=>s+c.montant,0);
+  const solde=totalIn-totalOut;
+  const cotisPayees=cotisations.filter(c=>c.annee===new Date().getFullYear()&&c.statut==='paye').length;
+  const cotisTotal=cotisations.filter(c=>c.annee===new Date().getFullYear()).length;
+  const avgPres=events.length>0&&membres.length>0?Math.round(membres.reduce((s,m)=>s+events.filter(e=>presences[m.id+'_'+e.id]).length,0)/(membres.length*events.length)*100):0;
+  const nextEvt=events.filter(e=>e.date>=today).sort((a,b)=>a.date.localeCompare(b.date))[0];
+  const stats=[
+    ['👥','Membres',membres.length,`${actifs+suisses} actifs · ${passifs} passifs`,'#e63329'],
+    ['📅','À venir',aVenir,nextEvt?'Prochain: '+fmtDate(nextEvt.date):'Aucun prévu','#60a5fa'],
+    ['💰','Solde',(solde>=0?'+':'')+solde.toFixed(0)+' CHF',`${totalIn.toFixed(0)} recettes / ${totalOut.toFixed(0)} dépenses`,solde>=0?'#22c55e':'#e63329'],
+    ['🏅','Présence',avgPres+'%','Taux moyen de participation','#c49a00'],
+    ['💳','Cotisations',cotisPayees+'/'+cotisTotal,(cotisTotal>0?Math.round(cotisPayees/cotisTotal*100):0)+'% réglées','#a78bfa'],
+    ['📊','Événements',events.length,(events.length-aVenir)+' passés','#f97316'],
+  ];
+  document.getElementById('presentation-content').innerHTML=`
+    <div style="text-align:center;margin-bottom:40px;">
+      <div style="font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:10px;">GE-FAIS · Tableau de bord</div>
+      <div style="font-size:48px;font-weight:900;color:#fff;letter-spacing:-2px;">${new Date().toLocaleDateString('fr-CH',{day:'numeric',month:'long',year:'numeric'})}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+      ${stats.map(([icon,label,val,sub,color])=>`
+        <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:18px;padding:24px 20px;text-align:center;border-top:3px solid ${color};">
+          <div style="font-size:26px;margin-bottom:8px;">${icon}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">${label}</div>
+          <div style="font-size:34px;font-weight:900;color:${color};letter-spacing:-1px;line-height:1.1;">${val}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:6px;">${sub}</div>
+        </div>`).join('')}
+    </div>`;
+  modal.style.display='flex';
+}
+function closePresentationMode(){document.getElementById('modal-presentation').style.display='none';}
+
 document.addEventListener('keydown', e => {
   if((e.ctrlKey||e.metaKey) && e.key === 'k'){e.preventDefault();openGlobalSearch();}
-  if(e.key==='Escape'){document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));}
+  if(e.key==='Escape'){document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));closeFAB();}
 });
 if(sessionStorage.getItem('gef_auth')==='ok'){initApp();}
 
 </script>
+
+<!-- BOUTON FLOTTANT + -->
+<button id="fab-add" onclick="openFAB()" style="position:fixed;bottom:86px;right:20px;width:52px;height:52px;border-radius:50%;background:var(--red);color:#fff;border:none;font-size:24px;cursor:pointer;box-shadow:0 4px 20px rgba(230,51,41,0.5);z-index:90;display:none;align-items:center;justify-content:center;transition:all 0.2s;">＋</button>
+<div id="fab-menu" style="display:none;position:fixed;bottom:146px;right:20px;z-index:90;flex-direction:column;gap:8px;align-items:flex-end;">
+  <div class="fab-item" onclick="closeFAB();navTo('membres','Membres');setTimeout(openMemberModal,300);">👤 Membre</div>
+  <div class="fab-item" onclick="closeFAB();navTo('evenements','Événements');setTimeout(openEventModal,300);">📅 Événement</div>
+  <div class="fab-item" onclick="closeFAB();navTo('compta','Comptabilité');setTimeout(()=>openComptaModal('recette'),300);">💰 Recette</div>
+  <div class="fab-item" onclick="closeFAB();navTo('compta','Comptabilité');setTimeout(()=>openComptaModal('depense'),300);">📉 Dépense</div>
+</div>
+
+<!-- TOAST NOTIFICATION -->
+<div id="sync-toast" style="position:fixed;top:70px;right:16px;z-index:300;display:none;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 16px;font-size:13px;box-shadow:var(--shadow-md);display:none;align-items:center;gap:8px;max-width:280px;">
+  <span id="sync-toast-icon">🔄</span>
+  <span id="sync-toast-msg">Données mises à jour</span>
+</div>
+
+<!-- MODAL PRESENTATION MODE -->
+<div id="modal-presentation" style="display:none;position:fixed;inset:0;background:#000;z-index:500;flex-direction:column;align-items:center;justify-content:center;padding:40px;">
+  <button onclick="closePresentationMode()" style="position:fixed;top:20px;right:20px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:8px 16px;border-radius:10px;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;">✕ Quitter</button>
+  <div id="presentation-content" style="width:100%;max-width:900px;"></div>
+</div>
 
 <!-- MODAL CONFIRMATION SUPPRESSION -->
 <div class="modal-overlay" id="modal-confirm-delete">
