@@ -1104,6 +1104,9 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
       <div class="nav-item" id="nav-compta" onclick="showPage('compta',this,'Comptabilité')">
         <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>Comptabilité
       </div>
+      <div class="nav-item" id="nav-dons" onclick="showPage('dons',this,'Dons & Paiements')">
+        <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Dons & Paiements
+      </div>
       <div class="nav-section">Outils</div>
       <div class="nav-item" id="nav-statistiques" onclick="showPage('statistiques',this,'Statistiques')">
         <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Statistiques
@@ -1118,9 +1121,6 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
       </div>
       <div class="nav-item" id="nav-rapport" onclick="showPage('rapport',this,'Rapport annuel')">
         <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Rapport
-      </div>
-      <div class="nav-item" id="nav-dons" onclick="showPage('dons',this,'Dons & Paiements')">
-        <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Dons & Paiements
       </div>
     </div>
     <div class="sidebar-footer"><span>v3.1 · 2025–2026</span><button class="btn-logout" onclick="logout()">Déconnexion</button></div>
@@ -1635,33 +1635,6 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
     </div>
 
     <!-- ═══ ACTIVITÉS — VUE D'ENSEMBLE ═══ -->
-    <div id="page-activites" class="page">
-      <div class="page-header">
-        <div class="page-header-left"><h2>Activités</h2><p id="activites-sub">Vue récapitulative de toutes les activités</p></div>
-      </div>
-      <!-- KPI globaux -->
-      <div id="activites-kpi" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;"></div>
-      <!-- Cartes dynamiques des sous-pages -->
-      <div id="activites-sections-grid" class="act-cards-grid"></div>
-      <!-- Bouton ajouter section -->
-      <button class="act-add-btn" onclick="openNewSubpage()">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg>
-        Créer une sous-page
-      </button>
-      <!-- Synthèse présences -->
-      <div class="card" style="margin-top:16px;">
-        <div class="card-title">📊 Taux de participation global</div>
-        <div id="activites-participation-chart" class="gef-chart"></div>
-      </div>
-      <div class="card" style="margin-top:12px;">
-        <div class="card-title">📅 Prochaines activités</div>
-        <div id="activites-upcoming"></div>
-      </div>
-    </div>
-
-    <!-- Pages dynamiques des sections -->
-    <div id="dynamic-section-pages"></div>
-
   </main>
 </div>
 
@@ -2280,6 +2253,8 @@ async function initApp(){
       else if(i===6)emailHistorique=val;
       else if(i===7)documents_list=val;
     });
+    ag_notes=lsGet('gef_ag_notes',[]);
+    event_subpages=lsGet('gef_event_subpages',DEFAULT_EVENT_SUBPAGES);
     // Sauvegarder aussi dans localStorage comme cache
     membres&&lsSet('gef_membres',membres);
     events&&lsSet('gef_events',events);
