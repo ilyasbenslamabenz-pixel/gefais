@@ -2459,8 +2459,32 @@ async function initApp(){
   document.getElementById('loading-overlay').style.display='flex';
   
   // Timeout de 5 secondes pour Firebase — après ça on charge depuis localStorage
-  const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),5000));
-  
+  // ── ÉTAPE 1 : Charger le cache local IMMÉDIATEMENT ───────────────
+  membres=lsGet('gef_membres',DEFAULT_MEMBRES);
+  events=lsGet('gef_events',DEFAULT_EVENTS);
+  presences=lsGet('gef_presences',DEFAULT_PRESENCES);
+  compta=lsGet('gef_compta',DEFAULT_COMPTA);
+  cotisations=lsGet('gef_cotisations',buildDefaultCotisations(DEFAULT_MEMBRES));
+  eventTypes=lsGet('gef_event_types',DEFAULT_EVENT_TYPES);
+  emailHistorique=lsGet('gef_email_historique',[]);
+  documents_list=lsGet('gef_documents',[]);
+  ag_notes=lsGet('gef_ag_notes',[]);
+  event_subpages=lsGet('gef_event_subpages',DEFAULT_EVENT_SUBPAGES);
+  const cachedDon=lsGet('gef_don_data',null);
+  if(cachedDon)Object.assign(_donData,cachedDon);
+
+  // ── Afficher l'app immédiatement avec les données locales ────────
+  document.getElementById('loading-overlay').style.display='none';
+  renderDashboard();
+  renderMembres();
+  _populateCotisAnneeSel();
+  _checkCotisationsAnnee();
+  let migrated=false;
+  membres.forEach(m=>{if(!m.createdAt){m.createdAt='2026-01-01';migrated=true;}});
+  if(migrated){save('gef_membres',membres);renderMembres();}
+
+  // ── ÉTAPE 2 : Synchroniser Firebase en arrière-plan ──────────────
+  const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000));
   try{
     const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents','gef_event_subpages','gef_don_data'];
     const defaults=[DEFAULT_MEMBRES,DEFAULT_EVENTS,DEFAULT_PRESENCES,DEFAULT_COMPTA,buildDefaultCotisations(DEFAULT_MEMBRES),DEFAULT_EVENT_TYPES,[],[],DEFAULT_EVENT_SUBPAGES,null];
@@ -2485,9 +2509,8 @@ async function initApp(){
       else if(i===8)event_subpages=val;
       else if(i===9&&val){Object.assign(_donData,val);lsSet('gef_don_data',_donData);}
     });
-    ag_notes=lsGet('gef_ag_notes',[]);
     if(!docs[8].exists)event_subpages=lsGet('gef_event_subpages',DEFAULT_EVENT_SUBPAGES);
-    // Sauvegarder aussi dans localStorage comme cache
+    // Mettre à jour le cache local
     membres&&lsSet('gef_membres',membres);
     events&&lsSet('gef_events',events);
     presences&&lsSet('gef_presences',presences);
@@ -2495,36 +2518,21 @@ async function initApp(){
     cotisations&&lsSet('gef_cotisations',cotisations);
     if(isNew){keys.forEach((k,i)=>save(k,defaults[i]));}
     setupListeners();
+    // Re-render avec les données Firebase (plus récentes)
+    renderDashboard();
+    renderMembres();
+    _populateCotisAnneeSel();
+    _checkCotisationsAnnee();
+    let migrated2=false;
+    membres.forEach(m=>{if(!m.createdAt){m.createdAt='2026-01-01';migrated2=true;}});
+    if(migrated2){save('gef_membres',membres);renderMembres();}
   }catch(e){
-    console.warn('Firebase indisponible, chargement depuis le cache local:', e.message);
-    // Charger depuis localStorage
-    membres=lsGet('gef_membres',DEFAULT_MEMBRES);
-    events=lsGet('gef_events',DEFAULT_EVENTS);
-    presences=lsGet('gef_presences',DEFAULT_PRESENCES);
-    compta=lsGet('gef_compta',DEFAULT_COMPTA);
-    cotisations=lsGet('gef_cotisations',buildDefaultCotisations(DEFAULT_MEMBRES));
-    eventTypes=lsGet('gef_event_types',DEFAULT_EVENT_TYPES);
-    emailHistorique=lsGet('gef_email_historique',[]);
-    documents_list=lsGet('gef_documents',[]);
-    ag_notes=lsGet('gef_ag_notes',[]);
-    event_subpages=lsGet('gef_event_subpages',DEFAULT_EVENT_SUBPAGES);
-    const cachedDon=lsGet('gef_don_data',null);
-    if(cachedDon)Object.assign(_donData,cachedDon);
+    console.warn('Firebase indisponible:', e.message);
     const s=document.getElementById('sync-indicator');
     if(s){s.textContent='📴 Hors ligne';s.style.display='inline';s.style.color='var(--text3)';}
     const banner=document.getElementById('offline-banner');
     if(banner){banner.style.display='flex';document.querySelector('.main').style.paddingTop='128px';}
   }
-  
-  document.getElementById('loading-overlay').style.display='none';
-  renderDashboard();
-  renderMembres();
-  _populateCotisAnneeSel();
-  _checkCotisationsAnnee();
-  // Migration: tous les membres sans createdAt → 2026-01-01
-  let migrated=false;
-  membres.forEach(m=>{if(!m.createdAt){m.createdAt='2026-01-01';migrated=true;}});
-  if(migrated){save('gef_membres',membres);renderMembres();}
 }
 
 // ── DASHBOARD ────────────────────────────────────────────────────
