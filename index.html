@@ -1186,10 +1186,6 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
     <span>📴</span><span style="flex:1;">Mode hors ligne — données locales.</span>
     <button id="offline-banner-btn" onclick="syncNow()" style="background:rgba(196,154,0,0.25);border:1px solid rgba(196,154,0,0.4);color:#f0b429;padding:4px 12px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">Reconnecter</button>
   </div>
-    <span>📴</span>
-    <span style="flex:1;">Mode hors ligne — données locales.</span>
-    <button onclick="reconnectFirebase()" style="background:#f59e0b;color:#fff;border:none;padding:5px 10px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">Reconnecter</button>
-  </div>
   <!-- WIDGET STATUT SAUVEGARDE -->
   <div id="save-status"><span id="save-status-icon"></span><span id="save-status-text"></span></div>
 
@@ -4550,15 +4546,21 @@ document.addEventListener('keydown', e => {
   if((e.ctrlKey||e.metaKey) && e.key === 'k'){e.preventDefault();openGlobalSearch();}
   if(e.key==='Escape'){document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));closeFAB();}
 });
-function _tryInitApp(){
+function _tryInitApp(attempt){
+  attempt=attempt||0;
   if(typeof firebase==='undefined'){
-    console.warn('Firebase not loaded yet, retrying...');
-    setTimeout(_tryInitApp,300);
+    if(attempt<15){
+      setTimeout(()=>_tryInitApp(attempt+1),300);
+    } else {
+      // Firebase unavailable after 4.5s — launch in offline mode
+      console.warn('Firebase unavailable, launching in offline mode');
+      if(sessionStorage.getItem('gef_auth')==='ok'){initApp();}
+    }
     return;
   }
   if(sessionStorage.getItem('gef_auth')==='ok'){initApp();}
 }
-_tryInitApp();
+_tryInitApp(0);
 
 </script>
 
