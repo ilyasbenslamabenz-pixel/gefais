@@ -668,23 +668,23 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 /* ── CLASSEMENT PRÉSENCES ── */
 .pres-group{margin-bottom:14px;border-radius:16px;overflow:hidden;border:1.5px solid var(--border);box-shadow:var(--shadow);}
 .pres-group-header{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;font-size:12px;font-weight:700;}
-.pres-rank-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:8px;transition:all 0.15s;}
+.pres-rank-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:16px;margin-bottom:10px;transition:all 0.15s;}
 .pres-rank-row:hover{border-color:rgba(230,51,41,0.4);box-shadow:var(--shadow);}
-.pres-rank-left{display:flex;align-items:center;gap:8px;flex:1;min-width:0;}
-.pres-rank-pos{font-size:12px;font-weight:800;min-width:26px;text-align:center;flex-shrink:0;}
-.pres-rank-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;letter-spacing:-0.5px;}
+.pres-rank-left{display:flex;align-items:center;gap:14px;flex:1;min-width:0;}
+.pres-rank-pos{font-size:15px;font-weight:800;min-width:32px;text-align:center;flex-shrink:0;}
+.pres-rank-avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0;letter-spacing:-0.5px;}
 .pres-rank-info{flex:1;min-width:0;}
-.pres-rank-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;}
+.pres-rank-name{font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;}
 .pres-dots-mini{display:flex;gap:3px;flex-wrap:wrap;}
 .pres-dot-mini{width:9px;height:9px;border-radius:50%;cursor:pointer;transition:transform 0.15s;}
 .pres-dot-mini:hover{transform:scale(1.5);}
 .pres-dot-mini-yes{background:var(--red);}
 .pres-dot-mini-no{background:#4a3a38;}
-.pres-rank-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;min-width:64px;}
-.pres-rank-pct{font-size:18px;font-weight:900;letter-spacing:-0.5px;line-height:1;}
-.pres-rank-bar{width:56px;height:5px;background:var(--bg3);border-radius:4px;overflow:hidden;}
+.pres-rank-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;min-width:74px;}
+.pres-rank-pct{font-size:24px;font-weight:900;letter-spacing:-1px;line-height:1;}
+.pres-rank-bar{width:70px;height:6px;background:var(--bg3);border-radius:4px;overflow:hidden;}
 .pres-rank-fill{height:100%;border-radius:4px;transition:width 0.6s ease;}
-.pres-rank-count{font-size:10px;color:var(--text3);font-weight:600;}
+.pres-rank-count{font-size:11px;color:var(--text3);font-weight:600;}
 
 /* ── PRÉSENCES VUE ÉVÉNEMENTS ── */
 .pres-month-sep{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);padding:14px 4px 6px;border-bottom:1px solid var(--border);margin-bottom:8px;}
@@ -2919,8 +2919,8 @@ function renderPresences(){
         <div class="pres-rank-avatar" style="background:${color}22;color:${color};border:1.5px solid ${color}44;">${initials}</div>
         <div class="pres-rank-info">
           <div class="pres-rank-name">${m.prenom} <strong>${m.nom}</strong></div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px;">${m.p} fois présent sur ${evts.length}</div>
-          ${m.presence_attendue!=null?`<div style="font-size:10px;margin-top:2px;"><span style="color:var(--text3);">Attendu </span><span style="font-weight:700;color:var(--text2);">${Math.round(m.presence_attendue*100)}%</span>${m.pct<Math.round(m.presence_attendue*100)?` <span style="color:var(--red);font-size:9px;">↓ -${Math.round(m.presence_attendue*100)-m.pct}%</span>`:` <span style="color:var(--green);font-size:9px;">✓</span>`}</div>`:''}
+          <div style="font-size:12px;color:var(--text3);margin-top:2px;">${m.p} fois présent sur ${evts.length}</div>
+          ${m.presence_attendue!=null?`<div style="font-size:11px;margin-top:3px;"><span style="color:var(--text3);">Attendu </span><span style="font-weight:700;color:var(--text2);">${Math.round(m.presence_attendue*100)}%</span>${m.pct<Math.round(m.presence_attendue*100)?` <span style="color:var(--red);font-size:10px;font-weight:700;">↓ -${Math.round(m.presence_attendue*100)-m.pct}%</span>`:` <span style="color:var(--green);font-size:10px;font-weight:700;">✓</span>`}</div>`:''}
         </div>
       </div>
       <div class="pres-rank-right">
