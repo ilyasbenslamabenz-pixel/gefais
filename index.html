@@ -2779,10 +2779,10 @@ function renderMembres(){
     const avgPres=events.length>0&&membres.length>0?Math.round(membres.reduce((s,m)=>s+events.filter(e=>presences[m.id+'_'+e.id]).length,0)/(membres.length*events.length)*100):0;
     const sansType=membres.filter(m=>!m.type).length;
     kpiEl.innerHTML=`
-      <div class="kpi-mini"><div class="kpi-mini-val">${actifs+suisses}</div><div class="kpi-mini-lbl">Actifs</div></div>
-      <div class="kpi-mini"><div class="kpi-mini-val">${passifs}</div><div class="kpi-mini-lbl">Passifs</div></div>
-      <div class="kpi-mini"><div class="kpi-mini-val" style="color:${avgPres>=70?'var(--green)':avgPres>=40?'var(--gold)':'var(--red)'};">${avgPres}%</div><div class="kpi-mini-lbl">Présence moy.</div></div>
-      <div class="kpi-mini"><div class="kpi-mini-val" style="color:var(--gold);">${suisses}</div><div class="kpi-mini-lbl">Actifs Suisses</div></div>`;
+      <div class="kpi-mini"><div class="kpi-mini-val" style="color:var(--red);">${actifs}</div><div class="kpi-mini-lbl">Actifs</div></div>
+      <div class="kpi-mini"><div class="kpi-mini-val" style="color:var(--gold);">${suisses}</div><div class="kpi-mini-lbl">Actifs Suisses</div></div>
+      <div class="kpi-mini"><div class="kpi-mini-val" style="color:var(--text3);">${passifs}</div><div class="kpi-mini-lbl">Passifs</div></div>
+      <div class="kpi-mini"><div class="kpi-mini-val" style="color:${avgPres>=70?'var(--green)':avgPres>=40?'var(--gold)':'var(--red)'};">${avgPres}%</div><div class="kpi-mini-lbl">Présence moy.</div></div>`;
   }
 
   const chartEl=document.getElementById('membres-repartition-chart');
@@ -2913,19 +2913,29 @@ function renderPresences(){
     const color=m.pct>=70?'var(--green)':m.pct>=40?'var(--gold)':'var(--red)';
     const medal=idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':'';
     const initials=(m.prenom[0]||'')+(m.nom[0]||'');
+    const attendu=m.presence_attendue!=null?Math.round(m.presence_attendue*100):null;
+    const diff=attendu!=null?m.pct-attendu:null;
     return`<div class="pres-rank-row" data-mid="${m.id}">
-      <div class="pres-rank-left">
-        <div class="pres-rank-pos" style="color:var(--text3);">${medal||idx+1}</div>
-        <div class="pres-rank-avatar" style="background:${color}22;color:${color};border:1.5px solid ${color}44;">${initials}</div>
-        <div class="pres-rank-info">
-          <div class="pres-rank-name">${m.prenom} <strong>${m.nom}</strong></div>
-          <div style="font-size:12px;color:var(--text3);margin-top:2px;">${m.p} fois présent sur ${evts.length}</div>
-          ${m.presence_attendue!=null?`<div style="font-size:11px;margin-top:3px;"><span style="color:var(--text3);">Attendu </span><span style="font-weight:700;color:var(--text2);">${Math.round(m.presence_attendue*100)}%</span>${m.pct<Math.round(m.presence_attendue*100)?` <span style="color:var(--red);font-size:10px;font-weight:700;">↓ -${Math.round(m.presence_attendue*100)-m.pct}%</span>`:` <span style="color:var(--green);font-size:10px;font-weight:700;">✓</span>`}</div>`:''}
+      <div class="pres-rank-pos" style="color:var(--text3);flex-shrink:0;">${medal||idx+1}</div>
+      <div class="pres-rank-avatar" style="background:${color}22;color:${color};border:1.5px solid ${color}44;flex-shrink:0;">${initials}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;">
+          <div>
+            <div class="pres-rank-name">${m.prenom} <strong>${m.nom}</strong></div>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:3px;flex-wrap:wrap;">
+              <span style="font-size:12px;color:var(--text3);">${m.p}/${evts.length} présences</span>
+              ${attendu!=null?`<span style="font-size:11px;color:var(--text3);">·</span>
+              <span style="font-size:11px;color:var(--text3);">Attendu</span>
+              <span style="font-size:11px;font-weight:700;color:var(--text2);">${attendu}%</span>
+              ${diff<0?`<span style="font-size:11px;color:var(--red);font-weight:700;">↓${diff}%</span>`:diff>0?`<span style="font-size:11px;color:var(--green);font-weight:700;">↑+${diff}%</span>`:`<span style="font-size:11px;color:var(--green);font-weight:700;">✓</span>`}`:''}
+            </div>
+          </div>
+          <div class="pres-rank-pct" style="color:${color};flex-shrink:0;">${m.pct}%</div>
         </div>
-      </div>
-      <div class="pres-rank-right">
-        <div class="pres-rank-pct" style="color:${color};">${m.pct}%</div>
-        <div class="pres-rank-bar"><div class="pres-rank-fill" style="width:${m.pct}%;background:${color};"></div></div>
+        <div style="height:8px;background:var(--bg3);border-radius:6px;overflow:hidden;position:relative;">
+          <div style="height:100%;width:${m.pct}%;background:${color};border-radius:6px;transition:width 0.6s ease;"></div>
+          ${attendu!=null?`<div style="position:absolute;top:0;bottom:0;left:${attendu}%;width:2px;background:rgba(255,255,255,0.3);transform:translateX(-50%);"></div>`:''}
+        </div>
       </div>
     </div>`;
   }).join('');
@@ -4311,6 +4321,79 @@ function donCopyIBAN() {
 
 // ── THÈME SOMBRE / CLAIR ──────────────────────────────────────────
 let _darkMode = lsGet('gef_dark_mode', true);
+let _themeStyleEl = null;
+function _injectThemeCSS(css){
+  if(!_themeStyleEl){_themeStyleEl=document.createElement('style');_themeStyleEl.id='dynamic-theme';document.head.appendChild(_themeStyleEl);}
+  _themeStyleEl.textContent=css;
+}
+function _applyLightCSS(){
+  _injectThemeCSS(`
+    .badge-actif{background:#fff0ef;color:#c0271e;border:1px solid #ffd5d3;}
+    .badge-suisse{background:#fffbeb;color:#92400e;border:1px solid #fde68a;}
+    .badge-passif{background:#f3f4f6;color:#4b5563;border:1px solid #e5e7eb;}
+    .badge-role{background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;}
+    .badge-paye{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;}
+    .badge-impaye{background:#fff1f0;color:#c0271e;border:1px solid #ffd5d3;}
+    .badge-recette{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;}
+    .badge-depense{background:#fff1f0;color:#c0271e;border:1px solid #ffd5d3;}
+    .dot-no{background:#d1d5db;}
+    .pres-dot-mini-no{background:#d1d5db;}
+    .dash-alerte-warn{background:#fffbeb;border:1.5px solid #fde68a;color:#92400e;}
+    .dash-alerte-danger{background:#fff1f0;border:1.5px solid #fecaca;color:#c0271e;}
+    .dash-alerte-info{background:#eff6ff;border:1.5px solid #bfdbfe;color:#1e40af;}
+    .dash-alerte-success{background:#f0fdf4;border:1.5px solid #bbf7d0;color:#166534;}
+    .dash-finance-in{background:#f0fdf4;border:1px solid #bbf7d0;}
+    .dash-finance-out{background:#fff1f0;border:1px solid #ffd5d3;}
+    .cotis-status-paye{background:#f0fdf4;color:#166534;}
+    .cotis-status-impaye{background:#fff1f0;color:#c0271e;}
+    .pres-present{background:#f0fdf4;border-color:#86efac;}
+    .pres-absent{background:#fff1f0;border-color:#fca5a5;}
+    .pres-badge-yes{background:#f0fdf4;color:#166534;}
+    .pres-badge-no{background:#fff1f0;color:#c0271e;}
+    .don-info-twint{background:#e6f7ff;border:1.5px solid #bae6fd;}
+    .don-info-bank{background:#f8fafc;border:1.5px solid #e8e5e0;}
+    .nav-item:hover{background:rgba(230,51,41,0.06);}
+    input,select,textarea{background:#f7f7f5;color:#111111;}
+    select option{background:#ffffff;}
+    .member-card-v2{box-shadow:0 1px 4px rgba(0,0,0,0.08);}
+    .kpi-mini{background:#f7f7f5;border-color:#e8e5e0;}
+    tr:hover td{background:#f5f5f3;}
+    .chart-bar-track{background:#f0eeeb;}
+    .pres-rank-bar{background:#f0eeeb;}
+  `);
+}
+function _applyDarkCSS(){
+  _injectThemeCSS(`
+    .badge-actif{background:rgba(230,51,41,0.18);color:#ff7a72;border:1px solid rgba(230,51,41,0.3);}
+    .badge-suisse{background:rgba(196,154,0,0.18);color:#f0b429;border:1px solid rgba(196,154,0,0.3);}
+    .badge-passif{background:rgba(255,255,255,0.06);color:#9ca3af;border:1px solid rgba(255,255,255,0.12);}
+    .badge-role{background:rgba(96,165,250,0.18);color:#93c5fd;border:1px solid rgba(96,165,250,0.3);}
+    .badge-paye{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.25);}
+    .badge-impaye{background:rgba(230,51,41,0.15);color:#ff7a72;border:1px solid rgba(230,51,41,0.25);}
+    .badge-recette{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.25);}
+    .badge-depense{background:rgba(230,51,41,0.15);color:#ff7a72;border:1px solid rgba(230,51,41,0.25);}
+    .dot-no{background:#4a3a38;}
+    .pres-dot-mini-no{background:#4a3a38;}
+    .dash-alerte-warn{background:rgba(196,154,0,0.12);border:1.5px solid rgba(196,154,0,0.3);color:#f0b429;}
+    .dash-alerte-danger{background:rgba(230,51,41,0.12);border:1.5px solid rgba(230,51,41,0.3);color:#ff7a72;}
+    .dash-alerte-info{background:rgba(96,165,250,0.12);border:1.5px solid rgba(96,165,250,0.3);color:#93c5fd;}
+    .dash-alerte-success{background:rgba(34,197,94,0.1);border:1.5px solid rgba(34,197,94,0.3);color:#4ade80;}
+    .dash-finance-in{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);}
+    .dash-finance-out{background:rgba(230,51,41,0.08);border:1px solid rgba(230,51,41,0.2);}
+    .cotis-status-paye{background:rgba(34,197,94,0.15);color:var(--green);}
+    .cotis-status-impaye{background:rgba(230,51,41,0.12);color:var(--red);}
+    .pres-present{background:rgba(34,197,94,0.07);border-color:rgba(34,197,94,0.2);}
+    .pres-absent{background:rgba(230,51,41,0.05);border-color:rgba(230,51,41,0.12);}
+    .pres-badge-yes{background:rgba(34,197,94,0.15);color:var(--green);}
+    .pres-badge-no{background:rgba(230,51,41,0.12);color:var(--red);}
+    .don-info-twint{background:rgba(96,165,250,0.1);border:1.5px solid rgba(96,165,250,0.25);}
+    .don-info-bank{background:rgba(255,255,255,0.04);border:1.5px solid var(--border);}
+    select option{background:#220d14;}
+    .chart-bar-track{background:var(--bg3);}
+    .pres-rank-bar{background:var(--bg3);}
+  `);
+}
+
 function applyTheme(dark) {
   const root = document.documentElement;
   if (dark) {
@@ -4326,6 +4409,9 @@ function applyTheme(dark) {
     root.style.setProperty('--shadow-md','0 4px 20px rgba(0,0,0,0.5)');
     root.style.setProperty('--shadow-lg','0 8px 40px rgba(0,0,0,0.6)');
     document.body.style.background = '#12040a';
+    const sidebarD = document.getElementById('sidebar');
+    if(sidebarD) sidebarD.style.background = '';
+    _applyDarkCSS();
     const btn = document.getElementById('theme-toggle');
     if (btn) btn.textContent = '☀️';
     const btn2 = document.getElementById('theme-toggle-sidebar');
@@ -4337,12 +4423,22 @@ function applyTheme(dark) {
     root.style.setProperty('--card','#ffffff');
     root.style.setProperty('--border','#e8e5e0');
     root.style.setProperty('--text','#111111');
-    root.style.setProperty('--text2','#6b7280');
-    root.style.setProperty('--text3','#9ca3af');
-    root.style.setProperty('--shadow','0 1px 4px rgba(0,0,0,0.06)');
-    root.style.setProperty('--shadow-md','0 4px 16px rgba(0,0,0,0.08)');
-    root.style.setProperty('--shadow-lg','0 8px 32px rgba(0,0,0,0.1)');
+    root.style.setProperty('--text2','#4b5563');
+    root.style.setProperty('--text3','#6b7280');
+    root.style.setProperty('--shadow','0 1px 4px rgba(0,0,0,0.08)');
+    root.style.setProperty('--shadow-md','0 4px 16px rgba(0,0,0,0.1)');
+    root.style.setProperty('--shadow-lg','0 8px 32px rgba(0,0,0,0.12)');
+    root.style.setProperty('--red-light','#fff0ef');
+    root.style.setProperty('--gold-light','#fffbeb');
+    root.style.setProperty('--green-light','#f0fdf4');
+    root.style.setProperty('--blue-light','#eff6ff');
+    root.style.setProperty('--purple-light','#f5f3ff');
     document.body.style.background = '#f7f7f5';
+    // Sidebar
+    const sidebar = document.getElementById('sidebar');
+    if(sidebar) sidebar.style.background = '#ffffff';
+    // Fix badge colors for light mode
+    _applyLightCSS();
     const btn = document.getElementById('theme-toggle');
     if (btn) btn.textContent = '🌙';
     const btn2 = document.getElementById('theme-toggle-sidebar');
