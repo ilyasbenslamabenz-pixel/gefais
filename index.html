@@ -184,7 +184,7 @@ select option{background:#220d14;}
 label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:5px;}
 
 /* MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
 .modal-overlay.open{display:flex;}
 .modal{background:var(--bg2);border:1px solid var(--border);border-radius:24px 24px 0 0;padding:28px;width:100%;max-width:580px;max-height:91vh;overflow-y:auto;box-shadow:0 -8px 60px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.06);}
 .modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;}
@@ -979,6 +979,7 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
   label{font-size:12px;}
 
   /* Modals */
+  .modal-overlay{align-items:flex-end;}
   .modal{padding:22px 16px 32px;border-radius:24px 24px 0 0;max-height:92vh;}
   .modal h3{font-size:19px;margin-bottom:16px;}
   .modal-footer{flex-direction:column;gap:8px;}
@@ -2753,7 +2754,7 @@ function renderMembres(){
     let va,vb;
     if(sortBy==='prenom'){va=a.prenom||'';vb=b.prenom||'';}
     else if(sortBy==='nom'){va=a.nom||'';vb=b.nom||'';}
-    else if(sortBy==='type'){va=a.type||'';vb=b.type||'';}
+    else if(sortBy==='type'){const to={'Actif':0,'Actif Suisse':1,'Passif':2};va=to[a.type]??3;vb=to[b.type]??3;return va-vb;}
     else if(sortBy==='adhesion'){va=a.adhesion||'';vb=b.adhesion||'';}
     else if(sortBy==='presence'){
       va=events.length>0?events.filter(e=>presences[a.id+'_'+e.id]).length/events.length:0;
@@ -2919,6 +2920,7 @@ function renderPresences(){
         <div class="pres-rank-info">
           <div class="pres-rank-name">${m.prenom} <strong>${m.nom}</strong></div>
           <div style="font-size:11px;color:var(--text3);margin-top:2px;">${m.p} fois présent sur ${evts.length}</div>
+          ${m.presence_attendue!=null?`<div style="font-size:10px;margin-top:2px;"><span style="color:var(--text3);">Attendu </span><span style="font-weight:700;color:var(--text2);">${Math.round(m.presence_attendue*100)}%</span>${m.pct<Math.round(m.presence_attendue*100)?` <span style="color:var(--red);font-size:9px;">↓ -${Math.round(m.presence_attendue*100)-m.pct}%</span>`:` <span style="color:var(--green);font-size:9px;">✓</span>`}</div>`:''}
         </div>
       </div>
       <div class="pres-rank-right">
@@ -3533,15 +3535,32 @@ function renderCompta(){
     chartEl.innerHTML=months.length?months.map(m=>{
       const [y,mo]=m.split('-');
       const mois=['','Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+      const solde=byMonth[m].in-byMonth[m].out;
       const pIn=Math.round(byMonth[m].in/maxVal*100);
       const pOut=Math.round(byMonth[m].out/maxVal*100);
-      return`<div class="chart-bar-row">
-        <div class="chart-bar-label">${mois[parseInt(mo)]} ${y.slice(2)}</div>
-        <div style="flex:1;display:flex;flex-direction:column;gap:3px;">
-          <div class="chart-bar-track" style="height:14px;"><div class="chart-bar-fill" style="width:${pIn}%;background:var(--green);height:100%;">${pIn>15?'+'+byMonth[m].in.toFixed(0):''}</div></div>
-          <div class="chart-bar-track" style="height:14px;"><div class="chart-bar-fill" style="width:${pOut}%;background:var(--red);height:100%;">${pOut>15?'−'+byMonth[m].out.toFixed(0):''}</div></div>
+      const soldeColor=solde>=0?'var(--green)':'var(--red)';
+      return`<div style="margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+          <span style="font-size:12px;font-weight:700;color:var(--text2);">${mois[parseInt(mo)]} ${y}</span>
+          <span style="font-size:13px;font-weight:800;color:${soldeColor};">${solde>=0?'+':''}${solde.toFixed(0)} CHF</span>
         </div>
-        <div class="chart-bar-val" style="color:${byMonth[m].in-byMonth[m].out>=0?'var(--green)':'var(--red)'};">${byMonth[m].in-byMonth[m].out>=0?'+':''}${(byMonth[m].in-byMonth[m].out).toFixed(0)}</div>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:10px;color:var(--green);width:20px;text-align:right;flex-shrink:0;">+</span>
+            <div style="flex:1;height:12px;background:var(--bg3);border-radius:6px;overflow:hidden;">
+              <div style="height:100%;width:${pIn}%;background:linear-gradient(90deg,rgba(34,197,94,0.6),var(--green));border-radius:6px;transition:width 0.5s ease;"></div>
+            </div>
+            <span style="font-size:11px;font-weight:600;color:var(--green);min-width:52px;text-align:right;">${byMonth[m].in.toFixed(0)} CHF</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:10px;color:var(--red);width:20px;text-align:right;flex-shrink:0;">−</span>
+            <div style="flex:1;height:12px;background:var(--bg3);border-radius:6px;overflow:hidden;">
+              <div style="height:100%;width:${pOut}%;background:linear-gradient(90deg,rgba(230,51,41,0.6),var(--red));border-radius:6px;transition:width 0.5s ease;"></div>
+            </div>
+            <span style="font-size:11px;font-weight:600;color:var(--red);min-width:52px;text-align:right;">${byMonth[m].out.toFixed(0)} CHF</span>
+          </div>
+        </div>
+        <div style="height:1px;background:var(--border);margin-top:10px;"></div>
       </div>`;
     }).join(''):'<p style="color:var(--text3);font-size:13px;text-align:center;padding:16px 0;">Aucune écriture enregistrée.</p>';
   }
@@ -4444,6 +4463,15 @@ function _showOfflineBanner(){const b=document.getElementById('offline-banner');
 function _hideOfflineBanner(){const b=document.getElementById('offline-banner');if(b)b.style.display='none';}
 
 document.querySelectorAll('.modal-overlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');});});
+
+// Soumettre les modals avec Enter
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Enter'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')return;
+  const modal=document.querySelector('.modal-overlay.open .modal');
+  if(!modal)return;
+  const saveBtn=modal.querySelector('.btn-primary:not([disabled])');
+  if(saveBtn){e.preventDefault();saveBtn.click();}
+});
 // Raccourci clavier Ctrl+K / Cmd+K pour la recherche
 function selectSectionColor(c,el){selectSpColor(c,el);}
 function deleteSection(){deleteSubpage(_editingSubpage);}
