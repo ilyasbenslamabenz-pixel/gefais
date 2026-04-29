@@ -66,10 +66,10 @@ h1,h2,h3{font-family:'DM Serif Display',serif;font-weight:400;}
 .nav{flex:1;padding:12px 10px;overflow-y:auto;}
 .nav-section{padding:12px 10px 4px;font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1.5px;font-weight:600;}
 .nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;color:var(--text2);transition:all 0.15s;font-size:13px;border-radius:10px;margin-bottom:2px;border:none;}
-.nav-item:hover{color:var(--text);background:var(--bg3);}
-.nav-item.active{color:var(--red);background:var(--red-light);font-weight:600;}
+.nav-item:hover{color:var(--text);background:rgba(230,51,41,0.08);}
+.nav-item.active{color:#fff;background:var(--red);font-weight:700;box-shadow:0 2px 12px rgba(230,51,41,0.35);}
 .nav-icon{width:15px;height:15px;opacity:0.5;flex-shrink:0;}
-.nav-item.active .nav-icon{opacity:1;}
+.nav-item.active .nav-icon{opacity:1;filter:brightness(10);}
 .sidebar-footer{padding:14px 20px;border-top:1px solid var(--border);font-size:11px;color:var(--text3);display:flex;justify-content:space-between;align-items:center;}
 .btn-logout{background:none;border:none;color:var(--text3);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;padding:4px 8px;border-radius:6px;transition:0.15s;}
 .btn-logout:hover{color:var(--red);background:var(--red-light);}
@@ -97,7 +97,7 @@ h1,h2,h3{font-family:'DM Serif Display',serif;font-weight:400;}
 
 /* MAIN */
 .main{margin-left:var(--sidebar);flex:1;padding:28px 32px;min-height:100vh;}
-.page{display:none;}.page.active{display:block;}
+.page{display:none;}.page.active{display:block;animation:pageIn 0.22s ease both;}
 .page-header{margin-bottom:24px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;}
 .page-header-left h2{font-size:26px;color:var(--text);font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:-0.5px;}
 .page-header-left h2::after{content:'';display:block;width:24px;height:3px;background:var(--red);margin-top:6px;border-radius:3px;}
@@ -577,6 +577,7 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 .manage-sp-types{font-size:11px;color:var(--text3);}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes pageIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
 /* ── ACTIVITÉS PAGES ── */
 .nav-sub{padding-left:28px !important;font-size:12px !important;}
@@ -667,21 +668,54 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 /* ── CLASSEMENT PRÉSENCES ── */
 .pres-group{margin-bottom:14px;border-radius:16px;overflow:hidden;border:1.5px solid var(--border);box-shadow:var(--shadow);}
 .pres-group-header{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;font-size:12px;font-weight:700;}
-.pres-rank-row{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card);border-top:1px solid var(--border);transition:background 0.15s;}
-.pres-rank-row:hover{background:var(--bg2);}
-.pres-rank-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;letter-spacing:-0.5px;}
+.pres-rank-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:8px;transition:all 0.15s;}
+.pres-rank-row:hover{border-color:rgba(230,51,41,0.4);box-shadow:var(--shadow);}
+.pres-rank-left{display:flex;align-items:center;gap:8px;flex:1;min-width:0;}
+.pres-rank-pos{font-size:12px;font-weight:800;min-width:26px;text-align:center;flex-shrink:0;}
+.pres-rank-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;letter-spacing:-0.5px;}
 .pres-rank-info{flex:1;min-width:0;}
-.pres-rank-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:5px;display:flex;align-items:center;flex-wrap:wrap;gap:4px;}
-.pres-dots-mini{display:flex;gap:4px;flex-wrap:wrap;}
+.pres-rank-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;}
+.pres-dots-mini{display:flex;gap:3px;flex-wrap:wrap;}
 .pres-dot-mini{width:9px;height:9px;border-radius:50%;cursor:pointer;transition:transform 0.15s;}
-.pres-dot-mini:hover{transform:scale(1.4);}
+.pres-dot-mini:hover{transform:scale(1.5);}
 .pres-dot-mini-yes{background:var(--red);}
 .pres-dot-mini-no{background:#4a3a38;}
-.pres-rank-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;min-width:56px;}
-.pres-rank-pct{font-size:16px;font-weight:800;letter-spacing:-0.5px;}
-.pres-rank-bar{width:52px;height:4px;background:var(--bg3);border-radius:4px;overflow:hidden;}
+.pres-rank-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;min-width:64px;}
+.pres-rank-pct{font-size:18px;font-weight:900;letter-spacing:-0.5px;line-height:1;}
+.pres-rank-bar{width:56px;height:5px;background:var(--bg3);border-radius:4px;overflow:hidden;}
 .pres-rank-fill{height:100%;border-radius:4px;transition:width 0.6s ease;}
-.pres-rank-count{font-size:10px;color:var(--text3);}
+.pres-rank-count{font-size:10px;color:var(--text3);font-weight:600;}
+
+/* ── PRÉSENCES VUE ÉVÉNEMENTS ── */
+.pres-month-sep{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);padding:14px 4px 6px;border-bottom:1px solid var(--border);margin-bottom:8px;}
+.pres-evt-card{background:var(--card);border:1px solid var(--border);border-radius:16px;margin-bottom:8px;overflow:hidden;transition:border-color 0.2s,box-shadow 0.2s;cursor:pointer;}
+.pres-evt-card:hover{border-color:rgba(230,51,41,0.3);}
+.pres-evt-card.open{border-color:rgba(230,51,41,0.4);box-shadow:0 4px 20px rgba(0,0,0,0.3);}
+.pres-evt-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;gap:10px;}
+.pres-evt-left{display:flex;align-items:flex-start;gap:10px;flex:1;min-width:0;}
+.pres-evt-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.pres-evt-name{font-size:14px;font-weight:700;color:var(--text);}
+.pres-evt-meta{font-size:11px;color:var(--text3);margin-top:2px;}
+.pres-evt-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.pres-evt-avatars{display:flex;gap:-4px;}
+.pres-evt-avatar{width:26px;height:26px;border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--card);margin-left:-6px;flex-shrink:0;}
+.pres-evt-avatars .pres-evt-avatar:first-child{margin-left:0;}
+.pres-evt-pct{font-size:16px;font-weight:900;letter-spacing:-0.5px;}
+.pres-evt-count{font-size:10px;color:var(--text3);font-weight:600;}
+.pres-evt-chevron{font-size:20px;color:var(--text3);transition:transform 0.2s;line-height:1;}
+.pres-evt-body{border-top:1px solid var(--border);padding:14px 16px;}
+.pres-evt-bar-wrap{margin-bottom:14px;}
+.pres-evt-bar-track{height:6px;background:var(--bg3);border-radius:6px;overflow:hidden;}
+.pres-evt-bar-fill{height:100%;border-radius:6px;transition:width 0.5s ease;}
+.pres-evt-members{display:flex;flex-direction:column;gap:6px;}
+.pres-member-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;cursor:pointer;transition:all 0.15s;border:1px solid transparent;}
+.pres-present{background:rgba(34,197,94,0.07);border-color:rgba(34,197,94,0.2);}
+.pres-absent{background:rgba(230,51,41,0.05);border-color:rgba(230,51,41,0.12);}
+.pres-member-row:hover{opacity:0.8;}
+.pres-member-avatar{width:34px;height:34px;border-radius:50%;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.pres-member-name{flex:1;font-size:13px;font-weight:500;color:var(--text);}
+.pres-badge-yes{background:rgba(34,197,94,0.15);color:var(--green);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap;}
+.pres-badge-no{background:rgba(230,51,41,0.12);color:var(--red);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap;}
 
 /* ── STATISTIQUES ── */
 .stat-kpi-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);}
@@ -998,6 +1032,69 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
   .login-brand{font-size:22px;}
   .dh-bubble-num{font-size:32px;}
 }
+
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:52px 24px;text-align:center;gap:12px;}
+.empty-state-icon{font-size:48px;opacity:0.6;}
+.empty-state-title{font-size:16px;font-weight:700;color:var(--text2);}
+.empty-state-sub{font-size:13px;color:var(--text3);line-height:1.5;}
+
+/* ── COTISATIONS CARDS REDESIGN ── */
+.cotis-card-v2{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:0;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow 0.2s;}
+.cotis-card-v2:hover{box-shadow:var(--shadow-md);}
+.cotis-card-v2-top{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;gap:10px;}
+.cotis-card-v2-accent{position:absolute;top:0;left:0;right:0;height:3px;border-radius:0;}
+.cotis-card-v2-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0;letter-spacing:-0.5px;}
+.cotis-card-v2-info{flex:1;min-width:0;}
+.cotis-card-v2-name{font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cotis-card-v2-type{font-size:11px;color:var(--text3);margin-top:2px;}
+.cotis-card-v2-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.cotis-card-v2-amount{font-size:18px;font-weight:900;letter-spacing:-0.5px;font-family:'DM Sans',sans-serif;}
+.cotis-card-v2-status{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:0.3px;}
+.cotis-card-v2-bottom{border-top:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.02);}
+.cotis-status-paye{background:rgba(34,197,94,0.15);color:var(--green);}
+.cotis-status-impaye{background:rgba(230,51,41,0.12);color:var(--red);}
+
+/* ── COMPTA CARDS REDESIGN ── */
+.compta-card-v2{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;transition:all 0.15s;}
+.compta-card-v2:hover{box-shadow:var(--shadow-md);}
+.compta-card-v2-stripe{width:4px;height:48px;border-radius:4px;flex-shrink:0;}
+.compta-card-v2-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.compta-card-v2-body{flex:1;min-width:0;}
+.compta-card-v2-desc{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.compta-card-v2-meta{font-size:11px;color:var(--text3);margin-top:3px;display:flex;gap:6px;flex-wrap:wrap;}
+.compta-card-v2-amount{font-size:18px;font-weight:900;letter-spacing:-0.5px;font-family:'DM Sans',sans-serif;flex-shrink:0;}
+.compta-card-v2-actions{display:flex;gap:4px;flex-shrink:0;}
+
+/* ── MEMBRES CARDS REDESIGN ── */
+.member-card-v2{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:var(--shadow);transition:all 0.2s;}
+.member-card-v2:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.member-card-v2-header{display:flex;align-items:center;gap:12px;padding:14px 16px;}
+.member-card-v2-avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;flex-shrink:0;letter-spacing:-0.5px;}
+.member-card-v2-info{flex:1;min-width:0;}
+.member-card-v2-name{font-size:15px;font-weight:700;color:var(--text);}
+.member-card-v2-role{font-size:11px;color:var(--text3);margin-top:2px;}
+.member-card-v2-actions{display:flex;gap:4px;}
+.member-card-v2-footer{border-top:1px solid var(--border);padding:10px 16px;display:flex;gap:8px;align-items:center;background:rgba(255,255,255,0.02);}
+
+/* ── STAT KPI REDESIGN ── */
+.stat-kpi-card-v2{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden;}
+.stat-kpi-card-v2::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.stat-kpi-card-v2-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);}
+.stat-kpi-card-v2-val{font-size:28px;font-weight:900;letter-spacing:-1px;line-height:1;font-family:'DM Sans',sans-serif;}
+.stat-kpi-card-v2-sub{font-size:11px;color:var(--text3);}
+
+/* ── RAPPORT REDESIGN ── */
+.rapport-section{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:12px;box-shadow:var(--shadow);}
+.rapport-section-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.rapport-section-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.rapport-section-title{font-size:15px;font-weight:700;color:var(--text);}
+.rapport-kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;}
+.rapport-kpi{background:var(--bg3);border-radius:12px;padding:12px;text-align:center;}
+.rapport-kpi-val{font-size:22px;font-weight:900;font-family:'DM Sans',sans-serif;letter-spacing:-0.5px;}
+.rapport-kpi-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-top:2px;}
+.rapport-list-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.rapport-list-item:last-child{border-bottom:none;}
+
 </style>
 </head>
 <body>
@@ -1085,7 +1182,10 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
     <span id="sync-indicator" style="font-size:11px;color:var(--green);display:none;cursor:default;"></span>
   </div>
   <!-- BANNIÈRE HORS LIGNE -->
-  <div id="offline-banner" style="display:none;background:rgba(196,154,0,0.15);border-bottom:1.5px solid rgba(196,154,0,0.3);padding:10px 16px;font-size:12px;color:#f0b429;align-items:center;gap:8px;position:fixed;top:58px;left:0;right:0;z-index:38;">
+  <div id="offline-banner" style="display:none;background:rgba(196,154,0,0.15);border-bottom:1px solid rgba(196,154,0,0.25);padding:7px 14px;font-size:11px;color:#f0b429;align-items:center;gap:8px;position:fixed;top:58px;left:0;right:0;z-index:38;">
+    <span>📴</span><span style="flex:1;">Mode hors ligne — données locales.</span>
+    <button id="offline-banner-btn" onclick="syncNow()" style="background:rgba(196,154,0,0.25);border:1px solid rgba(196,154,0,0.4);color:#f0b429;padding:4px 12px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">Reconnecter</button>
+  </div>
     <span>📴</span>
     <span style="flex:1;">Mode hors ligne — données locales.</span>
     <button onclick="reconnectFirebase()" style="background:#f59e0b;color:#fff;border:none;padding:5px 10px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">Reconnecter</button>
@@ -1296,7 +1396,7 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
     <!-- PRÉSENCES -->
     <div id="page-presences" class="page">
       <div class="page-header">
-        <div class="page-header-left"><h2>Présences</h2><p id="pres-header-sub">Touchez un point pour modifier</p></div>
+        <div class="page-header-left"><h2>Présences</h2><p id="pres-header-sub">Taux de participation</p></div>
         <button class="btn btn-secondary btn-sm" onclick="exportPresencesCSV()">⬇️ CSV</button>
       </div>
       <!-- Stats band -->
@@ -1310,22 +1410,9 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
           <option value="Actif Suisse">Actif Suisse</option>
           <option value="Passif">Passif</option>
         </select>
-        <div class="pres-view-toggle">
-          <button id="pres-view-rank" class="pres-view-btn active" onclick="setPresView('rank')">🏆 Classement</button>
-          <button id="pres-view-table" class="pres-view-btn" onclick="setPresView('table')">📋 Tableau</button>
-        </div>
       </div>
-      <!-- Vue classement -->
+      <!-- Vue classement uniquement -->
       <div id="presences-rank-view"></div>
-      <!-- Vue tableau -->
-      <div id="presences-table-view" style="display:none;">
-        <div class="card" style="overflow-x:auto;">
-          <table style="min-width:480px;">
-            <thead id="presence-thead"></thead>
-            <tbody id="presence-tbody"></tbody>
-          </table>
-        </div>
-      </div>
     </div>
 
     <!-- ÉVÉNEMENTS -->
@@ -1700,7 +1787,7 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
       <!-- Note bas de page -->
       <div class="don-note">
         <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        Les QR codes sont stockés localement sur cet appareil. Cliquez sur un champ pour le modifier.
+        Les QR codes et coordonnées bancaires sont sauvegardés sur Firebase et synchronisés sur tous les appareils. Cliquez sur un champ pour le modifier.
       </div>
     </div>
 
@@ -1767,6 +1854,14 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
       <div class="form-group"><label>Email</label><input id="m-email" type="email" placeholder="email@exemple.ch"></div>
       <div class="form-group"><label>Téléphone</label><input id="m-tel" type="text" placeholder="+41 …"></div>
       <div class="form-group"><label>Date d'adhésion</label><input id="m-adhesion" type="date"></div>
+      <div class="form-group"><label>Année d'arrivée dans l'association</label>
+        <select id="m-created-year">
+          <option value="2024">2024</option>
+          <option value="2025">2025</option>
+          <option value="2026" selected>2026</option>
+          <option value="2027">2027</option>
+        </select>
+      </div>
       <div class="form-group"><label>Présence attendue aux réunions</label>
         <select id="m-presence"><option value="0">0% — Passif (ne participe pas)</option><option value="0.4">40% — Actif Suisse (participe parfois)</option><option value="0.8" selected>80% — Actif (participe régulièrement)</option><option value="1">100% — Toujours présent</option></select>
       </div>
@@ -1973,9 +2068,34 @@ function checkLogin(){
   const err=document.getElementById('login-error');
   if(input.value===MOT_DE_PASSE){
     sessionStorage.setItem('gef_auth','ok');
-    document.getElementById('login-screen').style.display='none';
-    document.getElementById('app').style.display='flex';
-    initApp();
+    // Animation : login sort vers le haut, app entre depuis le bas
+    const loginScreen=document.getElementById('login-screen');
+    const appEl=document.getElementById('app');
+    // Phase 1 : bouton devient vert + pulse
+    const btn=document.querySelector('.login-btn');
+    if(btn){btn.style.background='var(--green)';btn.innerHTML='<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';}
+    loginScreen.style.transition='opacity 0.4s ease, transform 0.5s cubic-bezier(0.4,0,0.2,1)';
+    loginScreen.style.transitionDelay='0.3s';
+    setTimeout(()=>{
+      loginScreen.style.opacity='0';
+      loginScreen.style.transform='scale(1.05)';
+    },300);
+    // Phase 2 : app apparaît avec slide up
+    appEl.style.display='flex';
+    appEl.style.opacity='0';
+    appEl.style.transform='translateY(30px)';
+    appEl.style.transition='opacity 0.5s ease, transform 0.5s cubic-bezier(0.34,1.2,0.64,1)';
+    setTimeout(()=>{
+      appEl.style.opacity='1';
+      appEl.style.transform='translateY(0)';
+    },500);
+    setTimeout(()=>{
+      loginScreen.style.display='none';
+      appEl.style.transition='';
+      appEl.style.transform='';
+      appEl.style.opacity='';
+      initApp();
+    },900);
   } else {
     err.style.display='flex';
     input.value='';
@@ -2028,22 +2148,27 @@ function closeSidebar(){document.getElementById('sidebar').classList.remove('mob
     }
   },{passive:true});
 })();
+const _pageIcons={dashboard:'⊞',membres:'👥',presences:'🏅',evenements:'📅',cotisations:'💳',compta:'💰',statistiques:'📊',messagerie:'✉️',documents:'📁',rapport:'📄',dons:'💛'};
 function showPage(name,el,title){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
-  el.classList.add('active');
-  document.getElementById('topbar-title').textContent=title;
+  if(el)el.classList.add('active');
+  // Update topbar title with icon
+  const icon=_pageIcons[name]||'';
+  const titleEl=document.getElementById('topbar-title');
+  if(titleEl)titleEl.textContent=(icon?icon+' ':'')+title;
+  // Scroll to top
+  document.querySelector('.main')?.scrollTo({top:0,behavior:'instant'});
+  window.scrollTo({top:0,behavior:'instant'});
   closeSidebar();
   const _staticMap={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport,dons:renderDons};
   if(_staticMap[name])_staticMap[name]();
-
 }
 function navTo(name,title){
   document.querySelectorAll('.bottom-nav-item').forEach(i=>i.classList.remove('active'));
   document.getElementById('bnav-'+name)?.classList.add('active');
   showPage(name,document.getElementById('nav-'+name),title);
-  if(name==='dashboard')renderDashboard();
 }function switchTab(id,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
@@ -2400,6 +2525,10 @@ async function initApp(){
   renderMembres();
   _populateCotisAnneeSel();
   _checkCotisationsAnnee();
+  // Migration: tous les membres sans createdAt → 2026-01-01
+  let migrated=false;
+  membres.forEach(m=>{if(!m.createdAt){m.createdAt='2026-01-01';migrated=true;}});
+  if(migrated){save('gef_membres',membres);renderMembres();}
 }
 
 // ── DASHBOARD ────────────────────────────────────────────────────
@@ -2412,8 +2541,9 @@ function renderDashboard(){
   const totalIn=compta.filter(c=>c.type==='recette').reduce((s,c)=>s+c.montant,0);
   const totalOut=compta.filter(c=>c.type==='depense').reduce((s,c)=>s+c.montant,0);
   const solde=totalIn-totalOut;
-  const cotisPayees=cotisations.filter(c=>c.statut==='paye').length;
-  const cotisTotal=cotisations.length;
+  const anneeEnCours=new Date().getFullYear();
+  const cotisTotal=cotisations.filter(c=>c.annee===anneeEnCours).length;
+  const cotisPayees=cotisations.filter(c=>c.annee===anneeEnCours&&c.statut==='paye').length;
   const today=new Date().toISOString().slice(0,10);
   const h=new Date().getHours();
   const greet=h<6?'Bonne nuit 🌙':h<12?'Bonjour 👋':h<18?'Bon après-midi ☀️':'Bonsoir 🌇';
@@ -2476,9 +2606,9 @@ function renderDashboard(){
     const alertes=[];
     const upcoming7=events.filter(e=>{const d=new Date(e.date);const diff=(d-new Date())/86400000;return diff>=0&&diff<=7;});
     if(upcoming7.length)alertes.push({type:'info',icon:'📅',msg:`${upcoming7.length} événement(s) dans les 7 prochains jours : ${upcoming7.map(e=>e.nom||e.type).join(', ')}`});
-    const impayees=cotisations.filter(c=>c.statut==='impaye'&&c.montant>0).length;
-    if(impayees>0)alertes.push({type:'warn',icon:'💳',msg:`${impayees} cotisation(s) toujours en attente de paiement`});
-    else if(cotisTotal>0)alertes.push({type:'success',icon:'🎉',msg:'Toutes les cotisations sont à jour !'});
+    const impayees=cotisations.filter(c=>c.annee===anneeEnCours&&c.statut==='impaye'&&c.montant>0).length;
+    if(impayees>0)alertes.push({type:'warn',icon:'💳',msg:`${impayees} cotisation(s) ${anneeEnCours} en attente de paiement`});
+    else if(cotisTotal>0)alertes.push({type:'success',icon:'🎉',msg:`Toutes les cotisations ${anneeEnCours} sont à jour !`});
     alertesEl.innerHTML=alertes.map(a=>`<div class="dash-alerte dash-alerte-${a.type}"><span style="font-size:16px;">${a.icon}</span><span>${a.msg}</span></div>`).join('');
     alertesEl.style.marginBottom=alertes.length?'14px':'0';
   }
@@ -2642,12 +2772,12 @@ function renderMembres(){
   const kpiEl=document.getElementById('membres-kpi');
   if(kpiEl){
     const avgPres=events.length>0&&membres.length>0?Math.round(membres.reduce((s,m)=>s+events.filter(e=>presences[m.id+'_'+e.id]).length,0)/(membres.length*events.length)*100):0;
-    const avecEmail=membres.filter(m=>m.email).length;
+    const sansType=membres.filter(m=>!m.type).length;
     kpiEl.innerHTML=`
       <div class="kpi-mini"><div class="kpi-mini-val">${actifs+suisses}</div><div class="kpi-mini-lbl">Actifs</div></div>
       <div class="kpi-mini"><div class="kpi-mini-val">${passifs}</div><div class="kpi-mini-lbl">Passifs</div></div>
       <div class="kpi-mini"><div class="kpi-mini-val" style="color:${avgPres>=70?'var(--green)':avgPres>=40?'var(--gold)':'var(--red)'};">${avgPres}%</div><div class="kpi-mini-lbl">Présence moy.</div></div>
-      <div class="kpi-mini"><div class="kpi-mini-val">${avecEmail}</div><div class="kpi-mini-lbl">Avec email</div></div>`;
+      <div class="kpi-mini"><div class="kpi-mini-val" style="color:var(--gold);">${suisses}</div><div class="kpi-mini-lbl">Actifs Suisses</div></div>`;
   }
 
   const chartEl=document.getElementById('membres-repartition-chart');
@@ -2686,32 +2816,44 @@ function renderMembres(){
 
   document.getElementById('member-cards').innerHTML=paged.map(m=>{
     const isNew=m.createdAt&&(new Date()-new Date(m.createdAt))<30*86400000;
-    return`<div class="member-card">
-    <div class="member-card-header">
-      <div><div class="member-card-name">${m.prenom} ${m.nom}${isNew?` <span style="background:rgba(34,197,94,0.2);color:#4ade80;font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;margin-left:4px;">NOUVEAU</span>`:''}</div></div>
-      <div><button class="btn-icon" onclick="editMember(${m.id})">✏️</button><button class="btn-icon" onclick="deleteMember(${m.id})">🗑️</button></div>
-    </div>
-    <div class="member-card-meta">${badgeType(m.type)}${m.role?`<span class="badge-role">${m.role}</span>`:''}</div>
-    ${m.email?`<div style="font-size:12px;color:var(--text3);">✉️ ${m.email}</div>`:''}
-    ${m.tel?`<div style="font-size:12px;color:var(--text3);margin-top:2px;">📞 ${m.tel}</div>`:''}
-  </div>`;}).join('');
+    const typeColor=m.type==='Actif'?'var(--red)':m.type==='Actif Suisse'?'var(--gold)':'var(--text3)';
+    const initials=(m.prenom[0]||'')+(m.nom[0]||'');
+    const pres=events.length>0?Math.round(events.filter(e=>presences[m.id+'_'+e.id]).length/events.length*100):null;
+    return`<div class="member-card-v2">
+      <div class="member-card-v2-header">
+        <div class="member-card-v2-avatar" style="background:${typeColor}20;color:${typeColor};">${initials}</div>
+        <div class="member-card-v2-info">
+          <div class="member-card-v2-name">${m.prenom} ${m.nom}${isNew?` <span style="background:rgba(34,197,94,0.2);color:var(--green);font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;">NOUVEAU</span>`:''}</div>
+          <div class="member-card-v2-role">${m.role?m.role+' · ':''}${m.type||'—'}</div>
+        </div>
+        <div class="member-card-v2-actions">
+          <button class="btn-icon" onclick="editMember(${m.id})">✏️</button>
+          <button class="btn-icon" onclick="deleteMember(${m.id})">🗑️</button>
+        </div>
+      </div>
+      <div class="member-card-v2-footer">
+        ${m.email?`<span style="font-size:11px;color:var(--text3);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">✉️ ${m.email}</span>`:`<span style="font-size:11px;color:var(--text3);">Pas d'email</span>`}
+        ${pres!==null?`<span style="font-size:11px;font-weight:700;color:${pres>=70?'var(--green)':pres>=40?'var(--gold)':'var(--red)'};">🏅 ${pres}%</span>`:''}
+      </div>
+    </div>`;}).join('');
 
   // Pagination controls (append after table)
   const paginEl=document.getElementById('membres-pagination');
   if(paginEl)paginEl.innerHTML=paginationM;
 }
 function memPage(dir){renderMembres._page=(renderMembres._page||0)+dir;renderMembres();}
-function openMemberModal(){editingMembre=null;document.getElementById('modal-membre-title').textContent='Ajouter un membre';['nom','prenom','role','email','tel','notes','adhesion'].forEach(f=>document.getElementById('m-'+f).value='');document.getElementById('m-type').value='';document.getElementById('m-presence').value='0.8';document.getElementById('modal-membre').classList.add('open');}
-function editMember(id){editingMembre=id;const m=membres.find(x=>x.id===id);document.getElementById('modal-membre-title').textContent='Modifier le membre';document.getElementById('m-nom').value=m.nom;document.getElementById('m-prenom').value=m.prenom;document.getElementById('m-role').value=m.role||'';document.getElementById('m-type').value=m.type||'';document.getElementById('m-email').value=m.email||'';document.getElementById('m-tel').value=m.tel||'';document.getElementById('m-adhesion').value=m.adhesion||'';document.getElementById('m-presence').value=m.presence_attendue||0;document.getElementById('m-notes').value=m.notes||'';document.getElementById('modal-membre').classList.add('open');}
+function openMemberModal(){editingMembre=null;document.getElementById('modal-membre-title').textContent='Ajouter un membre';['nom','prenom','role','email','tel','notes','adhesion'].forEach(f=>document.getElementById('m-'+f).value='');document.getElementById('m-type').value='';document.getElementById('m-presence').value='0.8';document.getElementById('m-created-year').value=new Date().getFullYear();document.getElementById('modal-membre').classList.add('open');}
+function editMember(id){editingMembre=id;const m=membres.find(x=>x.id===id);document.getElementById('modal-membre-title').textContent='Modifier le membre';document.getElementById('m-nom').value=m.nom;document.getElementById('m-prenom').value=m.prenom;document.getElementById('m-role').value=m.role||'';document.getElementById('m-type').value=m.type||'';document.getElementById('m-email').value=m.email||'';document.getElementById('m-tel').value=m.tel||'';document.getElementById('m-adhesion').value=m.adhesion||'';document.getElementById('m-presence').value=m.presence_attendue||0;document.getElementById('m-notes').value=m.notes||'';const yr=m.createdAt?new Date(m.createdAt).getFullYear():2026;const sel=document.getElementById('m-created-year');if(sel){if(![...sel.options].find(o=>parseInt(o.value)===yr)){const opt=document.createElement('option');opt.value=yr;opt.textContent=yr;sel.appendChild(opt);}sel.value=yr;}document.getElementById('modal-membre').classList.add('open');}
 function saveMember(){
   const nom=document.getElementById('m-nom').value.trim(),prenom=document.getElementById('m-prenom').value.trim();
   if(!nom||!prenom){alert('Nom et prénom requis.');return;}
   // Détection de doublon
   const doublon=membres.find(m=>m.id!==editingMembre&&m.nom.toLowerCase()===nom.toLowerCase()&&m.prenom.toLowerCase()===prenom.toLowerCase());
   if(doublon&&!confirm(`⚠️ Un membre "${prenom} ${nom}" existe déjà. Continuer quand même ?`))return;
+  const yr=parseInt(document.getElementById('m-created-year')?.value)||new Date().getFullYear();
   const data={nom,prenom,role:document.getElementById('m-role').value,type:document.getElementById('m-type').value,email:document.getElementById('m-email').value,tel:document.getElementById('m-tel').value,adhesion:document.getElementById('m-adhesion').value,presence_attendue:parseFloat(document.getElementById('m-presence').value),notes:document.getElementById('m-notes').value};
-  if(editingMembre){const i=membres.findIndex(m=>m.id===editingMembre);membres[i]={...membres[i],...data};}
-  else{const newId=Math.max(0,...membres.map(m=>m.id))+1;const anneeEnCours=new Date().getFullYear();membres.push({id:newId,...data,createdAt:new Date().toISOString().slice(0,10)});cotisations.push({membreId:newId,annee:anneeEnCours,montant:data.type==='Actif'?50:data.type==='Actif Suisse'?30:0,statut:'impaye',datePaiement:'',notes:''});save('gef_cotisations',cotisations);}
+  if(editingMembre){const i=membres.findIndex(m=>m.id===editingMembre);membres[i]={...membres[i],...data,createdAt:`${yr}-01-01`};}
+  else{const newId=Math.max(0,...membres.map(m=>m.id))+1;const anneeEnCours=new Date().getFullYear();const yr=parseInt(document.getElementById('m-created-year')?.value)||anneeEnCours;membres.push({id:newId,...data,createdAt:`${yr}-01-01`});cotisations.push({membreId:newId,annee:anneeEnCours,montant:data.type==='Actif'?50:data.type==='Actif Suisse'?30:0,statut:'impaye',datePaiement:'',notes:''});save('gef_cotisations',cotisations);}
   save('gef_membres',membres);closeModal('modal-membre');renderMembres();
 }
 function deleteMember(id){
@@ -2726,13 +2868,6 @@ function deleteMember(id){
 
 // ── PRÉSENCES ────────────────────────────────────────────────────
 let _presView = 'rank';
-function setPresView(v){
-  _presView=v;
-  document.getElementById('presences-rank-view').style.display=v==='rank'?'block':'none';
-  document.getElementById('presences-table-view').style.display=v==='table'?'block':'none';
-  document.getElementById('pres-view-rank').className='pres-view-btn'+(v==='rank'?' active':'');
-  document.getElementById('pres-view-table').className='pres-view-btn'+(v==='table'?' active':'');
-}
 
 function renderPresences(){
   const evts=events.slice().sort((a,b)=>a.date.localeCompare(b.date));
@@ -2740,7 +2875,6 @@ function renderPresences(){
   const ft=document.getElementById('filter-presences-type')?.value||'';
   const list=membres.filter(m=>(m.nom+' '+m.prenom).toLowerCase().includes(q)&&(!ft||m.type===ft));
 
-  // Header sub
   const sub=document.getElementById('pres-header-sub');
   if(sub)sub.textContent=`${list.length} membres · ${evts.length} événements`;
 
@@ -2750,86 +2884,104 @@ function renderPresences(){
     const totalPres=list.reduce((s,m)=>s+evts.filter(e=>presences[m.id+'_'+e.id]).length,0);
     const possible=list.length*evts.length;
     const avgPct=possible>0?Math.round(totalPres/possible*100):0;
-    const top=list.map(m=>({name:m.prenom+' '+m.nom,p:evts.filter(e=>presences[m.id+'_'+e.id]).length})).sort((a,b)=>b.p-a.p)[0];
     const perfect=list.filter(m=>evts.length>0&&evts.every(e=>presences[m.id+'_'+e.id])).length;
     statsEl.innerHTML=`
       <div class="pres-stat-card"><div class="pres-stat-icon" style="background:rgba(96,165,250,0.15);">📅</div><div><div class="pres-stat-label">Événements</div><div class="pres-stat-val">${evts.length}</div></div></div>
-      <div class="pres-stat-card"><div class="pres-stat-icon" style="background:${avgPct>=70?'rgba(34,197,94,0.15)':'rgba(196,154,0,0.15)'};">​${avgPct>=70?'📈':'📊'}</div><div><div class="pres-stat-label">Taux moyen</div><div class="pres-stat-val" style="color:${avgPct>=70?'var(--green)':avgPct>=40?'var(--gold)':'var(--red)'};">${avgPct}%</div></div></div>
+      <div class="pres-stat-card"><div class="pres-stat-icon" style="background:${avgPct>=70?'rgba(34,197,94,0.15)':'rgba(196,154,0,0.15)'};">${avgPct>=70?'📈':'📊'}</div><div><div class="pres-stat-label">Taux moyen</div><div class="pres-stat-val" style="color:${avgPct>=70?'var(--green)':avgPct>=40?'var(--gold)':'var(--red)'};">${avgPct}%</div></div></div>
       <div class="pres-stat-card"><div class="pres-stat-icon" style="background:rgba(196,154,0,0.15);">🏅</div><div><div class="pres-stat-label">100% présent</div><div class="pres-stat-val">${perfect}</div></div></div>
     `;
   }
 
-  // VUE CLASSEMENT
+  // CLASSEMENT
   const rankEl=document.getElementById('presences-rank-view');
-  if(rankEl){
-    const ranked=list.map(m=>{
-      const p=evts.filter(e=>presences[m.id+'_'+e.id]).length;
-      const pct=evts.length>0?Math.round((p/evts.length)*100):0;
-      return{...m,p,pct};
-    }).sort((a,b)=>b.pct-a.pct);
+  if(!rankEl)return;
 
-    // Séparer par zone
-    const top=ranked.filter(m=>m.pct>=70);
-    const mid=ranked.filter(m=>m.pct>=40&&m.pct<70);
-    const low=ranked.filter(m=>m.pct<40);
-
-    const renderGroup=(title,icon,color,bg,list)=>list.length===0?'':
-      `<div class="pres-group">
-        <div class="pres-group-header" style="background:${bg};border-left:3px solid ${color};">
-          <span>${icon} ${title}</span>
-          <span style="font-size:11px;font-weight:700;color:${color};">${list.length} membre${list.length>1?'s':''}</span>
-        </div>
-        ${list.map((m,idx)=>{
-          const medal=m.pct===100?'🥇':m.pct>=80?'🥈':m.pct>=70?'🥉':'';
-          const initials=(m.prenom[0]||'')+(m.nom[0]||'');
-          const dots=evts.map(e=>{
-            const isP=!!presences[m.id+'_'+e.id];
-            return`<span class="pres-dot-mini ${isP?'pres-dot-mini-yes':'pres-dot-mini-no'}" 
-              title="${e.nom||e.type} · ${fmtDate(e.date)}"
-              onclick="togglePresenceRank(${m.id},${e.id},this)"></span>`;
-          }).join('');
-          return`<div class="pres-rank-row" data-mid="${m.id}">
-            <div class="pres-rank-avatar" style="background:${color};">${initials}</div>
-            <div class="pres-rank-info">
-              <div class="pres-rank-name">${medal} ${m.prenom} ${m.nom} <span style="margin-left:4px;">${badgeType(m.type)}</span></div>
-              <div class="pres-dots-mini">${dots}</div>
-            </div>
-            <div class="pres-rank-right">
-              <div class="pres-rank-pct" style="color:${color};">${m.pct}%</div>
-              <div class="pres-rank-bar"><div class="pres-rank-fill" style="width:${m.pct}%;background:${color};"></div></div>
-              <div class="pres-rank-count">${m.p}/${evts.length}</div>
-            </div>
-          </div>`;
-        }).join('')}
-      </div>`;
-
-    rankEl.innerHTML=
-      renderGroup('Excellente présence','🟢','var(--green)','#f0fdf4',top)+
-      renderGroup('Présence moyenne','🟡','var(--gold)','#fffbeb',mid)+
-      renderGroup('Présence faible','🔴','var(--red)','#fff1f0',low)+
-      (ranked.length===0?'<div style="text-align:center;padding:32px;color:var(--text3);">Aucun membre</div>':'');
-  }
-
-  // VUE TABLEAU
-  document.getElementById('presence-thead').innerHTML=`<tr><th style="min-width:120px">Membre</th><th>Type</th>${evts.map(e=>`<th class="event-header" title="${e.nom||e.type}">${(e.nom||e.type).slice(0,8)}<br><span style="font-size:9px;opacity:0.6">${fmtDate(e.date)}</span></th>`).join('')}<th>%</th></tr>`;
-  document.getElementById('presence-tbody').innerHTML=list.map(m=>{
+  const ranked=list.map(m=>{
     const p=evts.filter(e=>presences[m.id+'_'+e.id]).length;
     const pct=evts.length>0?Math.round((p/evts.length)*100):0;
-    const color=pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';
-    return`<tr>
-      <td class="td-name" style="font-size:12px;white-space:nowrap;">${m.prenom} ${m.nom}</td>
-      <td>${badgeType(m.type)}</td>
-      ${evts.map(e=>`<td style="text-align:center;cursor:pointer;padding:10px 6px" onclick="togglePresence(${m.id},${e.id},this)"><span class="dot ${presences[m.id+'_'+e.id]?'dot-yes':'dot-no'}"></span></td>`).join('')}
-      <td><div style="display:flex;align-items:center;gap:6px;min-width:80px;">
-        <div class="pct-bar"><div class="pct-fill" style="width:${pct}%;background:${color}"></div></div>
-        <span style="font-size:11px;font-weight:700;color:${color}">${pct}%</span>
-      </div></td>
-    </tr>`;
+    return{...m,p,pct};
+  }).sort((a,b)=>b.pct-a.pct);
+
+  if(!ranked.length){rankEl.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3);">Aucun membre</div>';return;}
+
+  rankEl.innerHTML=ranked.map((m,idx)=>{
+    const color=m.pct>=70?'var(--green)':m.pct>=40?'var(--gold)':'var(--red)';
+    const medal=idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':'';
+    const initials=(m.prenom[0]||'')+(m.nom[0]||'');
+    return`<div class="pres-rank-row" data-mid="${m.id}">
+      <div class="pres-rank-left">
+        <div class="pres-rank-pos" style="color:var(--text3);">${medal||idx+1}</div>
+        <div class="pres-rank-avatar" style="background:${color}22;color:${color};border:1.5px solid ${color}44;">${initials}</div>
+        <div class="pres-rank-info">
+          <div class="pres-rank-name">${m.prenom} <strong>${m.nom}</strong></div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px;">${m.p} fois présent sur ${evts.length}</div>
+        </div>
+      </div>
+      <div class="pres-rank-right">
+        <div class="pres-rank-pct" style="color:${color};">${m.pct}%</div>
+        <div class="pres-rank-bar"><div class="pres-rank-fill" style="width:${m.pct}%;background:${color};"></div></div>
+      </div>
+    </div>`;
   }).join('');
-  setPresView(_presView);
+}
+
+function togglePresEvt(eid, cardEl){
+  const body=document.getElementById('pres-body-'+eid);
+  if(!body)return;
+  const isOpen=body.style.display!=='none';
+  // Fermer tous les autres
+  document.querySelectorAll('.pres-evt-body').forEach(b=>b.style.display='none');
+  document.querySelectorAll('.pres-evt-card').forEach(c=>c.classList.remove('open'));
+  document.querySelectorAll('.pres-evt-chevron').forEach(c=>c.style.transform='');
+  if(!isOpen){
+    body.style.display='block';
+    cardEl.classList.add('open');
+    cardEl.querySelector('.pres-evt-chevron').style.transform='rotate(90deg)';
+  }
+}
+
+function togglePresEvtMember(mid, eid){
+  haptic('light');
+  const key=mid+'_'+eid;
+  presences[key]=!presences[key];
+  save('gef_presences',presences);
+  const row=document.getElementById('pres-mr-'+mid+'-'+eid);
+  if(row){
+    const isP=presences[key];
+    row.className='pres-member-row '+(isP?'pres-present':'pres-absent');
+    row.querySelector('.pres-member-avatar').style.background=isP?'rgba(34,197,94,0.2)':'rgba(230,51,41,0.1)';
+    row.querySelector('.pres-member-avatar').style.color=isP?'var(--green)':'var(--red)';
+    row.querySelector('.pres-member-badge').innerHTML=isP?'<span class="pres-badge-yes">✓ Présent</span>':'<span class="pres-badge-no">✗ Absent</span>';
+  }
+  // Mettre à jour le header de la card
+  const evts=events.slice().sort((a,b)=>a.date.localeCompare(b.date));
+  const q=(document.getElementById('search-presences')?.value||'').toLowerCase();
+  const ft=document.getElementById('filter-presences-type')?.value||'';
+  const list=membres.filter(m=>(m.nom+' '+m.prenom).toLowerCase().includes(q)&&(!ft||m.type===ft));
+  const presCount=list.filter(m=>presences[m.id+'_'+eid]).length;
+  const presPct=list.length>0?Math.round(presCount/list.length*100):0;
+  const color=presPct>=70?'var(--green)':presPct>=40?'var(--gold)':'var(--red)';
+  const card=document.querySelector('.pres-evt-card[onclick*="togglePresEvt('+eid+',"]');
+  if(card){
+    const dot=card.querySelector('.pres-evt-dot');if(dot)dot.style.background=color;
+    const pct=card.querySelector('.pres-evt-pct');if(pct){pct.textContent=presPct+'%';pct.style.color=color;}
+    const cnt=card.querySelector('.pres-evt-count');if(cnt)cnt.textContent=presCount+'/'+list.length;
+    const bar=card.querySelector('.pres-evt-bar-fill');if(bar){bar.style.width=presPct+'%';bar.style.background=color;}
+    // Mettre à jour les avatars
+    const avatarZone=card.querySelector('.pres-evt-avatars');
+    if(avatarZone){
+      const presents=list.filter(m=>presences[m.id+'_'+eid]);
+      avatarZone.innerHTML=presents.slice(0,8).map(m=>`<div class="pres-evt-avatar" style="background:rgba(34,197,94,0.2);color:var(--green);" title="${m.prenom} ${m.nom}">${m.prenom[0]}${m.nom[0]}</div>`).join('')+(presents.length>8?`<div class="pres-evt-avatar" style="background:var(--bg3);color:var(--text3);">+${presents.length-8}</div>`:'');
+    }
+  }
+}
+
+function togglePresenceEvt(mid,eid,rowEl){
+  togglePresEvtMember(mid,eid);
 }
 
 function togglePresenceRank(mid,eid,dotEl){
+  haptic('light');
   const key=mid+'_'+eid;
   presences[key]=!presences[key];
   save('gef_presences',presences);
@@ -3172,7 +3324,31 @@ function renderCotisations(){
     <div class="stat-card"><div class="stat-label">Encaissé</div><div class="stat-value">${montantTotal.toFixed(0)}<span>CHF</span></div></div>
   `;
   document.getElementById('cotis-tbody').innerHTML=list.map(c=>{const m=membres.find(x=>x.id===c.membreId);if(!m)return'';return`<tr><td class="td-name">${m.prenom} ${m.nom}</td><td>${badgeType(m.type)}</td><td style="font-weight:500">${c.montant>0?c.montant.toFixed(2):'—'}</td><td><span class="badge ${c.statut==='paye'?'badge-paye':'badge-impaye'}">${c.statut==='paye'?'✓ Payé':'En attente'}</span></td><td style="color:var(--text3)">${c.datePaiement?fmtDate(c.datePaiement):'—'}</td><td><button class="btn btn-sm btn-secondary" onclick="editCotisation(${c.membreId},${annee})">Modifier</button></td></tr>`;}).join('');
-  document.getElementById('cotis-cards').innerHTML=list.map(c=>{const m=membres.find(x=>x.id===c.membreId);if(!m)return'';const p=c.statut==='paye';return`<div class="member-card" style="border-left:3px solid ${p?'var(--green)':'var(--red)'}"><div class="member-card-header"><div><div class="member-card-name">${m.prenom} ${m.nom}</div><div style="margin-top:4px;">${badgeType(m.type)}</div></div><div style="text-align:right;"><div style="margin-bottom:6px;"><span class="badge ${p?'badge-paye':'badge-impaye'}">${p?'✓ Payé':'En attente'}</span></div><div style="font-size:13px;font-weight:600;">${c.montant>0?c.montant.toFixed(2)+' CHF':'—'}</div>${c.datePaiement?`<div style="font-size:11px;color:var(--text3);margin-top:2px;">${fmtDate(c.datePaiement)}</div>`:''}</div></div><button class="btn btn-sm btn-secondary" style="width:100%;justify-content:center;margin-top:8px;" onclick="editCotisation(${c.membreId},${annee})">Modifier la cotisation</button></div>`;}).join('');
+  document.getElementById('cotis-cards').innerHTML=list.map(c=>{
+    const m=membres.find(x=>x.id===c.membreId);if(!m)return'';
+    const p=c.statut==='paye';
+    const color=p?'var(--green)':'var(--red)';
+    const initials=(m.prenom[0]||'')+(m.nom[0]||'');
+    return`<div class="cotis-card-v2" style="position:relative;">
+      <div style="height:3px;background:${color};border-radius:0;"></div>
+      <div class="cotis-card-v2-top">
+        <div class="cotis-card-v2-avatar" style="background:${color}20;color:${color};">${initials}</div>
+        <div class="cotis-card-v2-info">
+          <div class="cotis-card-v2-name">${m.prenom} ${m.nom}</div>
+          <div class="cotis-card-v2-type">${badgeType(m.type)}</div>
+        </div>
+        <div class="cotis-card-v2-right">
+          <div class="cotis-card-v2-amount" style="color:${color};">${c.montant>0?c.montant.toFixed(2)+' CHF':'—'}</div>
+          <div class="cotis-card-v2-status ${p?'cotis-status-paye':'cotis-status-impaye'}">${p?'✓ Payé':'En attente'}</div>
+          ${c.datePaiement?`<div style="font-size:10px;color:var(--text3);">${fmtDate(c.datePaiement)}</div>`:''}
+        </div>
+      </div>
+      <div class="cotis-card-v2-bottom">
+        <button class="btn btn-sm btn-secondary" style="font-size:11px;padding:6px 12px;" onclick="editCotisation(${c.membreId},${annee})">✏️ Modifier</button>
+        ${p?`<span style="font-size:11px;color:var(--green);">Cotisation réglée ✓</span>`:`<span style="font-size:11px;color:var(--text3);">En attente de paiement</span>`}
+      </div>
+    </div>`;
+  }).join('');
 }
 function editCotisation(membreId,annee){editingCotisation={membreId,annee};const c=cotisations.find(x=>x.membreId===membreId&&x.annee===annee);const m=membres.find(x=>x.id===membreId);document.getElementById('modal-cotis-title').textContent=`Cotisation — ${m.prenom} ${m.nom}`;document.getElementById('cotis-statut').value=c.statut||'impaye';document.getElementById('cotis-montant').value=c.montant||0;document.getElementById('cotis-date').value=c.datePaiement||'';document.getElementById('cotis-annee').value=c.annee||2026;document.getElementById('cotis-notes').value=c.notes||'';document.getElementById('modal-cotisation').classList.add('open');}
 function saveCotisation(){const{membreId,annee}=editingCotisation;const i=cotisations.findIndex(c=>c.membreId===membreId&&c.annee===annee);const data={statut:document.getElementById('cotis-statut').value,montant:parseFloat(document.getElementById('cotis-montant').value)||0,datePaiement:document.getElementById('cotis-date').value,annee:parseInt(document.getElementById('cotis-annee').value),notes:document.getElementById('cotis-notes').value};if(i>=0)cotisations[i]={...cotisations[i],...data};save('gef_cotisations',cotisations);closeModal('modal-cotisation');renderCotisations();}
@@ -3385,24 +3561,26 @@ function renderCompta(){
   if(cards) cards.innerHTML=list.map(c=>{
     const atts=c.attachments||[];
     const isIn=c.type==='recette';
-    return`<div class="compta-card">
-      <div class="compta-card-header">
-        <div>
-          <div style="font-weight:700;font-size:14px;color:var(--text);">${c.description}</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px;">${c.categorie||''} · ${fmtDate(c.date)}</div>
-        </div>
-        <div style="text-align:right;">
-          <div style="font-size:18px;font-weight:800;color:${isIn?'var(--green)':'var(--red)'};">${isIn?'+':'−'}${c.montant.toFixed(2)} CHF</div>
-          <span class="badge ${isIn?'badge-recette':'badge-depense'}" style="font-size:10px;">${isIn?'Recette':'Dépense'}</span>
+    const color=isIn?'var(--green)':'var(--red)';
+    const bg=isIn?'rgba(34,197,94,0.12)':'rgba(230,51,41,0.1)';
+    const icon=isIn?'📥':'📤';
+    return`<div class="compta-card-v2">
+      <div class="compta-card-v2-stripe" style="background:${color};"></div>
+      <div class="compta-card-v2-icon" style="background:${bg};">${icon}</div>
+      <div class="compta-card-v2-body">
+        <div class="compta-card-v2-desc">${c.description}</div>
+        <div class="compta-card-v2-meta">
+          <span>${fmtDate(c.date)}</span>
+          ${c.categorie?`<span>· ${c.categorie}</span>`:''}
+          ${atts.length?`<span>· 📎 ${atts.length}</span>`:''}
         </div>
       </div>
-      ${atts.length?`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;">
-        ${atts.filter(a=>a.type&&a.type.startsWith('image/')).map(a=>`<img src="${a.data}" class="attach-thumb" style="width:48px;height:48px;border-radius:8px;object-fit:cover;" onclick="openPhotoViewer('${a.data}')">`).join('')}
-        ${atts.filter(a=>!a.type||!a.type.startsWith('image/')).map(a=>`<div class="attach-file" style="font-size:11px;padding:5px 10px;">📄 ${a.name}</div>`).join('')}
-      </div>`:''}
-      <div style="display:flex;gap:6px;margin-top:10px;">
-        <button class="btn btn-sm btn-secondary" style="flex:1;" onclick="editCompta(${c.id})">✏️ Modifier</button>
-        <button class="btn-icon" onclick="deleteCompta(${c.id})">🗑️</button>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;">
+        <div class="compta-card-v2-amount" style="color:${color};">${isIn?'+':'−'}${c.montant.toFixed(2)}<span style="font-size:12px;font-weight:500;"> CHF</span></div>
+        <div class="compta-card-v2-actions">
+          <button class="btn-icon" onclick="editCompta(${c.id})">✏️</button>
+          <button class="btn-icon" onclick="deleteCompta(${c.id})">🗑️</button>
+        </div>
       </div>
     </div>`;
   }).join('');
@@ -3411,8 +3589,9 @@ function renderCompta(){
 // ── STATISTIQUES ─────────────────────────────────────────────────
 function renderStatistiques(){
   const totalPres=membres.length*events.length>0?Math.round(membres.reduce((s,m)=>s+events.filter(e=>presences[m.id+'_'+e.id]).length,0)/(membres.length*events.length)*100):0;
-  const cotisPayees=cotisations.filter(c=>c.statut==='paye').length;
-  const cotisTotal=cotisations.length;
+  const anneeStats=new Date().getFullYear();
+  const cotisPayees=cotisations.filter(c=>c.annee===anneeStats&&c.statut==='paye').length;
+  const cotisTotal=cotisations.filter(c=>c.annee===anneeStats).length;
   const totalIn=compta.filter(c=>c.type==='recette').reduce((s,c)=>s+c.montant,0);
   const totalOut=compta.filter(c=>c.type==='depense').reduce((s,c)=>s+c.montant,0);
   const solde=totalIn-totalOut;
@@ -3643,30 +3822,64 @@ function renderRapport(){
   const nbReunions=events.filter(e=>e.type==='Réunion').length;
   const topPresence=membres.map(m=>{const p=events.filter(e=>presences[m.id+'_'+e.id]).length;return{name:m.prenom+' '+m.nom,pct:events.length>0?Math.round((p/events.length)*100):0};}).sort((a,b)=>b.pct-a.pct).slice(0,3);
 
+  const avgPres=membres.length>0&&events.length>0?Math.round(membres.reduce((s,m)=>s+events.filter(e=>presences[m.id+'_'+e.id]).length,0)/(membres.length*events.length)*100):0;
+  const solde=totalIn-totalOut;
+
   document.getElementById('rapport-content').innerHTML=`
-    <div class="rapport-section"><h4>👥 Membres</h4>
-      <div class="rapport-row"><span class="rapport-key">Total membres</span><span class="rapport-val">${membres.length}</span></div>
-      <div class="rapport-row"><span class="rapport-key">Membres Actifs</span><span class="rapport-val">${actifs}</span></div>
-      <div class="rapport-row"><span class="rapport-key">Membres Actifs Suisses</span><span class="rapport-val">${suisses}</span></div>
-      <div class="rapport-row"><span class="rapport-key">Membres Passifs</span><span class="rapport-val">${passifs}</span></div>
+    <!-- Membres -->
+    <div class="rapport-section">
+      <div class="rapport-section-header">
+        <div class="rapport-section-icon" style="background:rgba(230,51,41,0.15);">👥</div>
+        <div class="rapport-section-title">Membres</div>
+      </div>
+      <div class="rapport-kpi-row">
+        <div class="rapport-kpi"><div class="rapport-kpi-val">${membres.length}</div><div class="rapport-kpi-label">Total</div></div>
+        <div class="rapport-kpi"><div class="rapport-kpi-val" style="color:var(--red);">${actifs+suisses}</div><div class="rapport-kpi-label">Actifs</div></div>
+        <div class="rapport-kpi"><div class="rapport-kpi-val" style="color:var(--text3);">${passifs}</div><div class="rapport-kpi-label">Passifs</div></div>
+      </div>
+      <div class="rapport-list-item"><span>Actifs Suisses</span><strong>${suisses}</strong></div>
+      <div class="rapport-list-item"><span>Avec email</span><strong>${membres.filter(m=>m.email).length}</strong></div>
     </div>
-    <div class="rapport-section"><h4>📅 Événements</h4>
-      <div class="rapport-row"><span class="rapport-key">Total événements</span><span class="rapport-val">${events.length}</span></div>
-      <div class="rapport-row"><span class="rapport-key">Maraudes</span><span class="rapport-val">${nbMaraudes}</span></div>
-      <div class="rapport-row"><span class="rapport-key">Réunions</span><span class="rapport-val">${nbReunions}</span></div>
+
+    <!-- Événements -->
+    <div class="rapport-section">
+      <div class="rapport-section-header">
+        <div class="rapport-section-icon" style="background:rgba(96,165,250,0.15);">📅</div>
+        <div class="rapport-section-title">Événements & Présences</div>
+      </div>
+      <div class="rapport-kpi-row">
+        <div class="rapport-kpi"><div class="rapport-kpi-val">${events.length}</div><div class="rapport-kpi-label">Événements</div></div>
+        <div class="rapport-kpi"><div class="rapport-kpi-val" style="color:${avgPres>=70?'var(--green)':avgPres>=40?'var(--gold)':'var(--red)'};">${avgPres}%</div><div class="rapport-kpi-label">Présence moy.</div></div>
+        <div class="rapport-kpi"><div class="rapport-kpi-val">${nbMaraudes}</div><div class="rapport-kpi-label">Maraudes</div></div>
+      </div>
+      ${topPresence.map((m,i)=>`<div class="rapport-list-item"><span>${['🥇','🥈','🥉'][i]} ${m.name}</span><strong style="color:${m.pct>=70?'var(--green)':'var(--gold)'};">${m.pct}%</strong></div>`).join('')}
     </div>
-    <div class="rapport-section"><h4>✅ Présences</h4>
-      ${topPresence.map((m,i)=>`<div class="rapport-row"><span class="rapport-key">${i+1}. ${m.name}</span><span class="rapport-val">${m.pct}%</span></div>`).join('')}
+
+    <!-- Cotisations -->
+    <div class="rapport-section">
+      <div class="rapport-section-header">
+        <div class="rapport-section-icon" style="background:rgba(196,154,0,0.15);">💳</div>
+        <div class="rapport-section-title">Cotisations ${annee}</div>
+      </div>
+      <div class="rapport-kpi-row">
+        <div class="rapport-kpi"><div class="rapport-kpi-val" style="color:var(--green);">${cotisPayees}</div><div class="rapport-kpi-label">Payées</div></div>
+        <div class="rapport-kpi"><div class="rapport-kpi-val" style="color:var(--red);">${totalCotis-cotisPayees}</div><div class="rapport-kpi-label">En attente</div></div>
+        <div class="rapport-kpi"><div class="rapport-kpi-val">${totalCotis>0?Math.round(cotisPayees/totalCotis*100):0}%</div><div class="rapport-kpi-label">Taux</div></div>
+      </div>
+      <div class="rapport-list-item"><span>Montant encaissé</span><strong style="color:var(--green);">+${cotisations.filter(c=>c.annee===annee&&c.statut==='paye').reduce((s,c)=>s+c.montant,0).toFixed(2)} CHF</strong></div>
     </div>
-    <div class="rapport-section"><h4>💰 Cotisations ${annee}</h4>
-      <div class="rapport-row"><span class="rapport-key">Cotisations payées</span><span class="rapport-val">${cotisPayees} / ${totalCotis}</span></div>
-      <div class="rapport-row"><span class="rapport-key">Taux de paiement</span><span class="rapport-val">${totalCotis>0?Math.round(cotisPayees/totalCotis*100):0}%</span></div>
-      <div class="rapport-row"><span class="rapport-key">Montant encaissé</span><span class="rapport-val">${cotisations.filter(c=>c.annee===annee&&c.statut==='paye').reduce((s,c)=>s+c.montant,0).toFixed(2)} CHF</span></div>
-    </div>
-    <div class="rapport-section"><h4>🏦 Comptabilité</h4>
-      <div class="rapport-row"><span class="rapport-key">Total recettes</span><span class="rapport-val amount-in">+${totalIn.toFixed(2)} CHF</span></div>
-      <div class="rapport-row"><span class="rapport-key">Total dépenses</span><span class="rapport-val amount-out">−${totalOut.toFixed(2)} CHF</span></div>
-      <div class="rapport-row"><span class="rapport-key">Solde final</span><span class="rapport-val" style="color:${totalIn-totalOut>=0?'var(--green)':'var(--red)'}">${(totalIn-totalOut).toFixed(2)} CHF</span></div>
+
+    <!-- Comptabilité -->
+    <div class="rapport-section">
+      <div class="rapport-section-header">
+        <div class="rapport-section-icon" style="background:${solde>=0?'rgba(34,197,94,0.15)':'rgba(230,51,41,0.12)'};">${solde>=0?'📈':'📉'}</div>
+        <div class="rapport-section-title">Comptabilité</div>
+      </div>
+      <div class="rapport-kpi-row">
+        <div class="rapport-kpi"><div class="rapport-kpi-val" style="color:var(--green);">+${totalIn.toFixed(0)}</div><div class="rapport-kpi-label">Recettes CHF</div></div>
+        <div class="rapport-kpi"><div class="rapport-kpi-val" style="color:var(--red);">−${totalOut.toFixed(0)}</div><div class="rapport-kpi-label">Dépenses CHF</div></div>
+        <div class="rapport-kpi"><div class="rapport-kpi-val" style="color:${solde>=0?'var(--green)':'var(--red)'};">${solde>=0?'+':''}${solde.toFixed(0)}</div><div class="rapport-kpi-label">Solde CHF</div></div>
+      </div>
     </div>
   `;
 }
@@ -4196,6 +4409,36 @@ function exportComptaCSV() {
   a.download = `compta_gef_${today}.csv`; a.click();
 }
 
+// ── SWIPE DOWN POUR FERMER LES MODALS ────────────────────────────
+(function(){
+  let startY=0,startX=0;
+  document.addEventListener('touchstart',e=>{
+    const t=e.touches[0];
+    startY=t.clientY;startX=t.clientX;
+  },{passive:true});
+  document.addEventListener('touchend',e=>{
+    const t=e.changedTouches[0];
+    const dy=t.clientY-startY;
+    const dx=Math.abs(t.clientX-startX);
+    if(dy>80&&dx<60){
+      const open=document.querySelector('.modal-overlay.open');
+      if(open)open.classList.remove('open');
+    }
+  },{passive:true});
+})();
+
+// ── VIBRATION HAPTIQUE ────────────────────────────────────────────
+function haptic(type){
+  if(!navigator.vibrate)return;
+  if(type==='light')navigator.vibrate(10);
+  else if(type==='medium')navigator.vibrate(25);
+  else if(type==='success')navigator.vibrate([10,50,10]);
+}
+
+// ── BANNIÈRE HORS-LIGNE ───────────────────────────────────────────
+function _showOfflineBanner(){const b=document.getElementById('offline-banner');if(b)b.style.display='flex';}
+function _hideOfflineBanner(){const b=document.getElementById('offline-banner');if(b)b.style.display='none';}
+
 document.querySelectorAll('.modal-overlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');});});
 // Raccourci clavier Ctrl+K / Cmd+K pour la recherche
 function selectSectionColor(c,el){selectSpColor(c,el);}
@@ -4307,7 +4550,15 @@ document.addEventListener('keydown', e => {
   if((e.ctrlKey||e.metaKey) && e.key === 'k'){e.preventDefault();openGlobalSearch();}
   if(e.key==='Escape'){document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));closeFAB();}
 });
-if(sessionStorage.getItem('gef_auth')==='ok'){initApp();}
+function _tryInitApp(){
+  if(typeof firebase==='undefined'){
+    console.warn('Firebase not loaded yet, retrying...');
+    setTimeout(_tryInitApp,300);
+    return;
+  }
+  if(sessionStorage.getItem('gef_auth')==='ok'){initApp();}
+}
+_tryInitApp();
 
 </script>
 
