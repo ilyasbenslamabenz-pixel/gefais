@@ -114,7 +114,7 @@ h1,h2,h3{font-family:'DM Serif Display',serif;font-weight:400;}
 
 /* CARD */
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px;box-shadow:var(--shadow);transition:box-shadow 0.2s;}
-.card-title{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:14px;text-transform:uppercase;letter-spacing:1px;}
+.card-title{font-size:13px;font-weight:700;color:var(--text2);margin-bottom:14px;text-transform:uppercase;letter-spacing:1px;}
 
 /* TABLE */
 .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
@@ -719,13 +719,13 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 
 /* ── STATISTIQUES ── */
 .stat-kpi-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);}
-.stat-kpi-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
-.stat-kpi-label{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;font-weight:700;margin-bottom:3px;}
+.stat-kpi-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.stat-kpi-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;font-weight:700;margin-bottom:3px;}
 .stat-kpi-val{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.5px;}
-.stat-section-title{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;padding-left:2px;}
+.stat-section-title{font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-left:2px;}
 .top3-card{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:10px;flex:1;min-width:120px;}
-.top3-medal{font-size:24px;}
-.top3-name{flex:1;font-size:13px;font-weight:600;color:var(--text);}
+.top3-medal{font-size:28px;}
+.top3-name{flex:1;font-size:15px;font-weight:600;color:var(--text);}
 .top3-pct{font-size:20px;font-weight:800;}
 
 /* ── KPI MINI MEMBRES ── */
@@ -3664,7 +3664,23 @@ function renderStatistiques(){
 
   // Présence par membre
   const presData=membres.map(m=>{const p=events.filter(e=>presences[m.id+'_'+e.id]).length;return{label:m.prenom+' '+m.nom,val:events.length>0?Math.round((p/events.length)*100):0};}).sort((a,b)=>b.val-a.val);
-  document.getElementById('stat-presence-chart').innerHTML=presData.map((d,i)=>`<div class="chart-bar-row" style="animation:fadeUp 0.3s ease both;animation-delay:${i*0.02}s;"><div class="chart-bar-label">${d.label}</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:${d.val}%;background:${d.val>=70?'var(--green)':d.val>=40?'var(--gold)':'var(--red)'};">${d.val>15?d.val+'%':''}</div></div><div class="chart-bar-val" style="color:${d.val>=70?'var(--green)':d.val>=40?'var(--gold)':'var(--red)'};">${d.val}%</div></div>`).join('');
+  document.getElementById('stat-presence-chart').innerHTML=presData.map((d,i)=>{
+    const mRef=membres.find(m=>d.label.includes(m.nom)&&d.label.includes(m.prenom));
+    const seuil=mRef?.presence_attendue!=null?Math.round(mRef.presence_attendue*100):70;
+    const color=seuil===0?'#22c55e':d.val>=seuil?'#22c55e':d.val>=Math.round(seuil*0.7)?'#f97316':'#e63329';
+    const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+    return`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);animation:fadeUp 0.25s ease both;animation-delay:${i*0.015}s;">
+      <div style="width:22px;text-align:center;font-size:12px;color:var(--text3);flex-shrink:0;">${medal||(i+1)}</div>
+      <div style="width:150px;font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0;">${d.label}</div>
+      <div style="flex:1;position:relative;height:24px;background:var(--bg3);border-radius:8px;overflow:hidden;">
+        <div style="position:absolute;inset:0;width:${d.val}%;background:linear-gradient(90deg,${color}99,${color});border-radius:8px;transition:width 0.6s ease;"></div>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;padding:0 10px;">
+          <span style="font-size:11px;font-weight:800;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.6);">${d.val>10?d.val+'%':''}</span>
+        </div>
+      </div>
+      <div style="width:42px;text-align:right;font-size:14px;font-weight:900;color:${color};flex-shrink:0;">${d.val}%</div>
+    </div>`;
+  }).join('');
 
   // Présences par événement
   const evData=events.map(e=>{const c=membres.filter(m=>presences[m.id+'_'+e.id]).length;const pct=membres.length>0?Math.round((c/membres.length)*100):0;return{label:(e.nom||e.type).slice(0,22),val:pct,count:c};}).sort((a,b)=>b.val-a.val);
