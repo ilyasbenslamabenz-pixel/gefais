@@ -245,6 +245,9 @@ function resizeCanvas(){
   ctx.lineWidth=2.5;
   ctx.lineCap='round';
   ctx.lineJoin='round';
+  // Fond blanc explicite
+  ctx.fillStyle='#ffffff';
+  ctx.fillRect(0,0,canvas.width/dpr,canvas.height/dpr);
 }
 resizeCanvas();
 window.addEventListener('resize',resizeCanvas);
@@ -263,7 +266,10 @@ canvas.addEventListener('touchmove',e=>{e.preventDefault();if(!drawing)return;co
 canvas.addEventListener('touchend',()=>drawing=false);
 
 function clearSig(){
-  ctx.clearRect(0,0,canvas.width/window.devicePixelRatio,canvas.height/window.devicePixelRatio);
+  const dpr=window.devicePixelRatio||1;
+  ctx.clearRect(0,0,canvas.width/dpr,canvas.height/dpr);
+  ctx.fillStyle='#ffffff';
+  ctx.fillRect(0,0,canvas.width/dpr,canvas.height/dpr);
   sigEmpty=true;
 }
 
