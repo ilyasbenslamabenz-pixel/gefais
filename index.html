@@ -19,7 +19,7 @@
   --green:#30d158;--green-light:rgba(48,209,88,0.1);
   --blue:#0a84ff;--blue-light:rgba(10,132,255,0.1);
   --purple:#bf5af2;--purple-light:rgba(191,90,242,0.1);
-  --sidebar:240px;--radius:14px;--radius-lg:20px;--radius-xl:26px;--bottom-bar:72px;
+  --sidebar:260px;--radius:14px;--radius-lg:20px;--radius-xl:26px;--bottom-bar:72px;
   --shadow:0 2px 8px rgba(0,0,0,0.5);
   --shadow-md:0 4px 24px rgba(0,0,0,0.6);
   --shadow-lg:0 8px 48px rgba(0,0,0,0.7);
@@ -67,7 +67,7 @@ h1,h2,h3{font-family:'Plus Jakarta Sans',sans-serif;font-weight:400;}
 .logo span{font-size:10px;color:var(--text3);letter-spacing:1.2px;text-transform:uppercase;margin-top:1px;display:block;}
 .nav{flex:1;padding:12px 10px;overflow-y:auto;}
 .nav-section{padding:12px 10px 4px;font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1.5px;font-weight:600;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;color:var(--text2);transition:all 0.18s;font-size:13px;font-weight:500;border-radius:12px;margin-bottom:3px;border:none;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;color:var(--text2);transition:all 0.18s;font-size:13px;font-weight:500;border-radius:12px;margin-bottom:3px;border:none;white-space:nowrap;}
 .nav-item:hover{color:var(--text);background:rgba(230,51,41,0.08);}
 .nav-item.active{color:#fff;background:linear-gradient(135deg,var(--red),#c0271e);font-weight:700;box-shadow:0 4px 16px rgba(255,59,48,0.3),inset 0 1px 0 rgba(255,255,255,0.1);}
 .nav-icon{width:15px;height:15px;opacity:0.5;flex-shrink:0;}
@@ -1255,8 +1255,8 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
   <nav class="sidebar" id="sidebar">
     <div class="logo">
       <div class="logo-mark">
-        <div style="width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#1a1a26,#0e0e18);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <svg width="26" height="26" viewBox="0 0 40 40" fill="none" id="logo-svg">
+        <div style="width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,#1a1a26,#0e0e18);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="32" height="32" viewBox="0 0 40 40" fill="none" id="logo-svg">
           <circle cx="20" cy="3" r="3.5" class="logo-dot"/>
           <circle cx="28" cy="5" r="3" class="logo-dot"/>
           <circle cx="34" cy="11" r="2.5" class="logo-dot"/>
@@ -1644,15 +1644,29 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 
     <!-- DEMANDES D'ADHÉSION -->
     <div id="page-demandes" class="page">
-      <div class="page-header">
-        <div class="page-header-left"><h2>Adhésions</h2><p id="demandes-header-sub">Demandes en attente</p></div>
-        <button class="btn btn-primary btn-sm" onclick="partagerLienAdhesion()">📤 Partager</button>
+
+      <!-- HERO BANNER -->
+      <div style="background:linear-gradient(135deg,#16050f,#200a12);border:1px solid rgba(255,59,48,0.15);border-radius:22px;padding:22px 24px;margin-bottom:16px;position:relative;overflow:hidden;">
+        <div style="position:absolute;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(255,59,48,0.15),transparent 70%);top:-60px;right:-40px;pointer-events:none;"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative;">
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,59,48,0.7);margin-bottom:6px;">GE-FAIS · Adhésions</div>
+            <div style="font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#fff;">Demandes d'adhésion</div>
+            <div id="demandes-header-sub" style="font-size:13px;color:rgba(255,255,255,0.45);margin-top:4px;">Chargement…</div>
+          </div>
+          <button onclick="partagerLienAdhesion()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:10px 16px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:6px;-webkit-appearance:none;">
+            📤 Partager
+          </button>
+        </div>
       </div>
-      <div class="tabs">
+
+      <!-- TABS -->
+      <div class="tabs" style="margin-bottom:16px;">
         <button class="tab active" onclick="setDemandesTab('attente')">⏳ En attente</button>
         <button class="tab" onclick="setDemandesTab('validees')">✅ Validées</button>
         <button class="tab" onclick="setDemandesTab('refusees')">❌ Refusées</button>
       </div>
+
       <div id="demandes-list"></div>
     </div>
 
@@ -2668,7 +2682,7 @@ async function initApp(){
     const s=document.getElementById('sync-indicator');
     if(s){s.textContent='📴 Hors ligne';s.style.display='inline';s.style.color='var(--text3)';}
     const banner=document.getElementById('offline-banner');
-    if(banner){banner.style.display='flex';document.querySelector('.main').style.paddingTop='128px';}
+    if(banner){banner.style.display='flex';document.querySelector('.main').style.paddingTop='100px';}
   }
 }
 
@@ -4779,85 +4793,121 @@ async function renderDemandes(){
   const attente=_demandesData.filter(d=>d.statut==='en_attente'||d.statut==='signatures_en_cours');
   const badge=document.getElementById('demandes-badge');
   if(badge){if(attente.length>0){badge.textContent=attente.length;badge.style.display='inline';}else{badge.style.display='none';}}
-  if(sub)sub.textContent=`${attente.length} en attente · ${_demandesData.filter(d=>d.statut==='validee').length} validées`;
+  if(sub)sub.textContent=`${attente.length} en attente · ${_demandesData.filter(d=>d.statut==='validee'||d.statut==='validée').length} validées`;
 
   const filtered=_demandesData.filter(d=>{
     if(_demandesTab==='attente')return d.statut==='en_attente'||d.statut==='signatures_en_cours';
-    if(_demandesTab==='validees')return d.statut==='validee';
-    return d.statut==='refusee';
+    if(_demandesTab==='validees')return d.statut==='validee'||d.statut==='validée';
+    return d.statut==='refusee'||d.statut==='refusée';
   });
 
   if(!filtered.length){list.innerHTML=`<div style="text-align:center;padding:40px;color:var(--text3);">Aucune demande</div>`;return;}
 
-  list.innerHTML=filtered.map(d=>{
+  list.innerHTML=filtered.map((d,idx)=>{
     const date=new Date(d.date).toLocaleDateString('fr-CH',{day:'2-digit',month:'short',year:'numeric'});
-    const typeColor=d.type==='Actif'?'var(--red)':d.type==='Actif Suisse'?'var(--gold)':'var(--text3)';
-    const initials=(d.prenom?.[0]||'')+(d.nom?.[0]||'');
-    const hasPres=!!d.sigPresident;
-    const hasVp=!!d.sigVp;
+    const isActif=d.type==='Actif', isSuisse=d.type==='Actif Suisse';
+    const typeColor=isActif?'#ff6b6b':isSuisse?'#ffd60a':'#ababbb';
+    const typeBg=isActif?'rgba(255,59,48,0.18)':isSuisse?'rgba(255,214,10,0.14)':'rgba(255,255,255,0.07)';
+    const initials=(d.prenom?.[0]||'').toUpperCase()+(d.nom?.[0]||'').toUpperCase();
+    const hasPres=!!d.sigPresident, hasVp=!!d.sigVp;
     const sigEnCours=d.statut==='en_attente'||d.statut==='signatures_en_cours';
+    const isValidee=d.statut==='validee'||d.statut==='validée';
+    const isRefusee=d.statut==='refusee'||d.statut==='refusée';
+    const accentColor=sigEnCours?'#ff9f0a':isValidee?'#30d158':'#ff3b30';
+    const accentBg=sigEnCours?'rgba(255,159,10,0.1)':isValidee?'rgba(48,209,88,0.1)':'rgba(255,59,48,0.08)';
 
-    return`<div class="card" style="margin-bottom:12px;">
-      <!-- En-tête membre -->
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
-        <div style="width:46px;height:46px;border-radius:14px;background:${typeColor}18;color:${typeColor};display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0;">${initials}</div>
-        <div style="flex:1;">
-          <div style="font-size:16px;font-weight:700;">${d.prenom||''} ${d.nom||''}</div>
-          <div style="font-size:12px;color:var(--text3);">${date} · <span style="color:${typeColor};font-weight:600;">${d.type||'—'}</span></div>
+    return`<div style="background:var(--card);border:1px solid var(--border);border-radius:22px;overflow:hidden;margin-bottom:16px;transition:all 0.2s;">
+
+      <!-- Top accent bar -->
+      <div style="height:4px;background:linear-gradient(90deg,${accentColor},${accentColor}88);"></div>
+
+      <!-- Main header -->
+      <div style="padding:20px 20px 16px;display:flex;align-items:flex-start;gap:14px;">
+
+        <!-- Avatar -->
+        <div style="width:56px;height:56px;border-radius:18px;background:${typeBg};color:${typeColor};display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;flex-shrink:0;border:1.5px solid ${typeColor}30;">${initials}</div>
+
+        <!-- Infos -->
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:18px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;">${d.prenom||''} ${d.nom||''}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
+            <span style="background:${typeBg};color:${typeColor};font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;border:1px solid ${typeColor}40;">${d.type||'—'}</span>
+            <span style="background:${accentBg};color:${accentColor};font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">${sigEnCours?'⏳ En attente':isValidee?'✅ Validée':'❌ Refusée'}</span>
+            <span style="font-size:11px;color:var(--text3);">${date}</span>
+          </div>
         </div>
       </div>
-      <!-- Infos -->
-      <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:14px;font-size:13px;">
-        ${d.email?`<div style="display:flex;gap:8px;"><span style="color:var(--text3);">✉️</span><span>${d.email}</span></div>`:''}
-        ${d.tel?`<div style="display:flex;gap:8px;"><span style="color:var(--text3);">📞</span><span>${d.tel}</span></div>`:''}
-      </div>
+
+      <!-- Contact -->
+      ${d.email||d.tel?`<div style="padding:0 20px 14px;display:flex;flex-direction:column;gap:7px;">
+        ${d.email?`<div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border-radius:10px;padding:9px 12px;">
+          <span style="font-size:13px;">✉️</span><span style="font-size:13px;color:var(--text2);font-weight:500;">${d.email}</span>
+        </div>`:''}
+        ${d.tel?`<div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border-radius:10px;padding:9px 12px;">
+          <span style="font-size:13px;">📞</span><span style="font-size:13px;color:var(--text2);font-weight:500;">${d.tel}</span>
+        </div>`:''}
+      </div>`:''}
+
       <!-- Signature membre -->
-      ${d.signature?`<div style="margin-bottom:14px;"><div style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Signature du membre</div><img src="${d.signature}" style="max-height:55px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid var(--border);padding:5px;"></div>`:''}
+      ${d.signature?`<div style="padding:0 20px 16px;">
+        <div style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;">✍️ Signature du membre</div>
+        <div style="background:#fff;border-radius:12px;padding:8px 12px;display:inline-block;box-shadow:0 2px 8px rgba(0,0,0,0.3);">
+          <img src="${d.signature}" style="max-height:52px;max-width:220px;display:block;">
+        </div>
+      </div>`:''}
 
       ${sigEnCours?`
       <!-- SIGNATURES BUREAU -->
-      <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px;">
-        <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:12px;">Signatures du bureau</div>
+      <div style="margin:0 16px 16px;border-radius:16px;overflow:hidden;border:1px solid var(--border);">
+        <div style="background:rgba(255,159,10,0.08);padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;">
+          <span style="font-size:13px;">🖊️</span>
+          <span style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#ff9f0a;">Signatures du bureau</span>
+        </div>
         <!-- Président -->
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
-          <div style="display:flex;align-items:center;gap:10px;">
-            ${hasPres
-              ?`<div style="width:28px;height:28px;border-radius:50%;background:rgba(48,209,88,0.15);display:flex;align-items:center;justify-content:center;font-size:14px;">✅</div>`
-              :`<div style="width:28px;height:28px;border-radius:50%;background:rgba(255,159,10,0.12);display:flex;align-items:center;justify-content:center;font-size:14px;">⏳</div>`}
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);${hasPres?'background:rgba(48,209,88,0.05);':''}">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:40px;height:40px;border-radius:12px;background:${hasPres?'rgba(48,209,88,0.15)':'rgba(255,255,255,0.05)'};border:1.5px solid ${hasPres?'rgba(48,209,88,0.3)':'var(--border)'};display:flex;align-items:center;justify-content:center;font-size:18px;">${hasPres?'✅':'✍️'}</div>
             <div>
-              <div style="font-size:13px;font-weight:700;">Président</div>
+              <div style="font-size:14px;font-weight:700;">Président</div>
               <div style="font-size:11px;color:var(--text3);">Pasche Louka</div>
             </div>
           </div>
           ${hasPres
-            ?`<div style="font-size:11px;color:var(--green);font-weight:700;">Signé ✓</div>`
-            :`<button class="btn btn-primary btn-sm" onclick="ouvrirSignature('${d.id}','president')">✍️ Signer</button>`}
+            ?`<span style="background:rgba(48,209,88,0.15);color:#30d158;font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;">Signé ✓</span>`
+            :`<button onclick="ouvrirSignature('${d.id}','president')" style="background:var(--red);color:#fff;border:none;padding:9px 18px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;display:flex;align-items:center;gap:6px;-webkit-appearance:none;">✍️ Signer</button>`}
         </div>
         <!-- VP -->
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;">
-          <div style="display:flex;align-items:center;gap:10px;">
-            ${hasVp
-              ?`<div style="width:28px;height:28px;border-radius:50%;background:rgba(48,209,88,0.15);display:flex;align-items:center;justify-content:center;font-size:14px;">✅</div>`
-              :`<div style="width:28px;height:28px;border-radius:50%;background:rgba(255,159,10,0.12);display:flex;align-items:center;justify-content:center;font-size:14px;">⏳</div>`}
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;${hasVp?'background:rgba(48,209,88,0.05);':''}">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:40px;height:40px;border-radius:12px;background:${hasVp?'rgba(48,209,88,0.15)':'rgba(255,255,255,0.05)'};border:1.5px solid ${hasVp?'rgba(48,209,88,0.3)':'var(--border)'};display:flex;align-items:center;justify-content:center;font-size:18px;">${hasVp?'✅':'✍️'}</div>
             <div>
-              <div style="font-size:13px;font-weight:700;">Vice-Présidente</div>
+              <div style="font-size:14px;font-weight:700;">Vice-Présidente</div>
               <div style="font-size:11px;color:var(--text3);">Janezic Sana</div>
             </div>
           </div>
           ${hasVp
-            ?`<div style="font-size:11px;color:var(--green);font-weight:700;">Signé ✓</div>`
-            :`<button class="btn btn-primary btn-sm" onclick="ouvrirSignature('${d.id}','vp')">✍️ Signer</button>`}
+            ?`<span style="background:rgba(48,209,88,0.15);color:#30d158;font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;">Signé ✓</span>`
+            :`<button onclick="ouvrirSignature('${d.id}','vp')" style="background:var(--red);color:#fff;border:none;padding:9px 18px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;display:flex;align-items:center;gap:6px;-webkit-appearance:none;">✍️ Signer</button>`}
         </div>
       </div>
-      <div style="display:flex;gap:8px;">
-        <button class="btn btn-secondary" style="flex:1;" onclick="refuserDemande('${d.id}')">❌ Refuser</button>
+      <!-- Refuser -->
+      <div style="padding:0 16px 16px;">
+        <button onclick="refuserDemande('${d.id}')" style="width:100%;background:rgba(255,59,48,0.08);color:var(--red);border:1px solid rgba(255,59,48,0.2);padding:12px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;">Refuser cette demande</button>
       </div>`
-      :d.statut==='validee'?`
-      <div style="display:flex;gap:8px;align-items:center;">
-        <div style="flex:1;font-size:12px;color:var(--green);font-weight:700;">✅ Adhésion validée</div>
-        <button class="btn btn-secondary btn-sm" onclick="regenererPDF('${d.id}')">⬇️ PDF</button>
-      </div>`:`
-      <div style="font-size:12px;color:var(--red);font-weight:700;text-align:center;padding:8px;">❌ Demande refusée</div>`}
+
+      :isValidee?`
+      <div style="padding:0 16px 16px;display:flex;gap:10px;align-items:stretch;">
+        <div style="flex:1;background:rgba(48,209,88,0.08);border:1px solid rgba(48,209,88,0.2);border-radius:14px;padding:14px 16px;">
+          <div style="font-size:14px;font-weight:800;color:#30d158;margin-bottom:3px;">✅ Adhésion validée</div>
+          ${d.dateValidation?`<div style="font-size:11px;color:var(--text3);">${new Date(d.dateValidation).toLocaleDateString('fr-CH',{day:'2-digit',month:'long',year:'numeric'})}</div>`:''}
+        </div>
+        <button onclick="regenererPDF('${d.id}')" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:0 16px;border-radius:14px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;flex-shrink:0;">⬇️ PDF</button>
+      </div>`:isRefusee?`
+      <div style="padding:0 16px 16px;">
+        <div style="background:rgba(255,59,48,0.08);border:1px solid rgba(255,59,48,0.2);border-radius:14px;padding:14px 16px;">
+          <div style="font-size:14px;font-weight:800;color:var(--red);">❌ Demande refusée</div>
+        </div>
+      </div>`:``}
     </div>`;
   }).join('');
 }
@@ -5359,10 +5409,9 @@ document.addEventListener('keydown', e => {
 function _tryInitApp(attempt){
   attempt=attempt||0;
   if(typeof firebase==='undefined'){
-    if(attempt<15){
-      setTimeout(()=>_tryInitApp(attempt+1),300);
+    if(attempt<20){
+      setTimeout(()=>_tryInitApp(attempt+1),250);
     } else {
-      // Firebase unavailable after 4.5s — launch in offline mode
       console.warn('Firebase unavailable, launching in offline mode');
       if(sessionStorage.getItem('gef_auth')==='ok'){initApp();}
     }
@@ -5370,7 +5419,12 @@ function _tryInitApp(attempt){
   }
   if(sessionStorage.getItem('gef_auth')==='ok'){initApp();}
 }
-_tryInitApp(0);
+// Lancer immédiatement et aussi attendre DOMContentLoaded
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',()=>_tryInitApp(0));
+} else {
+  _tryInitApp(0);
+}
 
 </script>
 
