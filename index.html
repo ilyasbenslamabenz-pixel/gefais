@@ -2172,7 +2172,7 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
       <div class="form-group"><label>Prénom *</label><input id="m-prenom" type="text" placeholder="Marie"></div>
       <div class="form-group"><label>Rôle</label><input id="m-role" type="text" placeholder="Président·e"></div>
       <div class="form-group"><label>Type</label>
-        <select id="m-type"><option value="">— Sélectionner —</option><option value="Actif">Actif</option><option value="Actif Suisse">Actif Suisse</option><option value="Passif">Passif</option></select>
+        <select id="m-type" onchange="autoPresence(this.value)"><option value="">— Sélectionner —</option><option value="Actif">Actif</option><option value="Actif Suisse">Actif Suisse</option><option value="Passif">Passif</option></select>
       </div>
       <div class="form-group"><label>Email</label><input id="m-email" type="email" placeholder="email@exemple.ch"></div>
       <div class="form-group"><label>Téléphone</label><input id="m-tel" type="text" placeholder="+41 …"></div>
@@ -3277,6 +3277,10 @@ function editMember(id){editingMembre=id;const m=membres.find(x=>x.id===id);docu
   if(document.getElementById('m-adhesion-mois'))document.getElementById('m-adhesion-mois').value=adhM||'';
   if(document.getElementById('m-adhesion-annee'))document.getElementById('m-adhesion-annee').value=adhY||'';
   const yr=m.createdAt?new Date(m.createdAt).getFullYear():2026;const sel=document.getElementById('m-created-year');if(sel){if(![...sel.options].find(o=>parseInt(o.value)===yr)){const opt=document.createElement('option');opt.value=yr;opt.textContent=yr;sel.appendChild(opt);}sel.value=yr;}document.getElementById('modal-membre').classList.add('open');}
+function autoPresence(type){
+  const map={'Actif':'0.8','Actif Suisse':'0.4','Passif':'0'};
+  if(map[type]!==undefined) document.getElementById('m-presence').value=map[type];
+}
 function saveMember(){
   const nom=document.getElementById('m-nom').value.trim(),prenom=document.getElementById('m-prenom').value.trim();
   if(!nom||!prenom){alert('Nom et prénom requis.');return;}
