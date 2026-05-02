@@ -3,64 +3,67 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Association GE-FAIS — Formulaire d'adhésion</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#09090f;--card:#111119;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.15);
-  --red:#ff3b30;--gold:#ffd60a;--green:#30d158;
-  --text:#f5f5f7;--text2:#ababbb;--text3:#66667a;
+  --bg:#f4f4f8;--card:#ffffff;--border:#e4e4ea;--border2:#d0d0da;
+  --red:#e63329;--gold:#c49a00;--green:#1a9e3f;
+  --text:#0f0f14;--text2:#4a4a5a;--text3:#8a8a9a;
 }
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:24px 16px 60px;-webkit-font-smoothing:antialiased;}
 
 /* HEADER */
 .header{text-align:center;margin-bottom:36px;padding-top:20px;}
-.logo-badge{width:80px;height:80px;border-radius:22px;background:linear-gradient(135deg,#1a1a26,#0e0e18);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 8px 32px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.04);}
-.brand{font-size:28px;font-weight:900;letter-spacing:-1px;margin-bottom:4px;}
+.logo-badge{width:80px;height:80px;border-radius:22px;background:linear-gradient(135deg,#1a1a26,#0e0e18);border:none;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 8px 32px rgba(0,0,0,0.15),0 0 0 4px rgba(255,59,48,0.08);}
+.brand{font-size:28px;font-weight:900;letter-spacing:-1px;margin-bottom:4px;color:var(--text);}
 .brand span{color:var(--red);}
 .subtitle{font-size:13px;color:var(--text3);font-style:italic;}
-.form-title{font-size:20px;font-weight:700;margin-top:20px;letter-spacing:-0.5px;}
+.form-title{font-size:20px;font-weight:700;margin-top:20px;letter-spacing:-0.5px;color:var(--text);}
 .form-title-line{width:40px;height:3px;background:var(--red);border-radius:2px;margin:8px auto 0;}
 
 /* CARD */
-.card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:28px 24px;width:100%;max-width:520px;margin-bottom:16px;box-shadow:0 4px 24px rgba(0,0,0,0.4);}
+.card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:28px 24px;width:100%;max-width:520px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,0.06);}
 .card-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:20px;display:flex;align-items:center;gap:8px;}
 .card-title::before{content:'';display:inline-block;width:3px;height:14px;background:var(--red);border-radius:2px;}
 
 /* FORM */
 .form-group{margin-bottom:18px;}
 label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px;letter-spacing:0.3px;}
-input[type=text],input[type=email],input[type=tel]{width:100%;background:rgba(255,255,255,0.05);border:1.5px solid var(--border);color:var(--text);padding:14px 16px;border-radius:14px;font-size:15px;font-family:'Plus Jakarta Sans',sans-serif;outline:none;transition:all 0.2s;-webkit-appearance:none;}
-input:focus{border-color:var(--red);background:rgba(255,59,48,0.04);box-shadow:0 0 0 4px rgba(255,59,48,0.08);}
+input[type=text],input[type=email],input[type=tel],select{width:100%;background:#f8f8fc;border:1.5px solid var(--border);color:var(--text);padding:14px 16px;border-radius:14px;font-size:15px;font-family:'Plus Jakarta Sans',sans-serif;outline:none;transition:all 0.2s;-webkit-appearance:none;}
+input:focus,select:focus{border-color:var(--red);background:#fff;box-shadow:0 0 0 4px rgba(230,51,41,0.08);}
 input::placeholder{color:var(--text3);}
 
 /* TYPE SELECTOR */
 .type-options{display:flex;flex-direction:column;gap:10px;}
-.type-option{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;border:1.5px solid var(--border);cursor:pointer;transition:all 0.2s;}
-.type-option:hover{border-color:var(--border2);}
-.type-option.selected-actif{border-color:var(--red);background:rgba(255,59,48,0.08);}
-.type-option.selected-suisse{border-color:var(--gold);background:rgba(255,214,10,0.06);}
-.type-option.selected-passif{border-color:var(--text3);background:rgba(255,255,255,0.03);}
+.type-option{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;border:1.5px solid var(--border);cursor:pointer;transition:all 0.2s;background:#fff;}
+.type-option:hover{border-color:var(--border2);background:#f8f8fc;}
+.type-option.selected-actif{border-color:var(--red);background:rgba(230,51,41,0.05);}
+.type-option.selected-suisse{border-color:var(--gold);background:rgba(196,154,0,0.05);}
+.type-option.selected-passif{border-color:var(--text3);background:#f8f8fc;}
 .type-radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
 .type-radio.checked-actif{background:var(--red);border-color:var(--red);}
 .type-radio.checked-suisse{background:var(--gold);border-color:var(--gold);}
 .type-radio.checked-passif{background:var(--text3);border-color:var(--text3);}
 .type-radio::after{content:'';width:7px;height:7px;border-radius:50%;background:#fff;display:none;}
 .type-radio.checked-actif::after,.type-radio.checked-suisse::after,.type-radio.checked-passif::after{display:block;}
-.type-label{font-size:14px;font-weight:600;}
+.type-label{font-size:14px;font-weight:600;color:var(--text);}
 .type-desc{font-size:11px;color:var(--text3);margin-top:2px;}
 
 /* SIGNATURE CANVAS */
-.sig-wrap{background:#ffffff;border:1.5px solid var(--border2);border-radius:14px;overflow:hidden;position:relative;}
+.sig-wrap{background:#ffffff;border:1.5px solid var(--border);border-radius:14px;overflow:hidden;position:relative;}
 canvas{display:block;width:100%;touch-action:none;cursor:crosshair;}
-.sig-clear{position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.06);border:1px solid #ddd;color:#555;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;}
-.sig-label{font-size:11px;color:#888;text-align:center;padding:8px;border-top:1px solid #e0e0e0;}
+.sig-clear{position:absolute;top:10px;right:10px;background:#f0f0f4;border:1px solid var(--border);color:var(--text2);padding:5px 12px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;}
+.sig-label{font-size:11px;color:var(--text3);text-align:center;padding:8px;border-top:1px solid var(--border);}
 
 /* SUBMIT */
-.btn-submit{width:100%;background:linear-gradient(135deg,var(--red),#c0271e);color:#fff;border:none;padding:18px;border-radius:16px;font-size:16px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;box-shadow:0 4px 20px rgba(255,59,48,0.3);transition:all 0.2s;-webkit-appearance:none;margin-top:8px;}
-.btn-submit:hover{transform:translateY(-1px);box-shadow:0 6px 28px rgba(255,59,48,0.4);}
+.btn-submit{width:100%;background:linear-gradient(135deg,var(--red),#c0271e);color:#fff;border:none;padding:18px;border-radius:16px;font-size:16px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;box-shadow:0 4px 20px rgba(230,51,41,0.25);transition:all 0.2s;-webkit-appearance:none;margin-top:8px;}
+.btn-submit:hover{transform:translateY(-1px);box-shadow:0 6px 28px rgba(230,51,41,0.35);}
 .btn-submit:active{transform:none;}
 .btn-submit:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
 
@@ -69,10 +72,10 @@ canvas{display:block;width:100%;touch-action:none;cursor:crosshair;}
 .success-icon{font-size:64px;margin-bottom:20px;animation:bounceIn 0.6s ease;}
 .success-title{font-size:24px;font-weight:800;margin-bottom:8px;letter-spacing:-0.5px;}
 .success-sub{font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:28px;}
-.btn-pdf{background:var(--card);border:1px solid var(--border2);color:var(--text);padding:14px 24px;border-radius:14px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;display:inline-flex;align-items:center;gap:8px;-webkit-appearance:none;}
+.btn-pdf{background:#fff;border:1.5px solid var(--border);color:var(--text);padding:14px 24px;border-radius:14px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;display:inline-flex;align-items:center;gap:8px;-webkit-appearance:none;}
 
 /* TOAST */
-.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(20,20,28,0.95);border:1px solid var(--border2);border-radius:14px;padding:12px 20px;font-size:13px;font-weight:600;display:none;align-items:center;gap:10px;z-index:999;backdrop-filter:blur(20px);box-shadow:0 8px 32px rgba(0,0,0,0.5);white-space:nowrap;}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(15,15,20,0.95);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:12px 20px;font-size:13px;font-weight:600;color:#fff;display:none;align-items:center;gap:10px;z-index:999;backdrop-filter:blur(20px);box-shadow:0 8px 32px rgba(0,0,0,0.2);white-space:nowrap;}
 
 @keyframes bounceIn{0%{transform:scale(0.3);opacity:0}50%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
@@ -83,8 +86,8 @@ canvas{display:block;width:100%;touch-action:none;cursor:crosshair;}
 
 /* REQUIRED */
 .required{color:var(--red);}
-.field-error{font-size:11px;color:var(--red);margin-top:4px;display:none;}
-input.error{border-color:var(--red)!important;}
+.field-error{font-size:11px;color:var(--red);margin-top:5px;display:none;font-weight:600;}
+input.error{border-color:var(--red)!important;background:#fff5f5!important;}
 
 .footer{font-size:11px;color:var(--text3);text-align:center;margin-top:24px;}
 </style>
@@ -120,107 +123,153 @@ input.error{border-color:var(--red)!important;}
 
   <!-- Infos personnelles -->
   <div class="card">
-    <div class="card-title">Informations personnelles</div>
-    <div class="form-group">
-      <label>Prénom <span class="required">*</span></label>
-      <input type="text" id="f-prenom" placeholder="Votre prénom" autocomplete="given-name">
-      <div class="field-error" id="err-prenom">Champ requis</div>
+    <div class="card-title">👤 Informations personnelles</div>
+
+    <!-- Prénom + Nom côte à côte sur desktop -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+      <div>
+        <label>Prénom <span class="required">*</span></label>
+        <input type="text" id="f-prenom" placeholder="Prénom" autocomplete="given-name">
+        <div class="field-error" id="err-prenom">Requis</div>
+      </div>
+      <div>
+        <label>Nom <span class="required">*</span></label>
+        <input type="text" id="f-nom" placeholder="Nom" autocomplete="family-name">
+        <div class="field-error" id="err-nom">Requis</div>
+      </div>
     </div>
-    <div class="form-group">
-      <label>Nom <span class="required">*</span></label>
-      <input type="text" id="f-nom" placeholder="Votre nom de famille" autocomplete="family-name">
-      <div class="field-error" id="err-nom">Champ requis</div>
-    </div>
+
     <div class="form-group">
       <label>Adresse électronique <span class="required">*</span></label>
-      <input type="email" id="f-email" placeholder="votre@email.com" autocomplete="email">
+      <div style="position:relative;">
+        <input type="email" id="f-email" placeholder="votre@email.com" autocomplete="email" style="padding-left:42px;">
+        <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;">✉️</span>
+      </div>
       <div class="field-error" id="err-email">Email invalide</div>
     </div>
+
     <div class="form-group" style="margin-bottom:0;">
       <label>Numéro de téléphone <span class="required">*</span></label>
       <div style="display:flex;gap:8px;align-items:stretch;">
-        <div style="position:relative;flex-shrink:0;">
-          <select id="f-tel-indicatif" style="width:110px;height:52px;background:rgba(255,255,255,0.05);border:1.5px solid var(--border);color:var(--text);padding:0 8px;border-radius:14px;font-size:13px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;outline:none;cursor:pointer;">
-            <option value="+41">CH +41</option>
-            <option value="+33">FR +33</option>
-            <option value="+32">BE +32</option>
-            <option value="+352">LU +352</option>
-            <option value="+49">DE +49</option>
-            <option value="+39">IT +39</option>
-            <option value="+34">ES +34</option>
-            <option value="+44">GB +44</option>
-            <option value="+1">US +1</option>
-            <option value="+212">MA +212</option>
-            <option value="+213">DZ +213</option>
-            <option value="+216">TN +216</option>
-            <option value="+221">SN +221</option>
-            <option value="+225">CI +225</option>
-            <option value="+243">CD +243</option>
-          </select>
-
+        <select id="f-tel-indicatif" style="width:110px;height:52px;background:#f8f8fc;border:1.5px solid var(--border);color:var(--text);padding:0 10px;border-radius:14px;font-size:13px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;outline:none;cursor:pointer;flex-shrink:0;">
+          <option value="+41">CH +41</option>
+          <option value="+33">FR +33</option>
+          <option value="+32">BE +32</option>
+          <option value="+352">LU +352</option>
+          <option value="+49">DE +49</option>
+          <option value="+39">IT +39</option>
+          <option value="+34">ES +34</option>
+          <option value="+44">GB +44</option>
+          <option value="+1">US +1</option>
+          <option value="+212">MA +212</option>
+          <option value="+213">DZ +213</option>
+          <option value="+216">TN +216</option>
+          <option value="+221">SN +221</option>
+          <option value="+225">CI +225</option>
+          <option value="+243">CD +243</option>
+        </select>
+        <div style="position:relative;flex:1;">
+          <input type="tel" id="f-tel" placeholder="79 000 00 00" autocomplete="tel" style="width:100%;padding-left:42px;" inputmode="numeric">
+          <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;">📞</span>
         </div>
-        <input type="tel" id="f-tel" placeholder="79 000 00 00" autocomplete="tel" style="flex:1;" inputmode="numeric">
       </div>
-      <div class="field-error" id="err-tel">Numéro de téléphone requis</div>
+      <div class="field-error" id="err-tel">Numéro requis</div>
     </div>
   </div>
 
   <!-- Type de membre -->
   <div class="card">
-    <div class="card-title">Type de membre <span class="required">*</span></div>
+    <div class="card-title">🏷️ Type de membre <span class="required">*</span></div>
     <div class="type-options">
+
       <div class="type-option" onclick="selectType('Actif')" id="opt-actif">
         <div class="type-radio" id="radio-actif"></div>
-        <div>
-          <div class="type-label">Membre actif</div>
-          <div class="type-desc">Participe activement aux activités · Cotisation 50 CHF/an · Présence attendue 80%</div>
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
+            <div class="type-label">Membre actif</div>
+            <span style="font-size:12px;font-weight:700;color:var(--red);background:rgba(230,51,41,0.08);padding:3px 10px;border-radius:20px;">50 CHF/an</span>
+          </div>
+          <div class="type-desc">Participation active · Présence attendue 80%</div>
         </div>
       </div>
+
       <div class="type-option" onclick="selectType('Actif Suisse')" id="opt-suisse">
         <div class="type-radio" id="radio-suisse"></div>
-        <div>
-          <div class="type-label">Membre actif Suisse</div>
-          <div class="type-desc">Membre actif de nationalité suisse · Cotisation 50 CHF/an · Présence attendue 40%</div>
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
+            <div class="type-label">Membre actif Suisse</div>
+            <span style="font-size:12px;font-weight:700;color:var(--gold);background:rgba(196,154,0,0.08);padding:3px 10px;border-radius:20px;">50 CHF/an</span>
+          </div>
+          <div class="type-desc">Nationalité suisse · Présence attendue 40%</div>
         </div>
       </div>
+
       <div class="type-option" onclick="selectType('Passif')" id="opt-passif">
         <div class="type-radio" id="radio-passif"></div>
-        <div>
-          <div class="type-label">Membre passif</div>
-          <div class="type-desc">Soutien l'association sans participation active · Cotisation 50 CHF/an · Présence attendue 0%</div>
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
+            <div class="type-label">Membre passif</div>
+            <span style="font-size:12px;font-weight:700;color:var(--text3);background:rgba(0,0,0,0.05);padding:3px 10px;border-radius:20px;">50 CHF/an</span>
+          </div>
+          <div class="type-desc">Soutien sans participation active · Présence 0%</div>
         </div>
       </div>
+
     </div>
     <div class="field-error" id="err-type" style="margin-top:10px;">Veuillez choisir un type</div>
   </div>
 
   <!-- Signature -->
   <div class="card">
-    <div class="card-title">Signature du membre <span class="required">*</span></div>
-    <p style="font-size:12px;color:var(--text3);margin-bottom:12px;">Signez dans le cadre ci-dessous avec votre doigt ou stylet.</p>
-    <div class="sig-wrap">
-      <canvas id="sig-canvas" height="160"></canvas>
-      <button class="sig-clear" onclick="clearSig()">Effacer</button>
-      <div class="sig-label">← Signez ici →</div>
+    <div class="card-title">✍️ Signature du membre <span class="required">*</span></div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.5;">Signez ci-dessous avec votre doigt ou stylet. Cette signature sera intégrée au document final.</p>
+    <div class="sig-wrap" style="border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+      <canvas id="sig-canvas" height="180"></canvas>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-top:1px solid var(--border);background:#fafafa;">
+        <span style="font-size:12px;color:#999;">← Signez dans cet espace →</span>
+        <button class="sig-clear" onclick="clearSig()" style="background:none;border:1px solid #ddd;color:#888;padding:4px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;">✕ Effacer</button>
+      </div>
     </div>
     <div class="field-error" id="err-sig" style="margin-top:8px;">Signature requise</div>
   </div>
 
   <!-- Submit -->
-  <div class="card" style="background:transparent;border:none;padding:0;">
+  <div style="width:100%;max-width:520px;padding:0;">
     <button class="btn-submit" onclick="submitForm()" id="btn-submit">
-      📩 Soumettre ma demande d'adhésion
+      Soumettre ma demande →
     </button>
-    <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:12px;">Votre demande sera examinée par le bureau de l'association. Vous recevrez une confirmation par email.</p>
+    <p style="font-size:12px;color:var(--text3);text-align:center;margin-top:14px;line-height:1.6;">
+      🔒 Vos données sont transmises de façon sécurisée.<br>
+      Le bureau vous contactera pour confirmer votre adhésion.
+    </p>
   </div>
 </div>
 
 <!-- SUCCESS -->
 <div class="success-screen" id="success-screen">
-  <div class="success-icon">🎉</div>
+  <div style="width:88px;height:88px;border-radius:28px;background:linear-gradient(135deg,rgba(48,209,88,0.15),rgba(48,209,88,0.08));border:1.5px solid rgba(48,209,88,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:44px;">🎉</div>
   <div class="success-title">Demande envoyée !</div>
-  <div class="success-sub">Votre demande d'adhésion à l'association GE-FAIS a bien été reçue. Le bureau vous contactera prochainement pour finaliser votre inscription.</div>
-  <button class="btn-pdf" onclick="downloadPDF()" id="btn-dl-pdf">⬇️ Télécharger mon formulaire (PDF)</button>
+  <div class="success-sub">Votre demande d'adhésion à l'association GE-FAIS a bien été reçue.<br>Le bureau vous contactera prochainement.</div>
+
+  <div style="background:#f8f8fc;border:1px solid #e4e4ea;border-radius:16px;padding:16px;margin:20px 0;text-align:left;max-width:360px;width:100%;">
+    <div style="font-size:10px;font-weight:700;color:#8a8a9a;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Ce qui se passe ensuite</div>
+    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;">
+      <div style="width:22px;height:22px;border-radius:50%;background:#e63329;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">1</div>
+      <div style="font-size:13px;color:#4a4a5a;">Le bureau examine votre demande</div>
+    </div>
+    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;">
+      <div style="width:22px;height:22px;border-radius:50%;background:#e63329;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">2</div>
+      <div style="font-size:13px;color:#4a4a5a;">Le président et la VP signent le formulaire</div>
+    </div>
+    <div style="display:flex;align-items:flex-start;gap:10px;">
+      <div style="width:22px;height:22px;border-radius:50%;background:#1a9e3f;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">✓</div>
+      <div style="font-size:13px;color:#4a4a5a;">Vous êtes officiellement membre de GE-FAIS</div>
+    </div>
+  </div>
+
+  <button class="btn-pdf" onclick="downloadPDF()" id="btn-dl-pdf" style="width:100%;justify-content:center;padding:14px;">
+    ⬇️ Télécharger mon formulaire (PDF)
+  </button>
 </div>
 
 <!-- TOAST -->
@@ -506,24 +555,37 @@ async function downloadPDF(sigPresidentB64, sigVpB64, validated){
 </script>
 
 <script>
-// Chargement dynamique Firebase + jsPDF pour iOS Safari
-function _loadScript(src, cb){
-  const s=document.createElement('script');
-  s.src=src;s.onload=cb;s.onerror=()=>cb(new Error('Failed: '+src));
-  document.head.appendChild(s);
-}
-_loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js',()=>{
-  _loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js',()=>{
-    try{
-      firebase.initializeApp(FB_CONFIG);
-      db=firebase.firestore();
-      console.log('Firebase connecté ✅');
-    }catch(e){console.warn('Firebase:',e);}
+// Chargement dynamique Firebase + jsPDF — compatible iOS Safari
+(function(){
+  function loadScript(src, onLoad){
+    const s=document.createElement('script');
+    s.src=src;
+    s.async=true;
+    s.onload=onLoad;
+    s.onerror=function(){console.warn('Erreur chargement:',src);};
+    document.head.appendChild(s);
+  }
+
+  // Charger Firebase en séquence
+  loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js', function(){
+    loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js', function(){
+      try{
+        if(!firebase.apps.length){
+          firebase.initializeApp(FB_CONFIG);
+        }
+        db = firebase.firestore();
+        console.log('Firebase connecté ✅');
+      } catch(e){
+        console.warn('Firebase init error:', e.message);
+      }
+    });
   });
-});
-_loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',()=>{
-  console.log('jsPDF chargé ✅');
-});
+
+  // Charger jsPDF en parallèle
+  loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', function(){
+    console.log('jsPDF chargé ✅');
+  });
+})();
 </script>
 </body>
 </html>
