@@ -5,9 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Association GE-FAIS — Formulaire d'adhésion</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -55,10 +53,10 @@ input::placeholder{color:var(--text3);}
 .type-desc{font-size:11px;color:var(--text3);margin-top:2px;}
 
 /* SIGNATURE CANVAS */
-.sig-wrap{background:rgba(255,255,255,0.03);border:1.5px dashed var(--border2);border-radius:14px;overflow:hidden;position:relative;}
+.sig-wrap{background:#ffffff;border:1.5px solid var(--border2);border-radius:14px;overflow:hidden;position:relative;}
 canvas{display:block;width:100%;touch-action:none;cursor:crosshair;}
-.sig-clear{position:absolute;top:10px;right:10px;background:rgba(255,255,255,0.1);border:1px solid var(--border2);color:var(--text2);padding:5px 12px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;}
-.sig-label{font-size:11px;color:var(--text3);text-align:center;padding:8px;border-top:1px solid var(--border);}
+.sig-clear{position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.06);border:1px solid #ddd;color:#555;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;}
+.sig-label{font-size:11px;color:#888;text-align:center;padding:8px;border-top:1px solid #e0e0e0;}
 
 /* SUBMIT */
 .btn-submit{width:100%;background:linear-gradient(135deg,var(--red),#c0271e);color:#fff;border:none;padding:18px;border-radius:16px;font-size:16px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;box-shadow:0 4px 20px rgba(255,59,48,0.3);transition:all 0.2s;-webkit-appearance:none;margin-top:8px;}
@@ -133,8 +131,31 @@ input.error{border-color:var(--red)!important;}
       <div class="field-error" id="err-email">Email invalide</div>
     </div>
     <div class="form-group" style="margin-bottom:0;">
-      <label>Numéro de téléphone</label>
-      <input type="tel" id="f-tel" placeholder="+41 79 000 00 00" autocomplete="tel">
+      <label>Numéro de téléphone <span class="required">*</span></label>
+      <div style="display:flex;gap:8px;align-items:stretch;">
+        <div style="position:relative;flex-shrink:0;">
+          <select id="f-tel-indicatif" style="width:110px;height:52px;background:rgba(255,255,255,0.05);border:1.5px solid var(--border);color:var(--text);padding:0 8px;border-radius:14px;font-size:13px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;outline:none;cursor:pointer;">
+            <option value="+41">CH +41</option>
+            <option value="+33">FR +33</option>
+            <option value="+32">BE +32</option>
+            <option value="+352">LU +352</option>
+            <option value="+49">DE +49</option>
+            <option value="+39">IT +39</option>
+            <option value="+34">ES +34</option>
+            <option value="+44">GB +44</option>
+            <option value="+1">US +1</option>
+            <option value="+212">MA +212</option>
+            <option value="+213">DZ +213</option>
+            <option value="+216">TN +216</option>
+            <option value="+221">SN +221</option>
+            <option value="+225">CI +225</option>
+            <option value="+243">CD +243</option>
+          </select>
+
+        </div>
+        <input type="tel" id="f-tel" placeholder="79 000 00 00" autocomplete="tel" style="flex:1;" inputmode="numeric">
+      </div>
+      <div class="field-error" id="err-tel">Numéro de téléphone requis</div>
     </div>
   </div>
 
@@ -146,21 +167,21 @@ input.error{border-color:var(--red)!important;}
         <div class="type-radio" id="radio-actif"></div>
         <div>
           <div class="type-label">Membre actif</div>
-          <div class="type-desc">Participe activement aux activités · Cotisation 50 CHF/an</div>
+          <div class="type-desc">Participe activement aux activités · Cotisation 50 CHF/an · Présence attendue 80%</div>
         </div>
       </div>
       <div class="type-option" onclick="selectType('Actif Suisse')" id="opt-suisse">
         <div class="type-radio" id="radio-suisse"></div>
         <div>
           <div class="type-label">Membre actif Suisse</div>
-          <div class="type-desc">Membre actif de nationalité suisse · Cotisation 30 CHF/an</div>
+          <div class="type-desc">Membre actif de nationalité suisse · Cotisation 50 CHF/an · Présence attendue 40%</div>
         </div>
       </div>
       <div class="type-option" onclick="selectType('Passif')" id="opt-passif">
         <div class="type-radio" id="radio-passif"></div>
         <div>
           <div class="type-label">Membre passif</div>
-          <div class="type-desc">Soutien l'association sans participation active · Gratuit</div>
+          <div class="type-desc">Soutien l'association sans participation active · Cotisation 50 CHF/an · Présence attendue 0%</div>
         </div>
       </div>
     </div>
@@ -206,19 +227,8 @@ input.error{border-color:var(--red)!important;}
 
 <script>
 // ── FIREBASE ──────────────────────────────────────────────────────
-const FB_CONFIG={
-  apiKey:"AIzaSyBUJMUNFhB_nSWuUWQxQJfA0JUYsMPxlOY",
-  authDomain:"ge-fais.firebaseapp.com",
-  projectId:"ge-fais",
-  storageBucket:"ge-fais.appspot.com",
-  messagingSenderId:"123456789",
-  appId:"1:123456789:web:abcdef123456"
-};
-let db=null;
-try{
-  firebase.initializeApp(FB_CONFIG);
-  db=firebase.firestore();
-}catch(e){console.warn('Firebase:',e);}
+const FB_CONFIG={apiKey:"AIzaSyD7DeDaEEPIpbeR9fCfDBXVPzYeyFm04Ns",authDomain:"ge-fais.firebaseapp.com",projectId:"ge-fais",storageBucket:"ge-fais.firebasestorage.app",messagingSenderId:"908562621208",appId:"1:908562621208:web:1dae6e132a60f78051746d"};
+let db=null; // Initialisé par _initFirebase()
 
 // ── SIGNATURE CANVAS ──────────────────────────────────────────────
 const canvas=document.getElementById('sig-canvas');
@@ -231,7 +241,7 @@ function resizeCanvas(){
   canvas.width=rect.width*dpr;
   canvas.height=160*dpr;
   ctx.scale(dpr,dpr);
-  ctx.strokeStyle='#f5f5f7';
+  ctx.strokeStyle='#111111';
   ctx.lineWidth=2.5;
   ctx.lineCap='round';
   ctx.lineJoin='round';
@@ -282,12 +292,20 @@ function validate(){
   const prenom=document.getElementById('f-prenom').value.trim();
   const nom=document.getElementById('f-nom').value.trim();
   const email=document.getElementById('f-email').value.trim();
+  const tel=document.getElementById('f-tel').value.trim();
+
   if(!prenom){document.getElementById('f-prenom').classList.add('error');document.getElementById('err-prenom').style.display='block';ok=false;}
   else{document.getElementById('f-prenom').classList.remove('error');document.getElementById('err-prenom').style.display='none';}
+
   if(!nom){document.getElementById('f-nom').classList.add('error');document.getElementById('err-nom').style.display='block';ok=false;}
   else{document.getElementById('f-nom').classList.remove('error');document.getElementById('err-nom').style.display='none';}
+
   if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){document.getElementById('f-email').classList.add('error');document.getElementById('err-email').style.display='block';ok=false;}
   else{document.getElementById('f-email').classList.remove('error');document.getElementById('err-email').style.display='none';}
+
+  if(!tel){document.getElementById('f-tel').classList.add('error');document.getElementById('err-tel').style.display='block';ok=false;}
+  else{document.getElementById('f-tel').classList.remove('error');document.getElementById('err-tel').style.display='none';}
+
   if(!selectedType){document.getElementById('err-type').style.display='block';ok=false;}
   if(sigEmpty){document.getElementById('err-sig').style.display='block';ok=false;}
   else{document.getElementById('err-sig').style.display='none';}
@@ -313,12 +331,16 @@ async function submitForm(){
   const btn=document.getElementById('btn-submit');
   btn.disabled=true;btn.textContent='Envoi en cours…';
 
+  const indicatif=document.getElementById('f-tel-indicatif').value;
+  const telNum=document.getElementById('f-tel').value.trim();
+  const telComplet=indicatif+' '+telNum;
+
   _sigDataUrl=canvas.toDataURL('image/png');
   _formData={
     prenom:document.getElementById('f-prenom').value.trim(),
     nom:document.getElementById('f-nom').value.trim(),
     email:document.getElementById('f-email').value.trim(),
-    tel:document.getElementById('f-tel').value.trim(),
+    tel:telComplet,
     type:selectedType,
     signature:_sigDataUrl,
     date:new Date().toISOString(),
@@ -469,6 +491,27 @@ async function downloadPDF(sigPresidentB64, sigVpB64, validated){
 
   doc.save(`adhesion_gefais_${(_formData?.nom||'membre').toLowerCase()}.pdf`);
 }
+</script>
+
+<script>
+// Chargement dynamique Firebase + jsPDF pour iOS Safari
+function _loadScript(src, cb){
+  const s=document.createElement('script');
+  s.src=src;s.onload=cb;s.onerror=()=>cb(new Error('Failed: '+src));
+  document.head.appendChild(s);
+}
+_loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js',()=>{
+  _loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js',()=>{
+    try{
+      firebase.initializeApp(FB_CONFIG);
+      db=firebase.firestore();
+      console.log('Firebase connecté ✅');
+    }catch(e){console.warn('Firebase:',e);}
+  });
+});
+_loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',()=>{
+  console.log('jsPDF chargé ✅');
+});
 </script>
 </body>
 </html>
