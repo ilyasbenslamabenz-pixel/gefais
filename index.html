@@ -2837,7 +2837,8 @@ async function initApp(){
   document.getElementById('loading-overlay').style.display='flex';
 
   // ── ÉTAPE 1 : Cache local immédiat ───────────────────────────────
-  membres=lsGet('gef_membres',DEFAULT_MEMBRES);
+  // Fusionner localStorage + DEFAULT_MEMBRES pour ne jamais perdre de membres
+  {const ls=lsGet('gef_membres',[]);const lsIds=new Set(ls.map(m=>m.id));const manquants=DEFAULT_MEMBRES.filter(m=>!lsIds.has(m.id));membres=ls.length>0?[...ls,...manquants]:DEFAULT_MEMBRES;lsSet('gef_membres',membres);}
   events=lsGet('gef_events',DEFAULT_EVENTS);
   presences=lsGet('gef_presences',DEFAULT_PRESENCES);
   compta=lsGet('gef_compta',DEFAULT_COMPTA);
