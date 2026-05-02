@@ -2871,8 +2871,15 @@ async function initApp(){
       _firebaseOk=true;
       const isNew=!docs[0].exists;
       docs.forEach((d,i)=>{
-        const val=d.exists?d.data().value:defaults[i];
-        if(i===0)membres=val;
+        let val=d.exists?d.data().value:defaults[i];
+        if(i===0){
+          // Fusionner : garder les membres Firebase + ajouter ceux manquants depuis DEFAULT_MEMBRES
+          const fbMembres=val||[];
+          const fbIds=new Set(fbMembres.map(m=>m.id));
+          const manquants=DEFAULT_MEMBRES.filter(m=>!fbIds.has(m.id));
+          if(manquants.length>0){val=[...fbMembres,...manquants];}
+          membres=val;
+        }
         else if(i===1)events=val;
         else if(i===2)presences=val;
         else if(i===3)compta=val;
@@ -2888,7 +2895,8 @@ async function initApp(){
       presences&&lsSet('gef_presences',presences);
       compta&&lsSet('gef_compta',compta);
       cotisations&&lsSet('gef_cotisations',cotisations);
-      if(isNew){keys.forEach((k,i)=>{if(defaults[i])db.collection('gef_data').doc(k).set({value:defaults[i]}).catch(()=>{});});}
+      if(isNew){keys.forEach((k,i)=>{if(i!==0&&defaults[i])db.collection('gef_data').doc(k).set({value:defaults[i]}).catch(()=>{});});}
+      db.collection('gef_data').doc('gef_membres').set({value:membres}).catch(()=>{});
       setupListeners();
       _loadDemandesBadge();
       renderDashboard(); renderMembres();
