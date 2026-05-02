@@ -2782,6 +2782,9 @@ function setupListeners(){
 }
 
 function fmtDate(d){if(!d)return'—';const[y,m,day]=d.split('T')[0].split('-');return`${day}/${m}/${y}`;}
+function localToday(){const n=new Date();return`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;}
+function parseDate(d){return new Date((d||'').split('T')[0]+'T12:00:00');}
+function dateDiff(d){return Math.round((parseDate(d)-parseDate(localToday()))/86400000);}
 function fmtMonthYear(d){if(!d)return'—';const parts=d.split('T')[0].split('-');const y=parts[0];const mo=parseInt(parts[1]);const mois=['','Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];return mo&&mois[mo]?`${mois[mo]} ${y}`:y||'—';}
 function fmtDateTime(d){if(!d)return'—';const dt=new Date(d);return dt.toLocaleDateString('fr-CH',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
@@ -2930,7 +2933,7 @@ function renderDashboard(){
   const anneeEnCours=new Date().getFullYear();
   const cotisTotal=cotisations.filter(c=>c.annee===anneeEnCours).length;
   const cotisPayees=cotisations.filter(c=>c.annee===anneeEnCours&&c.statut==='paye').length;
-  const today=new Date().toISOString().slice(0,10);
+  const today=localToday();
   const h=new Date().getHours();
   const greet=h<6?'Bonne nuit 🌙':h<12?'Bonjour 👋':h<18?'Bon après-midi ☀️':'Bonsoir 🌇';
 
@@ -2994,7 +2997,7 @@ function renderDashboard(){
   const alertesEl=document.getElementById('dash-alertes');
   if(alertesEl){
     const alertes=[];
-    const upcoming7=events.filter(e=>{const d=new Date(e.date);const diff=(d-new Date())/86400000;return diff>=0&&diff<=7;});
+    const upcoming7=events.filter(e=>{const diff=dateDiff(e.date);return diff>=0&&diff<=7;});
     if(upcoming7.length)alertes.push({type:'info',icon:'📅',msg:`${upcoming7.length} événement(s) dans les 7 prochains jours : ${upcoming7.map(e=>e.nom||e.type).join(', ')}`});
     const impayees=cotisations.filter(c=>c.annee===anneeEnCours&&c.statut==='impaye'&&c.montant>0).length;
     if(impayees>0)alertes.push({type:'warn',icon:'💳',msg:`${impayees} cotisation(s) ${anneeEnCours} en attente de paiement`});
@@ -3040,7 +3043,7 @@ function renderDashboard(){
     const upcoming=events.filter(e=>e.date>=today).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,4);
     evEl.innerHTML=upcoming.length?upcoming.map(e=>{
       const chipCls=e.type==='Maraude'?'event-chip-maraude':e.type==='Réunion'?'event-chip-reunion':'event-chip-autre';
-      const jours=Math.round((new Date(e.date+'T12:00:00')-new Date(today+'T12:00:00'))/86400000);
+      const jours=dateDiff(e.date);
       const label=jours===0?'<span style="color:var(--green);font-weight:700;font-size:11px;">Aujourd\'hui</span>':jours===1?'<span style="color:var(--gold);font-weight:700;font-size:11px;">Demain</span>':`<span style="font-size:11px;color:var(--text3);">${fmtDate(e.date)}</span>`;
       return`<div style="display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--border);">
         <span class="event-chip ${chipCls}" style="font-size:10px;padding:2px 7px;">${e.type}</span>
@@ -3480,7 +3483,7 @@ function toggleSortDir(){
 }
 
 function _buildEventListHTML(filtered){
-  const today=new Date().toISOString().slice(0,10);
+  const today=localToday();
   const byMonth={};
   filtered.slice().sort((a,b)=>b.date.localeCompare(a.date)).forEach(e=>{
     const [y,m]=e.date.split('-');
@@ -3498,7 +3501,7 @@ function _buildEventListHTML(filtered){
       const pct=membres.length>0?Math.round((count/membres.length)*100):0;
       const isOpen=_openEventId===e.id;
       const isPast=e.date<today;
-      const joursRestantsEvt=isPast?-1:Math.round((new Date(e.date+'T12:00:00')-new Date(today+'T12:00:00'))/86400000);
+      const joursRestantsEvt=isPast?-1:dateDiff(e.date);
       // Trouver la couleur de la sous-page correspondante
       const sp=event_subpages.find(s=>s.types.includes(e.type));
       const chipCls=e.type==='Maraude'?'event-chip-maraude':e.type==='Réunion'?'event-chip-reunion':'event-chip-autre';
@@ -3519,7 +3522,7 @@ function _buildEventListHTML(filtered){
             <div class="event-row-sub">
               <span class="event-chip ${chipCls}" style="font-size:10px;padding:2px 7px;">${e.type}</span>
               <span>${fmtDate(e.date)}</span>
-              ${isPast?'<span style="color:var(--text3);">· Passé</span>':`<span style="color:var(--green);font-weight:700;">· ${Math.round((new Date(e.date+'T12:00:00')-new Date(today+'T12:00:00'))/86400000)===0?'Auj.':Math.round((new Date(e.date+'T12:00:00')-new Date(today+'T12:00:00'))/86400000)===1?'Demain':'Dans '+Math.round((new Date(e.date+'T12:00:00')-new Date(today+'T12:00:00'))/86400000)+'j'}</span>`}
+              ${isPast?'<span style="color:var(--text3);">· Passé</span>':`<span style="color:var(--green);font-weight:700;">· ${dateDiff(e.date)===0?'Auj.':dateDiff(e.date)===1?'Demain':'Dans '+dateDiff(e.date)+'j'}</span>`}
             </div>
           </div>
           <div class="event-row-pct">
@@ -3551,7 +3554,7 @@ function _buildEventListHTML(filtered){
 }
 
 function renderEvents(){
-  const today=new Date().toISOString().slice(0,10);
+  const today=localToday();
   const q=(document.getElementById('search-events')?.value||'').toLowerCase();
   const filterType=document.getElementById('filter-events-type')?.value||'';
   const filterPeriod=document.getElementById('filter-events-period')?.value||'';
@@ -3843,7 +3846,7 @@ function openComptaModal(type){
   _comptaAttachments=[];
   document.getElementById('modal-compta-title').textContent=type==='recette'?'Nouvelle recette':'Nouvelle dépense';
   document.getElementById('c-type').value=type;
-  document.getElementById('c-date').value=new Date().toISOString().slice(0,10);
+  document.getElementById('c-date').value=localToday();
   document.getElementById('c-montant').value='';
   document.getElementById('c-desc').value='';
   document.getElementById('c-cat').value='Autre';
@@ -4423,7 +4426,7 @@ function creerDossier(){
     id:Date.now()+Math.random(),
     type:'folder',
     nom:nom.trim(),
-    date:new Date().toISOString().slice(0,10),
+    date:localToday(),
     parentId:_currentFolder,
     ajoutePar:'Moi'
   };
@@ -4459,7 +4462,7 @@ function ajouterDocuments(input){
         taille:file.size,
         mimeType:file.type,
         categorie:detectCategorie(file.name),
-        date:new Date().toISOString().slice(0,10),
+        date:localToday(),
         ajoutePar:'Moi',
         parentId:_currentFolder,
         data:e.target.result
@@ -4635,7 +4638,7 @@ function renderSection(secId){
 function ajouterNoteSection(secId){
   const texte=prompt('Note / ordre du jour :');
   if(!texte||!texte.trim())return;
-  ag_notes.push({id:Date.now(),texte:texte.trim(),date:new Date().toISOString().slice(0,10),secId});
+  ag_notes.push({id:Date.now(),texte:texte.trim(),date:localToday(),secId});
   lsSet('gef_ag_notes',ag_notes);
   save('gef_ag_notes',ag_notes);
   renderSection(secId);
@@ -4980,7 +4983,7 @@ function globalSearch(q) {
 
 // ── EXPORT CSV ────────────────────────────────────────────────────
 function exportMembresCSV() {
-  const today = new Date().toISOString().slice(0,10);
+  const today = localToday();
   const header = ['Nom','Prénom','Rôle','Type','Email','Téléphone','Date adhésion','Présence moy (%)'];
   const rows = membres.map(m => {
     const pres = events.length > 0 ? Math.round(events.filter(e=>presences[m.id+'_'+e.id]).length / events.length * 100) : 0;
@@ -4993,7 +4996,7 @@ function exportMembresCSV() {
 }
 
 function exportComptaCSV() {
-  const today = new Date().toISOString().slice(0,10);
+  const today = localToday();
   const header = ['Date','Type','Montant (CHF)','Catégorie','Description','Pièce'];
   const rows = compta.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(c =>
     [c.date, c.type, c.montant.toFixed(2), c.categorie||'', c.description||'', c.piece||'']
@@ -5310,7 +5313,7 @@ async function confirmerSignature(){
     if(!dejaExiste){
       const newId=Math.max(0,...membres.map(m=>m.id))+1;
       const anneeEnCours=new Date().getFullYear();
-      const newMembre={id:newId,prenom:_demandeEnCours.prenom,nom:_demandeEnCours.nom,email:_demandeEnCours.email,tel:_demandeEnCours.tel||'',type:_demandeEnCours.type,role:'',adhesion:'',presence_attendue:_demandeEnCours.type==='Actif Suisse'?0.4:_demandeEnCours.type==='Passif'?0:0.8,notes:'',createdAt:new Date().toISOString().slice(0,10),adhesionDocDate:new Date().toISOString(),adhesionDocName:`adhesion_${(_demandeEnCours.nom||'membre').toLowerCase()}_valide.pdf`};
+      const newMembre={id:newId,prenom:_demandeEnCours.prenom,nom:_demandeEnCours.nom,email:_demandeEnCours.email,tel:_demandeEnCours.tel||'',type:_demandeEnCours.type,role:'',adhesion:'',presence_attendue:_demandeEnCours.type==='Actif Suisse'?0.4:_demandeEnCours.type==='Passif'?0:0.8,notes:'',createdAt:localToday(),adhesionDocDate:new Date().toISOString(),adhesionDocName:`adhesion_${(_demandeEnCours.nom||'membre').toLowerCase()}_valide.pdf`};
       membres.push(newMembre);
       cotisations.push({membreId:newId,annee:anneeEnCours,montant:50,statut:'impaye',datePaiement:'',notes:''});
       save('gef_membres',membres);save('gef_cotisations',cotisations);
@@ -5775,7 +5778,7 @@ function _populateCotisAnneeSel(){
 // ── MODE PRÉSENTATION ─────────────────────────────────────────────
 function openPresentationMode(){
   const modal=document.getElementById('modal-presentation');if(!modal)return;
-  const today=new Date().toISOString().slice(0,10);
+  const today=localToday();
   const actifs=membres.filter(m=>(m.type||'').trim()==='Actif').length;
   const suisses=membres.filter(m=>(m.type||'').trim()==='Actif Suisse').length;
   const passifs=membres.filter(m=>(m.type||'').trim()==='Passif').length;
