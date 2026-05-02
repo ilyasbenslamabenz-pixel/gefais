@@ -2888,7 +2888,7 @@ function renderMembres(){
     <td>${badgeType(m.type)}</td>
     <td style="color:var(--text3)">${m.email||'—'}</td>
     <td style="color:var(--text3);font-size:12px">${m.tel||'—'}</td>
-    <td><button class="btn-icon" onclick="editMember(${m.id})">✏️</button><button class="btn-icon" onclick="deleteMember(${m.id})">🗑️</button></td>
+    <td><button class="btn-icon" onclick="ouvrirFicheAdhesion(${m.id})" title="Formulaire d'adhésion">📄</button><button class="btn-icon" onclick="editMember(${m.id})">✏️</button><button class="btn-icon" onclick="deleteMember(${m.id})">🗑️</button></td>
   </tr>`;}).join('');
 
   document.getElementById('member-cards').innerHTML=paged.map(m=>{
