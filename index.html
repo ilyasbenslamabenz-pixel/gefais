@@ -2175,7 +2175,30 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
         <select id="m-type" onchange="autoPresence(this.value)"><option value="">— Sélectionner —</option><option value="Actif">Actif</option><option value="Actif Suisse">Actif Suisse</option><option value="Passif">Passif</option></select>
       </div>
       <div class="form-group"><label>Email</label><input id="m-email" type="email" placeholder="email@exemple.ch"></div>
-      <div class="form-group"><label>Téléphone</label><input id="m-tel" type="text" placeholder="+41 …"></div>
+      <div class="form-group"><label>Téléphone</label>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <select id="m-tel-indicatif" style="width:110px;flex-shrink:0;">
+            <option value="+41">🇨🇭 +41</option>
+            <option value="+33">🇫🇷 +33</option>
+            <option value="+32">🇧🇪 +32</option>
+            <option value="+352">🇱🇺 +352</option>
+            <option value="+49">🇩🇪 +49</option>
+            <option value="+39">🇮🇹 +39</option>
+            <option value="+34">🇪🇸 +34</option>
+            <option value="+351">🇵🇹 +351</option>
+            <option value="+212">🇲🇦 +212</option>
+            <option value="+213">🇩🇿 +213</option>
+            <option value="+216">🇹🇳 +216</option>
+            <option value="+225">🇨🇮 +225</option>
+            <option value="+221">🇸🇳 +221</option>
+            <option value="+243">🇨🇩 +243</option>
+            <option value="+237">🇨🇲 +237</option>
+            <option value="+1">🇺🇸 +1</option>
+            <option value="+44">🇬🇧 +44</option>
+          </select>
+          <input id="m-tel" type="text" placeholder="79 123 45 67" style="flex:1;">
+        </div>
+      </div>
       <div class="form-group"><label>Date d'adhésion</label>
         <div style="display:flex;gap:8px;">
           <select id="m-adhesion-mois" style="flex:1;">
@@ -3274,8 +3297,14 @@ function renderMembres(){
   if(paginEl)paginEl.innerHTML=paginationM;
 }
 function memPage(dir){renderMembres._page=(renderMembres._page||0)+dir;renderMembres();}
-function openMemberModal(){editingMembre=null;document.getElementById('modal-membre-title').textContent='Ajouter un membre';['nom','prenom','role','email','tel','notes'].forEach(f=>document.getElementById('m-'+f).value='');document.getElementById('m-type').value='';document.getElementById('m-presence').value='0.8';document.getElementById('m-created-year').value=new Date().getFullYear();document.getElementById('m-adhesion-mois').value='';document.getElementById('m-adhesion-annee').value='';document.getElementById('modal-membre').classList.add('open');}
-function editMember(id){editingMembre=id;const m=membres.find(x=>x.id===id);document.getElementById('modal-membre-title').textContent='Modifier le membre';document.getElementById('m-nom').value=m.nom;document.getElementById('m-prenom').value=m.prenom;document.getElementById('m-role').value=m.role||'';document.getElementById('m-type').value=m.type||'';document.getElementById('m-email').value=m.email||'';document.getElementById('m-tel').value=m.tel||'';document.getElementById('m-presence').value=m.presence_attendue||0;document.getElementById('m-notes').value=m.notes||'';
+function openMemberModal(){editingMembre=null;document.getElementById('modal-membre-title').textContent='Ajouter un membre';['nom','prenom','role','email','tel','notes'].forEach(f=>document.getElementById('m-'+f).value='');document.getElementById('m-type').value='';document.getElementById('m-tel-indicatif').value='+41';document.getElementById('m-presence').value='0.8';document.getElementById('m-created-year').value=new Date().getFullYear();document.getElementById('m-adhesion-mois').value='';document.getElementById('m-adhesion-annee').value='';document.getElementById('modal-membre').classList.add('open');}
+function editMember(id){editingMembre=id;const m=membres.find(x=>x.id===id);document.getElementById('modal-membre-title').textContent='Modifier le membre';document.getElementById('m-nom').value=m.nom;document.getElementById('m-prenom').value=m.prenom;document.getElementById('m-role').value=m.role||'';document.getElementById('m-type').value=m.type||'';document.getElementById('m-email').value=m.email||'';(function(){
+    const tel=m.tel||'';
+    const indicatifs=['+41','+33','+32','+352','+49','+39','+34','+351','+212','+213','+216','+225','+221','+243','+237','+1','+44'];
+    let matched=false;
+    for(const ind of indicatifs){if(tel.startsWith(ind+' ')){document.getElementById('m-tel-indicatif').value=ind;document.getElementById('m-tel').value=tel.slice(ind.length+1);matched=true;break;}}
+    if(!matched){document.getElementById('m-tel-indicatif').value='+41';document.getElementById('m-tel').value=tel.replace(/^\+\d+\s*/,'');}
+  })();document.getElementById('m-presence').value=m.presence_attendue||0;document.getElementById('m-notes').value=m.notes||'';
   // Adhesion month/year
   const adh=m.adhesion||'';const [adhY,adhM]=(adh||'').split('-');
   if(document.getElementById('m-adhesion-mois'))document.getElementById('m-adhesion-mois').value=adhM||'';
@@ -3295,7 +3324,7 @@ function saveMember(){
   const mo=document.getElementById('m-adhesion-mois')?.value||'';
   const ay=document.getElementById('m-adhesion-annee')?.value||'';
   const adhesion=mo&&ay?`${ay}-${mo}`:'';
-  const data={nom,prenom,role:document.getElementById('m-role').value,type:document.getElementById('m-type').value,email:document.getElementById('m-email').value,tel:document.getElementById('m-tel').value,adhesion,presence_attendue:parseFloat(document.getElementById('m-presence').value)||0,notes:document.getElementById('m-notes').value};
+  const data={nom,prenom,role:document.getElementById('m-role').value,type:document.getElementById('m-type').value,email:document.getElementById('m-email').value,tel:(document.getElementById('m-tel').value.trim()?(document.getElementById('m-tel-indicatif').value+' '+document.getElementById('m-tel').value.trim()):document.getElementById('m-tel').value.trim()),adhesion,presence_attendue:parseFloat(document.getElementById('m-presence').value)||0,notes:document.getElementById('m-notes').value};
   if(editingMembre){const i=membres.findIndex(m=>m.id===editingMembre);membres[i]={...membres[i],...data,createdAt:`${yr}-01-01`};}
   else{const newId=Math.max(0,...membres.map(m=>m.id))+1;const anneeEnCours=new Date().getFullYear();membres.push({id:newId,...data,createdAt:`${yr}-01-01`});cotisations.push({membreId:newId,annee:anneeEnCours,montant:50,statut:'impaye',datePaiement:'',notes:''});save('gef_cotisations',cotisations);}
   save('gef_membres',membres);closeModal('modal-membre');renderMembres();
