@@ -2708,32 +2708,35 @@ const firebaseConfig={apiKey:"AIzaSyD7DeDaEEPIpbeR9fCfDBXVPzYeyFm04Ns",authDomai
 let db=null;
 let _firebaseReady=false;
 
+let _storage=null;
+
 function _loadFirebase(cb){
-  if(typeof firebase!=='undefined'&&firebase.apps){
-    // Déjà chargé
-    if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    db=firebase.firestore();
-    _firebaseReady=true;
-    cb&&cb();
-    return;
+  if(typeof firebase!=='undefined'&&firebase.apps&&firebase.apps.length){
+    cb&&cb();return;
   }
-  // Charger dynamiquement — iOS Safari compatible
   function loadScript(src,next){
     const s=document.createElement('script');
     s.src=src;s.async=true;
     s.onload=()=>next&&next();
-    s.onerror=()=>{console.warn('Erreur chargement:',src);};
+    s.onerror=()=>next&&next(); // continuer même si erreur
     document.head.appendChild(s);
   }
   loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js',()=>{
     loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js',()=>{
-      try{
-        if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        db=firebase.firestore();
-        _firebaseReady=true;
-        console.log('Firebase connecté ✅');
-        cb&&cb();
-      }catch(e){console.warn('Firebase init:',e);}
+      loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js',()=>{
+        loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js',()=>{
+          try{
+            if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+            db=firebase.firestore();
+            _storage=firebase.storage();
+            _firebaseReady=true;
+            // Auth anonyme automatique pour Firebase Storage
+            firebase.auth().signInAnonymously().catch(()=>{});
+            console.log('Firebase connecté ✅');
+            cb&&cb();
+          }catch(e){console.warn('Firebase init:',e);cb&&cb();}
+        });
+      });
     });
   });
 }
@@ -2826,7 +2829,7 @@ function setupListeners(){
   updateOnlineStatus();
   // On ignore les snapshots dans les 3 secondes suivant notre propre sauvegarde
   const fromOther=(key)=>!_lastSave[key]||(Date.now()-_lastSave[key]>3000);
-  db.collection('gef_data').doc('gef_membres').onSnapshot(s=>{if(s.exists&&fromOther('gef_membres')){membres=s.data().value;rerender();}});
+  db.collection('gef_data').doc('gef_membres').onSnapshot(s=>{if(s.exists&&fromOther('gef_membres')){membres=s.data().value||[];lsSet('gef_membres',membres);rerender();}});
   db.collection('gef_data').doc('gef_events').onSnapshot(s=>{if(s.exists&&fromOther('gef_events')){events=s.data().value;rerender();}});
   db.collection('gef_data').doc('gef_presences').onSnapshot(s=>{if(s.exists&&fromOther('gef_presences')){presences=s.data().value;rerender();}});
   db.collection('gef_data').doc('gef_compta').onSnapshot(s=>{if(s.exists&&fromOther('gef_compta')){compta=s.data().value;rerender();}});
@@ -2928,17 +2931,7 @@ async function initApp(){
       docs.forEach((d,i)=>{
         if(!d.exists||!d.data().value)return;
         const val=d.data().value;
-        if(i===0){
-          // Préserver les adhesionDoc locaux si Firebase n'en a pas
-          const fbMembres=val;
-          const lsMembres=lsGet('gef_membres',[]);
-          fbMembres.forEach(fm=>{
-            const lm=lsMembres.find(x=>x.id===fm.id);
-            if(lm&&lm.adhesionDoc&&!fm.adhesionDoc&&!fm.adhesionUrl) fm.adhesionDoc=lm.adhesionDoc;
-          });
-          membres=fbMembres;
-          lsSet('gef_membres',membres);
-        }
+        if(i===0){membres=val||[];lsSet('gef_membres',membres);}
         else if(i===1){events=val;lsSet('gef_events',events);}
         else if(i===2){presences=val;lsSet('gef_presences',presences);}
         else if(i===3){compta=val;lsSet('gef_compta',compta);}
@@ -5123,18 +5116,14 @@ function ouvrirFicheAdhesion(id){
   if(!m)return;
   document.getElementById('modal-adhesion-titre').textContent='Formulaire d\'adhésion';
   document.getElementById('modal-adhesion-nom').textContent=m.prenom+' '+m.nom;
-  const hasDoc=!!(m.adhesionDoc||m.adhesionUrl); // idb: refs comptent aussi
+  const hasDoc=!!(m.adhesionUrl||m.hasAdhesion||(m.adhesionDoc&&!m.adhesionDoc.startsWith('idb:')));
   document.getElementById('adhesion-doc-exists').style.display=hasDoc?'block':'none';
   document.getElementById('adhesion-doc-empty').style.display=hasDoc?'none':'block';
   if(hasDoc){
     const dateStr=m.adhesionDocDate?new Date(m.adhesionDocDate).toLocaleDateString('fr-CH',{day:'2-digit',month:'long',year:'numeric'}):'Fiche importée';
-    document.getElementById('adhesion-doc-date').textContent=dateStr;
-    // Bouton voir PDF si URL Firebase Storage
+    document.getElementById('adhesion-doc-date').textContent=(m.adhesionDocName||'Formulaire')+' · '+dateStr;
     const btnVoir=document.getElementById('adhesion-btn-voir');
-    if(btnVoir){
-      if(m.adhesionUrl){btnVoir.style.display='inline-flex';btnVoir.onclick=()=>ouvrirPDFMobile(m.adhesionUrl,m.adhesionDocName||'adhesion.pdf');}
-      else{btnVoir.style.display='none';}
-    }
+    if(btnVoir){btnVoir.style.display='inline-flex';btnVoir.onclick=()=>telechargerAdhesionMembre();}
   }
   // Chercher si une demande validée existe pour ce membre dans Firebase
   const emptyEl=document.getElementById('adhesion-doc-empty');
@@ -5161,61 +5150,43 @@ function ouvrirFicheAdhesion(id){
 }
 
 function remplacerAdhesion(){
+  const m=membres.find(x=>x.id===_adhesionMembreId);
+  if(m){
+    // Supprimer l'ancien fichier de Storage si possible
+    if(m.adhesionUrl&&_storage){
+      try{_storage.refFromURL(m.adhesionUrl).delete().catch(()=>{});}catch(e){}
+    }
+    delete m.adhesionUrl;delete m.hasAdhesion;delete m.adhesionDoc;
+    delete m.adhesionDocName;delete m.adhesionDocDate;
+    save('gef_membres',membres);
+  }
   document.getElementById('adhesion-doc-exists').style.display='none';
   document.getElementById('adhesion-doc-empty').style.display='block';
 }
 
 // ── IndexedDB pour les PDFs d'adhésion ───────────────────────────
-const _idbName='gefais_files', _idbStore='adhesions', _idbVer=1;
-function _idbOpen(cb){
-  const req=indexedDB.open(_idbName,_idbVer);
-  req.onupgradeneeded=e=>e.target.result.createObjectStore(_idbStore);
-  req.onsuccess=e=>cb(e.target.result);
-  req.onerror=()=>cb(null);
-}
-function idbSave(key,blob,cb){
-  _idbOpen(db=>{
-    if(!db)return cb&&cb(false);
-    const tx=db.transaction(_idbStore,'readwrite');
-    tx.objectStore(_idbStore).put(blob,key);
-    tx.oncomplete=()=>cb&&cb(true);
-    tx.onerror=()=>cb&&cb(false);
-  });
-}
-function idbGet(key,cb){
-  _idbOpen(db=>{
-    if(!db)return cb(null);
-    const req=db.transaction(_idbStore,'readonly').objectStore(_idbStore).get(key);
-    req.onsuccess=e=>cb(e.target.result||null);
-    req.onerror=()=>cb(null);
-  });
-}
-function idbDelete(key){
-  _idbOpen(db=>{
-    if(!db)return;
-    db.transaction(_idbStore,'readwrite').objectStore(_idbStore).delete(key);
-  });
-}
-
+// ── Fiches d'adhésion → Firebase Storage ────────────────────────
 function importerAdhesion(input){
   const file=input.files[0];if(!file)return;
-  const maxSize=20*1024*1024;
-  if(file.size>maxSize){showToast('Fichier trop grand (max 20MB)','⚠️','warn');return;}
+  if(file.size>50*1024*1024){showToast('Fichier trop grand (max 50MB)','⚠️','warn');return;}
   const m=membres.find(x=>x.id===_adhesionMembreId);if(!m)return;
-  showToast('Sauvegarde en cours…','⏳');
-  const idbKey='adhesion_'+m.id;
-  idbSave(idbKey,file,ok=>{
-    if(ok){
-      m.adhesionDoc='idb:'+idbKey; // Référence vers IndexedDB
-      m.adhesionDocName=file.name;
-      m.adhesionDocDate=new Date().toISOString();
-      delete m.adhesionUrl;
-      save('gef_membres',membres);
-      showToast('Formulaire sauvegardé ✓','✅','success');
-      ouvrirFicheAdhesion(_adhesionMembreId);
-    } else {
-      showToast('Erreur de sauvegarde','❌','error');
-    }
+  if(!_storage){showToast('Firebase non disponible','⚠️','warn');return;}
+  showToast('Upload en cours…','⏳');
+  const ext=file.name.split('.').pop()||'pdf';
+  const path='adhesions/'+m.id+'_'+m.prenom.replace(/\s/g,'_')+'_'+m.nom.replace(/\s/g,'_')+'.'+ext;
+  const ref=_storage.ref(path);
+  ref.put(file).then(snap=>snap.ref.getDownloadURL()).then(url=>{
+    m.adhesionUrl=url;
+    m.adhesionDocName=file.name;
+    m.adhesionDocDate=new Date().toISOString();
+    m.hasAdhesion=true;
+    delete m.adhesionDoc;
+    save('gef_membres',membres);
+    showToast('Formulaire sauvegardé ✓','✅','success');
+    ouvrirFicheAdhesion(_adhesionMembreId);
+  }).catch(e=>{
+    console.error('Storage upload error:',e);
+    showToast('Erreur upload: '+e.message,'❌','error');
   });
   input.value='';
 }
@@ -5224,17 +5195,12 @@ function telechargerAdhesionMembre(){
   const m=membres.find(x=>x.id===_adhesionMembreId);
   if(!m)return;
   const nom=m.adhesionDocName||'adhesion_'+m.nom.toLowerCase()+'.pdf';
-  if(m.adhesionUrl){ouvrirPDFMobile(m.adhesionUrl,nom);return;}
-  if(!m.adhesionDoc)return;
-  if(m.adhesionDoc.startsWith('idb:')){
-    // Lire depuis IndexedDB
-    idbGet(m.adhesionDoc.slice(4),blob=>{
-      if(!blob){showToast('Fichier introuvable','⚠️','warn');return;}
-      const url=URL.createObjectURL(blob);
-      ouvrirPDFMobile(url,nom);
-    });
+  if(m.adhesionUrl){
+    ouvrirPDFMobile(m.adhesionUrl,nom);
+  } else if(m.adhesionDoc&&!m.adhesionDoc.startsWith('idb:')){
+    ouvrirPDFMobile(m.adhesionDoc,nom); // legacy base64
   } else {
-    ouvrirPDFMobile(m.adhesionDoc,nom);
+    showToast('Aucun fichier associé à ce membre','⚠️','warn');
   }
 }
 
