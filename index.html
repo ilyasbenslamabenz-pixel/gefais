@@ -2898,13 +2898,13 @@ async function initApp(){
       ]);
       _firebaseOk=true;
       const isNew=!docs[0].exists;
+      const fbDeletedSnap=await db.collection('gef_data').doc('gef_deleted_ids').get().catch(()=>null);
+      const fbDeletedIds=new Set((fbDeletedSnap?.exists?fbDeletedSnap.data().value:lsGet('gef_deleted_ids',[]))||[]);
       docs.forEach((d,i)=>{
         let val=d.exists?d.data().value:defaults[i];
         if(i===0){
           // Fusionner : garder les membres Firebase + ajouter ceux manquants depuis DEFAULT_MEMBRES
           const fbMembres=val||[];
-          const fbDeletedSnap=await db.collection('gef_data').doc('gef_deleted_ids').get().catch(()=>null);
-          const fbDeletedIds=new Set((fbDeletedSnap?.exists?fbDeletedSnap.data().value:lsGet('gef_deleted_ids',[]))||[]);
           const fbIds=new Set(fbMembres.map(m=>m.id));
           const manquants=DEFAULT_MEMBRES.filter(m=>!fbIds.has(m.id)&&!fbDeletedIds.has(m.id));
           if(manquants.length>0){val=[...fbMembres,...manquants];}
