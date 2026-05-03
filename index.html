@@ -2752,19 +2752,41 @@ function _showSaveStatus(state,text){
   if(state!=='saving')el._hide=setTimeout(()=>{el.className='';el.style.display='';},2000);
 }
 
+// File d'attente pour les sauvegardes en attente de Firebase
+const _saveQueue={};
+function _flushSaveQueue(){
+  if(!db)return;
+  Object.entries(_saveQueue).forEach(([key,value])=>{
+    db.collection('gef_data').doc(key).set({value:value}).then(()=>{
+      delete _saveQueue[key];
+      _showSaveStatus('saved','Sauvegardé');
+    }).catch(e=>console.warn('Flush save error:',e));
+  });
+}
+
 function save(key,value){
   lsSet(key,value);
   _lastSave[key]=Date.now();
   _showSaveStatus('saving','Sauvegarde…');
-  if(!db){_showSaveStatus('saved','Sauvé localement');return;}
+  if(!db){
+    // Firebase pas encore prêt — mettre en file d'attente
+    _saveQueue[key]=value;
+    _showSaveStatus('saved','Sauvé localement');
+    return;
+  }
   try{
     db.collection('gef_data').doc(key).set({value:value}).then(()=>{
       _showSaveStatus('saved','Sauvegardé');
-      const p=document.querySelector('.page.active')?.id?.replace('page-','');
-      const map={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport,dons:renderDons,demandes:renderDemandes};
-      map[p]?.();
-    }).catch(e=>{console.warn('Firebase save error:',e);_showSaveStatus('saved','Sauvé localement');});
-  }catch(e){console.warn('Firebase unavailable:',e);_showSaveStatus('saved','Sauvé localement');}
+    }).catch(e=>{
+      console.warn('Firebase save error:',e);
+      _saveQueue[key]=value;
+      _showSaveStatus('saved','Sauvé localement');
+    });
+  }catch(e){
+    console.warn('Firebase unavailable:',e);
+    _saveQueue[key]=value;
+    _showSaveStatus('saved','Sauvé localement');
+  }
 }
 
 let membres=DEFAULT_MEMBRES;
@@ -2890,6 +2912,7 @@ async function initApp(){
       const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000));
       const docs=await Promise.race([Promise.all(keys.map(k=>db.collection('gef_data').doc(k).get())),timeout]);
       _firebaseOk=true;
+      _flushSaveQueue(); // Envoyer les sauvegardes en attente
       const fbVide=!docs[0].exists;
       docs.forEach((d,i)=>{
         if(!d.exists||!d.data().value)return;
@@ -2911,6 +2934,7 @@ async function initApp(){
         db.collection('gef_data').doc('gef_presences').set({value:presences}).catch(()=>{});
         db.collection('gef_data').doc('gef_compta').set({value:compta}).catch(()=>{});
         db.collection('gef_data').doc('gef_cotisations').set({value:cotisations}).catch(()=>{});
+        if(documents_list.length>0)db.collection('gef_data').doc('gef_documents').set({value:documents_list}).catch(()=>{});
       }
       setupListeners();
       _loadDemandesBadge();
@@ -4456,11 +4480,36 @@ function renommerDossier(id){
 
 function ajouterDocuments(input){
   const files=Array.from(input.files);
-  files.forEach(file=>{
+  const MAX_FILE=400*1024; // 400KB par fichier (base64 = ~530KB)
+  const MAX_TOTAL=900*1024; // 900KB total pour rester sous la limite Firestore 1MB
+
+  // Vérifier taille totale actuelle
+  const currentSize=new TextEncoder().encode(JSON.stringify(documents_list)).length;
+
+  let added=0, skipped=[];
+  const process=(i)=>{
+    if(i>=files.length){
+      if(skipped.length>0) showToast('Fichier(s) trop grand(s) ignoré(s) : '+skipped.join(', ')+'\nMax 400KB par fichier.','⚠️','warn');
+      if(added>0){save('gef_documents',documents_list);renderDocuments();}
+      input.value='';
+      return;
+    }
+    const file=files[i];
+    if(file.size>MAX_FILE){
+      skipped.push(file.name+' ('+Math.round(file.size/1024)+'KB)');
+      process(i+1);
+      return;
+    }
     const reader=new FileReader();
     reader.onload=e=>{
+      const newSize=currentSize+new TextEncoder().encode(e.target.result).length;
+      if(newSize>MAX_TOTAL){
+        skipped.push(file.name+' (stockage plein)');
+        process(i+1);
+        return;
+      }
       const doc={
-        id:Date.now()+Math.random(),
+        id:Date.now()+Math.random()+i,
         type:'file',
         nom:file.name,
         taille:file.size,
@@ -4472,12 +4521,12 @@ function ajouterDocuments(input){
         data:e.target.result
       };
       documents_list.push(doc);
-      save('gef_documents',documents_list);
-      renderDocuments();
+      added++;
+      process(i+1);
     };
     reader.readAsDataURL(file);
-  });
-  input.value='';
+  };
+  process(0);
 }
 
 function detectCategorie(nom){
