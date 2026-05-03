@@ -2211,7 +2211,7 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
           </select>
           <select id="m-adhesion-annee" style="flex:1;">
             <option value="">Année</option>
-            ${[2020,2021,2022,2023,2024,2025,2026,2027].map(y=>`<option value="${y}">${y}</option>`).join('')}
+            <option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option><option value="2026">2026</option><option value="2027">2027</option>
           </select>
         </div>
       </div>
@@ -2458,7 +2458,7 @@ function toggleSidebar(){document.getElementById('sidebar').classList.toggle('mo
 function closeSidebar(){document.getElementById('sidebar').classList.remove('mobile-open');document.getElementById('sidebar-overlay').classList.remove('open');}
 
 // ── SWIPE POUR OUVRIR/FERMER LA SIDEBAR ──────────────────────────
-(function(){
+;(function(){
   let startX=0,startY=0,dragging=false;
   const THRESHOLD=60;   // distance min pour déclencher
   const EDGE=30;        // zone bord gauche pour ouvrir (px)
@@ -2861,15 +2861,15 @@ async function reconnectFirebase(){
 }
 
 async function initApp(){
-  document.getElementById('loading-overlay').style.display='flex';
+  try{document.getElementById('loading-overlay').style.display='flex';}catch(e){}
 
-  // ── ÉTAPE 1 : Cache local immédiat ───────────────────────────────
-  // Fusionner localStorage + DEFAULT_MEMBRES, en excluant les membres supprimés
-  {const ls=lsGet('gef_membres',[]);const deletedIds=new Set(lsGet('gef_deleted_ids',[]));const lsIds=new Set(ls.map(m=>m.id));const manquants=DEFAULT_MEMBRES.filter(m=>!lsIds.has(m.id)&&!deletedIds.has(m.id));membres=ls.length>0?[...ls,...manquants]:DEFAULT_MEMBRES;if(manquants.length>0)lsSet('gef_membres',membres);}
+  // ── Étape 1 : localStorage (instantané) ──────────────────────
+  membres=lsGet('gef_membres',null);
+  if(!membres||membres.length===0){membres=DEFAULT_MEMBRES.map(m=>({...m}));lsSet('gef_membres',membres);}
   events=lsGet('gef_events',DEFAULT_EVENTS);
   presences=lsGet('gef_presences',DEFAULT_PRESENCES);
   compta=lsGet('gef_compta',DEFAULT_COMPTA);
-  cotisations=lsGet('gef_cotisations',buildDefaultCotisations(DEFAULT_MEMBRES));
+  cotisations=lsGet('gef_cotisations',buildDefaultCotisations(membres));
   eventTypes=lsGet('gef_event_types',DEFAULT_EVENT_TYPES);
   emailHistorique=lsGet('gef_email_historique',[]);
   documents_list=lsGet('gef_documents',[]);
@@ -2878,71 +2878,47 @@ async function initApp(){
   const cachedDon=lsGet('gef_don_data',null);
   if(cachedDon)Object.assign(_donData,cachedDon);
 
-  // ── Afficher l'app immédiatement ─────────────────────────────────
-  document.getElementById('loading-overlay').style.display='none';
-  renderDashboard(); renderMembres();
-  _populateCotisAnneeSel(); _checkCotisationsAnnee();
-  let migrated=false;
-  membres.forEach(m=>{if(!m.createdAt){m.createdAt='2026-01-01';migrated=true;}});
-  if(migrated){lsSet('gef_membres',membres);renderMembres();}
+  // ── Afficher immédiatement ────────────────────────────────────
+  try{document.getElementById('loading-overlay').style.display='none';}catch(e){}
+  renderDashboard();renderMembres();
+  _populateCotisAnneeSel();_checkCotisationsAnnee();
 
-  // ── ÉTAPE 2 : Firebase en arrière-plan ───────────────────────────
+  // ── Étape 2 : Firebase en arrière-plan ───────────────────────
   _loadFirebase(async()=>{
     try{
       const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents','gef_event_subpages','gef_don_data'];
-      const defaults=[DEFAULT_MEMBRES,DEFAULT_EVENTS,DEFAULT_PRESENCES,DEFAULT_COMPTA,buildDefaultCotisations(DEFAULT_MEMBRES),DEFAULT_EVENT_TYPES,[],[],DEFAULT_EVENT_SUBPAGES,null];
       const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000));
-      const docs=await Promise.race([
-        Promise.all(keys.map(k=>db.collection('gef_data').doc(k).get())),
-        timeout
-      ]);
+      const docs=await Promise.race([Promise.all(keys.map(k=>db.collection('gef_data').doc(k).get())),timeout]);
       _firebaseOk=true;
-      const isNew=!docs[0].exists;
-      const fbDeletedSnap=await db.collection('gef_data').doc('gef_deleted_ids').get().catch(()=>null);
-      const fbDeletedIds=new Set((fbDeletedSnap?.exists?fbDeletedSnap.data().value:lsGet('gef_deleted_ids',[]))||[]);
+      const fbVide=!docs[0].exists;
       docs.forEach((d,i)=>{
-        let val=d.exists?d.data().value:defaults[i];
-        if(i===0){
-          // Fusionner : garder les membres Firebase + ajouter ceux manquants depuis DEFAULT_MEMBRES
-          const fbMembres=val||[];
-          const fbIds=new Set(fbMembres.map(m=>m.id));
-          const manquants=DEFAULT_MEMBRES.filter(m=>!fbIds.has(m.id)&&!fbDeletedIds.has(m.id));
-          if(manquants.length>0){val=[...fbMembres,...manquants];}
-          membres=val;
-        }
-        else if(i===1)events=val;
-        else if(i===2)presences=val;
-        else if(i===3)compta=val;
-        else if(i===4)cotisations=val;
+        if(!d.exists||!d.data().value)return;
+        const val=d.data().value;
+        if(i===0){membres=val;lsSet('gef_membres',membres);}
+        else if(i===1){events=val;lsSet('gef_events',events);}
+        else if(i===2){presences=val;lsSet('gef_presences',presences);}
+        else if(i===3){compta=val;lsSet('gef_compta',compta);}
+        else if(i===4){cotisations=val;lsSet('gef_cotisations',cotisations);}
         else if(i===5)eventTypes=val;
         else if(i===6)emailHistorique=val;
         else if(i===7)documents_list=val;
-        else if(i===8)event_subpages=val||lsGet('gef_event_subpages',DEFAULT_EVENT_SUBPAGES);
-        else if(i===9&&val){Object.assign(_donData,val);lsSet('gef_don_data',_donData);}
+        else if(i===8)event_subpages=val;
+        else if(i===9){Object.assign(_donData,val);lsSet('gef_don_data',_donData);}
       });
-      membres&&lsSet('gef_membres',membres);
-      events&&lsSet('gef_events',events);
-      presences&&lsSet('gef_presences',presences);
-      compta&&lsSet('gef_compta',compta);
-      cotisations&&lsSet('gef_cotisations',cotisations);
-      if(isNew){keys.forEach((k,i)=>{if(i!==0&&defaults[i])db.collection('gef_data').doc(k).set({value:defaults[i]}).catch(()=>{});});}
-      db.collection('gef_data').doc('gef_membres').set({value:membres}).catch(()=>{});
+      if(fbVide){
+        db.collection('gef_data').doc('gef_membres').set({value:membres}).catch(()=>{});
+        db.collection('gef_data').doc('gef_events').set({value:events}).catch(()=>{});
+        db.collection('gef_data').doc('gef_presences').set({value:presences}).catch(()=>{});
+        db.collection('gef_data').doc('gef_compta').set({value:compta}).catch(()=>{});
+        db.collection('gef_data').doc('gef_cotisations').set({value:cotisations}).catch(()=>{});
+      }
       setupListeners();
       _loadDemandesBadge();
-      renderDashboard(); renderMembres();
-      _populateCotisAnneeSel(); _checkCotisationsAnnee();
-      let migrated2=false;
-      membres.forEach(m=>{if(!m.createdAt){m.createdAt='2026-01-01';migrated2=true;}});
-      if(migrated2){lsSet('gef_membres',membres);renderMembres();}
+      renderDashboard();renderMembres();
+      _populateCotisAnneeSel();_checkCotisationsAnnee();
       const si=document.getElementById('sync-indicator');
       if(si){si.textContent='✓ Sync';si.style.color='var(--green)';si.style.display='inline';clearTimeout(si._t);si._t=setTimeout(()=>si.style.display='none',2500);}
-    }catch(e){
-      console.warn('Firebase indisponible:',e.message);
-      const si=document.getElementById('sync-indicator');
-      if(si){si.textContent='📴 Hors ligne';si.style.display='inline';si.style.color='var(--text3)';}
-      const banner=document.getElementById('offline-banner');
-      if(banner){banner.style.display='flex';document.querySelector('.main').style.paddingTop='100px';}
-    }
+    }catch(e){console.warn('Firebase indisponible:',e.message);}
   });
 }
 
@@ -3301,13 +3277,9 @@ function renderMembres(){
 }
 function memPage(dir){renderMembres._page=(renderMembres._page||0)+dir;renderMembres();}
 function openMemberModal(){editingMembre=null;document.getElementById('modal-membre-title').textContent='Ajouter un membre';['nom','prenom','role','email','tel','notes'].forEach(f=>document.getElementById('m-'+f).value='');document.getElementById('m-type').value='';document.getElementById('m-tel-indicatif').value='+41';document.getElementById('m-presence').value='0.8';document.getElementById('m-created-year').value=new Date().getFullYear();document.getElementById('m-adhesion-mois').value='';document.getElementById('m-adhesion-annee').value='';document.getElementById('modal-membre').classList.add('open');}
-function editMember(id){editingMembre=id;const m=membres.find(x=>x.id===id);document.getElementById('modal-membre-title').textContent='Modifier le membre';document.getElementById('m-nom').value=m.nom;document.getElementById('m-prenom').value=m.prenom;document.getElementById('m-role').value=m.role||'';document.getElementById('m-type').value=m.type||'';document.getElementById('m-email').value=m.email||'';(function(){
-    const tel=m.tel||'';
-    const indicatifs=['+41','+33','+32','+352','+49','+39','+34','+351','+212','+213','+216','+225','+221','+243','+237','+1','+44'];
-    let matched=false;
-    for(const ind of indicatifs){if(tel.startsWith(ind+' ')){document.getElementById('m-tel-indicatif').value=ind;document.getElementById('m-tel').value=tel.slice(ind.length+1);matched=true;break;}}
-    if(!matched){document.getElementById('m-tel-indicatif').value='+41';document.getElementById('m-tel').value=tel.replace(/^\+\d+\s*/,'');}
-  })();document.getElementById('m-presence').value=m.presence_attendue||0;document.getElementById('m-notes').value=m.notes||'';
+function editMember(id){editingMembre=id;const m=membres.find(x=>x.id===id);document.getElementById('modal-membre-title').textContent='Modifier le membre';document.getElementById('m-nom').value=m.nom;document.getElementById('m-prenom').value=m.prenom;document.getElementById('m-role').value=m.role||'';document.getElementById('m-type').value=m.type||'';document.getElementById('m-email').value=m.email||'';
+  {const tel=m.tel||'';const indicatifs=['+41','+33','+32','+352','+49','+39','+34','+351','+212','+213','+216','+225','+221','+243','+237','+1','+44'];let matched=false;for(const ind of indicatifs){if(tel.startsWith(ind+' ')){document.getElementById('m-tel-indicatif').value=ind;document.getElementById('m-tel').value=tel.slice(ind.length+1);matched=true;break;}}if(!matched){document.getElementById('m-tel-indicatif').value='+41';document.getElementById('m-tel').value=tel.replace(/^\+\d+\s*/,'');}}
+  document.getElementById('m-presence').value=m.presence_attendue||0;document.getElementById('m-notes').value=m.notes||'';
   // Adhesion month/year
   const adh=m.adhesion||'';const [adhY,adhM]=(adh||'').split('-');
   if(document.getElementById('m-adhesion-mois'))document.getElementById('m-adhesion-mois').value=adhM||'';
@@ -3338,7 +3310,7 @@ function deleteMember(id){
   confirmDelete(
     `Supprimer ${m.prenom} ${m.nom} ?`,
     `Cette action supprimera définitivement le membre et toutes ses cotisations. Cette action est irréversible.`,
-    ()=>{membres=membres.filter(x=>x.id!==id);cotisations=cotisations.filter(c=>c.membreId!==id);save('gef_membres',membres);save('gef_cotisations',cotisations);const delIds=lsGet('gef_deleted_ids',[]);if(!delIds.includes(id))delIds.push(id);lsSet('gef_deleted_ids',delIds);if(db)db.collection('gef_data').doc('gef_deleted_ids').set({value:delIds}).catch(()=>{});renderMembres();}
+    ()=>{membres=membres.filter(x=>x.id!==id);cotisations=cotisations.filter(c=>c.membreId!==id);save('gef_membres',membres);save('gef_cotisations',cotisations);renderMembres();}
   );
 }
 
@@ -5529,7 +5501,7 @@ function partagerLienAdhesion(){
 }
 
 // ── FIN DEMANDES ──────────────────────────────────────────────────
-(function(){
+;(function(){
   let startY=0,startX=0;
   document.addEventListener('touchstart',e=>{
     const t=e.touches[0];
@@ -5579,7 +5551,7 @@ document.addEventListener('click',e=>{
 },{passive:true});
 
 // ── PULL TO REFRESH ───────────────────────────────────────────────
-(function(){
+;(function(){
   const PTR_THRESHOLD=80;
   let startY=0,pulling=false,released=false;
   const ptr=document.getElementById('pull-to-refresh');
@@ -5860,20 +5832,14 @@ document.addEventListener('keydown', e => {
   if((e.ctrlKey||e.metaKey) && e.key === 'k'){e.preventDefault();openGlobalSearch();}
   if(e.key==='Escape'){document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));closeFAB();}
 });
-function _tryInitApp(attempt){
-  // Charger Firebase d'abord, puis lancer l'app
-  if(sessionStorage.getItem('gef_auth')==='ok'){
-    _loadFirebase(()=>{
-      // Firebase prêt — initApp gérera le reste
-    });
-    initApp();
-  }
+function _tryInitApp(){
+  if(sessionStorage.getItem('gef_auth')==='ok') initApp();
 }
 // Lancer immédiatement et aussi attendre DOMContentLoaded
 if(document.readyState==='loading'){
-  document.addEventListener('DOMContentLoaded',()=>_tryInitApp(0));
+  document.addEventListener('DOMContentLoaded',_tryInitApp);
 } else {
-  _tryInitApp(0);
+  _tryInitApp();
 }
 
 </script>
