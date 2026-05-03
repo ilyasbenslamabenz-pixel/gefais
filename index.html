@@ -1794,6 +1794,7 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
               <div id="adhesion-doc-date" style="font-size:12px;color:var(--text3);margin-top:3px;"></div>
             </div>
           </div>
+          <button id="adhesion-btn-voir" class="btn btn-primary" style="width:100%;padding:15px;font-size:15px;margin-bottom:8px;display:none;" >👁️ Voir le PDF</button>
           <button class="btn btn-primary" style="width:100%;padding:15px;font-size:15px;margin-bottom:8px;" onclick="telechargerAdhesionMembre()">⬇️ Télécharger le PDF</button>
           <button class="btn btn-secondary" style="width:100%;" onclick="remplacerAdhesion()">↺ Remplacer le formulaire</button>
         </div>
@@ -2863,8 +2864,8 @@ async function initApp(){
   document.getElementById('loading-overlay').style.display='flex';
 
   // ── ÉTAPE 1 : Cache local immédiat ───────────────────────────────
-  // Fusionner localStorage + DEFAULT_MEMBRES pour ne jamais perdre de membres
-  {const ls=lsGet('gef_membres',[]);const lsIds=new Set(ls.map(m=>m.id));const manquants=DEFAULT_MEMBRES.filter(m=>!lsIds.has(m.id));membres=ls.length>0?[...ls,...manquants]:DEFAULT_MEMBRES;lsSet('gef_membres',membres);}
+  // Fusionner localStorage + DEFAULT_MEMBRES, en excluant les membres supprimés
+  {const ls=lsGet('gef_membres',[]);const deletedIds=new Set(lsGet('gef_deleted_ids',[]));const lsIds=new Set(ls.map(m=>m.id));const manquants=DEFAULT_MEMBRES.filter(m=>!lsIds.has(m.id)&&!deletedIds.has(m.id));membres=ls.length>0?[...ls,...manquants]:DEFAULT_MEMBRES;if(manquants.length>0)lsSet('gef_membres',membres);}
   events=lsGet('gef_events',DEFAULT_EVENTS);
   presences=lsGet('gef_presences',DEFAULT_PRESENCES);
   compta=lsGet('gef_compta',DEFAULT_COMPTA);
@@ -2902,8 +2903,10 @@ async function initApp(){
         if(i===0){
           // Fusionner : garder les membres Firebase + ajouter ceux manquants depuis DEFAULT_MEMBRES
           const fbMembres=val||[];
+          const fbDeletedSnap=await db.collection('gef_data').doc('gef_deleted_ids').get().catch(()=>null);
+          const fbDeletedIds=new Set((fbDeletedSnap?.exists?fbDeletedSnap.data().value:lsGet('gef_deleted_ids',[]))||[]);
           const fbIds=new Set(fbMembres.map(m=>m.id));
-          const manquants=DEFAULT_MEMBRES.filter(m=>!fbIds.has(m.id));
+          const manquants=DEFAULT_MEMBRES.filter(m=>!fbIds.has(m.id)&&!fbDeletedIds.has(m.id));
           if(manquants.length>0){val=[...fbMembres,...manquants];}
           membres=val;
         }
@@ -3335,7 +3338,7 @@ function deleteMember(id){
   confirmDelete(
     `Supprimer ${m.prenom} ${m.nom} ?`,
     `Cette action supprimera définitivement le membre et toutes ses cotisations. Cette action est irréversible.`,
-    ()=>{membres=membres.filter(x=>x.id!==id);cotisations=cotisations.filter(c=>c.membreId!==id);save('gef_membres',membres);save('gef_cotisations',cotisations);renderMembres();}
+    ()=>{membres=membres.filter(x=>x.id!==id);cotisations=cotisations.filter(c=>c.membreId!==id);save('gef_membres',membres);save('gef_cotisations',cotisations);const delIds=lsGet('gef_deleted_ids',[]);if(!delIds.includes(id))delIds.push(id);lsSet('gef_deleted_ids',delIds);if(db)db.collection('gef_data').doc('gef_deleted_ids').set({value:delIds}).catch(()=>{});renderMembres();}
   );
 }
 
@@ -5057,12 +5060,18 @@ function ouvrirFicheAdhesion(id){
   if(!m)return;
   document.getElementById('modal-adhesion-titre').textContent='Formulaire d\'adhésion';
   document.getElementById('modal-adhesion-nom').textContent=m.prenom+' '+m.nom;
-  const hasDoc=!!(m.adhesionDoc);
+  const hasDoc=!!(m.adhesionDoc||m.adhesionUrl);
   document.getElementById('adhesion-doc-exists').style.display=hasDoc?'block':'none';
   document.getElementById('adhesion-doc-empty').style.display=hasDoc?'none':'block';
-  if(hasDoc&&m.adhesionDocDate){
-    const d=new Date(m.adhesionDocDate).toLocaleDateString('fr-CH',{day:'2-digit',month:'long',year:'numeric'});
-    document.getElementById('adhesion-doc-date').textContent='Importé le '+d;
+  if(hasDoc){
+    const dateStr=m.adhesionDocDate?new Date(m.adhesionDocDate).toLocaleDateString('fr-CH',{day:'2-digit',month:'long',year:'numeric'}):'Fiche importée';
+    document.getElementById('adhesion-doc-date').textContent=dateStr;
+    // Bouton voir PDF si URL Firebase Storage
+    const btnVoir=document.getElementById('adhesion-btn-voir');
+    if(btnVoir){
+      if(m.adhesionUrl){btnVoir.style.display='inline-flex';btnVoir.onclick=()=>window.open(m.adhesionUrl,'_blank');}
+      else{btnVoir.style.display='none';}
+    }
   }
   // Chercher si une demande validée existe pour ce membre dans Firebase
   const emptyEl=document.getElementById('adhesion-doc-empty');
@@ -5114,7 +5123,9 @@ function importerAdhesion(input){
 
 function telechargerAdhesionMembre(){
   const m=membres.find(x=>x.id===_adhesionMembreId);
-  if(!m||!m.adhesionDoc)return;
+  if(!m)return;
+  if(m.adhesionUrl){window.open(m.adhesionUrl,'_blank');return;}
+  if(!m.adhesionDoc)return;
   const a=document.createElement('a');
   a.href=m.adhesionDoc;
   a.download=m.adhesionDocName||`adhesion_${m.nom.toLowerCase()}.pdf`;
