@@ -2928,7 +2928,17 @@ async function initApp(){
       docs.forEach((d,i)=>{
         if(!d.exists||!d.data().value)return;
         const val=d.data().value;
-        if(i===0){membres=val;lsSet('gef_membres',membres);}
+        if(i===0){
+          // Préserver les adhesionDoc locaux si Firebase n'en a pas
+          const fbMembres=val;
+          const lsMembres=lsGet('gef_membres',[]);
+          fbMembres.forEach(fm=>{
+            const lm=lsMembres.find(x=>x.id===fm.id);
+            if(lm&&lm.adhesionDoc&&!fm.adhesionDoc&&!fm.adhesionUrl) fm.adhesionDoc=lm.adhesionDoc;
+          });
+          membres=fbMembres;
+          lsSet('gef_membres',membres);
+        }
         else if(i===1){events=val;lsSet('gef_events',events);}
         else if(i===2){presences=val;lsSet('gef_presences',presences);}
         else if(i===3){compta=val;lsSet('gef_compta',compta);}
@@ -5157,19 +5167,51 @@ function remplacerAdhesion(){
 
 function importerAdhesion(input){
   const file=input.files[0];if(!file)return;
-  const maxSize=5*1024*1024; // 5MB
-  if(file.size>maxSize){showToast('Fichier trop grand (max 5MB)','⚠️','warn');return;}
+  const maxSize=10*1024*1024;
+  if(file.size>maxSize){showToast('Fichier trop grand (max 10MB)','⚠️','warn');return;}
+  const m=membres.find(x=>x.id===_adhesionMembreId);if(!m)return;
+
+  showToast('Upload en cours…','⏳');
+
+  // Uploader vers Firebase Storage (persistant)
+  if(db){
+    const fname='adhesions/'+m.id+'_'+m.prenom+'_'+m.nom+'.pdf';
+    const FB_BUCKET='ge-fais.firebasestorage.app';
+    const FB_KEY='AIzaSyD7DeDaEEPIpbeR9fCfDBXVPzYeyFm04Ns';
+    const uploadUrl='https://firebasestorage.googleapis.com/v0/b/'+FB_BUCKET+'/o?uploadType=media&name='+encodeURIComponent(fname)+'&key='+FB_KEY;
+    fetch(uploadUrl,{method:'POST',headers:{'Content-Type':file.type||'application/pdf'},body:file})
+      .then(r=>r.json())
+      .then(data=>{
+        if(data.error){throw new Error(data.error.message);}
+        const url='https://firebasestorage.googleapis.com/v0/b/'+FB_BUCKET+'/o/'+encodeURIComponent(fname)+'?alt=media';
+        m.adhesionUrl=url;
+        m.adhesionDoc=null; // On ne garde pas le base64
+        m.adhesionDocName=file.name;
+        m.adhesionDocDate=new Date().toISOString();
+        save('gef_membres',membres);
+        showToast('Formulaire sauvegardé','✅','success');
+        ouvrirFicheAdhesion(_adhesionMembreId);
+      })
+      .catch(e=>{
+        console.warn('Storage upload failed, fallback local:',e);
+        _importerAdhesionLocal(file,m);
+      });
+  } else {
+    _importerAdhesionLocal(file,m);
+  }
+  input.value='';
+}
+
+function _importerAdhesionLocal(file,m){
+  // Fallback : base64 en localStorage uniquement
   const reader=new FileReader();
-  reader.onload=async e=>{
-    const data=e.target.result;
-    const m=membres.find(x=>x.id===_adhesionMembreId);if(!m)return;
-    m.adhesionDoc=data;
+  reader.onload=e=>{
+    m.adhesionDoc=e.target.result;
     m.adhesionDocName=file.name;
     m.adhesionDocDate=new Date().toISOString();
-    save('gef_membres',membres);
-    showToast('Formulaire importé','✅','success');
+    lsSet('gef_membres',membres); // Sauvegarder localement seulement (trop gros pour Firestore)
+    showToast('Sauvé localement (Firebase indisponible)','⚠️','warn');
     ouvrirFicheAdhesion(_adhesionMembreId);
-    input.value='';
   };
   reader.readAsDataURL(file);
 }
