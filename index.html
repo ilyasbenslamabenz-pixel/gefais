@@ -2813,6 +2813,17 @@ function setupListeners(){
     const map={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport,dons:renderDons,demandes:renderDemandes};
     map[p]?.();
   };
+  // Détection connexion internet
+  const banner=document.getElementById('offline-banner');
+  const main=document.querySelector('.main');
+  const updateOnlineStatus=()=>{
+    const online=navigator.onLine;
+    if(banner){banner.style.display=online?'none':'flex';if(main)main.style.paddingTop=online?'':'100px';}
+    if(online){_loadFirebase(()=>{_flushSaveQueue();});}
+  };
+  window.addEventListener('online',updateOnlineStatus);
+  window.addEventListener('offline',updateOnlineStatus);
+  updateOnlineStatus();
   // On ignore les snapshots dans les 3 secondes suivant notre propre sauvegarde
   const fromOther=(key)=>!_lastSave[key]||(Date.now()-_lastSave[key]>3000);
   db.collection('gef_data').doc('gef_membres').onSnapshot(s=>{if(s.exists&&fromOther('gef_membres')){membres=s.data().value;rerender();}});
@@ -2912,7 +2923,7 @@ async function initApp(){
       const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000));
       const docs=await Promise.race([Promise.all(keys.map(k=>db.collection('gef_data').doc(k).get())),timeout]);
       _firebaseOk=true;
-      _flushSaveQueue(); // Envoyer les sauvegardes en attente
+      setTimeout(_flushSaveQueue, 500); // Envoyer les sauvegardes en attente après init
       const fbVide=!docs[0].exists;
       docs.forEach((d,i)=>{
         if(!d.exists||!d.data().value)return;
@@ -4562,6 +4573,26 @@ function telechargerDoc(id){
   a.href=doc.data;a.download=doc.nom;a.click();
 }
 
+function voirDoc(id){
+  const doc=documents_list.find(d=>d.id===id);
+  if(!doc||!doc.data)return;
+  // PDF — ouvrir dans un nouvel onglet
+  if(doc.mimeType==='application/pdf'||doc.nom.toLowerCase().endsWith('.pdf')){
+    const win=window.open('','_blank');
+    win.document.write('<html><head><title>'+doc.nom+'</title></head><body style="margin:0;background:#222;">'
+      +'<iframe src="'+doc.data+'" style="width:100%;height:100vh;border:none;"></iframe></body></html>');
+    win.document.close();
+    return;
+  }
+  // Image — ouvrir directement
+  if(doc.mimeType&&doc.mimeType.startsWith('image/')){
+    window.open(doc.data,'_blank');
+    return;
+  }
+  // Autres — télécharger
+  telechargerDoc(id);
+}
+
 function supprimerDoc(id){
   const doc=documents_list.find(d=>d.id===id);
   if(!doc)return;
@@ -4651,13 +4682,14 @@ function renderDocuments(){
     <div class="docs-files-list">
       ${files_in.map(d=>{
         const ic=docIcon(d.nom);
-        return`<div class="doc-file-row">
+        return`<div class="doc-file-row" style="cursor:pointer;" onclick="voirDoc(${d.id})">
           <div class="doc-file-icon" style="background:${ic.color}22;color:${ic.color};">${ic.icon}</div>
           <div class="doc-file-info">
             <div class="doc-file-name">${d.nom}</div>
             <div class="doc-file-meta">${d.categorie} · ${formatSize(d.taille)} · ${fmtDate(d.date)}</div>
           </div>
           <div class="doc-file-actions">
+            <button class="btn-icon" onclick="voirDoc(${d.id})" title="Voir">👁️</button>
             <button class="btn-icon" onclick="telechargerDoc(${d.id})" title="Télécharger">⬇️</button>
             <button class="btn-icon" onclick="supprimerDoc(${d.id})" title="Supprimer">🗑️</button>
           </div>
