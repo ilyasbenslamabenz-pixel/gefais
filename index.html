@@ -5214,6 +5214,13 @@ function ouvrirPDFMobile(url,nom){
         '<iframe id="pdf-frame" src="'+(blobUrl||url)+'" style="width:100%;height:100%;border:none;"></iframe>'+
       '</div>';
     document.body.appendChild(modal);
+    // Bouton retour navigateur ferme le modal
+    history.pushState({pdfModal:true},'');
+    window.addEventListener('popstate',function _closePdf(e){
+      const m=document.getElementById('pdf-viewer-modal');
+      if(m)m.remove();
+      window.removeEventListener('popstate',_closePdf);
+    },{once:true});
     // Sur iOS, l'iframe ne marche pas — on ouvre directement
     if(/iPhone|iPad|iPod/.test(navigator.userAgent)){
       modal.querySelector('iframe').style.display='none';
