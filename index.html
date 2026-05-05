@@ -364,7 +364,6 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 @keyframes pageIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .page.active{animation:pageSlideIn 0.28s cubic-bezier(0.34,1.1,0.64,1) both;}
 /* ── HOVER CARDS GLOBAL ── */
-.card{transition:all 0.22s cubic-bezier(0.34,1.1,0.64,1);}
 .card:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.4);}
 /* ── NAV ITEM ANIMATIONS ── */
 .nav-item{transition:all 0.18s cubic-bezier(0.34,1.2,0.64,1);}
@@ -383,7 +382,7 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 .event-row{transition:all 0.22s cubic-bezier(0.34,1.1,0.64,1);}
 .event-row:hover{transform:translateY(-2px);}
 /* ── TABLE ROW STAGGER ── */
-tbody tr{animation:fadeUp 0.3s ease both;}
+tbody tr{transition:background 0.15s;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
 .skeleton-text{height:14px;margin-bottom:8px;border-radius:6px;}
@@ -2942,6 +2941,7 @@ function setupListeners(){
   db.collection('gef_data').doc('gef_documents').onSnapshot(s=>{if(s.exists&&fromOther('gef_documents')){documents_list=s.data().value;rerender();}});
   db.collection('gef_data').doc('gef_event_subpages').onSnapshot(s=>{if(s.exists&&fromOther('gef_event_subpages')){event_subpages=s.data().value;renderEvents();}});
   db.collection('gef_data').doc('gef_don_data').onSnapshot(s=>{if(s.exists&&fromOther('gef_don_data')){Object.assign(_donData,s.data().value);lsSet('gef_don_data',_donData);_donApplyUI();}});
+  db.collection('gef_data').doc('gef_presentations').onSnapshot(s=>{if(s.exists&&fromOther('gef_presentations')){presentations_list=s.data().value||[];lsSet('gef_presentations',presentations_list);const p=currentPage();if(p==='presentations')renderPresentations();}});
 }
 
 function fmtDate(d){if(!d)return'—';const[y,m,day]=d.split('T')[0].split('-');return`${day}/${m}/${y}`;}
@@ -3025,7 +3025,7 @@ async function initApp(){
   // ── Étape 2 : Firebase en arrière-plan ───────────────────────
   _loadFirebase(async()=>{
     try{
-      const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents','gef_event_subpages','gef_don_data'];
+      const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents','gef_event_subpages','gef_don_data','gef_presentations'];
       const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000));
       const docs=await Promise.race([Promise.all(keys.map(k=>db.collection('gef_data').doc(k).get())),timeout]);
       _firebaseOk=true;
@@ -3044,6 +3044,7 @@ async function initApp(){
         else if(i===7)documents_list=val;
         else if(i===8)event_subpages=val;
         else if(i===9){Object.assign(_donData,val);lsSet('gef_don_data',_donData);}
+        else if(i===10){presentations_list=val||[];lsSet('gef_presentations',presentations_list);}
       });
       if(fbVide){
         db.collection('gef_data').doc('gef_membres').set({value:membres}).catch(()=>{});
@@ -4780,7 +4781,7 @@ function renderPresentations(){
     const badge = _presGetBadge(p.type);
     const emoji = p.emoji || (p.type==='pdf'?'📄':p.type==='link'?'🔗':'📊');
     const date = p.date ? fmtDate(p.date) : '—';
-    return `<div class="pres-card anim-card" style="animation-delay:${ri*0.05}s" onclick="openPresViewer(${i})">
+    return `<div class="pres-card anim-card" style="animation-delay:${ri*0.05}s" onclick="openPresViewer('${encodeURIComponent(p.titre+p.date)}')">
       <div class="pres-card-thumb" style="background:${bg};">
         <span style="font-size:52px;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.3));">${emoji}</span>
         <div class="pres-card-overlay">▶ Ouvrir en plein écran</div>
@@ -4846,8 +4847,8 @@ async function uploadPresFile(input){
   input.value='';
 }
 
-function openPresViewer(idx){
-  const p = presentations_list[idx];
+function openPresViewer(key){
+  const p = presentations_list.find(x=>encodeURIComponent(x.titre+x.date)===key);
   if(!p) return;
   const viewer = document.getElementById('pres-viewer');
   const iframe = document.getElementById('pres-viewer-iframe');
