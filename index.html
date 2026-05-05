@@ -3059,8 +3059,8 @@ function renderDashboard(){
   const totalOut=compta.filter(c=>c.type==='depense').reduce((s,c)=>s+c.montant,0);
   const solde=totalIn-totalOut;
   const anneeEnCours=new Date().getFullYear();
-  const cotisTotal=cotisations.filter(c=>c.annee===anneeEnCours).length;
-  const cotisPayees=cotisations.filter(c=>c.annee===anneeEnCours&&c.statut==='paye').length;
+  const cotisTotal=cotisations.filter(c=>c.annee===anneeEnCours&&membres.some(m=>m.id===c.membreId)).length;
+  const cotisPayees=cotisations.filter(c=>c.annee===anneeEnCours&&c.statut==='paye'&&membres.some(m=>m.id===c.membreId)).length;
   const today=localToday();
   const h=new Date().getHours();
   const greet=h<6?'Bonne nuit 🌙':h<12?'Bonjour 👋':h<18?'Bon après-midi ☀️':'Bonsoir 🌇';
@@ -3127,7 +3127,7 @@ function renderDashboard(){
     const alertes=[];
     const upcoming7=events.filter(e=>{const diff=dateDiff(e.date);return diff>=0&&diff<=7;});
     if(upcoming7.length)alertes.push({type:'info',icon:'📅',msg:`${upcoming7.length} événement(s) dans les 7 prochains jours : ${upcoming7.map(e=>e.nom||e.type).join(', ')}`});
-    const impayees=cotisations.filter(c=>c.annee===anneeEnCours&&c.statut==='impaye'&&c.montant>0).length;
+    const impayees=cotisations.filter(c=>c.annee===anneeEnCours&&c.statut==='impaye'&&c.montant>0&&membres.some(m=>m.id===c.membreId)).length;
     if(impayees>0)alertes.push({type:'warn',icon:'💳',msg:`${impayees} cotisation(s) ${anneeEnCours} en attente de paiement`});
     else if(cotisTotal>0)alertes.push({type:'success',icon:'🎉',msg:`Toutes les cotisations ${anneeEnCours} sont à jour !`});
     alertesEl.innerHTML=alertes.map(a=>`<div class="dash-alerte dash-alerte-${a.type}"><span style="font-size:16px;">${a.icon}</span><span>${a.msg}</span></div>`).join('');
@@ -3900,8 +3900,8 @@ function renderCotisations(){
   const annee=parseInt(document.getElementById('cotis-filter-annee').value);
   const statut=document.getElementById('cotis-filter-statut').value;
   const list=cotisations.filter(c=>c.annee===annee&&(!statut||c.statut===statut));
-  const total=cotisations.filter(c=>c.annee===annee).length;
-  const payees=cotisations.filter(c=>c.annee===annee&&c.statut==='paye').length;
+  const total=cotisations.filter(c=>c.annee===annee&&membres.some(m=>m.id===c.membreId)).length;
+  const payees=cotisations.filter(c=>c.annee===annee&&c.statut==='paye'&&membres.some(m=>m.id===c.membreId)).length;
   const montantTotal=cotisations.filter(c=>c.annee===annee&&c.statut==='paye').reduce((s,c)=>s+c.montant,0);
   document.getElementById('cotis-stats').innerHTML=`
     <div class="stat-card"><div class="stat-label">Payées</div><div class="stat-value amount-in">${payees}<span>/ ${total}</span></div></div>
@@ -4193,7 +4193,7 @@ function renderStatistiques(){
   const totalPres=membres.length*events.length>0?Math.round(membres.reduce((s,m)=>s+events.filter(e=>presences[m.id+'_'+e.id]).length,0)/(membres.length*events.length)*100):0;
   const anneeStats=new Date().getFullYear();
   const cotisPayees=cotisations.filter(c=>c.annee===anneeStats&&c.statut==='paye').length;
-  const cotisTotal=cotisations.filter(c=>c.annee===anneeStats).length;
+  const cotisTotal=cotisations.filter(c=>c.annee===anneeStats&&membres.some(m=>m.id===c.membreId)).length;
   const totalIn=compta.filter(c=>c.type==='recette').reduce((s,c)=>s+c.montant,0);
   const totalOut=compta.filter(c=>c.type==='depense').reduce((s,c)=>s+c.montant,0);
   const solde=totalIn-totalOut;
@@ -4444,10 +4444,10 @@ function renderRapport(){
   const autres=membres.filter(m=>!m.type||!['Actif','Actif Suisse','Passif'].includes(m.type)).length;
   const totalIn=compta.filter(c=>c.type==='recette').reduce((s,c)=>s+c.montant,0);
   const totalOut=compta.filter(c=>c.type==='depense').reduce((s,c)=>s+c.montant,0);
-  const cotisPayees=cotisations.filter(c=>c.annee===annee&&c.statut==='paye').length;
-  const totalCotis=cotisations.filter(c=>c.annee===annee).length;
+  const cotisPayees=cotisations.filter(c=>c.annee===annee&&c.statut==='paye'&&membres.some(m=>m.id===c.membreId)).length;
+  const totalCotis=cotisations.filter(c=>c.annee===annee&&membres.some(m=>m.id===c.membreId)).length;
   // En attente = impayées avec montant > 0 seulement
-  const cotisEnAttente=cotisations.filter(c=>c.annee===annee&&c.statut==='impaye'&&c.montant>0).length;
+  const cotisEnAttente=cotisations.filter(c=>c.annee===annee&&c.statut==='impaye'&&c.montant>0&&membres.some(m=>m.id===c.membreId)).length;
   const nbMaraudes=events.filter(e=>e.type==='Maraude').length;
   const nbReunions=events.filter(e=>e.type==='Réunion').length;
   const nbAutresEvts=events.length-nbMaraudes-nbReunions;
