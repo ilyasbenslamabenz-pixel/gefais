@@ -3059,9 +3059,9 @@ function renderDashboard(){
   const totalOut=compta.filter(c=>c.type==='depense').reduce((s,c)=>s+c.montant,0);
   const solde=totalIn-totalOut;
   const anneeEnCours=new Date().getFullYear();
-  const cotisTotal=cotisations.filter(c=>c.annee===anneeEnCours&&membres.some(m=>m.id===c.membreId)).length;
+  const cotisTotal=cotisations.filter(c=>c.annee===anneeEnCours&&membres.some(m=>m.id===c.membreId)&&(c.montant>0||c.statut==='paye')).length;
   const cotisPayees=cotisations.filter(c=>c.annee===anneeEnCours&&c.statut==='paye'&&membres.some(m=>m.id===c.membreId)).length;
-  const cotisEnAttente=cotisations.filter(c=>c.annee===anneeEnCours&&c.statut==='impaye'&&c.montant>0&&membres.some(m=>m.id===c.membreId)).length;
+  const cotisEnAttente=cotisTotal-cotisPayees;
   const today=localToday();
   const h=new Date().getHours();
   const greet=h<6?'Bonne nuit 🌙':h<12?'Bonjour 👋':h<18?'Bon après-midi ☀️':'Bonsoir 🌇';
@@ -3901,7 +3901,7 @@ function renderCotisations(){
   const annee=parseInt(document.getElementById('cotis-filter-annee').value);
   const statut=document.getElementById('cotis-filter-statut').value;
   const list=cotisations.filter(c=>c.annee===annee&&(!statut||c.statut===statut));
-  const total=cotisations.filter(c=>c.annee===annee&&membres.some(m=>m.id===c.membreId)).length;
+  const total=cotisations.filter(c=>c.annee===annee&&membres.some(m=>m.id===c.membreId)&&(c.montant>0||c.statut==='paye')).length;
   const payees=cotisations.filter(c=>c.annee===annee&&c.statut==='paye'&&membres.some(m=>m.id===c.membreId)).length;
   const montantTotal=cotisations.filter(c=>c.annee===annee&&c.statut==='paye').reduce((s,c)=>s+c.montant,0);
   document.getElementById('cotis-stats').innerHTML=`
@@ -4194,7 +4194,7 @@ function renderStatistiques(){
   const totalPres=membres.length*events.length>0?Math.round(membres.reduce((s,m)=>s+events.filter(e=>presences[m.id+'_'+e.id]).length,0)/(membres.length*events.length)*100):0;
   const anneeStats=new Date().getFullYear();
   const cotisPayees=cotisations.filter(c=>c.annee===anneeStats&&c.statut==='paye').length;
-  const cotisTotal=cotisations.filter(c=>c.annee===anneeStats&&membres.some(m=>m.id===c.membreId)).length;
+  const cotisTotal=cotisations.filter(c=>c.annee===anneeStats&&membres.some(m=>m.id===c.membreId)&&(c.montant>0||c.statut==='paye')).length;
   const totalIn=compta.filter(c=>c.type==='recette').reduce((s,c)=>s+c.montant,0);
   const totalOut=compta.filter(c=>c.type==='depense').reduce((s,c)=>s+c.montant,0);
   const solde=totalIn-totalOut;
@@ -4446,7 +4446,7 @@ function renderRapport(){
   const totalIn=compta.filter(c=>c.type==='recette').reduce((s,c)=>s+c.montant,0);
   const totalOut=compta.filter(c=>c.type==='depense').reduce((s,c)=>s+c.montant,0);
   const cotisPayees=cotisations.filter(c=>c.annee===annee&&c.statut==='paye'&&membres.some(m=>m.id===c.membreId)).length;
-  const totalCotis=cotisations.filter(c=>c.annee===annee&&membres.some(m=>m.id===c.membreId)).length;
+  const totalCotis=cotisations.filter(c=>c.annee===annee&&membres.some(m=>m.id===c.membreId)&&(c.montant>0||c.statut==='paye')).length;
   // En attente = impayées avec montant > 0 seulement
   const cotisEnAttente=cotisations.filter(c=>c.annee===annee&&c.statut==='impaye'&&c.montant>0&&membres.some(m=>m.id===c.membreId)).length;
   const nbMaraudes=events.filter(e=>e.type==='Maraude').length;
