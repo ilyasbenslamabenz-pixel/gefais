@@ -346,7 +346,46 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 #sync-toast.show{display:flex;animation:toastIn 0.25s ease;}
 
 /* ── SKELETON LOADING ── */
-.skeleton{background:linear-gradient(90deg,var(--bg3) 25%,var(--card2,#1a1a28) 50%,var(--bg3) 75%);background-size:400px 100%;animation:skeletonShimmer 1.4s infinite;border-radius:10px;}
+/* ── PRÉSENTATIONS ── */
+.pres-card{background:var(--card);border:1.5px solid var(--border);border-radius:20px;overflow:hidden;transition:all 0.25s;cursor:pointer;position:relative;}
+.pres-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.5);border-color:var(--red);}
+.pres-card:hover .pres-card-overlay{opacity:1;}
+.pres-card-thumb{height:140px;display:flex;align-items:center;justify-content:center;font-size:52px;position:relative;overflow:hidden;}
+.pres-card-overlay{position:absolute;inset:0;background:rgba(255,59,48,0.85);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;font-size:14px;font-weight:700;color:#fff;gap:8px;}
+.pres-card-body{padding:14px 16px;}
+.pres-card-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pres-card-meta{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:6px;}
+.pres-card-actions{display:flex;gap:6px;padding:0 16px 14px;justify-content:flex-end;}
+.pres-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;letter-spacing:0.5px;padding:3px 9px;border-radius:20px;background:rgba(255,59,48,0.15);color:var(--red);border:1px solid rgba(255,59,48,0.25);}
+.pres-badge-pdf{background:rgba(239,68,68,0.15);color:#f87171;border-color:rgba(239,68,68,0.25);}
+.pres-badge-link{background:rgba(96,165,250,0.15);color:#93c5fd;border-color:rgba(96,165,250,0.25);}
+/* ── TRANSITIONS PAGE AMÉLIORÉES ── */
+@keyframes pageSlideIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+@keyframes pageIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.page.active{animation:pageSlideIn 0.28s cubic-bezier(0.34,1.1,0.64,1) both;}
+/* ── HOVER CARDS GLOBAL ── */
+.card{transition:all 0.22s cubic-bezier(0.34,1.1,0.64,1);}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.4);}
+/* ── NAV ITEM ANIMATIONS ── */
+.nav-item{transition:all 0.18s cubic-bezier(0.34,1.2,0.64,1);}
+.nav-item:hover{transform:translateX(3px);}
+/* ── STAT CARD HOVER ── */
+.stat-card{transition:all 0.22s cubic-bezier(0.34,1.2,0.64,1);}
+.stat-card:hover{transform:translateY(-3px) scale(1.01);box-shadow:0 8px 32px rgba(0,0,0,0.5);}
+/* ── BTN HOVER ── */
+.btn{transition:all 0.18s cubic-bezier(0.34,1.2,0.64,1);}
+.btn:hover{transform:translateY(-1px);}
+.btn:active{transform:scale(0.96) translateY(0);}
+/* ── KPI BAND CARD ── */
+.kpi-band-card{transition:all 0.22s cubic-bezier(0.34,1.2,0.64,1);}
+.kpi-band-card:hover{transform:translateY(-3px) scale(1.015);box-shadow:0 8px 32px rgba(0,0,0,0.4);}
+/* ── EVENT ROW ── */
+.event-row{transition:all 0.22s cubic-bezier(0.34,1.1,0.64,1);}
+.event-row:hover{transform:translateY(-2px);}
+/* ── TABLE ROW STAGGER ── */
+tbody tr{animation:fadeUp 0.3s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
 .skeleton-text{height:14px;margin-bottom:8px;border-radius:6px;}
 .skeleton-title{height:22px;width:60%;margin-bottom:12px;border-radius:8px;}
 .skeleton-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:12px;}
@@ -446,9 +485,7 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 .dash-hero-greeting{font-size:22px;font-weight:800;margin-bottom:3px;letter-spacing:-0.3px;}
 .dash-hero-date{font-size:13px;opacity:0.72;margin-bottom:16px;font-weight:400;}
 .dash-hero-actions{display:flex;gap:8px;flex-wrap:wrap;}
-.dash-quick-btn{background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.28);color:#fff;padding:8px 14px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;display:flex;align-items:center;gap:5px;transition:all 0.15s;white-space:nowrap;backdrop-filter:blur(4px);}
-.dash-quick-btn:hover{background:rgba(255,255,255,0.26);transform:translateY(-1px);}
-.dash-quick-btn:active{transform:scale(0.96);}
+
 .dash-hero-badge{flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(255,255,255,0.14);border:1.5px solid rgba(255,255,255,0.22);border-radius:18px;padding:14px 22px;backdrop-filter:blur(8px);text-align:center;min-width:80px;}
 .dash-hero-badge-num{font-size:36px;font-weight:900;letter-spacing:-2px;line-height:1;margin-bottom:2px;}
 .dash-hero-badge-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:0.7;}
@@ -1481,6 +1518,9 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
         <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         Documents
       </div>
+      <div class="nav-item" id="nav-presentations" onclick="showPage('presentations',this,'Présentations')">
+        <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Présentations
+      </div>
       <div class="nav-item" id="nav-rapport" onclick="showPage('rapport',this,'Rapport')">
         <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Rapport
       </div>
@@ -1979,6 +2019,69 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
         <div style="font-weight:600;color:var(--text2);font-size:13px;">Glissez vos fichiers ici</div>
         <div style="font-size:11px;margin-top:2px;">ou cliquez pour sélectionner</div>
       </div>
+    </div>
+
+    <!-- PRÉSENTATIONS -->
+    <div id="page-presentations" class="page">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h2>Présentations</h2>
+          <p id="pres-header-sub">Diaporamas pour les réunions</p>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-secondary btn-sm" onclick="openAddPresLink()">🔗 Ajouter un lien</button>
+          <label class="btn btn-primary btn-sm" style="cursor:pointer;">
+            ＋ Uploader un fichier
+            <input type="file" id="pres-file-input" accept=".ppt,.pptx,.pdf,.key" style="display:none;" onchange="uploadPresFile(this)">
+          </label>
+        </div>
+      </div>
+      <!-- KPI bar -->
+      <div id="pres-kpi" style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;"></div>
+      <!-- Grid -->
+      <div id="pres-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;"></div>
+      <!-- Empty state -->
+      <div id="pres-empty" style="display:none;text-align:center;padding:60px 20px;color:var(--text3);">
+        <div style="font-size:52px;margin-bottom:12px;">📊</div>
+        <div style="font-size:16px;font-weight:700;color:var(--text2);margin-bottom:6px;">Aucune présentation</div>
+        <div style="font-size:13px;">Uploadez un PowerPoint ou ajoutez un lien Google Slides</div>
+      </div>
+    </div>
+
+    <!-- MODAL AJOUTER LIEN PRÉSENTATION -->
+    <div class="modal-overlay" id="modal-add-pres-link">
+      <div class="modal" style="max-width:480px;">
+        <div class="modal-handle"></div>
+        <h3>🔗 Ajouter une présentation</h3>
+        <div class="form-grid" style="grid-template-columns:1fr;">
+          <div class="form-group">
+            <label>Titre</label>
+            <input type="text" id="pres-link-titre" placeholder="Ex: Réunion Mars 2026">
+          </div>
+          <div class="form-group">
+            <label>URL (Google Slides, OneDrive, lien direct…)</label>
+            <input type="text" id="pres-link-url" placeholder="https://docs.google.com/presentation/...">
+          </div>
+          <div class="form-group">
+            <label>Emoji / icône</label>
+            <input type="text" id="pres-link-emoji" placeholder="📊" maxlength="4" style="width:80px;">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeModal('modal-add-pres-link')">Annuler</button>
+          <button class="btn btn-primary" onclick="savePresLink()">Ajouter</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VISIONNEUSE PLEIN ÉCRAN -->
+    <div id="pres-viewer" style="display:none;position:fixed;inset:0;z-index:500;background:#000;flex-direction:column;">
+      <div id="pres-viewer-bar" style="display:flex;align-items:center;gap:12px;padding:10px 16px;background:rgba(0,0,0,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.08);flex-shrink:0;">
+        <button onclick="closePresViewer()" style="background:rgba(255,59,48,0.18);border:1px solid rgba(255,59,48,0.35);color:#ff6b6b;padding:7px 14px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;display:flex;align-items:center;gap:6px;">✕ Fermer</button>
+        <div id="pres-viewer-title" style="flex:1;font-size:15px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+        <button onclick="togglePresFullscreen()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:7px 14px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;">⛶ Plein écran</button>
+      </div>
+      <iframe id="pres-viewer-iframe" style="flex:1;border:none;width:100%;background:#1a1a2e;" allowfullscreen></iframe>
     </div>
 
     <!-- RAPPORT -->
@@ -2492,7 +2595,7 @@ function closeSidebar(){document.getElementById('sidebar').classList.remove('mob
     }
   },{passive:true});
 })();
-const _pageIcons={dashboard:'⊞',membres:'👥',presences:'🏅',evenements:'📅',cotisations:'💳',compta:'💰',statistiques:'📊',messagerie:'✉️',documents:'📁',rapport:'📄',dons:'💛'};
+const _pageIcons={dashboard:'⊞',membres:'👥',presences:'🏅',evenements:'📅',cotisations:'💳',compta:'💰',statistiques:'📊',messagerie:'✉️',documents:'📁',rapport:'📄',dons:'💛',presentations:'🖥️'};
 function showPage(name,el,title){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -2507,7 +2610,7 @@ function showPage(name,el,title){
   window.scrollTo({top:0,behavior:'instant'});
   closeSidebar();
   setTimeout(()=>_triggerPageAnimations(name),50);
-  const _staticMap={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport,dons:renderDons,demandes:renderDemandes};
+  const _staticMap={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport,dons:renderDons,demandes:renderDemandes,presentations:renderPresentations};
   if(_staticMap[name])_staticMap[name]();
 }
 function navTo(name,title){
@@ -2813,7 +2916,7 @@ function setupListeners(){
   let currentPage=()=>document.querySelector('.page.active')?.id?.replace('page-','');
   const rerender=()=>{
     const p=currentPage();
-    const map={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport,dons:renderDons,demandes:renderDemandes};
+    const map={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport,dons:renderDons,demandes:renderDemandes,presentations:renderPresentations};
     map[p]?.();
   };
   // Détection connexion internet
@@ -2830,10 +2933,10 @@ function setupListeners(){
   // On ignore les snapshots dans les 3 secondes suivant notre propre sauvegarde
   const fromOther=(key)=>!_lastSave[key]||(Date.now()-_lastSave[key]>3000);
   db.collection('gef_data').doc('gef_membres').onSnapshot(s=>{if(s.exists&&fromOther('gef_membres')){membres=s.data().value||[];lsSet('gef_membres',membres);rerender();}});
-  db.collection('gef_data').doc('gef_events').onSnapshot(s=>{if(s.exists&&fromOther('gef_events')){events=s.data().value;rerender();}});
-  db.collection('gef_data').doc('gef_presences').onSnapshot(s=>{if(s.exists&&fromOther('gef_presences')){presences=s.data().value;rerender();}});
-  db.collection('gef_data').doc('gef_compta').onSnapshot(s=>{if(s.exists&&fromOther('gef_compta')){compta=s.data().value;rerender();}});
-  db.collection('gef_data').doc('gef_cotisations').onSnapshot(s=>{if(s.exists&&fromOther('gef_cotisations')){cotisations=s.data().value;rerender();}});
+  db.collection('gef_data').doc('gef_events').onSnapshot(s=>{if(s.exists&&fromOther('gef_events')){events=s.data().value||[];rerender();}});
+  db.collection('gef_data').doc('gef_presences').onSnapshot(s=>{if(s.exists&&fromOther('gef_presences')){presences=s.data().value||{};rerender();}});
+  db.collection('gef_data').doc('gef_compta').onSnapshot(s=>{if(s.exists&&fromOther('gef_compta')){compta=s.data().value||[];rerender();}});
+  db.collection('gef_data').doc('gef_cotisations').onSnapshot(s=>{if(s.exists&&fromOther('gef_cotisations')){cotisations=s.data().value||[];rerender();}});
   db.collection('gef_data').doc('gef_event_types').onSnapshot(s=>{if(s.exists&&fromOther('gef_event_types'))eventTypes=s.data().value;});
   db.collection('gef_data').doc('gef_email_historique').onSnapshot(s=>{if(s.exists&&fromOther('gef_email_historique'))emailHistorique=s.data().value;});
   db.collection('gef_data').doc('gef_documents').onSnapshot(s=>{if(s.exists&&fromOther('gef_documents')){documents_list=s.data().value;rerender();}});
@@ -3142,7 +3245,7 @@ function renderDashboard(){
     });
 
     // Compteur animé sur les valeurs KPI
-    document.querySelectorAll('.kpi-band-val').forEach(el=>{
+    document.querySelectorAll('.kpi-band-val').forEach((el,i)=>{
       const raw=el.innerHTML;
       const num=parseInt(el.textContent.replace(/[^0-9]/g,''));
       if(isNaN(num)||num===0)return;
@@ -4613,6 +4716,172 @@ function supprimerDoc(id){
   }
   save('gef_documents',documents_list);
   renderDocuments();
+}
+
+// ── PRÉSENTATIONS ──────────────────────────────────────────────────
+let presentations_list = [];
+
+function _presGetColor(type){
+  if(type==='pptx'||type==='ppt') return 'linear-gradient(135deg,#c0271e,#ff4d40)';
+  if(type==='pdf') return 'linear-gradient(135deg,#dc2626,#f87171)';
+  if(type==='key') return 'linear-gradient(135deg,#0284c7,#38bdf8)';
+  return 'linear-gradient(135deg,#7c3aed,#a78bfa)';
+}
+
+function _presGetBadge(type){
+  if(type==='pptx'||type==='ppt') return '<span class="pres-badge">PPTX</span>';
+  if(type==='pdf') return '<span class="pres-badge pres-badge-pdf">PDF</span>';
+  if(type==='key') return '<span class="pres-badge" style="background:rgba(14,165,233,0.15);color:#38bdf8;border-color:rgba(14,165,233,0.25);">KEYNOTE</span>';
+  return '<span class="pres-badge pres-badge-link">LIEN</span>';
+}
+
+function _presGetEmbed(url, type){
+  if(type==='pdf') return url;
+  if(type==='link'){
+    // Google Slides embed
+    if(url.includes('docs.google.com/presentation')){
+      const base = url.split('/edit')[0].split('/pub')[0].split('/embed')[0];
+      return base + '/embed?start=false&loop=false&delayms=3000';
+    }
+    // OneDrive embed
+    if(url.includes('onedrive.live.com')||url.includes('1drv.ms')) return url;
+    return url;
+  }
+  // Firebase Storage PPTX → Office Online viewer
+  return 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURIComponent(url);
+}
+
+function renderPresentations(){
+  presentations_list = lsGet('gef_presentations', []);
+  const grid = document.getElementById('pres-grid');
+  const empty = document.getElementById('pres-empty');
+  const kpi = document.getElementById('pres-kpi');
+  const sub = document.getElementById('pres-header-sub');
+  if(!grid) return;
+
+  if(sub) sub.textContent = presentations_list.length + ' présentation' + (presentations_list.length>1?'s':'') + ' enregistrée' + (presentations_list.length>1?'s':'');
+
+  const types = ['pptx','ppt','pdf','key','link'];
+  const counts = Object.fromEntries(types.map(t=>[t, presentations_list.filter(p=>p.type===t).length]));
+  if(kpi) kpi.innerHTML = [
+    ['📊 PowerPoint', (counts.pptx||0)+(counts.ppt||0), 'var(--red)'],
+    ['📄 PDF', counts.pdf||0, '#f87171'],
+    ['🔗 Liens', counts.link||0, '#93c5fd']
+  ].map(([l,v,c])=>`<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 16px;display:flex;align-items:center;gap:8px;box-shadow:var(--shadow);"><span style="font-size:13px;">${l}</span><span style="font-size:18px;font-weight:800;color:${c};margin-left:auto;">${v}</span></div>`).join('');
+
+  if(!presentations_list.length){
+    grid.style.display='none'; if(empty) empty.style.display='block'; return;
+  }
+  grid.style.display='grid'; if(empty) empty.style.display='none';
+
+  grid.innerHTML = presentations_list.slice().reverse().map((p,ri)=>{
+    const i = presentations_list.length-1-ri;
+    const bg = _presGetColor(p.type);
+    const badge = _presGetBadge(p.type);
+    const emoji = p.emoji || (p.type==='pdf'?'📄':p.type==='link'?'🔗':'📊');
+    const date = p.date ? fmtDate(p.date) : '—';
+    return `<div class="pres-card anim-card" style="animation-delay:${ri*0.05}s" onclick="openPresViewer(${i})">
+      <div class="pres-card-thumb" style="background:${bg};">
+        <span style="font-size:52px;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.3));">${emoji}</span>
+        <div class="pres-card-overlay">▶ Ouvrir en plein écran</div>
+      </div>
+      <div class="pres-card-body">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">${badge}</div>
+        <div class="pres-card-title">${p.titre}</div>
+        <div class="pres-card-meta">📅 ${date}</div>
+      </div>
+      <div class="pres-card-actions">
+        <button class="btn-icon" onclick="event.stopPropagation();deletePresentation(${i})" title="Supprimer">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openAddPresLink(){
+  document.getElementById('pres-link-titre').value='';
+  document.getElementById('pres-link-url').value='';
+  document.getElementById('pres-link-emoji').value='🔗';
+  document.getElementById('modal-add-pres-link').classList.add('open');
+}
+
+function savePresLink(){
+  const titre = document.getElementById('pres-link-titre').value.trim();
+  const url = document.getElementById('pres-link-url').value.trim();
+  const emoji = document.getElementById('pres-link-emoji').value.trim()||'🔗';
+  if(!titre||!url){alert('Titre et URL requis.');return;}
+  presentations_list = lsGet('gef_presentations',[]);
+  presentations_list.push({titre,url,emoji,type:'link',date:localToday()});
+  lsSet('gef_presentations', presentations_list);
+  if(db) db.collection('gef_data').doc('gef_presentations').set({value:presentations_list}).catch(()=>{});
+  closeModal('modal-add-pres-link');
+  renderPresentations();
+  showToast('Présentation ajoutée','✅');
+}
+
+async function uploadPresFile(input){
+  const file = input.files[0];
+  if(!file) return;
+  const ext = file.name.split('.').pop().toLowerCase();
+  const titre = file.name.replace(/\.[^.]+$/,'');
+  const emoji = ext==='pdf'?'📄':ext==='key'?'🎨':'📊';
+
+  if(!_storage){
+    showToast('Firebase Storage non disponible','⚠️');
+    input.value=''; return;
+  }
+  showToast('Upload en cours…','⏳');
+  try{
+    const ref = _storage.ref('presentations/' + Date.now() + '_' + file.name);
+    await ref.put(file);
+    const url = await ref.getDownloadURL();
+    presentations_list = lsGet('gef_presentations',[]);
+    presentations_list.push({titre,url,emoji,type:ext,date:localToday()});
+    lsSet('gef_presentations', presentations_list);
+    if(db) db.collection('gef_data').doc('gef_presentations').set({value:presentations_list}).catch(()=>{});
+    renderPresentations();
+    showToast('Fichier uploadé ✅','📊');
+  }catch(e){
+    showToast('Erreur upload : '+e.message,'❌');
+  }
+  input.value='';
+}
+
+function openPresViewer(idx){
+  const p = presentations_list[idx];
+  if(!p) return;
+  const viewer = document.getElementById('pres-viewer');
+  const iframe = document.getElementById('pres-viewer-iframe');
+  const title = document.getElementById('pres-viewer-title');
+  if(title) title.textContent = (p.emoji||'📊') + ' ' + p.titre;
+  if(iframe) iframe.src = _presGetEmbed(p.url, p.type);
+  if(viewer){viewer.style.display='flex';document.body.style.overflow='hidden';}
+}
+
+function closePresViewer(){
+  const viewer = document.getElementById('pres-viewer');
+  const iframe = document.getElementById('pres-viewer-iframe');
+  if(viewer) viewer.style.display='none';
+  if(iframe) iframe.src='';
+  document.body.style.overflow='';
+}
+
+function togglePresFullscreen(){
+  const viewer = document.getElementById('pres-viewer');
+  if(!document.fullscreenElement){
+    viewer?.requestFullscreen?.();
+  } else {
+    document.exitFullscreen?.();
+  }
+}
+
+function deletePresentation(idx){
+  if(!confirm('Supprimer cette présentation ?')) return;
+  presentations_list = lsGet('gef_presentations',[]);
+  presentations_list.splice(idx,1);
+  lsSet('gef_presentations', presentations_list);
+  if(db) db.collection('gef_data').doc('gef_presentations').set({value:presentations_list}).catch(()=>{});
+  renderPresentations();
+  showToast('Supprimé','🗑️');
 }
 
 function renderDocuments(){
