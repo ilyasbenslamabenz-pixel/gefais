@@ -3061,6 +3061,7 @@ function renderDashboard(){
   const anneeEnCours=new Date().getFullYear();
   const cotisTotal=cotisations.filter(c=>c.annee===anneeEnCours&&membres.some(m=>m.id===c.membreId)).length;
   const cotisPayees=cotisations.filter(c=>c.annee===anneeEnCours&&c.statut==='paye'&&membres.some(m=>m.id===c.membreId)).length;
+  const cotisEnAttente=cotisations.filter(c=>c.annee===anneeEnCours&&c.statut==='impaye'&&c.montant>0&&membres.some(m=>m.id===c.membreId)).length;
   const today=localToday();
   const h=new Date().getHours();
   const greet=h<6?'Bonne nuit 🌙':h<12?'Bonjour 👋':h<18?'Bon après-midi ☀️':'Bonsoir 🌇';
@@ -3092,7 +3093,7 @@ function renderDashboard(){
       <div class="kpi-band-body">
         <div class="kpi-band-label">Total membres</div>
         <div class="kpi-band-val">${total}</div>
-        <div class="kpi-band-sub">${actifs} actifs · ${suisses} suisses · ${passifs} passifs${autres>0?' · '+autres+' autres':''}</div>
+        <div class="kpi-band-sub">${actifs}A · ${suisses}S · ${passifs}P${autres>0?' · '+autres+' aut.':''}</div>
       </div>
     </div>
     <div class="kpi-band-card kpi-animate" style="animation-delay:0.06s;border-top:3px solid var(--gold);">
@@ -3116,7 +3117,7 @@ function renderDashboard(){
       <div class="kpi-band-body">
         <div class="kpi-band-label">Cotisations</div>
         <div class="kpi-band-val">${cotisPayees}<span style="font-size:15px;font-weight:400;color:var(--text3);">/${cotisTotal}</span></div>
-        <div class="kpi-band-sub">${cotisTotal-cotisPayees} en attente</div>
+        <div class="kpi-band-sub">${cotisEnAttente} en attente</div>
       </div>
     </div>
   `;
@@ -3127,7 +3128,7 @@ function renderDashboard(){
     const alertes=[];
     const upcoming7=events.filter(e=>{const diff=dateDiff(e.date);return diff>=0&&diff<=7;});
     if(upcoming7.length)alertes.push({type:'info',icon:'📅',msg:`${upcoming7.length} événement(s) dans les 7 prochains jours : ${upcoming7.map(e=>e.nom||e.type).join(', ')}`});
-    const impayees=cotisations.filter(c=>c.annee===anneeEnCours&&c.statut==='impaye'&&c.montant>0&&membres.some(m=>m.id===c.membreId)).length;
+    const impayees=cotisEnAttente;
     if(impayees>0)alertes.push({type:'warn',icon:'💳',msg:`${impayees} cotisation(s) ${anneeEnCours} en attente de paiement`});
     else if(cotisTotal>0)alertes.push({type:'success',icon:'🎉',msg:`Toutes les cotisations ${anneeEnCours} sont à jour !`});
     alertesEl.innerHTML=alertes.map(a=>`<div class="dash-alerte dash-alerte-${a.type}"><span style="font-size:16px;">${a.icon}</span><span>${a.msg}</span></div>`).join('');
