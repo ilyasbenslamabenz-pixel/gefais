@@ -2925,6 +2925,7 @@ function setupListeners(){
   db.collection('gef_data').doc('gef_documents').onSnapshot(s=>{if(s.exists&&fromOther('gef_documents')){documents_list=s.data().value;rerender();}});
   db.collection('gef_data').doc('gef_event_subpages').onSnapshot(s=>{if(s.exists&&fromOther('gef_event_subpages')){event_subpages=s.data().value;renderEvents();}});
   db.collection('gef_data').doc('gef_don_data').onSnapshot(s=>{if(s.exists&&fromOther('gef_don_data')){Object.assign(_donData,s.data().value);lsSet('gef_don_data',_donData);_donApplyUI();}});
+  db.collection('gef_data').doc('gef_ag_notes').onSnapshot(s=>{if(s.exists&&fromOther('gef_ag_notes')){ag_notes=s.data().value||[];lsSet('gef_ag_notes',ag_notes);}});
   db.collection('gef_data').doc('gef_presentations').onSnapshot(s=>{if(s.exists&&fromOther('gef_presentations')){presentations_list=s.data().value||[];lsSet('gef_presentations',presentations_list);const p=currentPage();if(p==='presentations')renderPresentations();}});
 }
 
@@ -2953,7 +2954,7 @@ async function reconnectFirebase(){
   const btn=document.querySelector('#offline-banner button');
   if(btn){btn.textContent='⏳ Connexion…';btn.disabled=true;}
   try{
-    const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents','gef_event_subpages','gef_don_data'];
+    const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents','gef_event_subpages','gef_don_data','gef_ag_notes','gef_presentations'];
     const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000));
     const docs=await Promise.race([Promise.all(keys.map(k=>db.collection('gef_data').doc(k).get())),timeout]);
     _firebaseOk=true;
@@ -2970,6 +2971,8 @@ async function reconnectFirebase(){
       else if(i===7)documents_list=val;
       else if(i===8)event_subpages=val;
       else if(i===9&&val){Object.assign(_donData,val);lsSet('gef_don_data',_donData);_donApplyUI();}
+      else if(i===10){ag_notes=val;lsSet('gef_ag_notes',ag_notes);}
+      else if(i===11){presentations_list=val||[];lsSet('gef_presentations',presentations_list);}
     });
     setupListeners();
     document.getElementById('offline-banner').style.display='none';
@@ -3009,7 +3012,7 @@ async function initApp(){
   // ── Étape 2 : Firebase en arrière-plan ───────────────────────
   _loadFirebase(async()=>{
     try{
-      const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents','gef_event_subpages','gef_don_data','gef_presentations'];
+      const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents','gef_event_subpages','gef_don_data','gef_ag_notes','gef_presentations'];
       const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000));
       const docs=await Promise.race([Promise.all(keys.map(k=>db.collection('gef_data').doc(k).get())),timeout]);
       _firebaseOk=true;
@@ -3028,7 +3031,8 @@ async function initApp(){
         else if(i===7)documents_list=val;
         else if(i===8)event_subpages=val;
         else if(i===9){Object.assign(_donData,val);lsSet('gef_don_data',_donData);}
-        else if(i===10){presentations_list=val||[];lsSet('gef_presentations',presentations_list);}
+        else if(i===10){ag_notes=val;lsSet('gef_ag_notes',ag_notes);}
+        else if(i===11){presentations_list=val||[];lsSet('gef_presentations',presentations_list);}
       });
       if(fbVide){
         db.collection('gef_data').doc('gef_membres').set({value:membres}).catch(()=>{});
@@ -3261,7 +3265,7 @@ function renderDashboard(){
   // FIREBASE STORAGE ESTIMATION
   const fbEl=document.getElementById('dash-firebase-storage');
   if(fbEl){
-    const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents'];
+    const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents','gef_event_subpages','gef_don_data','gef_ag_notes'];
     let totalBytes=0;
     const details=keys.map(k=>{const raw=localStorage.getItem(k)||'';const bytes=new TextEncoder().encode(raw).length;totalBytes+=bytes;return{k,bytes};});
     const FREE_LIMIT_MB=1024;const usedMB=totalBytes/1024/1024;const pct=Math.min(100,Math.round(usedMB/FREE_LIMIT_MB*100));
@@ -3879,7 +3883,8 @@ function chipClass(type){
 
 // ── COTISATIONS ──────────────────────────────────────────────────
 function renderCotisations(){
-  const annee=parseInt(document.getElementById('cotis-filter-annee').value);
+  const anneeEl=document.getElementById('cotis-filter-annee');if(!anneeEl)return;
+  const annee=parseInt(anneeEl.value);
   const statut=document.getElementById('cotis-filter-statut').value;
   const list=cotisations.filter(c=>c.annee===annee&&(!statut||c.statut===statut));
   const total=cotisations.filter(c=>c.annee===annee&&membres.some(m=>m.id===c.membreId)&&(c.montant>0||c.statut==='paye')).length;
@@ -5236,6 +5241,9 @@ function applyTheme(dark) {
     root.style.setProperty('--green-light','#f0fdf4');
     root.style.setProperty('--blue-light','#eff6ff');
     root.style.setProperty('--purple-light','#f5f3ff');
+    root.style.setProperty('--border2','#d1cdc7');
+    root.style.setProperty('--card2','#f0eeeb');
+    root.style.setProperty('--red2','#e63329');
     document.body.style.background = '#f7f7f5';
     // Sidebar
     const sidebar = document.getElementById('sidebar');
