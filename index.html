@@ -81,7 +81,7 @@ h1,h2,h3{font-family:'Plus Jakarta Sans',sans-serif;font-weight:400;}
 .topbar-logo-dot{width:8px;height:8px;border-radius:50%;background:var(--red);}
 .topbar-logo-name{font-size:15px;font-weight:800;color:var(--text);letter-spacing:-0.3px;}
 .topbar-page{font-size:12px;color:var(--text2);font-weight:500;margin-left:2px;}
-.topbar-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;color:var(--text);flex:1;letter-spacing:-0.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;color:var(--text);flex:1;min-width:0;letter-spacing:-0.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .hamburger{background:none;border:none;color:var(--text2);cursor:pointer;padding:8px;border-radius:10px;display:flex;flex-direction:column;gap:4.5px;transition:background 0.15s;flex-shrink:0;}
 .hamburger:hover{background:var(--bg3);}
 .hamburger span{display:block;width:18px;height:1.5px;background:currentColor;border-radius:2px;transition:all 0.2s;}
@@ -186,8 +186,10 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 
 /* MODAL */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
-.modal-overlay.open{display:flex;}
-.modal{background:var(--bg2);border:1px solid var(--border);border-radius:24px 24px 0 0;padding:28px;width:100%;max-width:580px;max-height:91vh;overflow-y:auto;box-shadow:0 -8px 60px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.06);}
+.modal-overlay.open{display:flex;animation:overlayIn 0.18s ease both;}
+@keyframes overlayIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:24px 24px 0 0;padding:28px;width:100%;max-width:580px;max-height:91vh;overflow-y:auto;box-shadow:0 -8px 60px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.06);animation:modalSlideUp 0.28s cubic-bezier(0.34,1.2,0.64,1) both;}
+@keyframes modalSlideUp{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:none}}
 .modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;}
 .modal h3{margin-bottom:18px;font-size:21px;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;letter-spacing:-0.3px;}
 .modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;padding-top:16px;border-top:1px solid var(--border);}
@@ -471,7 +473,7 @@ tbody tr{transition:background 0.15s;}
 .dash-hero-eyebrow{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;opacity:0.65;margin-bottom:7px;}
 .dash-hero-greeting{font-size:22px;font-weight:800;margin-bottom:3px;letter-spacing:-0.3px;}
 .dash-hero-date{font-size:13px;opacity:0.72;margin-bottom:16px;font-weight:400;}
-.dash-hero-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.dash-hero-actions{display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;}
 .dash-quick-btn{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.92);padding:8px 14px;border-radius:11px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:all 0.2s;white-space:nowrap;backdrop-filter:blur(8px);line-height:1;}
 .dash-quick-btn:hover{background:rgba(255,255,255,0.22);transform:translateY(-1px);}
 .dash-quick-btn:active{transform:scale(0.97);}
@@ -971,6 +973,9 @@ tbody tr{transition:background 0.15s;}
   /* Topbar */
   .topbar{height:58px;padding:0 14px;}
   .topbar-title{font-size:18px;}
+  .logout-label{display:none;}
+  .btn-logout::after{content:'✕';font-size:14px;}
+  .dash-quick-btn{font-size:11px;padding:7px 10px;}
 
   /* Événements accordéon mobile */
   .event-row{border-radius:16px;margin-bottom:10px;}
@@ -1176,11 +1181,11 @@ tbody tr{transition:background 0.15s;}
 
   <div class="topbar">
     <button class="hamburger" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
-    <span class="topbar-title" id="topbar-title">Tableau de bord</span>
+    <span class="topbar-title" id="topbar-title">Accueil</span>
     <button onclick="openGlobalSearch()" style="background:none;border:none;color:var(--text2);cursor:pointer;padding:8px;border-radius:10px;display:flex;align-items:center;" title="Recherche (Ctrl+K)"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></button>
     <button onclick="openSettings()" style="background:none;border:none;color:var(--text2);cursor:pointer;padding:8px;border-radius:10px;display:flex;align-items:center;" title="Réglages"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
     <button id="theme-toggle" onclick="toggleTheme()" style="background:none;border:none;cursor:pointer;padding:6px;border-radius:10px;font-size:16px;" title="Changer le thème">☀️</button>
-    <button class="btn-logout" onclick="logout()">Quitter</button>
+    <button class="btn-logout" onclick="logout()" title="Se déconnecter"><span class="logout-label">Quitter</span></button>
     <span id="sync-indicator" style="font-size:11px;color:var(--green);display:none;cursor:default;"></span>
   </div>
   <!-- BANNIÈRE HORS LIGNE -->
@@ -1216,7 +1221,7 @@ tbody tr{transition:background 0.15s;}
     </div>
     <div class="nav">
       <div class="nav-section">Principal</div>
-      <div class="nav-item active" id="nav-dashboard" onclick="showPage('dashboard',this,'Tableau de bord')">
+      <div class="nav-item active" id="nav-dashboard" onclick="showPage('dashboard',this,'Accueil')">
         <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Tableau de bord
       </div>
       <div class="nav-item" id="nav-membres" onclick="showPage('membres',this,'Membres')">
@@ -1233,7 +1238,7 @@ tbody tr{transition:background 0.15s;}
       </div>
       <div class="nav-section">Finances</div>
       <div class="nav-item" id="nav-cotisations" onclick="showPage('cotisations',this,'Cotisations')">
-        <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Cotisations
+        <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Cotisations <span id="cotis-badge" style="display:none;background:var(--gold);color:#000;font-size:9px;font-weight:800;padding:2px 6px;border-radius:10px;margin-left:auto;"></span>
       </div>
       <div class="nav-item" id="nav-compta" onclick="showPage('compta',this,'Comptabilité')">
         <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>Comptabilité
@@ -2231,7 +2236,7 @@ tbody tr{transition:background 0.15s;}
       </div>
       <div class="form-group"><label>Montant (CHF)</label><input id="cotis-montant" type="number" min="0" step="0.5"></div>
       <div class="form-group"><label>Date de paiement</label><input id="cotis-date" type="date"></div>
-      <div class="form-group"><label>Année</label><input id="cotis-annee" type="number" value="2026"></div>
+      <div class="form-group"><label>Année</label><input id="cotis-annee" type="number"></div>
       <div class="form-group full"><label>Notes</label><input id="cotis-notes" type="text" placeholder="Remarque…"></div>
     </div>
     <div class="modal-footer">
@@ -2417,7 +2422,7 @@ const DEFAULT_COMPTA=[
 ];
 const DEFAULT_MESSAGES=[];
 
-function buildDefaultCotisations(m){const annee=new Date().getFullYear();return m.map(x=>({membreId:x.id,annee,montant:50,statut:'impaye',datePaiement:'',notes:''}));}
+function buildDefaultCotisations(m){const annee=new Date().getFullYear();return m.map(x=>({membreId:x.id,annee,montant:x.type==='Actif Suisse'?(_gSettings&&_gSettings.cotisSuisse||30):(_gSettings&&_gSettings.cotisActif||50),statut:'impaye',datePaiement:'',notes:''}));}
 
 // ── SOUS-PAGES ÉVÉNEMENTS ─────────────────────────────────────────
 const DEFAULT_EVENT_SUBPAGES=[
@@ -2438,7 +2443,7 @@ function saveSubpage(){
   const couleur=document.getElementById('sp-couleur').value||'var(--red)';
   const checks=document.querySelectorAll('#sp-types-checks input[type=checkbox]:checked');
   const types=[...checks].map(c=>c.value);
-  if(!nom){alert('Nom requis.');return;}
+  if(!nom){showToast('Nom requis.','⚠️','warn');return;}
   if(_editingSubpage){
     const sp=event_subpages.find(s=>s.id===_editingSubpage);
     if(sp){sp.nom=nom;sp.emoji=emoji;sp.couleur=couleur;sp.types=types;}
@@ -2482,12 +2487,13 @@ function editSubpage(id){
 }
 
 function deleteSubpage(id){
-  if(!confirm('Supprimer cette sous-page ?'))return;
-  event_subpages=event_subpages.filter(s=>s.id!==id);
-  if(_activeSubpage===id)_activeSubpage=1;
-  save('gef_event_subpages',event_subpages);
-  renderManageSubpages();
-  renderEvents();
+  _gconfirm('Supprimer cette sous-page ?','Cette action est irréversible.',()=>{
+    event_subpages=event_subpages.filter(s=>s.id!==id);
+    if(_activeSubpage===id)_activeSubpage=1;
+    save('gef_event_subpages',event_subpages);
+    renderManageSubpages();
+    renderEvents();
+  },'','🗂️','Supprimer','background:var(--red);color:#fff;');
 }
 
 function selectSpColor(color,el){
@@ -2733,7 +2739,7 @@ async function reconnectFirebase(){
     renderDashboard();renderMembres();renderEvents();
   }catch(e){
     if(btn){btn.textContent='Reconnecter';btn.disabled=false;}
-    alert('Impossible de se connecter à Firebase. Vérifiez votre connexion internet.');
+    showToast('Impossible de se connecter à Firebase. Vérifiez votre connexion internet.','⚠️','warn');
   }
 }
 
@@ -2795,6 +2801,7 @@ async function initApp(){
       }
       setupListeners();
       _loadDemandesBadge();
+      _updateCotisBadge();
       renderDashboard();renderMembres();
       _populateCotisAnneeSel();_checkCotisationsAnnee();
       const si=document.getElementById('sync-indicator');
@@ -2863,12 +2870,12 @@ function renderDashboard(){
       <div class="kpi-band-icon" style="background:${solde>=0?'rgba(48,209,88,0.12)':'rgba(255,59,48,0.12)'};">${solde>=0?'💚':'🔴'}</div>
       <div class="kpi-band-body">
         <div class="kpi-band-label">Solde financier</div>
-        <div class="kpi-band-val" style="color:${solde>=0?'var(--green)':'var(--red)'};">${solde>=0?'+':''}${solde.toFixed(0)}<span style="font-size:12px;font-weight:400;color:var(--text3);margin-left:3px;">CHF</span></div>
-        <div class="kpi-band-sub">${totalIn.toFixed(0)} CHF recettes</div>
+        <div class="kpi-band-val" style="color:${solde>=0?'var(--green)':'var(--red)'};">${solde>=0?'+':''}${solde.toFixed(0)}<span style="font-size:12px;font-weight:400;color:var(--text3);margin-left:3px;">${(_gSettings&&_gSettings.devise)||'CHF'}</span></div>
+        <div class="kpi-band-sub">${totalIn.toFixed(0)} ${(_gSettings&&_gSettings.devise)||'CHF'} recettes</div>
       </div>
     </div>
     <div class="kpi-band-card kpi-animate" style="animation-delay:0.18s">
-      <div class="kpi-band-icon" style="background:${cotisPayees===cotisTotal&&cotisTotal>0?'rgba(34,197,94,0.15)':'rgba(96,165,250,0.15)'};">${cotisPayees===cotisTotal&&cotisTotal>0?'✅':'💳'}</div>
+      <div class="kpi-band-icon" style="background:${cotisPayees===cotisTotal&&cotisTotal>0?'rgba(34,197,94,0.15)':'rgba(96,165,250,0.15)';">${cotisPayees===cotisTotal&&cotisTotal>0?'✅':'<svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="display:block;"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>'}</div>
       <div class="kpi-band-body">
         <div class="kpi-band-label">Cotisations</div>
         <div class="kpi-band-val">${cotisPayees}<span style="font-size:15px;font-weight:400;color:var(--text3);">/${cotisTotal}</span></div>
@@ -2881,10 +2888,11 @@ function renderDashboard(){
   const alertesEl=document.getElementById('dash-alertes');
   if(alertesEl){
     const alertes=[];
-    const upcoming7=events.filter(e=>{const diff=dateDiff(e.date);return diff>=0&&diff<=7;});
-    if(upcoming7.length)alertes.push({type:'info',icon:'📅',msg:`${upcoming7.length} événement(s) dans les 7 prochains jours : ${upcoming7.map(e=>e.nom||e.type).join(', ')}`});
+    const _alertJ=(_gSettings&&_gSettings.alerteJours)||7;
+    const upcoming7=events.filter(e=>{const diff=dateDiff(e.date);return diff>=0&&diff<=_alertJ;});
+    if(upcoming7.length)alertes.push({type:'info',icon:'📅',msg:`${upcoming7.length} événement${upcoming7.length>1?'s':''} dans les ${_alertJ} prochains jours : ${upcoming7.map(e=>e.nom||e.type).join(', ')}`});
     const impayees=cotisEnAttente;
-    if(impayees>0)alertes.push({type:'warn',icon:'💳',msg:`${impayees} cotisation(s) ${anneeEnCours} en attente de paiement`});
+    if(impayees>0)alertes.push({type:'warn',icon:'💳',msg:`${impayees} cotisation${impayees>1?'s':''} ${anneeEnCours} en attente de paiement`});
     else if(cotisTotal>0)alertes.push({type:'success',icon:'🎉',msg:`Toutes les cotisations ${anneeEnCours} sont à jour !`});
     alertesEl.innerHTML=alertes.map(a=>`<div class="dash-alerte dash-alerte-${a.type}"><span style="font-size:16px;">${a.icon}</span><span>${a.msg}</span></div>`).join('');
     alertesEl.style.marginBottom=alertes.length?'14px':'0';
@@ -2959,12 +2967,12 @@ function renderDashboard(){
     <div class="dash-finance-row dash-finance-in">
       <div class="dash-finance-icon">⬆️</div>
       <div class="dash-finance-label">Recettes</div>
-      <div class="dash-finance-amount amount-in">+${totalIn.toFixed(2)} CHF</div>
+      <div class="dash-finance-amount amount-in">+${totalIn.toFixed(2)} ${(_gSettings&&_gSettings.devise)||'CHF'}</div>
     </div>
     <div class="dash-finance-row dash-finance-out">
       <div class="dash-finance-icon">⬇️</div>
       <div class="dash-finance-label">Dépenses</div>
-      <div class="dash-finance-amount amount-out">−${totalOut.toFixed(2)} CHF</div>
+      <div class="dash-finance-amount amount-out">−${totalOut.toFixed(2)} ${(_gSettings&&_gSettings.devise)||'CHF'}</div>
     </div>
     <div class="dash-finance-divider"></div>
     <div class="dash-finance-solde ${solde>=0?'dash-finance-solde-pos':'dash-finance-solde-neg'}">
@@ -3016,7 +3024,7 @@ function renderDashboard(){
   // FIREBASE STORAGE ESTIMATION
   const fbEl=document.getElementById('dash-firebase-storage');
   if(fbEl){
-    const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents','gef_event_subpages','gef_don_data','gef_ag_notes'];
+    const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents','gef_event_subpages','gef_don_data','gef_ag_notes','gef_presentations'];
     let totalBytes=0;
     const details=keys.map(k=>{const raw=localStorage.getItem(k)||'';const bytes=new TextEncoder().encode(raw).length;totalBytes+=bytes;return{k,bytes};});
     const FREE_LIMIT_MB=1024;const usedMB=totalBytes/1024/1024;const pct=Math.min(100,Math.round(usedMB/FREE_LIMIT_MB*100));
@@ -3099,6 +3107,13 @@ function renderMembres(){
       <button class="btn btn-secondary btn-sm" onclick="memPage(1)" ${pageM>=totalPagesM-1?'disabled':''}>Suivant →</button>
     </div>`:'';
 
+  if(!list.length){
+    const noMsg=q||ft?'Aucun membre ne correspond à votre recherche.':'Aucun membre enregistré pour l\'instant.';
+    document.getElementById('membres-tbody').innerHTML=`<tr><td colspan="7" style="padding:40px;text-align:center;color:var(--text3);font-size:13px;">${noMsg}</td></tr>`;
+    document.getElementById('member-cards').innerHTML=`<div class="empty-state"><div class="empty-state-icon">👥</div><div style="font-size:16px;font-weight:700;color:var(--text);">Aucun membre</div><div style="font-size:13px;color:var(--text3);max-width:240px;line-height:1.5;">${noMsg}</div>${!q&&!ft?'<button class="btn btn-primary" style="margin-top:12px;" onclick="openMemberModal()">＋ Ajouter un membre</button>':''}</div>`;
+    const paginEl=document.getElementById('membres-pagination');if(paginEl)paginEl.innerHTML='';
+    return;
+  }
   document.getElementById('membres-tbody').innerHTML=paged.map(m=>{
     const isNew=m.createdAt&&(new Date()-new Date(m.createdAt))<30*86400000;
     return`<tr>
@@ -3161,24 +3176,33 @@ function editMember(id){editingMembre=id;const m=membres.find(x=>x.id===id);docu
   const adh=m.adhesion||'';const [adhY,adhM]=(adh||'').split('-');
   if(document.getElementById('m-adhesion-mois'))document.getElementById('m-adhesion-mois').value=adhM||'';
   if(document.getElementById('m-adhesion-annee'))document.getElementById('m-adhesion-annee').value=adhY||'';
-  const yr=m.createdAt?new Date(m.createdAt).getFullYear():new Date().getFullYear();const sel=document.getElementById('m-created-year');if(sel){if(![...sel.options].find(o=>parseInt(o.value)===yr)){const opt=document.createElement('option');opt.value=yr;opt.textContent=yr;sel.appendChild(opt);}sel.value=yr;}document.getElementById('modal-membre').classList.add('open');}
+  const yr=m.createdAt?new Date(m.createdAt).getFullYear():new Date().getFullYear();
+  const sel=document.getElementById('m-created-year');
+  if(sel){
+    // Repopulate if empty (editMember called directly without openMemberModal)
+    if(sel.options.length===0){const cur=new Date().getFullYear();sel.innerHTML='';for(let y=cur-10;y<=cur+1;y++){const o=document.createElement('option');o.value=y;o.textContent=y;sel.appendChild(o);}}
+    if(![...sel.options].find(o=>parseInt(o.value)===yr)){const opt=document.createElement('option');opt.value=yr;opt.textContent=yr;sel.appendChild(opt);}
+    sel.value=yr;
+  }
+  document.getElementById('modal-membre').classList.add('open');}
 function autoPresence(type){
   const map={'Actif':'0.8','Actif Suisse':'0.4','Passif':'0'};
   if(map[type]!==undefined) document.getElementById('m-presence').value=map[type];
 }
 function saveMember(){
   const nom=document.getElementById('m-nom').value.trim(),prenom=document.getElementById('m-prenom').value.trim();
-  if(!nom||!prenom){alert('Nom et prénom requis.');return;}
+  if(!nom||!prenom){showToast('Nom et prénom requis.','⚠️','warn');return;}
   // Détection de doublon
   const doublon=membres.find(m=>m.id!==editingMembre&&m.nom.toLowerCase()===nom.toLowerCase()&&m.prenom.toLowerCase()===prenom.toLowerCase());
-  if(doublon&&!confirm(`⚠️ Un membre "${prenom} ${nom}" existe déjà. Continuer quand même ?`))return;
+  if(doublon&&!window._forceDoublon){_gconfirm(`Un membre "${prenom} ${nom}" existe déjà`,`Voulez-vous créer un doublon ?`,()=>{window._forceDoublon=true;saveMember();setTimeout(()=>{window._forceDoublon=false;},500);},'','⚠️','Continuer quand même','background:var(--gold);color:#000;');return;}
+  window._forceDoublon=false;
   const yr=parseInt(document.getElementById('m-created-year')?.value)||new Date().getFullYear();
   const mo=document.getElementById('m-adhesion-mois')?.value||'';
   const ay=document.getElementById('m-adhesion-annee')?.value||'';
   const adhesion=mo&&ay?`${ay}-${mo}`:'';
   const data={nom,prenom,role:document.getElementById('m-role').value,type:document.getElementById('m-type').value,email:document.getElementById('m-email').value,tel:(document.getElementById('m-tel').value.trim()?(document.getElementById('m-tel-indicatif').value+' '+document.getElementById('m-tel').value.trim()):document.getElementById('m-tel').value.trim()),adhesion,presence_attendue:parseFloat(document.getElementById('m-presence').value)||0,notes:document.getElementById('m-notes').value};
   if(editingMembre){const i=membres.findIndex(m=>m.id===editingMembre);membres[i]={...membres[i],...data,createdAt:`${yr}-01-01`};}
-  else{const newId=Math.max(0,...membres.map(m=>m.id))+1;const anneeEnCours=new Date().getFullYear();membres.push({id:newId,...data,adhesionYear:yr,createdAt:new Date().toISOString()});cotisations.push({membreId:newId,annee:anneeEnCours,montant:50,statut:'impaye',datePaiement:'',notes:''});save('gef_cotisations',cotisations);}
+  else{const newId=Math.max(0,...membres.map(m=>m.id))+1;const anneeEnCours=new Date().getFullYear();const montantDefaut=m.type==='Actif Suisse'?(_gSettings.cotisSuisse||30):(_gSettings.cotisActif||50);membres.push({id:newId,...data,adhesionYear:yr,createdAt:new Date().toISOString()});cotisations.push({membreId:newId,annee:anneeEnCours,montant:montantDefaut,statut:'impaye',datePaiement:'',notes:''});save('gef_cotisations',cotisations);}
   save('gef_membres',membres);closeModal('modal-membre');renderMembres();
 }
 function deleteMember(id){
@@ -3197,10 +3221,11 @@ let _presView = 'rank';
 function renderPresences(){
   // Peupler le select années
   const anneePresEl=document.getElementById('filter-presences-annee');
-  if(anneePresEl&&anneePresEl.options.length<=1){
+  if(anneePresEl){
     const anneesEvts=[...new Set(events.map(e=>e.date.slice(0,4)))].sort((a,b)=>b-a);
-    const curStr=new Date().getFullYear().toString();
-    anneePresEl.innerHTML='<option value="">Toutes</option>'+anneesEvts.map(a=>`<option value="${a}" ${a===curStr?'selected':''}>${a}</option>`).join('');
+    const prevVal2=anneePresEl.value||new Date().getFullYear().toString();
+    anneePresEl.innerHTML='<option value="">Toutes</option>'+anneesEvts.map(a=>`<option value="${a}">${a}</option>`).join('');
+    if([...anneePresEl.options].some(o=>o.value===prevVal2)) anneePresEl.value=prevVal2;
   }
   const filtreAnnee=anneePresEl?.value||'';
   const evts=events.filter(e=>!filtreAnnee||e.date.startsWith(filtreAnnee)).slice().sort((a,b)=>a.date.localeCompare(b.date));
@@ -3613,7 +3638,7 @@ function toggleAllPresences(val){toggleAllPresencesInline(currentEventId,val);}
 function populateEventTypes(selected){const sel=document.getElementById('e-type');sel.innerHTML=eventTypes.map(t=>`<option value="${t}"${t===selected?'selected':''}>${t}</option>`).join('');}
 function openEventModal(){editingEvent=null;document.getElementById('modal-event-title').textContent='Ajouter un événement';document.getElementById('e-date').value='';populateEventTypes('Réunion');document.getElementById('e-nom').value='';document.getElementById('e-comment').value='';document.getElementById('modal-event').classList.add('open');}
 function editEvent(id){editingEvent=id;const e=events.find(x=>x.id===id);document.getElementById('modal-event-title').textContent="Modifier l'événement";document.getElementById('e-date').value=e.date;populateEventTypes(e.type);document.getElementById('e-nom').value=e.nom||'';document.getElementById('e-comment').value=e.commentaires||'';document.getElementById('modal-event').classList.add('open');}
-function saveEvent(){const date=document.getElementById('e-date').value;if(!date){alert('Date requise.');return;}const data={date,type:document.getElementById('e-type').value,nom:document.getElementById('e-nom').value,commentaires:document.getElementById('e-comment').value};if(editingEvent){const i=events.findIndex(e=>e.id===editingEvent);events[i]={...events[i],...data};}else events.push({id:Math.max(0,...events.map(e=>e.id))+1,...data});save('gef_events',events);closeModal('modal-event');renderEvents();}
+function saveEvent(){const date=document.getElementById('e-date').value;if(!date){showToast('Date requise.','⚠️','warn');return;}const data={date,type:document.getElementById('e-type').value,nom:document.getElementById('e-nom').value,commentaires:document.getElementById('e-comment').value};if(editingEvent){const i=events.findIndex(e=>e.id===editingEvent);events[i]={...events[i],...data};}else events.push({id:Math.max(0,...events.map(e=>e.id))+1,...data});save('gef_events',events);closeModal('modal-event');renderEvents();}
 function deleteEvent(id){const e=events.find(x=>x.id===id);if(!e)return;confirmDelete(`Supprimer ${e.nom||e.type} ?`,'Cet événement et ses présences seront supprimés définitivement.',()=>{events=events.filter(x=>x.id!==id);Object.keys(presences).filter(k=>k.endsWith('_'+id)).forEach(k=>delete presences[k]);save('gef_events',events);save('gef_presences',presences);renderEvents();});}
 function dupliquerEvent(id){const e=events.find(x=>x.id===id);if(!e)return;const newId=Math.max(0,...events.map(x=>x.id))+1;const clone={...e,id:newId,nom:(e.nom||e.type)+' (copie)',date:localToday()};events.push(clone);save('gef_events',events);renderEvents();showToast('Événement dupliqué','⧉','success');}
 
@@ -3636,7 +3661,7 @@ function ajouterType(){
   const input=document.getElementById('new-type-input');
   const val=input.value.trim();
   if(!val){return;}
-  if(eventTypes.find(t=>t.toLowerCase()===val.toLowerCase())){alert('Ce type existe déjà.');return;}
+  if(eventTypes.find(t=>t.toLowerCase()===val.toLowerCase())){showToast('Ce type existe déjà.','⚠️','warn');return;}
   eventTypes.push(val);
   save('gef_event_types',eventTypes);
   input.value='';
@@ -3644,11 +3669,12 @@ function ajouterType(){
 }
 function supprimerType(type){
   const utilise=events.find(e=>e.type===type);
-  if(utilise){alert(`Ce type est utilisé par l'événement "${utilise.nom||utilise.type}". Modifiez d'abord cet événement.`);return;}
-  if(!confirm(`Supprimer le type "${type}" ?`))return;
-  eventTypes=eventTypes.filter(t=>t!==type);
-  save('gef_event_types',eventTypes);
-  renderTypesList();
+  if(utilise){showToast(`Type utilisé par "${utilise.nom||utilise.type}" — modifiez cet événement d'abord`,'⚠️','warn');return;}
+  _gconfirm(`Supprimer le type "${type}" ?`,'',()=>{
+    eventTypes=eventTypes.filter(t=>t!==type);
+    save('gef_event_types',eventTypes);
+    renderTypesList();
+  },'','🏷️','Supprimer','background:var(--red);color:#fff;');
 }
 function chipClass(type){
   if(type==='Réunion')return'event-chip-reunion';
@@ -3668,7 +3694,7 @@ function renderCotisations(){
   document.getElementById('cotis-stats').innerHTML=`
     <div class="stat-card"><div class="stat-label">Payées</div><div class="stat-value amount-in">${payees}<span>/ ${total}</span></div></div>
     <div class="stat-card"><div class="stat-label">En attente</div><div class="stat-value amount-out">${total-payees}</div></div>
-    <div class="stat-card"><div class="stat-label">Encaissé</div><div class="stat-value">${montantTotal.toFixed(0)}<span>CHF</span></div></div>
+    <div class="stat-card"><div class="stat-label">Encaissé</div><div class="stat-value">${montantTotal.toFixed(0)}<span>${(_gSettings&&_gSettings.devise)||'CHF'}</span></div></div>
   `;
   document.getElementById('cotis-tbody').innerHTML=list.map(c=>{const m=membres.find(x=>x.id===c.membreId);if(!m)return'';return`<tr><td class="td-name">${m.prenom} ${m.nom}</td><td>${badgeType(m.type)}</td><td style="font-weight:500">${c.montant>0?c.montant.toFixed(2):'—'}</td><td><span class="badge ${c.statut==='paye'?'badge-paye':'badge-impaye'}">${c.statut==='paye'?'✓ Payé':'En attente'}</span></td><td style="color:var(--text3)">${c.datePaiement?fmtDate(c.datePaiement):'—'}</td><td><button class="btn btn-sm btn-secondary" onclick="editCotisation(${c.membreId},${annee})">Modifier</button></td></tr>`;}).join('');
   document.getElementById('cotis-cards').innerHTML=list.map(c=>{
@@ -3685,7 +3711,7 @@ function renderCotisations(){
           <div class="cotis-card-v2-type">${badgeType(m.type)}</div>
         </div>
         <div class="cotis-card-v2-right">
-          <div class="cotis-card-v2-amount" style="color:${color};">${c.montant>0?c.montant.toFixed(2)+' CHF':'—'}</div>
+          <div class="cotis-card-v2-amount" style="color:${color};">${c.montant>0?c.montant.toFixed(2)+' '+((_gSettings&&_gSettings.devise)||'CHF')+'':'—'}</div>
           <div class="cotis-card-v2-status ${p?'cotis-status-paye':'cotis-status-impaye'}">${p?'✓ Payé':'En attente'}</div>
           ${c.datePaiement?`<div style="font-size:10px;color:var(--text3);">${fmtDate(c.datePaiement)}</div>`:''}
         </div>
@@ -3713,7 +3739,7 @@ Cher(e)s membres,
 Nous vous rappelons que votre cotisation GE-Fais pour l'année ${annee} n'a pas encore été reçue.
 
 Membres concernés :
-${nonPayes.map(m=>`- ${m.prenom} ${m.nom}${m.montant?` (${m.montant.toFixed(2)} CHF)`:''}`).join('\n')}
+${nonPayes.map(m=>`- ${m.prenom} ${m.nom}${m.montant?` (${m.montant.toFixed(2)} ${(_gSettings&&_gSettings.devise)||'CHF'})`:''}`).join('\n')}
 
 Merci de régulariser votre situation dans les meilleurs délais en contactant la trésorière.
 
@@ -3722,7 +3748,7 @@ Le bureau de GE-Fais`;
   document.getElementById('rappel-email-preview').textContent=email;
   document.getElementById('modal-rappel').classList.add('open');
 }
-function copierEmail(){navigator.clipboard.writeText(document.getElementById('rappel-email-preview').textContent).then(()=>alert('Email copié dans le presse-papier !')).catch(()=>alert('Copiez manuellement le texte ci-dessus.'));}
+function copierEmail(){navigator.clipboard.writeText(document.getElementById('rappel-email-preview').textContent).then(()=>showToast('Email copié dans le presse-papier !','⚠️','warn')).catch(()=>showToast('Copiez manuellement le texte ci-dessus.','⚠️','warn'));}
 
 // ── COMPTA ───────────────────────────────────────────────────────
 // ── COMPTABILITÉ ─────────────────────────────────────────────────
@@ -3737,6 +3763,7 @@ function openComptaModal(type){
   document.getElementById('c-date').value=localToday();
   document.getElementById('c-montant').value='';
   document.getElementById('c-desc').value='';
+  _settingsUpdateCatSelect();
   document.getElementById('c-cat').value='Autre';
   _renderAttachmentsPreview();
   document.getElementById('modal-compta').classList.add('open');
@@ -3826,7 +3853,7 @@ function telechargerPhoto(){
 function saveCompta(){
   const montant=parseFloat(document.getElementById('c-montant').value);
   const desc=document.getElementById('c-desc').value.trim();
-  if(!desc||isNaN(montant)||montant<=0){alert('Description et montant requis.');return;}
+  if(!desc||isNaN(montant)||montant<=0){showToast('Description et montant requis.','⚠️','warn');return;}
   const data={
     date:document.getElementById('c-date').value,
     type:document.getElementById('c-type').value,
@@ -3849,16 +3876,17 @@ function saveCompta(){
 function deleteCompta(id){
   const c=compta.find(x=>x.id===id);
   if(!c)return;
-  confirmDelete(`Supprimer ${c.description} ?`,`Cette écriture de ${c.montant.toFixed(2)} CHF sera supprimée définitivement.`,()=>{compta=compta.filter(x=>x.id!==id);save('gef_compta',compta);renderCompta();});
+  confirmDelete(`Supprimer ${c.description} ?`,`Cette écriture de ${c.montant.toFixed(2)} ${(_gSettings&&_gSettings.devise)||'CHF'} sera supprimée définitivement.`,()=>{compta=compta.filter(x=>x.id!==id);save('gef_compta',compta);renderCompta();});
 }
 
 function renderCompta(){
   // Peupler le select années dynamiquement
   const anneesSel=document.getElementById('compta-filter-annee');
-  if(anneesSel&&anneesSel.options.length<=1){
+  if(anneesSel){
     const annees=[...new Set(compta.map(c=>c.date.slice(0,4)))].sort((a,b)=>b-a);
-    const cur=new Date().getFullYear().toString();
-    anneesSel.innerHTML='<option value="">Toutes</option>'+annees.map(a=>`<option value="${a}" ${a===cur?'selected':''}>${a}</option>`).join('');
+    const prevVal=anneesSel.value||new Date().getFullYear().toString();
+    anneesSel.innerHTML='<option value="">Toutes</option>'+annees.map(a=>`<option value="${a}">${a}</option>`).join('');
+    if([...anneesSel.options].some(o=>o.value===prevVal)) anneesSel.value=prevVal;
   }
   const ft=document.getElementById('compta-filter-type').value;
   const fa=document.getElementById('compta-filter-annee')?.value||'';
@@ -3866,8 +3894,8 @@ function renderCompta(){
   const totalIn=compta.filter(c=>c.type==='recette').reduce((s,c)=>s+c.montant,0);
   const totalOut=compta.filter(c=>c.type==='depense').reduce((s,c)=>s+c.montant,0);
   document.getElementById('compta-summary').innerHTML=`
-    <div class="stat-card"><div class="stat-label">Recettes</div><div class="stat-value amount-in">${totalIn.toFixed(2)}<span>CHF</span></div></div>
-    <div class="stat-card"><div class="stat-label">Dépenses</div><div class="stat-value amount-out">${totalOut.toFixed(2)}<span>CHF</span></div></div>
+    <div class="stat-card"><div class="stat-label">Recettes</div><div class="stat-value amount-in">${totalIn.toFixed(2)}<span>${(_gSettings&&_gSettings.devise)||'CHF'}</span></div></div>
+    <div class="stat-card"><div class="stat-label">Dépenses</div><div class="stat-value amount-out">${totalOut.toFixed(2)}<span>${(_gSettings&&_gSettings.devise)||'CHF'}</span></div></div>
     <div class="stat-card"><div class="stat-label">Solde</div><div class="stat-value amount-bal">${(totalIn-totalOut).toFixed(2)}<span>CHF</span></div></div>
   `;
   // Graphique évolution par mois
@@ -3887,7 +3915,7 @@ function renderCompta(){
       return`<div style="margin-bottom:12px;">
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
           <span style="font-size:12px;font-weight:700;color:var(--text2);">${mois[parseInt(mo)]} ${y}</span>
-          <span style="font-size:13px;font-weight:800;color:${soldeColor};">${solde>=0?'+':''}${solde.toFixed(0)} CHF</span>
+          <span style="font-size:13px;font-weight:800;color:${soldeColor};">${solde>=0?'+':''}${(_gSettings&&_gSettings.devise)||'CHF'}</span>
         </div>
         <div style="display:flex;flex-direction:column;gap:4px;">
           <div style="display:flex;align-items:center;gap:8px;">
@@ -3895,14 +3923,14 @@ function renderCompta(){
             <div style="flex:1;height:12px;background:var(--bg3);border-radius:6px;overflow:hidden;">
               <div style="height:100%;width:${pIn}%;background:linear-gradient(90deg,rgba(34,197,94,0.6),var(--green));border-radius:6px;transition:width 0.5s ease;"></div>
             </div>
-            <span style="font-size:11px;font-weight:600;color:var(--green);min-width:52px;text-align:right;">${byMonth[m].in.toFixed(0)} CHF</span>
+            <span style="font-size:11px;font-weight:600;color:var(--green);min-width:52px;text-align:right;">${byMonth[m].in.toFixed(0)} ${(_gSettings&&_gSettings.devise)||'CHF'}</span>
           </div>
           <div style="display:flex;align-items:center;gap:8px;">
             <span style="font-size:10px;color:var(--red);width:20px;text-align:right;flex-shrink:0;">−</span>
             <div style="flex:1;height:12px;background:var(--bg3);border-radius:6px;overflow:hidden;">
               <div style="height:100%;width:${pOut}%;background:linear-gradient(90deg,rgba(255,59,48,0.6),var(--red));border-radius:6px;transition:width 0.5s ease;"></div>
             </div>
-            <span style="font-size:11px;font-weight:600;color:var(--red);min-width:52px;text-align:right;">${byMonth[m].out.toFixed(0)} CHF</span>
+            <span style="font-size:11px;font-weight:600;color:var(--red);min-width:52px;text-align:right;">${byMonth[m].out.toFixed(0)} ${(_gSettings&&_gSettings.devise)||'CHF'}</span>
           </div>
         </div>
         <div style="height:1px;background:var(--border);margin-top:10px;"></div>
@@ -3944,7 +3972,7 @@ function renderCompta(){
         </div>
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;">
-        <div class="compta-card-v2-amount" style="color:${color};">${isIn?'+':'−'}${c.montant.toFixed(2)}<span style="font-size:12px;font-weight:500;"> CHF</span></div>
+        <div class="compta-card-v2-amount" style="color:${color};">${isIn?'+':'−'}${c.montant.toFixed(2)}<span style="font-size:12px;font-weight:500;"> ${(_gSettings&&_gSettings.devise)||'CHF'}</span></div>
         <div class="compta-card-v2-actions">
           <button class="btn-icon" onclick="editCompta(${c.id})">✏️</button>
           <button class="btn-icon" onclick="deleteCompta(${c.id})">🗑️</button>
@@ -3956,6 +3984,20 @@ function renderCompta(){
 
 // ── STATISTIQUES ─────────────────────────────────────────────────
 function renderStatistiques(){
+  if(!membres.length||!events.length){
+    const container=document.getElementById('stats-kpi-row');
+    if(container){
+      const existing=document.getElementById('stats-empty-state');
+      if(!existing){
+        const d=document.createElement('div');d.id='stats-empty-state';d.className='empty-state';
+        d.style.cssText='margin-top:32px;grid-column:1/-1;';
+        d.innerHTML='<div class="empty-state-icon">📊</div><div style="font-size:16px;font-weight:700;color:var(--text);">Aucune donnée</div><div style="font-size:13px;color:var(--text3);max-width:260px;line-height:1.5;">Ajoutez des membres et des événements pour voir les statistiques.</div>';
+        container.after(d);
+      }
+    }
+    return;
+  }
+  document.getElementById('stats-empty-state')?.remove();
   const totalPres=membres.length*events.length>0?Math.round(membres.reduce((s,m)=>s+events.filter(e=>presences[m.id+'_'+e.id]).length,0)/(membres.length*events.length)*100):0;
   const anneeStats=new Date().getFullYear();
   const cotisPayees=cotisations.filter(c=>c.annee===anneeStats&&c.statut==='paye').length;
@@ -3970,8 +4012,8 @@ function renderStatistiques(){
   const kpiEl=document.getElementById('stats-kpi-row');
   if(kpiEl)kpiEl.innerHTML=`
     <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:#fff1f0;">📊</div><div><div class="stat-kpi-label">Taux présence</div><div class="stat-kpi-val" style="color:${totalPres>=70?'var(--green)':totalPres>=40?'var(--gold)':'var(--red)'};">${totalPres}%</div></div></div>
-    <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:rgba(96,165,250,0.15);">💳</div><div><div class="stat-kpi-label">Cotisations</div><div class="stat-kpi-val">${cotisPayees}<span style="font-size:13px;color:var(--text3);">/${cotisTotal}</span></div></div></div>
-    <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:${solde>=0?'#f0fdf4':'#fff1f0'};">${solde>=0?'💚':'🔴'}</div><div><div class="stat-kpi-label">Solde</div><div class="stat-kpi-val" style="color:${solde>=0?'var(--green)':'var(--red)'};">${solde>=0?'+':''}${solde.toFixed(0)} <span style="font-size:10px;font-weight:400;color:var(--text3);">CHF</span></div></div></div>
+    <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:rgba(96,165,250,0.15);"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div><div><div class="stat-kpi-label">Cotisations</div><div class="stat-kpi-val">${cotisPayees}<span style="font-size:13px;color:var(--text3);">/${cotisTotal}</span></div></div></div>
+    <div class="stat-kpi-card"><div class="stat-kpi-icon" style="background:${solde>=0?'#f0fdf4':'#fff1f0'};">${solde>=0?'💚':'🔴'}</div><div><div class="stat-kpi-label">Solde</div><div class="stat-kpi-val" style="color:${solde>=0?'var(--green)':'var(--red)'};">${solde>=0?'+':''}${solde.toFixed(0)} <span style="font-size:10px;font-weight:400;color:var(--text3);">${(_gSettings&&_gSettings.devise)||'CHF'}</span></div></div></div>
   `;
 
   // Présence par membre
@@ -4110,10 +4152,10 @@ function emailRetirerFichier(i){
 function envoyerEmail(){
   const sujet = document.getElementById('email-sujet').value.trim();
   const corps = document.getElementById('email-corps').value.trim();
-  if(!emailSelectionnes.size){ alert('Sélectionnez au moins un destinataire.'); return; }
+  if(!emailSelectionnes.size){ showToast('Sélectionnez au moins un destinataire.','⚠️','warn'); return; }
   const destinataires = [...emailSelectionnes].map(id=>membres.find(m=>m.id===id)).filter(Boolean);
   const adresses = destinataires.filter(m=>m.email).map(m=>m.email);
-  if(!adresses.length){ alert('Aucun destinataire sélectionné n\'a d\'adresse email enregistrée.'); return; }
+  if(!adresses.length){ showToast('Aucun destinataire sélectionné n\'a d\'adresse email enregistrée.','⚠️','warn'); return; }
 
   // Avertissement pièces jointes
   let corpsEnvoi = corps;
@@ -4141,7 +4183,7 @@ function envoyerEmail(){
 
 function emailCopierDestinataires(){
   const adresses = [...emailSelectionnes].map(id=>membres.find(m=>m.id===id)).filter(m=>m&&m.email).map(m=>m.email);
-  if(!adresses.length){ alert('Aucun destinataire avec email.'); return; }
+  if(!adresses.length){ showToast('Aucun destinataire avec email.','⚠️','warn'); return; }
   navigator.clipboard.writeText(adresses.join(', ')).then(()=>{
     const fb = document.getElementById('email-feedback');
     fb.style.display='inline';
@@ -4185,10 +4227,11 @@ function emailSupprimerHistorique(id){
 }
 
 function emailEffacerHistorique(){
-  if(!confirm('Effacer tout l\'historique des emails ?')) return;
-  emailHistorique = [];
-  save('gef_email_historique', emailHistorique);
-  renderEmailHistorique();
+  _gconfirm('Effacer tout l'historique ?','Tous les emails envoyés seront supprimés.',()=>{
+    emailHistorique = [];
+    save('gef_email_historique', emailHistorique);
+    renderEmailHistorique();
+  },'','🗑️','Effacer','background:var(--red);color:#fff;');
 }
 
 function emailReutiliser(id){
@@ -4231,65 +4274,54 @@ function renderRapport(){
   const montantEncaisse=cotisations.filter(c=>c.annee===annee&&c.statut==='paye').reduce((s,c)=>s+c.montant,0);
   const tauxCotis=totalCotis>0?Math.round(cotisPayees/totalCotis*100):0;
 
+  const dev=((_gSettings&&_gSettings.devise)||'CHF');
   document.getElementById('rapport-content').innerHTML=`
-    <!-- Membres -->
-    <div class="rapport-section">
-      <div class="rapport-section-header">
-        <div class="rapport-section-icon" style="background:rgba(255,59,48,0.15);">👥</div>
-        <div class="rapport-section-title">Membres</div>
-      </div>
-      <div class="rapport-kpi-row" style="grid-template-columns:repeat(4,1fr);">
-        <div class="rapport-kpi"><div class="rapport-kpi-val">${membres.length}</div><div class="rapport-kpi-label">Total</div></div>
-        <div class="rapport-kpi"><div class="rapport-kpi-val" style="color:var(--red);">${actifs}</div><div class="rapport-kpi-label">Actifs</div></div>
-        <div class="rapport-kpi"><div class="rapport-kpi-val" style="color:var(--gold);">${suisses}</div><div class="rapport-kpi-label">Act. Suisses</div></div>
-        <div class="rapport-kpi"><div class="rapport-kpi-val" style="color:var(--text3);">${passifs}</div><div class="rapport-kpi-label">Passifs</div></div>
-      </div>
-      ${autres>0?`<div class="rapport-list-item"><span>Sans catégorie</span><strong style="color:var(--text3);">${autres}</strong></div>`:''}
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;">
+      <div style="background:linear-gradient(135deg,var(--red),#c0271e);border-radius:16px;padding:16px;color:#fff;text-align:center;"><div style="font-size:32px;font-weight:900;letter-spacing:-1px;">${membres.length}</div><div style="font-size:10px;font-weight:700;opacity:0.8;text-transform:uppercase;letter-spacing:1px;">Membres</div></div>
+      <div style="background:rgba(96,165,250,0.12);border:1.5px solid rgba(96,165,250,0.3);border-radius:16px;padding:16px;text-align:center;"><div style="font-size:32px;font-weight:900;letter-spacing:-1px;color:#60a5fa;">${events.length}</div><div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;">Événements</div></div>
+      <div style="background:${avgPres>=70?'rgba(34,197,94,0.12)':'rgba(255,159,10,0.12)'};border:1.5px solid ${avgPres>=70?'rgba(34,197,94,0.3)':'rgba(255,159,10,0.3)'};border-radius:16px;padding:16px;text-align:center;"><div style="font-size:32px;font-weight:900;letter-spacing:-1px;color:${avgPres>=70?'var(--green)':'var(--gold)'};">${avgPres}%</div><div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;">Présence moy.</div></div>
+      <div style="background:${solde>=0?'rgba(34,197,94,0.12)':'rgba(255,59,48,0.12)'};border:1.5px solid ${solde>=0?'rgba(34,197,94,0.3)':'rgba(255,59,48,0.3)'};border-radius:16px;padding:16px;text-align:center;"><div style="font-size:28px;font-weight:900;letter-spacing:-1px;color:${solde>=0?'var(--green)':'var(--red)'};">${solde>=0?'+':''}${solde.toFixed(0)}</div><div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;">Solde ${dev}</div></div>
     </div>
 
-    <!-- Événements -->
     <div class="rapport-section">
-      <div class="rapport-section-header">
-        <div class="rapport-section-icon" style="background:rgba(96,165,250,0.15);">📅</div>
-        <div class="rapport-section-title">Événements & Présences</div>
+      <div class="rapport-section-header"><div class="rapport-section-icon" style="background:rgba(255,59,48,0.15);">👥</div><div class="rapport-section-title">Membres</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:center;">
+        <div>
+          ${[['Actif',actifs,'var(--red)'],['Actif Suisse',suisses,'var(--gold)'],['Passif',passifs,'var(--text3)'],...(autres>0?[['Sans catégorie',autres,'var(--text3)']]:[])].map(([label,val,color])=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="font-size:12px;color:var(--text2);width:96px;">${label}</div><div style="flex:1;height:18px;background:var(--bg3);border-radius:5px;overflow:hidden;"><div style="height:100%;width:${membres.length>0?Math.round(val/membres.length*100):0}%;background:${color};border-radius:5px;"></div></div><div style="font-size:13px;font-weight:800;color:${color};width:18px;text-align:right;">${val}</div></div>`).join('')}
+        </div>
+        <svg viewBox="0 0 120 120" width="110" height="110" style="margin:auto;display:block;">
+          ${(()=>{const types=[[actifs,'var(--red)'],[suisses,'#c49a00'],[passifs,'#6b7280'],[autres,'#d1d5db']].filter(([v])=>v>0);const tot=types.reduce((s,[v])=>s+v,0);if(!tot)return '<circle cx="60" cy="60" r="44" fill="var(--bg3)"/>';let ang=-90;return types.map(([v,col])=>{const pct=v/tot;const sw=pct*360;const r1=ang*Math.PI/180;const r2=(ang+sw)*Math.PI/180;const x1=60+44*Math.cos(r1);const y1=60+44*Math.sin(r1);const x2=60+44*Math.cos(r2);const y2=60+44*Math.sin(r2);const lg=sw>180?1:0;const d=`M60,60 L${x1.toFixed(1)},${y1.toFixed(1)} A44,44 0 ${lg},1 ${x2.toFixed(1)},${y2.toFixed(1)} Z`;ang+=sw;return `<path d="${d}" fill="${col}" stroke="var(--bg2)" stroke-width="2"/>`;}).join('')+'<circle cx="60" cy="60" r="26" fill="var(--bg2)"/><text x="60" y="57" text-anchor="middle" font-size="18" font-weight="900" fill="var(--text)">'+tot+'</text><text x="60" y="70" text-anchor="middle" font-size="9" fill="var(--text3)">membres</text>';})()}
+        </svg>
       </div>
-      <div class="rapport-kpi-row">
+    </div>
+
+    <div class="rapport-section">
+      <div class="rapport-section-header"><div class="rapport-section-icon" style="background:rgba(96,165,250,0.15);">📅</div><div class="rapport-section-title">Événements & Présences</div></div>
+      <div class="rapport-kpi-row" style="margin-bottom:14px;">
         <div class="rapport-kpi"><div class="rapport-kpi-val">${events.length}</div><div class="rapport-kpi-label">Total</div></div>
-        <div class="rapport-kpi"><div class="rapport-kpi-val" style="color:${avgPres>=70?'var(--green)':avgPres>=40?'var(--gold)':'var(--red)'};">${avgPres}%</div><div class="rapport-kpi-label">Présence moy.</div></div>
         <div class="rapport-kpi"><div class="rapport-kpi-val">${nbMaraudes}</div><div class="rapport-kpi-label">Maraudes</div></div>
+        <div class="rapport-kpi"><div class="rapport-kpi-val">${nbReunions}</div><div class="rapport-kpi-label">Réunions</div></div>
+        <div class="rapport-kpi"><div class="rapport-kpi-val" style="color:${avgPres>=70?'var(--green)':avgPres>=40?'var(--gold)':'var(--red)'};">${avgPres}%</div><div class="rapport-kpi-label">Présence moy.</div></div>
       </div>
-      ${nbReunions>0?`<div class="rapport-list-item"><span>Réunions</span><strong>${nbReunions}</strong></div>`:''}
-      ${nbAutresEvts>0?`<div class="rapport-list-item"><span>Autres types</span><strong>${nbAutresEvts}</strong></div>`:''}
-      ${topPresence.map((m,i)=>`<div class="rapport-list-item"><span>${['🥇','🥈','🥉'][i]} ${m.name}</span><strong style="color:${m.color};">${m.pct}%</strong></div>`).join('')}
+      ${topPresence.map((m,i)=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;"><span style="font-size:14px;">${['🥇','🥈','🥉'][i]}</span><span style="flex:1;font-size:13px;color:var(--text);">${m.name}</span><div style="width:80px;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${m.pct}%;background:${m.color};border-radius:4px;"></div></div><span style="font-size:12px;font-weight:700;color:${m.color};width:32px;text-align:right;">${m.pct}%</span></div>`).join('')}
     </div>
 
-    <!-- Cotisations -->
     <div class="rapport-section">
-      <div class="rapport-section-header">
-        <div class="rapport-section-icon" style="background:rgba(196,154,0,0.15);">💳</div>
-        <div class="rapport-section-title">Cotisations ${annee}</div>
-      </div>
-      <div class="rapport-kpi-row">
-        <div class="rapport-kpi"><div class="rapport-kpi-val" style="color:var(--green);">${cotisPayees}</div><div class="rapport-kpi-label">Payées</div></div>
-        <div class="rapport-kpi"><div class="rapport-kpi-val" style="color:var(--red);">${cotisEnAttente}</div><div class="rapport-kpi-label">En attente</div></div>
-        <div class="rapport-kpi"><div class="rapport-kpi-val" style="color:${tauxCotis>=80?'var(--green)':tauxCotis>=50?'var(--gold)':'var(--red)'};">${tauxCotis}%</div><div class="rapport-kpi-label">Taux</div></div>
-      </div>
-      <div class="rapport-list-item"><span>Montant encaissé</span><strong style="color:var(--green);">+${montantEncaisse.toFixed(2)} CHF</strong></div>
+      <div class="rapport-section-header"><div class="rapport-section-icon" style="background:rgba(196,154,0,0.15);">💳</div><div class="rapport-section-title">Cotisations ${annee}</div></div>
+      <div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:6px;"><span>${cotisPayees} payées / ${totalCotis}</span><span style="font-weight:700;color:${tauxCotis>=80?'var(--green)':tauxCotis>=50?'var(--gold)':'var(--red)'};">${tauxCotis}%</span></div><div style="height:12px;background:var(--bg3);border-radius:6px;overflow:hidden;"><div style="height:100%;width:${tauxCotis}%;background:${tauxCotis>=80?'var(--green)':tauxCotis>=50?'var(--gold)':'var(--red)'};border-radius:6px;"></div></div></div>
+      <div class="rapport-list-item"><span>Montant encaissé</span><strong style="color:var(--green);">+${montantEncaisse.toFixed(2)} ${dev}</strong></div>
+      ${cotisEnAttente>0?`<div class="rapport-list-item"><span style="color:var(--red);">En attente</span><strong style="color:var(--red);">${cotisEnAttente} membre${cotisEnAttente>1?'s':''}</strong></div>`:''}
     </div>
 
-    <!-- Comptabilité -->
     <div class="rapport-section">
-      <div class="rapport-section-header">
-        <div class="rapport-section-icon" style="background:${solde>=0?'rgba(34,197,94,0.15)':'rgba(255,59,48,0.12)'};">${solde>=0?'📈':'📉'}</div>
-        <div class="rapport-section-title">Comptabilité</div>
+      <div class="rapport-section-header"><div class="rapport-section-icon" style="background:${solde>=0?'rgba(34,197,94,0.15)':'rgba(255,59,48,0.12)'};">${solde>=0?'📈':'📉'}</div><div class="rapport-section-title">Comptabilité</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+        <div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);border-radius:12px;padding:14px;text-align:center;"><div style="font-size:22px;font-weight:800;color:var(--green);">+${totalIn.toFixed(0)}</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-top:2px;">Recettes ${dev}</div></div>
+        <div style="background:rgba(255,59,48,0.08);border:1px solid rgba(255,59,48,0.25);border-radius:12px;padding:14px;text-align:center;"><div style="font-size:22px;font-weight:800;color:var(--red);">−${totalOut.toFixed(0)}</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-top:2px;">Dépenses ${dev}</div></div>
       </div>
-      <div class="rapport-kpi-row">
-        <div class="rapport-kpi"><div class="rapport-kpi-val" style="color:var(--green);">+${totalIn.toFixed(0)}</div><div class="rapport-kpi-label">Recettes CHF</div></div>
-        <div class="rapport-kpi"><div class="rapport-kpi-val" style="color:var(--red);">−${totalOut.toFixed(0)}</div><div class="rapport-kpi-label">Dépenses CHF</div></div>
-        <div class="rapport-kpi"><div class="rapport-kpi-val" style="color:${solde>=0?'var(--green)':'var(--red)'};">${solde>=0?'+':''}${solde.toFixed(0)}</div><div class="rapport-kpi-label">Solde CHF</div></div>
-      </div>
+      ${(()=>{const bm={};compta.forEach(co=>{const m=co.date.slice(0,7);if(!bm[m])bm[m]={in:0,out:0};bm[m][co.type==='recette'?'in':'out']+=co.montant;});const months=Object.keys(bm).sort().slice(-6);if(!months.length)return '';const mx=Math.max(...months.map(m=>bm[m].in+bm[m].out),1);return '<div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">6 derniers mois</div><div style="display:flex;align-items:flex-end;gap:3px;height:52px;">'+months.map(m=>{const iH=Math.max(4,Math.round(bm[m].in/mx*48));const oH=Math.max(4,Math.round(bm[m].out/mx*48));return`<div style="flex:1;display:flex;flex-direction:column;gap:2px;align-items:center;"><div style="display:flex;gap:1px;align-items:flex-end;height:48px;"><div style="width:6px;height:${iH}px;background:var(--green);border-radius:3px 3px 0 0;"></div><div style="width:6px;height:${oH}px;background:var(--red);border-radius:3px 3px 0 0;"></div></div><div style="font-size:8px;color:var(--text3);">${m.slice(5)}</div></div>`;}).join('')+'</div>';})()}
     </div>
-  `;
+  `;   `;
 }
 
 // ── EXPORTS CSV ──────────────────────────────────────────────────
@@ -4302,7 +4334,7 @@ function exportPresencesCSV(){
   downloadCSV(csv,'presences_gefais.csv');
 }
 function exportCotisCSV(){
-  let csv='Membre,Type,Montant CHF,Statut,Date paiement,Année\n';
+  let csv='Membre,Type,Montant '+((_gSettings&&_gSettings.devise)||'CHF')+',Statut,Date paiement,Année\n';
   csv+=cotisations.map(c=>{const m=membres.find(x=>x.id===c.membreId);if(!m)return'';return[m.prenom+' '+m.nom,m.type||'',c.montant,c.statut==='paye'?'Payé':'En attente',c.datePaiement||'',c.annee].map(v=>`"${v}"`).join(',');}).filter(Boolean).join('\n');
   downloadCSV(csv,'cotisations_gefais.csv');
 }
@@ -4317,18 +4349,11 @@ function exportRapportTxt(){
 let _currentFolder = null; // null = racine
 
 function creerDossier(){
-  const nom=prompt('Nom du dossier :');
-  if(!nom||!nom.trim())return;
-  const folder={
-    id:Date.now()+Math.random(),
-    type:'folder',
-    nom:nom.trim(),
-    date:localToday(),
-    parentId:_currentFolder,
-    ajoutePar:'Moi'
-  };
-  documents_list.push(folder);
-  save('gef_documents',documents_list);
+  _gprompt('Nom du dossier :','',nom=>{
+    if(!nom||!nom.trim())return;
+    const folder={id:Date.now()+Math.random(),type:'folder',nom:nom.trim(),date:localToday(),parentId:_currentFolder,ajoutePar:'Moi'};
+    documents_list.push(folder);
+    save('gef_documents',documents_list);
   renderDocuments();
 }
 
@@ -4340,11 +4365,12 @@ function ouvrirDossier(id){
 function renommerDossier(id){
   const f=documents_list.find(d=>d.id===id);
   if(!f)return;
-  const nom=prompt('Nouveau nom :',f.nom);
-  if(!nom||!nom.trim())return;
-  f.nom=nom.trim();
-  save('gef_documents',documents_list);
-  renderDocuments();
+  _gprompt('Nouveau nom :',f.nom,nom=>{
+    if(!nom||!nom.trim())return;
+    f.nom=nom.trim();
+    save('gef_documents',documents_list);
+    renderDocuments();
+  });
 }
 
 function ajouterDocuments(input){
@@ -4358,7 +4384,7 @@ function ajouterDocuments(input){
   let added=0, skipped=[];
   const process=(i)=>{
     if(i>=files.length){
-      if(skipped.length>0) showToast('Fichier(s) trop grand(s) ignoré(s) : '+skipped.join(', ')+'\nMax 400KB par fichier.','⚠️','warn');
+      if(skipped.length>0) showToast(`${skipped.length} fichier${skipped.length>1?'s':''} trop grand${skipped.length>1?'s':''} ignoré${skipped.length>1?'s':''} : ${skipped.join(', ')}\nMax 400`KB par fichier.','⚠️','warn');
       if(added>0){save('gef_documents',documents_list);renderDocuments();}
       input.value='';
       return;
@@ -4456,15 +4482,27 @@ function supprimerDoc(id){
   if(!doc)return;
   if(doc.type==='folder'){
     const count=documents_list.filter(d=>d.parentId===id).length;
-    if(count>0&&!confirm(`Ce dossier contient ${count} élément(s). Supprimer quand même ?`))return;
+    if(count>0){
+      _gconfirm(`Supprimer ce dossier ?`,`Il contient ${count} élément${count>1?'s':''} qui seront supprimés.`,()=>{
+        const toDelete2=[id];
+        const cc2=(pid)=>{documents_list.filter(d=>d.parentId===pid).forEach(d=>{toDelete2.push(d.id);if(d.type==='folder')cc2(d.id);});};
+        cc2(id);
+        documents_list=documents_list.filter(d=>!toDelete2.includes(d.id));
+        save('gef_documents',documents_list);renderDocuments();
+      },'','📁','Supprimer tout','background:var(--red);color:#fff;');
+      return;
+    }
     // Supprimer récursivement
     const toDelete=[id];
     const collectChildren=(pid)=>{documents_list.filter(d=>d.parentId===pid).forEach(d=>{toDelete.push(d.id);if(d.type==='folder')collectChildren(d.id);});};
     collectChildren(id);
     documents_list=documents_list.filter(d=>!toDelete.includes(d.id));
   } else {
-    if(!confirm('Supprimer ce document ?'))return;
-    documents_list=documents_list.filter(d=>d.id!==id);
+    _gconfirm('Supprimer ce document ?','',()=>{
+      documents_list=documents_list.filter(d=>d.id!==id);
+      save('gef_documents',documents_list);renderDocuments();
+    },'','📄','Supprimer','background:var(--red);color:#fff;');
+    return;
   }
   save('gef_documents',documents_list);
   renderDocuments();
@@ -4560,7 +4598,7 @@ function savePresLink(){
   const titre = document.getElementById('pres-link-titre').value.trim();
   const url = document.getElementById('pres-link-url').value.trim();
   const emoji = document.getElementById('pres-link-emoji').value.trim()||'🔗';
-  if(!titre||!url){alert('Titre et URL requis.');return;}
+  if(!titre||!url){showToast('Titre et URL requis.','⚠️','warn');return;}
   presentations_list = lsGet('gef_presentations',[]);
   presentations_list.push({titre,url,emoji,type:'link',date:localToday()});
   lsSet('gef_presentations', presentations_list);
@@ -4627,13 +4665,14 @@ function togglePresFullscreen(){
 }
 
 function deletePresentation(idx){
-  if(!confirm('Supprimer cette présentation ?')) return;
-  presentations_list = lsGet('gef_presentations',[]);
-  presentations_list.splice(idx,1);
-  lsSet('gef_presentations', presentations_list);
-  if(db) db.collection('gef_data').doc('gef_presentations').set({value:presentations_list}).catch(()=>{});
-  renderPresentations();
-  showToast('Supprimé','🗑️');
+  _gconfirm('Supprimer cette présentation ?','',()=>{
+    presentations_list = lsGet('gef_presentations',[]);
+    presentations_list.splice(idx,1);
+    lsSet('gef_presentations', presentations_list);
+    if(db) db.collection('gef_data').doc('gef_presentations').set({value:presentations_list}).catch(()=>{});
+    renderPresentations();
+    showToast('Supprimé','🗑️');
+  },'','📊','Supprimer','background:var(--red);color:#fff;');
 }
 
 function renderDocuments(){
@@ -4723,7 +4762,10 @@ function renderDocuments(){
   }
 
   if(!folders_in.length&&!files_in.length){
-    html='<div style="text-align:center;padding:40px 0;color:var(--text3);"><div style="font-size:36px;margin-bottom:10px;">📂</div><div style="font-weight:600;color:var(--text2);">Dossier vide</div><div style="font-size:12px;margin-top:4px;">Ajoutez un document ou un dossier</div></div>';
+    const isRoot=!_currentFolder;
+    const emptyTitle=q?'Aucun résultat':isRoot?'Aucun document':'Dossier vide';
+    const emptySub=q?'Aucun document ne correspond à votre recherche.':isRoot?'Ajoutez vos premiers documents ou créez un dossier.':'Ce dossier est vide pour l\'instant.';
+    html=`<div class="empty-state"><div class="empty-state-icon">${isRoot?'📂':'📁'}</div><div style="font-size:16px;font-weight:700;color:var(--text);">${emptyTitle}</div><div style="font-size:13px;color:var(--text3);max-width:240px;line-height:1.5;">${emptySub}</div>${isRoot&&!q?'<button class="btn btn-primary" style="margin-top:12px;" onclick="document.getElementById(\'doc-upload\').click()">＋ Ajouter un document</button>':''}</div>`;
   }
   grid.innerHTML=html;
 
@@ -4745,20 +4787,21 @@ function renderSection(secId){
 
 // ── NOTES SECTIONS ───────────────────────────────────────────────
 function ajouterNoteSection(secId){
-  const texte=prompt('Note / ordre du jour :');
-  if(!texte||!texte.trim())return;
-  ag_notes.push({id:Date.now(),texte:texte.trim(),date:localToday(),secId});
+  _gprompt('Note / ordre du jour :','',texte=>{
+    if(!texte||!texte.trim())return;
+    ag_notes.push({id:Date.now(),texte:texte.trim(),date:localToday(),secId});
   lsSet('gef_ag_notes',ag_notes);
   save('gef_ag_notes',ag_notes);
   renderSection(secId);
 }
 function supprimerNoteSection(noteId){
-  if(!confirm('Supprimer cette note ?'))return;
-  ag_notes=ag_notes.filter(n=>n.id!==noteId);
-  lsSet('gef_ag_notes',ag_notes);
-  save('gef_ag_notes',ag_notes);
-  const p=document.querySelector('.page.active')?.id?.replace('page-','');
-  if(p)renderSection(p);
+  _gconfirm('Supprimer cette note ?','',()=>{
+    ag_notes=ag_notes.filter(n=>n.id!==noteId);
+    lsSet('gef_ag_notes',ag_notes);
+    save('gef_ag_notes',ag_notes);
+    const p=document.querySelector('.page.active')?.id?.replace('page-','');
+    if(p)renderSection(p);
+  },'','📝','Supprimer','background:var(--red);color:#fff;');
 }
 // Compatibilité avec l'ancien code
 function ajouterNoteAG(){ajouterNoteSection('sec-ag');}
@@ -5055,6 +5098,34 @@ function confirmDelete(title, msg, onConfirm) {
   document.getElementById('modal-confirm-delete').classList.add('open');
 }
 
+function _gconfirm(title, msg, onOk, onCancel, icon, okLabel, okStyle) {
+  document.getElementById('gconfirm-title').textContent = title;
+  document.getElementById('gconfirm-msg').textContent = msg || '';
+  document.getElementById('gconfirm-icon').textContent = icon || '⚠️';
+  const okBtn = document.getElementById('gconfirm-ok');
+  okBtn.textContent = okLabel || 'Confirmer';
+  okBtn.style.cssText = okStyle || '';
+  okBtn.onclick = () => { closeModal('modal-gconfirm'); if(onOk) onOk(); };
+  const cancelBtn = document.getElementById('gconfirm-cancel');
+  cancelBtn.onclick = () => { closeModal('modal-gconfirm'); if(onCancel) onCancel(); };
+  document.getElementById('modal-gconfirm').classList.add('open');
+}
+
+let _gpromptCb = () => {};
+function _gprompt(title, defaultVal, onResult) {
+  document.getElementById('gprompt-title').textContent = title;
+  const inp = document.getElementById('gprompt-input');
+  inp.value = defaultVal || '';
+  _gpromptCb = onResult || (() => {});
+  document.getElementById('modal-gprompt').classList.add('open');
+  setTimeout(() => inp.focus(), 120);
+}
+function _gpromptSubmit() {
+  const val = document.getElementById('gprompt-input').value.trim();
+  closeModal('modal-gprompt');
+  _gpromptCb(val || null);
+}
+
 // ── RECHERCHE GLOBALE ─────────────────────────────────────────────
 function openGlobalSearch() {
   document.getElementById('modal-search').classList.add('open');
@@ -5087,7 +5158,7 @@ function globalSearch(q) {
     .slice(0,3).forEach(c=>results.push({
       icon: c.type==='recette'?'💚':'🔴',
       label: c.description||c.desc||'Entrée comptable',
-      sub: fmtDate(c.date)+' · '+(c.montant||0).toFixed(2)+' CHF',
+      sub: fmtDate(c.date)+' · '+(c.montant||0).toFixed(2)+' '+((_gSettings&&_gSettings.devise)||'CHF')+',
       action: `closeModal('modal-search');navTo('compta','Comptabilité');`
     }));
 
@@ -5461,7 +5532,7 @@ async function renderDemandes(){
             <div style="width:40px;height:40px;border-radius:12px;background:${hasPres?'rgba(48,209,88,0.15)':'rgba(255,255,255,0.05)'};border:1.5px solid ${hasPres?'rgba(48,209,88,0.3)':'var(--border)'};display:flex;align-items:center;justify-content:center;font-size:18px;">${hasPres?'✅':'✍️'}</div>
             <div>
               <div style="font-size:14px;font-weight:700;">Président</div>
-              <div style="font-size:11px;color:var(--text3);">Pasche Louka</div>
+              <div style="font-size:11px;color:var(--text3);" id="sig-nom-president">Pasche Louka</div>
             </div>
           </div>
           ${hasPres
@@ -5474,7 +5545,7 @@ async function renderDemandes(){
             <div style="width:40px;height:40px;border-radius:12px;background:${hasVp?'rgba(48,209,88,0.15)':'rgba(255,255,255,0.05)'};border:1.5px solid ${hasVp?'rgba(48,209,88,0.3)':'var(--border)'};display:flex;align-items:center;justify-content:center;font-size:18px;">${hasVp?'✅':'✍️'}</div>
             <div>
               <div style="font-size:14px;font-weight:700;">Vice-Présidente</div>
-              <div style="font-size:11px;color:var(--text3);">Janezic Sana</div>
+              <div style="font-size:11px;color:var(--text3);" id="sig-nom-vp">Janezic Sana</div>
             </div>
           </div>
           ${hasVp
@@ -5511,18 +5582,19 @@ function setDemandesTab(tab){
 }
 
 async function refuserDemande(id){
-  if(!confirm('Refuser cette demande ?'))return;
-  try{
-    await db.collection('gef_demandes').doc(id).update({statut:'refusee'});
-    showToast('Demande refusée','❌');renderDemandes();
-  }catch(e){showToast('Erreur','⚠️','warn');}
+  _gconfirm('Refuser cette demande ?','Cette décision sera enregistrée.',async()=>{
+    try{
+      await db.collection('gef_demandes').doc(id).update({statut:'refusee'});
+      showToast('Demande refusée','❌');renderDemandes();
+    }catch(e){showToast('Erreur','⚠️','warn');}
+  },'','🚫','Refuser','background:var(--red);color:#fff;');
 }
 
 // Ouvrir modal pour UNE signature (président ou VP)
 function ouvrirSignature(id, role){
   _demandeEnCours=_demandesData.find(d=>d.id===id);
   _sigRoleEnCours=role;
-  const titre=role==='president'?'Signature — Président (Pasche Louka)':'Signature — Vice-Présidente (Janezic Sana)';
+  const _nomPres=(_gSettings&&_gSettings.nomPresident)||'Pasche Louka';const _nomVP=(_gSettings&&_gSettings.nomVP)||'Janezic Sana';const titre=role==='president'?`Signature — Président (${_nomPres})`:`Signature — Vice-Présidente (${_nomVP})`;
   document.getElementById('modal-sig-titre').textContent=titre;
   document.getElementById('modal-sig-bureau').classList.add('open');
   setTimeout(()=>_initSigCanvas('sig-unique',role),100);
@@ -5688,13 +5760,13 @@ function _genererPDFValidation(d,sigPres,sigVp,validated=true){
   // Noms sous signatures
   doc.setFontSize(7);doc.setFont('helvetica','italic');doc.setTextColor(100,100,120);
   doc.text('Signature du membre',col1,y);
-  doc.text('Pasche Louka',col2,y);
-  doc.text('Janezic Sana',col3,y);
+  doc.text((_gSettings&&_gSettings.nomPresident)||'Pasche Louka',col2,y);
+  doc.text((_gSettings&&_gSettings.nomVP)||'Janezic Sana',col3,y);
 
   // ── FOOTER ────────────────────────────────────────────────────────
   doc.setFillColor(230,51,41);doc.rect(0,284,W,13,'F');
   doc.setFontSize(8);doc.setTextColor(255,255,255);doc.setFont('helvetica','normal');
-  doc.text('Association GE-FAIS · Genève · gefais.ch',W/2,292,{align:'center'});
+  doc.text(`${(_gSettings&&_gSettings.nomLegal)||'Association GE-FAIS'} · ${(_gSettings&&_gSettings.ville)||'Genève'} · ${(_gSettings&&_gSettings.site)||'gefais.ch'}`,W/2,292,{align:'center'});
 
   // ── SAUVEGARDER + TÉLÉCHARGER ─────────────────────────────────────
   const fileName=`adhesion_gefais_${(d.nom||'membre').toLowerCase()}_valide.pdf`;
@@ -5730,6 +5802,13 @@ function _loadDemandesBadge(){
   }).catch(()=>{});
 }
 
+function _updateCotisBadge(){
+  const annee=new Date().getFullYear();
+  const n=cotisations.filter(c=>c.annee===annee&&c.statut==='impaye'&&membres.some(m=>m.id===c.membreId)).length;
+  const badge=document.getElementById('cotis-badge');
+  if(badge){if(n>0){badge.textContent=n;badge.style.display='inline';}else{badge.style.display='none';}}
+}
+
 function partagerLienAdhesion(){
   const url='https://ilyasbenslamabenz-pixel.github.io/gefais/adhesion.html';
   const msg=`Rejoins l'association GE-FAIS !\n\nRemplis le formulaire d'adhésion ici :\n${url}`;
@@ -5737,7 +5816,7 @@ function partagerLienAdhesion(){
     navigator.share({title:'Adhésion GE-FAIS',text:msg,url}).catch(()=>{});
   } else {
     navigator.clipboard?.writeText(url).then(()=>showToast('Lien copié !','📋','success')).catch(()=>{
-      prompt('Copie ce lien :',url);
+      _gprompt('Copie ce lien :',url,()=>{});
     });
   }
 }
@@ -5999,47 +6078,77 @@ const _ACCENT_PRESETS = [
 ];
 
 let _gSettings = lsGet('gef_settings', {
-  accentHex: '#ff3b30',
-  accentHex2: '#ff6b6b',
-  accentLight: 'rgba(255,59,48,0.12)',
+  accentHex: '#ff3b30', accentHex2: '#ff6b6b', accentLight: 'rgba(255,59,48,0.12)',
   radius: 14,
-  nomAsso: 'GE-FAIS',
-  sousTitre: 'Espace de gestion',
+  nomAsso: 'GE-FAIS', sousTitre: 'Espace de gestion',
+  nomLegal: 'Association GE-FAIS', ville: 'Genève', site: 'gefais.ch', emailAsso: '',
+  cotisActif: 50, cotisSuisse: 30, devise: 'CHF',
+  categories: ['Cotisation','Don','Subvention','Matériel','Événement','Loyer','Communication','Déplacement','Autre'],
+  nomPresident: 'Pasche Louka', nomVP: 'Janezic Sana',
+  alerteJours: 7,
   mdp: 'gefais2025',
 });
 
 function _settingsApplyAll() {
   const root = document.documentElement;
-  root.style.setProperty('--red',   _gSettings.accentHex);
-  root.style.setProperty('--red2',  _gSettings.accentHex2);
-  root.style.setProperty('--red-light', _gSettings.accentLight);
-  root.style.setProperty('--radius', _gSettings.radius + 'px');
-  root.style.setProperty('--radius-lg', (_gSettings.radius + 6) + 'px');
-  root.style.setProperty('--radius-xl', (_gSettings.radius + 12) + 'px');
-  // Nom association
+  root.style.setProperty('--red',       _gSettings.accentHex   || '#ff3b30');
+  root.style.setProperty('--red2',      _gSettings.accentHex2  || '#ff6b6b');
+  root.style.setProperty('--red-light', _gSettings.accentLight || 'rgba(255,59,48,0.12)');
+  root.style.setProperty('--radius',    (_gSettings.radius || 14) + 'px');
+  root.style.setProperty('--radius-lg', ((_gSettings.radius || 14) + 6) + 'px');
+  root.style.setProperty('--radius-xl', ((_gSettings.radius || 14) + 12) + 'px');
+  // Nom association sidebar
   const logoEl = document.querySelector('.logo h1');
-  if (logoEl) logoEl.textContent = _gSettings.nomAsso;
+  if (logoEl) logoEl.textContent = _gSettings.nomAsso || 'GE-FAIS';
   const logoSpan = document.querySelector('.logo span');
-  if (logoSpan) logoSpan.textContent = _gSettings.sousTitre;
-  // Mettre à jour le mot de passe actif
+  if (logoSpan) logoSpan.textContent = _gSettings.sousTitre || 'Espace de gestion';
+  // Mot de passe actif
   window._MOT_DE_PASSE_ACTIF = _gSettings.mdp || 'gefais2025';
+  // Mettre à jour le select catégories compta
+  _settingsUpdateCatSelect();
+  // Noms bureau (demandes)
+  const elPres = document.getElementById('sig-nom-president');
+  if (elPres) elPres.textContent = _gSettings.nomPresident || 'Pasche Louka';
+  const elVP = document.getElementById('sig-nom-vp');
+  if (elVP) elVP.textContent = _gSettings.nomVP || 'Janezic Sana';
 }
 
 function openSettings() {
   closeSidebar();
-  // Remplir les champs
-  document.getElementById('settings-nom-asso').value = _gSettings.nomAsso || 'GE-FAIS';
-  document.getElementById('settings-sous-titre').value = _gSettings.sousTitre || 'Espace de gestion';
-  document.getElementById('settings-radius').value = _gSettings.radius || 14;
-  document.getElementById('settings-radius-val').textContent = (_gSettings.radius || 14) + 'px';
-  document.getElementById('settings-custom-color').value = _gSettings.accentHex || '#ff3b30';
-  // Vider les inputs MDP
+  const s = _gSettings;
+  // Apparence
+  document.getElementById('settings-nom-asso').value      = s.nomAsso    || 'GE-FAIS';
+  document.getElementById('settings-sous-titre').value    = s.sousTitre  || 'Espace de gestion';
+  document.getElementById('settings-radius').value        = s.radius     || 14;
+  document.getElementById('settings-radius-val').textContent = (s.radius || 14) + 'px';
+  document.getElementById('settings-custom-color').value  = s.accentHex  || '#ff3b30';
+  // Association
+  document.getElementById('settings-nom-legal').value     = s.nomLegal   || 'Association GE-FAIS';
+  document.getElementById('settings-ville').value         = s.ville      || 'Genève';
+  document.getElementById('settings-site').value          = s.site       || 'gefais.ch';
+  document.getElementById('settings-email-asso').value    = s.emailAsso  || '';
+  // Cotisations
+  document.getElementById('settings-cotis-actif').value   = s.cotisActif  ?? 50;
+  document.getElementById('settings-cotis-suisse').value  = s.cotisSuisse ?? 30;
+  document.getElementById('settings-devise').value        = s.devise     || 'CHF';
+  document.getElementById('settings-devise-label').textContent  = s.devise || 'CHF';
+  document.getElementById('settings-devise-label2').textContent = s.devise || 'CHF';
+  _settingsRenderCategories();
+  // Signatures
+  document.getElementById('settings-nom-president').value = s.nomPresident || 'Pasche Louka';
+  document.getElementById('settings-nom-vp').value        = s.nomVP        || 'Janezic Sana';
+  // Alertes
+  const alerteJours = s.alerteJours || 7;
+  document.getElementById('settings-alerte-jours').value  = alerteJours;
+  document.getElementById('settings-alerte-val').textContent = alerteJours + ' j';
+  // Sécurité
   ['settings-mdp-actuel','settings-mdp-nouveau','settings-mdp-confirm'].forEach(id => {
     document.getElementById(id).value = '';
   });
-  // Toggle thème
+  // Footer ville
+  const fv = document.getElementById('settings-footer-ville');
+  if (fv) fv.textContent = s.ville || 'Genève';
   _settingsUpdateToggle();
-  // Rendu des presets couleurs
   _settingsRenderAccents();
   document.getElementById('modal-settings').classList.add('open');
 }
@@ -6098,16 +6207,67 @@ function _settingsApplyRadius(val) {
   _settingsApplyAll();
 }
 
-function _settingsSaveNom() {
-  _gSettings.nomAsso = document.getElementById('settings-nom-asso').value || 'GE-FAIS';
-  lsSet('gef_settings', _gSettings);
-  _settingsApplyAll();
+function _settingsSaveField(key, val, applyNow) {
+  _gSettings[key] = val;
+  // Merge avec les défauts pour ne pas perdre les clés non encore sauvegardées
+  const stored = lsGet('gef_settings', {});
+  lsSet('gef_settings', Object.assign({}, stored, _gSettings));
+  if (applyNow) _settingsApplyAll();
+  // Mettre à jour labels devise en temps réel
+  if (key === 'devise') {
+    document.getElementById('settings-devise-label').textContent  = val;
+    document.getElementById('settings-devise-label2').textContent = val;
+  }
+  if (key === 'ville') {
+    const fv = document.getElementById('settings-footer-ville');
+    if (fv) fv.textContent = val || 'Genève';
+  }
 }
 
-function _settingsSaveSousTitre() {
-  _gSettings.sousTitre = document.getElementById('settings-sous-titre').value || 'Espace de gestion';
+function _settingsSaveAlerte(val) {
+  _gSettings.alerteJours = parseInt(val);
+  document.getElementById('settings-alerte-val').textContent = val + ' j';
   lsSet('gef_settings', _gSettings);
-  _settingsApplyAll();
+}
+
+function _settingsRenderCategories() {
+  const el = document.getElementById('settings-categories-list');
+  if (!el) return;
+  const cats = _gSettings.categories || [];
+  el.innerHTML = cats.map((c, i) => `
+    <div style="display:flex;align-items:center;gap:4px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:3px 10px 3px 12px;">
+      <span style="font-size:12px;color:var(--text);">${c}</span>
+      <button onclick="_settingsRemoveCategorie(${i})" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;line-height:1;padding:0 2px;">×</button>
+    </div>`).join('');
+}
+
+function _settingsAddCategorie() {
+  _gprompt('Nom de la nouvelle catégorie :','',nom=>{
+    if (!nom || !nom.trim()) return;
+    if (!_gSettings.categories) _gSettings.categories = [];
+    if (_gSettings.categories.includes(nom.trim())) { showToast('Catégorie déjà existante','⚠️','warn'); return; }
+    _gSettings.categories.push(nom.trim());
+    lsSet('gef_settings', _gSettings);
+    _settingsRenderCategories();
+    _settingsUpdateCatSelect();
+    showToast('Catégorie ajoutée','✓','success');
+  });
+}
+
+function _settingsRemoveCategorie(idx) {
+  _gSettings.categories.splice(idx, 1);
+  lsSet('gef_settings', _gSettings);
+  _settingsRenderCategories();
+  _settingsUpdateCatSelect();
+}
+
+function _settingsUpdateCatSelect() {
+  // Mettre à jour le select dans le modal compta
+  const sel = document.getElementById('c-cat');
+  if (!sel) return;
+  const current = sel.value;
+  const cats = _gSettings.categories || [];
+  sel.innerHTML = cats.map(c => `<option${c===current?' selected':''}>${c}</option>`).join('');
 }
 
 function _settingsChangerMDP() {
@@ -6140,12 +6300,15 @@ function _settingsExportAll() {
 }
 
 function _settingsResetSettings() {
-  confirmDelete('Réinitialiser la personnalisation ?', 'Les couleurs, le rayon et le nom seront réinitialisés aux valeurs par défaut.', () => {
-    _gSettings = { accentHex:'#ff3b30', accentHex2:'#ff6b6b', accentLight:'rgba(255,59,48,0.12)', radius:14, nomAsso:'GE-FAIS', sousTitre:'Espace de gestion', mdp: _gSettings.mdp };
+  confirmDelete('Réinitialiser l\'apparence ?', 'Couleurs, rayon des coins et noms de l\'app seront réinitialisés. Les données association, signatures, cotisations et catégories sont conservées.', () => {
+    _gSettings = Object.assign({}, _gSettings, {
+      accentHex:'#ff3b30', accentHex2:'#ff6b6b', accentLight:'rgba(255,59,48,0.12)',
+      radius:14, nomAsso:'GE-FAIS', sousTitre:'Espace de gestion',
+    });
     lsSet('gef_settings', _gSettings);
     _settingsApplyAll();
     openSettings();
-    showToast('Personnalisation réinitialisée','↩️','success');
+    showToast('Apparence réinitialisée','↩️','success');
   });
 }
 
@@ -6157,19 +6320,21 @@ function rerender(){
   const p=document.querySelector('.page.active')?.id?.replace('page-','');
   const map={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport,dons:renderDons,demandes:renderDemandes,presentations:renderPresentations};
   if(p&&map[p])map[p]();
+  _updateCotisBadge();
   showToast('Synchronisé depuis un autre appareil','🔄');
 }
 
 // ── GÉNÉRATION COTISATIONS ────────────────────────────────────────
 function genererCotisationsAnnee(){
   const cur=new Date().getFullYear();
-  const anneeStr=prompt('Générer les cotisations pour quelle année ?',cur);
-  const annee=parseInt(anneeStr);
-  if(!annee||isNaN(annee))return;
+  _gprompt('Générer les cotisations pour quelle année ?',String(cur),anneeStr=>{
+    const annee=parseInt(anneeStr);
+    if(!annee||isNaN(annee))return;
   let created=0;
   membres.forEach(m=>{
     if(!cotisations.find(c=>c.membreId===m.id&&c.annee===annee)){
-      cotisations.push({membreId:m.id,annee,montant:50,statut:'impaye',datePaiement:'',notes:''});
+      const montant=m.type==='Actif Suisse'?(_gSettings.cotisSuisse||30):(_gSettings.cotisActif||50);
+      cotisations.push({membreId:m.id,annee,montant,statut:'impaye',datePaiement:'',notes:''});
       created++;
     }
   });
@@ -6213,7 +6378,7 @@ function openPresentationMode(){
   const stats=[
     ['👥','Membres',membres.length,`${actifs+suisses} actifs · ${passifs} passifs`,'var(--red)'],
     ['📅','À venir',aVenir,nextEvt?'Prochain: '+fmtDate(nextEvt.date):'Aucun prévu','#60a5fa'],
-    ['💰','Solde',(solde>=0?'+':'')+solde.toFixed(0)+' CHF',`${totalIn.toFixed(0)} recettes / ${totalOut.toFixed(0)} dépenses`,solde>=0?'#22c55e':'var(--red)'],
+    ['💰','Solde',(solde>=0?'+':'')+solde.toFixed(0)+' '+((_gSettings&&_gSettings.devise)||'CHF')+',`${totalIn.toFixed(0)} recettes / ${totalOut.toFixed(0)} dépenses`,solde>=0?'#22c55e':'var(--red)'],
     ['🏅','Présence',avgPres+'%','Taux moyen de participation','#c49a00'],
     ['💳','Cotisations',cotisPayees+'/'+cotisTotal,(cotisTotal>0?Math.round(cotisPayees/cotisTotal*100):0)+'% réglées','#a78bfa'],
     ['📊','Événements',events.length,(events.length-aVenir)+' passés','#f97316'],
@@ -6296,6 +6461,33 @@ if(document.readyState==='loading'){
   </div>
 </div>
 
+<!-- MODALE CONFIRM GÉNÉRIQUE -->
+<div class="modal-overlay" id="modal-gconfirm">
+  <div class="modal" style="max-width:380px;">
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="font-size:38px;margin-bottom:10px;" id="gconfirm-icon">⚠️</div>
+      <h3 style="margin-bottom:8px;" id="gconfirm-title"></h3>
+      <p id="gconfirm-msg" style="font-size:13px;color:var(--text2);line-height:1.5;"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="gconfirm-cancel" onclick="closeModal('modal-gconfirm')">Annuler</button>
+      <button class="btn btn-primary" id="gconfirm-ok">Confirmer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODALE PROMPT GÉNÉRIQUE -->
+<div class="modal-overlay" id="modal-gprompt">
+  <div class="modal" style="max-width:400px;">
+    <h3 id="gprompt-title" style="margin-bottom:16px;"></h3>
+    <input id="gprompt-input" type="text" style="font-size:15px;padding:12px 14px;border-radius:var(--radius);margin-bottom:4px;" onkeydown="if(event.key==='Enter'){event.preventDefault();_gpromptSubmit();}">
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-gprompt');_gpromptCb(null);">Annuler</button>
+      <button class="btn btn-primary" onclick="_gpromptSubmit()">OK</button>
+    </div>
+  </div>
+</div>
+
 <!-- RECHERCHE GLOBALE -->
 <div class="modal-overlay" id="modal-search" style="align-items:flex-start;padding-top:80px;">
   <div class="modal" style="max-width:540px;border-radius:20px;padding:20px;">
@@ -6371,16 +6563,117 @@ if(document.readyState==='loading'){
       <!-- Association -->
       <div>
         <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;">Association</div>
-
         <div style="display:flex;flex-direction:column;gap:8px;">
-          <div style="padding:12px 14px;background:var(--bg3);border-radius:14px;">
-            <label style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Nom affiché</label>
-            <input id="settings-nom-asso" type="text" placeholder="GE-FAIS" value="" oninput="_settingsSaveNom()" style="font-size:14px;padding:8px 10px;border-radius:10px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div style="padding:12px 14px;background:var(--bg3);border-radius:14px;">
+              <label style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Nom affiché</label>
+              <input id="settings-nom-asso" type="text" placeholder="GE-FAIS" value="" oninput="_settingsSaveField('nomAsso',this.value,true)" style="font-size:14px;padding:8px 10px;border-radius:10px;width:100%;">
+            </div>
+            <div style="padding:12px 14px;background:var(--bg3);border-radius:14px;">
+              <label style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Sous-titre sidebar</label>
+              <input id="settings-sous-titre" type="text" placeholder="Espace de gestion" value="" oninput="_settingsSaveField('sousTitre',this.value,true)" style="font-size:14px;padding:8px 10px;border-radius:10px;width:100%;">
+            </div>
           </div>
-          <div style="padding:12px 14px;background:var(--bg3);border-radius:14px;">
-            <label style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Sous-titre sidebar</label>
-            <input id="settings-sous-titre" type="text" placeholder="Espace de gestion" value="" oninput="_settingsSaveSousTitre()" style="font-size:14px;padding:8px 10px;border-radius:10px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div style="padding:12px 14px;background:var(--bg3);border-radius:14px;">
+              <label style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Nom complet légal</label>
+              <input id="settings-nom-legal" type="text" placeholder="Association GE-FAIS" value="" oninput="_settingsSaveField('nomLegal',this.value)" style="font-size:14px;padding:8px 10px;border-radius:10px;width:100%;">
+            </div>
+            <div style="padding:12px 14px;background:var(--bg3);border-radius:14px;">
+              <label style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Ville</label>
+              <input id="settings-ville" type="text" placeholder="Genève" value="" oninput="_settingsSaveField('ville',this.value)" style="font-size:14px;padding:8px 10px;border-radius:10px;width:100%;">
+            </div>
           </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div style="padding:12px 14px;background:var(--bg3);border-radius:14px;">
+              <label style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Site web</label>
+              <input id="settings-site" type="text" placeholder="gefais.ch" value="" oninput="_settingsSaveField('site',this.value)" style="font-size:14px;padding:8px 10px;border-radius:10px;width:100%;">
+            </div>
+            <div style="padding:12px 14px;background:var(--bg3);border-radius:14px;">
+              <label style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Email de contact</label>
+              <input id="settings-email-asso" type="email" placeholder="contact@gefais.ch" value="" oninput="_settingsSaveField('emailAsso',this.value)" style="font-size:14px;padding:8px 10px;border-radius:10px;width:100%;">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cotisations -->
+      <div>
+        <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;">Cotisations & Finances</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+            <div style="padding:12px 14px;background:var(--bg3);border-radius:14px;">
+              <label style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Montant Actif</label>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <input id="settings-cotis-actif" type="number" min="0" step="5" placeholder="50" oninput="_settingsSaveField('cotisActif',parseFloat(this.value)||50)" style="font-size:14px;padding:8px 10px;border-radius:10px;width:100%;">
+                <span style="font-size:12px;color:var(--text3);white-space:nowrap;" id="settings-devise-label">CHF</span>
+              </div>
+            </div>
+            <div style="padding:12px 14px;background:var(--bg3);border-radius:14px;">
+              <label style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Montant Actif CH</label>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <input id="settings-cotis-suisse" type="number" min="0" step="5" placeholder="30" oninput="_settingsSaveField('cotisSuisse',parseFloat(this.value)||30)" style="font-size:14px;padding:8px 10px;border-radius:10px;width:100%;">
+                <span style="font-size:12px;color:var(--text3);white-space:nowrap;" id="settings-devise-label2">CHF</span>
+              </div>
+            </div>
+            <div style="padding:12px 14px;background:var(--bg3);border-radius:14px;">
+              <label style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Devise</label>
+              <select id="settings-devise" onchange="_settingsSaveField('devise',this.value,true)" style="font-size:14px;padding:8px 10px;border-radius:10px;width:100%;">
+                <option value="CHF">CHF</option>
+                <option value="EUR">EUR</option>
+                <option value="USD">USD</option>
+                <option value="GBP">GBP</option>
+                <option value="CAD">CAD</option>
+              </select>
+            </div>
+          </div>
+          <!-- Catégories comptabilité -->
+          <div style="padding:14px;background:var(--bg3);border-radius:14px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--text);">Catégories comptabilité</div>
+                <div style="font-size:11px;color:var(--text3);">Apparaissent dans le menu déroulant</div>
+              </div>
+              <button onclick="_settingsAddCategorie()" style="background:var(--red);color:#fff;border:none;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer;">＋</button>
+            </div>
+            <div id="settings-categories-list" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Signatures PDF -->
+      <div>
+        <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;">Signatures & Bureau</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div style="padding:12px 14px;background:var(--bg3);border-radius:14px;">
+              <label style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Nom — Président·e</label>
+              <input id="settings-nom-president" type="text" placeholder="Prénom Nom" value="" oninput="_settingsSaveField('nomPresident',this.value)" style="font-size:14px;padding:8px 10px;border-radius:10px;width:100%;">
+            </div>
+            <div style="padding:12px 14px;background:var(--bg3);border-radius:14px;">
+              <label style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Nom — Vice-Président·e</label>
+              <input id="settings-nom-vp" type="text" placeholder="Prénom Nom" value="" oninput="_settingsSaveField('nomVP',this.value)" style="font-size:14px;padding:8px 10px;border-radius:10px;width:100%;">
+            </div>
+          </div>
+          <div style="padding:10px 14px;background:rgba(255,214,10,0.07);border:1px solid rgba(255,214,10,0.2);border-radius:12px;font-size:11px;color:var(--text3);">
+            💡 Ces noms apparaissent sur les PDF de validation des demandes d'adhésion.
+          </div>
+        </div>
+      </div>
+
+      <!-- Alertes -->
+      <div>
+        <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;">Alertes & Tableau de bord</div>
+        <div style="padding:14px;background:var(--bg3);border-radius:14px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--text);">Fenêtre d'alerte événements</div>
+              <div style="font-size:11px;color:var(--text3);">Alerter si un événement est dans les X prochains jours</div>
+            </div>
+            <span id="settings-alerte-val" style="font-size:13px;font-weight:700;color:var(--red);">7 j</span>
+          </div>
+          <input type="range" id="settings-alerte-jours" min="1" max="30" value="7" oninput="_settingsSaveAlerte(this.value)" style="width:100%;accent-color:var(--red);">
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:4px;"><span>1 jour</span><span>30 jours</span></div>
         </div>
       </div>
 
@@ -6419,7 +6712,7 @@ if(document.readyState==='loading'){
 
       <!-- Version -->
       <div style="text-align:center;padding-top:4px;padding-bottom:4px;">
-        <div style="font-size:11px;color:var(--text3);">GE-FAIS · v2.0 · <span style="color:var(--text3);">Genève</span></div>
+        <div style="font-size:11px;color:var(--text3);">GE-FAIS · v2.0 · <span id="settings-footer-ville">Genève</span></div>
       </div>
 
     </div>
