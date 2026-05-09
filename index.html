@@ -4321,7 +4321,7 @@ function renderRapport(){
       </div>
       ${(()=>{const bm={};compta.forEach(co=>{const m=co.date.slice(0,7);if(!bm[m])bm[m]={in:0,out:0};bm[m][co.type==='recette'?'in':'out']+=co.montant;});const months=Object.keys(bm).sort().slice(-6);if(!months.length)return '';const mx=Math.max(...months.map(m=>bm[m].in+bm[m].out),1);return '<div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">6 derniers mois</div><div style="display:flex;align-items:flex-end;gap:3px;height:52px;">'+months.map(m=>{const iH=Math.max(4,Math.round(bm[m].in/mx*48));const oH=Math.max(4,Math.round(bm[m].out/mx*48));return`<div style="flex:1;display:flex;flex-direction:column;gap:2px;align-items:center;"><div style="display:flex;gap:1px;align-items:flex-end;height:48px;"><div style="width:6px;height:${iH}px;background:var(--green);border-radius:3px 3px 0 0;"></div><div style="width:6px;height:${oH}px;background:var(--red);border-radius:3px 3px 0 0;"></div></div><div style="font-size:8px;color:var(--text3);">${m.slice(5)}</div></div>`;}).join('')+'</div>';})()}
     </div>
-  `;   `;
+  `; ;
 }
 
 // ── EXPORTS CSV ──────────────────────────────────────────────────
