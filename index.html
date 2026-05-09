@@ -2422,7 +2422,7 @@ const DEFAULT_COMPTA=[
 ];
 const DEFAULT_MESSAGES=[];
 
-function buildDefaultCotisations(m){const annee=new Date().getFullYear();return m.map(x=>({membreId:x.id,annee,montant:x.type==='Actif Suisse'?(_gSettings&&_gSettings.cotisSuisse||30):(_gSettings&&_gSettings.cotisActif||50),statut:'impaye',datePaiement:'',notes:''}));}
+function buildDefaultCotisations(m){const annee=new Date().getFullYear();return m.map(x=>({membreId:x.id,annee,montant:x.type==='Actif Suisse'?30:50,statut:'impaye',datePaiement:'',notes:''}));}
 
 // ── SOUS-PAGES ÉVÉNEMENTS ─────────────────────────────────────────
 const DEFAULT_EVENT_SUBPAGES=[
