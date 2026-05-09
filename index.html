@@ -2875,7 +2875,7 @@ function renderDashboard(){
       </div>
     </div>
     <div class="kpi-band-card kpi-animate" style="animation-delay:0.18s">
-      <div class="kpi-band-icon" style="background:${cotisPayees===cotisTotal&&cotisTotal>0?'rgba(34,197,94,0.15)':'rgba(96,165,250,0.15)';">${cotisPayees===cotisTotal&&cotisTotal>0?'✅':'<svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="display:block;"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>'}</div>
+      <div class="kpi-band-icon" style="background:${cotisPayees===cotisTotal&&cotisTotal>0?'rgba(34,197,94,0.15)':'rgba(96,165,250,0.15)'}">${cotisPayees===cotisTotal&&cotisTotal>0?'✅':'<svg width=\"20\" height=\"20\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"2\" y=\"6\" width=\"20\" height=\"14\" rx=\"2\"/><path d=\"M2 10h20\"/></svg>'}</div>
       <div class="kpi-band-body">
         <div class="kpi-band-label">Cotisations</div>
         <div class="kpi-band-val">${cotisPayees}<span style="font-size:15px;font-weight:400;color:var(--text3);">/${cotisTotal}</span></div>
@@ -4227,7 +4227,7 @@ function emailSupprimerHistorique(id){
 }
 
 function emailEffacerHistorique(){
-  _gconfirm('Effacer tout l'historique ?','Tous les emails envoyés seront supprimés.',()=>{
+  _gconfirm('Effacer tout l\'historique ?','Tous les emails envoyés seront supprimés.',()=>{
     emailHistorique = [];
     save('gef_email_historique', emailHistorique);
     renderEmailHistorique();
@@ -4354,7 +4354,8 @@ function creerDossier(){
     const folder={id:Date.now()+Math.random(),type:'folder',nom:nom.trim(),date:localToday(),parentId:_currentFolder,ajoutePar:'Moi'};
     documents_list.push(folder);
     save('gef_documents',documents_list);
-  renderDocuments();
+    renderDocuments();
+  });
 }
 
 function ouvrirDossier(id){
@@ -4384,7 +4385,7 @@ function ajouterDocuments(input){
   let added=0, skipped=[];
   const process=(i)=>{
     if(i>=files.length){
-      if(skipped.length>0) showToast(`${skipped.length} fichier${skipped.length>1?'s':''} trop grand${skipped.length>1?'s':''} ignoré${skipped.length>1?'s':''} : ${skipped.join(', ')}\nMax 400`KB par fichier.','⚠️','warn');
+      if(skipped.length>0) showToast(`${skipped.length} fichier${skipped.length>1?'s':''} trop grand${skipped.length>1?'s':''} ignoré${skipped.length>1?'s':''} : ${skipped.join(', ')} (max 400KB)`,'⚠️','warn');
       if(added>0){save('gef_documents',documents_list);renderDocuments();}
       input.value='';
       return;
@@ -4790,9 +4791,10 @@ function ajouterNoteSection(secId){
   _gprompt('Note / ordre du jour :','',texte=>{
     if(!texte||!texte.trim())return;
     ag_notes.push({id:Date.now(),texte:texte.trim(),date:localToday(),secId});
-  lsSet('gef_ag_notes',ag_notes);
-  save('gef_ag_notes',ag_notes);
-  renderSection(secId);
+    lsSet('gef_ag_notes',ag_notes);
+    save('gef_ag_notes',ag_notes);
+    renderSection(secId);
+  });
 }
 function supprimerNoteSection(noteId){
   _gconfirm('Supprimer cette note ?','',()=>{
@@ -5158,7 +5160,7 @@ function globalSearch(q) {
     .slice(0,3).forEach(c=>results.push({
       icon: c.type==='recette'?'💚':'🔴',
       label: c.description||c.desc||'Entrée comptable',
-      sub: fmtDate(c.date)+' · '+(c.montant||0).toFixed(2)+' '+((_gSettings&&_gSettings.devise)||'CHF')+',
+      sub: fmtDate(c.date)+' · '+(c.montant||0).toFixed(2)+' '+((_gSettings&&_gSettings.devise)||'CHF'),
       action: `closeModal('modal-search');navTo('compta','Comptabilité');`
     }));
 
@@ -6330,20 +6332,21 @@ function genererCotisationsAnnee(){
   _gprompt('Générer les cotisations pour quelle année ?',String(cur),anneeStr=>{
     const annee=parseInt(anneeStr);
     if(!annee||isNaN(annee))return;
-  let created=0;
-  membres.forEach(m=>{
-    if(!cotisations.find(c=>c.membreId===m.id&&c.annee===annee)){
-      const montant=m.type==='Actif Suisse'?(_gSettings.cotisSuisse||30):(_gSettings.cotisActif||50);
-      cotisations.push({membreId:m.id,annee,montant,statut:'impaye',datePaiement:'',notes:''});
-      created++;
-    }
+    let created=0;
+    membres.forEach(m=>{
+      if(!cotisations.find(c=>c.membreId===m.id&&c.annee===annee)){
+        const montant=m.type==='Actif Suisse'?(_gSettings.cotisSuisse||30):(_gSettings.cotisActif||50);
+        cotisations.push({membreId:m.id,annee,montant,statut:'impaye',datePaiement:'',notes:''});
+        created++;
+      }
+    });
+    if(!created){showToast('Toutes les cotisations '+annee+' existent déjà','ℹ️');return;}
+    save('gef_cotisations',cotisations);
+    _populateCotisAnneeSel();
+    const sel=document.getElementById('cotis-filter-annee');if(sel)sel.value=annee;
+    renderCotisations();
+    showToast(created+' cotisation'+(created>1?'s':'')+' '+annee+' générée'+(created>1?'s':'!'),'✅');
   });
-  if(!created){showToast('Toutes les cotisations '+annee+' existent déjà','ℹ️');return;}
-  save('gef_cotisations',cotisations);
-  _populateCotisAnneeSel();
-  const sel=document.getElementById('cotis-filter-annee');if(sel)sel.value=annee;
-  renderCotisations();
-  showToast(created+' cotisation'+(created>1?'s':'')+' '+annee+' générée'+(created>1?'s':'!'),'✅');
 }
 
 function _checkCotisationsAnnee(){
@@ -6378,7 +6381,7 @@ function openPresentationMode(){
   const stats=[
     ['👥','Membres',membres.length,`${actifs+suisses} actifs · ${passifs} passifs`,'var(--red)'],
     ['📅','À venir',aVenir,nextEvt?'Prochain: '+fmtDate(nextEvt.date):'Aucun prévu','#60a5fa'],
-    ['💰','Solde',(solde>=0?'+':'')+solde.toFixed(0)+' '+((_gSettings&&_gSettings.devise)||'CHF')+',`${totalIn.toFixed(0)} recettes / ${totalOut.toFixed(0)} dépenses`,solde>=0?'#22c55e':'var(--red)'],
+    ['💰','Solde',(solde>=0?'+':'')+solde.toFixed(0)+' '+((_gSettings&&_gSettings.devise)||'CHF'),`${totalIn.toFixed(0)} recettes / ${totalOut.toFixed(0)} dépenses`,solde>=0?'#22c55e':'var(--red)'],
     ['🏅','Présence',avgPres+'%','Taux moyen de participation','#c49a00'],
     ['💳','Cotisations',cotisPayees+'/'+cotisTotal,(cotisTotal>0?Math.round(cotisPayees/cotisTotal*100):0)+'% réglées','#a78bfa'],
     ['📊','Événements',events.length,(events.length-aVenir)+' passés','#f97316'],
