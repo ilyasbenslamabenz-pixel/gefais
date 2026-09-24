@@ -3070,7 +3070,7 @@ function renderDashboard(){
     });
 
     // Compteur animé sur les valeurs KPI
-    document.querySelectorAll('.kpi-band-val').forEach(el=>{
+    document.querySelectorAll('.kpi-band-val').forEach((el,i)=>{
       const raw=el.innerHTML;
       const num=parseInt(el.textContent.replace(/[^0-9]/g,''));
       if(isNaN(num)||num===0)return;
