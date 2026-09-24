@@ -3836,12 +3836,32 @@ function editCompta(id){
 function comptaAjouterFichier(input){
   const files=Array.from(input.files);
   files.forEach(file=>{
-    const reader=new FileReader();
-    reader.onload=e=>{
-      _comptaAttachments.push({name:file.name,type:file.type,size:file.size,data:e.target.result});
-      _renderAttachmentsPreview();
-    };
-    reader.readAsDataURL(file);
+    if(file.type&&file.type.startsWith('image/')){
+      const img=new Image();
+      const reader=new FileReader();
+      reader.onload=ev=>{
+        img.onload=()=>{
+          const MAX=1600;
+          let w=img.width,h=img.height;
+          if(w>MAX||h>MAX){const r=Math.min(MAX/w,MAX/h);w=Math.round(w*r);h=Math.round(h*r);}
+          const canvas=document.createElement('canvas');
+          canvas.width=w;canvas.height=h;
+          canvas.getContext('2d').drawImage(img,0,0,w,h);
+          const dataUrl=canvas.toDataURL('image/jpeg',0.82);
+          _comptaAttachments.push({name:file.name,type:'image/jpeg',size:Math.round(dataUrl.length*0.75),data:dataUrl});
+          _renderAttachmentsPreview();
+        };
+        img.src=ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      const reader=new FileReader();
+      reader.onload=e=>{
+        _comptaAttachments.push({name:file.name,type:file.type,size:file.size,data:e.target.result});
+        _renderAttachmentsPreview();
+      };
+      reader.readAsDataURL(file);
+    }
   });
   input.value='';
 }
