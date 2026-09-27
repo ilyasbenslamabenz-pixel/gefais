@@ -2575,7 +2575,7 @@ function saveSubpage(){
   const couleur=document.getElementById('sp-couleur').value||'var(--red)';
   const checks=document.querySelectorAll('#sp-types-checks input[type=checkbox]:checked');
   const types=[...checks].map(c=>c.value);
-  if(!nom){alert('Nom requis.');return;}
+  if(!nom){iosAlert('Nom requis.');return;}
   if(_editingSubpage){
     const sp=event_subpages.find(s=>s.id===_editingSubpage);
     if(sp){sp.nom=nom;sp.emoji=emoji;sp.couleur=couleur;sp.types=types;}
@@ -2619,12 +2619,13 @@ function editSubpage(id){
 }
 
 function deleteSubpage(id){
-  if(!confirm('Supprimer cette sous-page ?'))return;
-  event_subpages=event_subpages.filter(s=>s.id!==id);
-  if(_activeSubpage===id)_activeSubpage=1;
-  save('gef_event_subpages',event_subpages);
-  renderManageSubpages();
-  renderEvents();
+  iosConfirm('Supprimer cette sous-page ?',()=>{
+    event_subpages=event_subpages.filter(s=>s.id!==id);
+    if(_activeSubpage===id)_activeSubpage=1;
+    save('gef_event_subpages',event_subpages);
+    renderManageSubpages();
+    renderEvents();
+  },{danger:true,confirmLabel:'Supprimer'});
 }
 
 function selectSpColor(color,el){
@@ -2827,7 +2828,7 @@ async function reconnectFirebase(){
     renderDashboard();renderMembres();renderEvents();
   }catch(e){
     if(btn){btn.textContent='Reconnecter';btn.disabled=false;}
-    alert('Impossible de se connecter à Firebase. Vérifiez votre connexion internet.');
+    iosAlert('Impossible de se connecter à Firebase. Vérifiez votre connexion internet.');
   }
 }
 
@@ -3269,18 +3270,24 @@ function editMember(id){editingMembre=id;const m=membres.find(x=>x.id===id);docu
   const yr=m.createdAt?new Date(m.createdAt).getFullYear():2026;const sel=document.getElementById('m-created-year');if(sel){if(![...sel.options].find(o=>parseInt(o.value)===yr)){const opt=document.createElement('option');opt.value=yr;opt.textContent=yr;sel.appendChild(opt);}sel.value=yr;}document.getElementById('modal-membre').classList.add('open');}
 function saveMember(){
   const nom=document.getElementById('m-nom').value.trim(),prenom=document.getElementById('m-prenom').value.trim();
-  if(!nom||!prenom){alert('Nom et prénom requis.');return;}
+  if(!nom||!prenom){iosAlert('Nom et prénom requis.');return;}
   // Détection de doublon
   const doublon=membres.find(m=>m.id!==editingMembre&&m.nom.toLowerCase()===nom.toLowerCase()&&m.prenom.toLowerCase()===prenom.toLowerCase());
-  if(doublon&&!confirm(`⚠️ Un membre "${prenom} ${nom}" existe déjà. Continuer quand même ?`))return;
-  const yr=parseInt(document.getElementById('m-created-year')?.value)||new Date().getFullYear();
-  const mo=document.getElementById('m-adhesion-mois')?.value||'';
-  const ay=document.getElementById('m-adhesion-annee')?.value||'';
-  const adhesion=mo&&ay?`${ay}-${mo}`:'';
-  const data={nom,prenom,role:document.getElementById('m-role').value,type:document.getElementById('m-type').value,email:document.getElementById('m-email').value,tel:document.getElementById('m-tel').value,adhesion,presence_attendue:parseFloat(document.getElementById('m-presence').value)||0,notes:document.getElementById('m-notes').value};
-  if(editingMembre){const i=membres.findIndex(m=>m.id===editingMembre);membres[i]={...membres[i],...data,createdAt:`${yr}-01-01`};}
-  else{const newId=Math.max(0,...membres.map(m=>m.id))+1;const anneeEnCours=new Date().getFullYear();membres.push({id:newId,...data,createdAt:`${yr}-01-01`});cotisations.push({membreId:newId,annee:anneeEnCours,montant:50,statut:'impaye',datePaiement:'',notes:''});save('gef_cotisations',cotisations);}
-  save('gef_membres',membres);closeModal('modal-membre');renderMembres();
+  const _saveMemberProceed=()=>{
+    const yr=parseInt(document.getElementById('m-created-year')?.value)||new Date().getFullYear();
+    const mo=document.getElementById('m-adhesion-mois')?.value||'';
+    const ay=document.getElementById('m-adhesion-annee')?.value||'';
+    const adhesion=mo&&ay?`${ay}-${mo}`:'';
+    const data={nom,prenom,role:document.getElementById('m-role').value,type:document.getElementById('m-type').value,email:document.getElementById('m-email').value,tel:document.getElementById('m-tel').value,adhesion,presence_attendue:parseFloat(document.getElementById('m-presence').value)||0,notes:document.getElementById('m-notes').value};
+    if(editingMembre){const i=membres.findIndex(m=>m.id===editingMembre);membres[i]={...membres[i],...data,createdAt:`${yr}-01-01`};}
+    else{const newId=Math.max(0,...membres.map(m=>m.id))+1;const anneeEnCours=new Date().getFullYear();membres.push({id:newId,...data,createdAt:`${yr}-01-01`});cotisations.push({membreId:newId,annee:anneeEnCours,montant:50,statut:'impaye',datePaiement:'',notes:''});save('gef_cotisations',cotisations);}
+    save('gef_membres',membres);closeModal('modal-membre');renderMembres();
+  };
+  if(doublon){
+    iosConfirm(`⚠️ Un membre "${prenom} ${nom}" existe déjà. Continuer quand même ?`,_saveMemberProceed,{confirmLabel:'Continuer'});
+  } else {
+    _saveMemberProceed();
+  }
 }
 function deleteMember(id){
   const m=membres.find(x=>x.id===id);
@@ -3705,7 +3712,7 @@ function toggleAllPresences(val){toggleAllPresencesInline(currentEventId,val);}
 function populateEventTypes(selected){const sel=document.getElementById('e-type');sel.innerHTML=eventTypes.map(t=>`<option value="${t}"${t===selected?'selected':''}>${t}</option>`).join('');}
 function openEventModal(){editingEvent=null;document.getElementById('modal-event-title').textContent='Ajouter un événement';document.getElementById('e-date').value='';populateEventTypes('Réunion');document.getElementById('e-nom').value='';document.getElementById('e-comment').value='';document.getElementById('modal-event').classList.add('open');}
 function editEvent(id){editingEvent=id;const e=events.find(x=>x.id===id);document.getElementById('modal-event-title').textContent="Modifier l'événement";document.getElementById('e-date').value=e.date;populateEventTypes(e.type);document.getElementById('e-nom').value=e.nom||'';document.getElementById('e-comment').value=e.commentaires||'';document.getElementById('modal-event').classList.add('open');}
-function saveEvent(){const date=document.getElementById('e-date').value;if(!date){alert('Date requise.');return;}const data={date,type:document.getElementById('e-type').value,nom:document.getElementById('e-nom').value,commentaires:document.getElementById('e-comment').value};if(editingEvent){const i=events.findIndex(e=>e.id===editingEvent);events[i]={...events[i],...data};}else events.push({id:Math.max(0,...events.map(e=>e.id))+1,...data});save('gef_events',events);closeModal('modal-event');renderEvents();}
+function saveEvent(){const date=document.getElementById('e-date').value;if(!date){iosAlert('Date requise.');return;}const data={date,type:document.getElementById('e-type').value,nom:document.getElementById('e-nom').value,commentaires:document.getElementById('e-comment').value};if(editingEvent){const i=events.findIndex(e=>e.id===editingEvent);events[i]={...events[i],...data};}else events.push({id:Math.max(0,...events.map(e=>e.id))+1,...data});save('gef_events',events);closeModal('modal-event');renderEvents();}
 function deleteEvent(id){const e=events.find(x=>x.id===id);if(!e)return;confirmDelete(`Supprimer ${e.nom||e.type} ?`,'Cet événement et ses présences seront supprimés définitivement.',()=>{events=events.filter(x=>x.id!==id);save('gef_events',events);renderEvents();});}
 
 // ── TYPES ÉVÉNEMENTS ─────────────────────────────────────────────
@@ -3727,7 +3734,7 @@ function ajouterType(){
   const input=document.getElementById('new-type-input');
   const val=input.value.trim();
   if(!val){return;}
-  if(eventTypes.find(t=>t.toLowerCase()===val.toLowerCase())){alert('Ce type existe déjà.');return;}
+  if(eventTypes.find(t=>t.toLowerCase()===val.toLowerCase())){iosAlert('Ce type existe déjà.');return;}
   eventTypes.push(val);
   save('gef_event_types',eventTypes);
   input.value='';
@@ -3735,11 +3742,12 @@ function ajouterType(){
 }
 function supprimerType(type){
   const utilise=events.find(e=>e.type===type);
-  if(utilise){alert(`Ce type est utilisé par l'événement "${utilise.nom||utilise.type}". Modifiez d'abord cet événement.`);return;}
-  if(!confirm(`Supprimer le type "${type}" ?`))return;
-  eventTypes=eventTypes.filter(t=>t!==type);
-  save('gef_event_types',eventTypes);
-  renderTypesList();
+  if(utilise){iosAlert(`Ce type est utilisé par l'événement "${utilise.nom||utilise.type}". Modifiez d'abord cet événement.`);return;}
+  iosConfirm(`Supprimer le type "${type}" ?`,()=>{
+    eventTypes=eventTypes.filter(t=>t!==type);
+    save('gef_event_types',eventTypes);
+    renderTypesList();
+  },{danger:true,confirmLabel:'Supprimer'});
 }
 function chipClass(type){
   if(type==='Réunion')return'event-chip-reunion';
@@ -3816,7 +3824,7 @@ Le bureau de GE-Fais`;
   document.getElementById('rappel-email-preview').textContent=email;
   document.getElementById('modal-rappel').classList.add('open');
 }
-function copierEmail(){navigator.clipboard.writeText(document.getElementById('rappel-email-preview').textContent).then(()=>alert('Email copié dans le presse-papier !')).catch(()=>alert('Copiez manuellement le texte ci-dessus.'));}
+function copierEmail(){navigator.clipboard.writeText(document.getElementById('rappel-email-preview').textContent).then(()=>iosAlert('Email copié dans le presse-papier !')).catch(()=>iosAlert('Copiez manuellement le texte ci-dessus.'));}
 
 // ── COMPTA ───────────────────────────────────────────────────────
 // ── COMPTABILITÉ ─────────────────────────────────────────────────
@@ -3940,7 +3948,7 @@ function telechargerPhoto(){
 function saveCompta(){
   const montant=parseFloat(document.getElementById('c-montant').value);
   const desc=document.getElementById('c-desc').value.trim();
-  if(!desc||isNaN(montant)||montant<=0){alert('Description et montant requis.');return;}
+  if(!desc||isNaN(montant)||montant<=0){iosAlert('Description et montant requis.');return;}
   const data={
     date:document.getElementById('c-date').value,
     type:document.getElementById('c-type').value,
@@ -4216,10 +4224,10 @@ function emailRetirerFichier(i){
 function envoyerEmail(){
   const sujet = document.getElementById('email-sujet').value.trim();
   const corps = document.getElementById('email-corps').value.trim();
-  if(!emailSelectionnes.size){ alert('Sélectionnez au moins un destinataire.'); return; }
+  if(!emailSelectionnes.size){ iosAlert('Sélectionnez au moins un destinataire.'); return; }
   const destinataires = [...emailSelectionnes].map(id=>membres.find(m=>m.id===id)).filter(Boolean);
   const adresses = destinataires.filter(m=>m.email).map(m=>m.email);
-  if(!adresses.length){ alert('Aucun destinataire sélectionné n\'a d\'adresse email enregistrée.'); return; }
+  if(!adresses.length){ iosAlert('Aucun destinataire sélectionné n\'a d\'adresse email enregistrée.'); return; }
 
   // Avertissement pièces jointes
   let corpsEnvoi = corps;
@@ -4247,7 +4255,7 @@ function envoyerEmail(){
 
 function emailCopierDestinataires(){
   const adresses = [...emailSelectionnes].map(id=>membres.find(m=>m.id===id)).filter(m=>m&&m.email).map(m=>m.email);
-  if(!adresses.length){ alert('Aucun destinataire avec email.'); return; }
+  if(!adresses.length){ iosAlert('Aucun destinataire avec email.'); return; }
   navigator.clipboard.writeText(adresses.join(', ')).then(()=>{
     const fb = document.getElementById('email-feedback');
     fb.style.display='inline';
@@ -4291,10 +4299,11 @@ function emailSupprimerHistorique(id){
 }
 
 function emailEffacerHistorique(){
-  if(!confirm('Effacer tout l\'historique des emails ?')) return;
-  emailHistorique = [];
-  save('gef_email_historique', emailHistorique);
-  renderEmailHistorique();
+  iosConfirm('Effacer tout l\'historique des emails ?',()=>{
+    emailHistorique = [];
+    save('gef_email_historique', emailHistorique);
+    renderEmailHistorique();
+  },{danger:true,confirmLabel:'Effacer'});
 }
 
 function emailReutiliser(id){
@@ -4514,20 +4523,29 @@ function telechargerDoc(id){
 function supprimerDoc(id){
   const doc=documents_list.find(d=>d.id===id);
   if(!doc)return;
+  const _doDelete=()=>{
+    if(doc.type==='folder'){
+      // Supprimer récursivement
+      const toDelete=[id];
+      const collectChildren=(pid)=>{documents_list.filter(d=>d.parentId===pid).forEach(d=>{toDelete.push(d.id);if(d.type==='folder')collectChildren(d.id);});};
+      collectChildren(id);
+      documents_list=documents_list.filter(d=>!toDelete.includes(d.id));
+    } else {
+      documents_list=documents_list.filter(d=>d.id!==id);
+    }
+    save('gef_documents',documents_list);
+    renderDocuments();
+  };
   if(doc.type==='folder'){
     const count=documents_list.filter(d=>d.parentId===id).length;
-    if(count>0&&!confirm(`Ce dossier contient ${count} élément(s). Supprimer quand même ?`))return;
-    // Supprimer récursivement
-    const toDelete=[id];
-    const collectChildren=(pid)=>{documents_list.filter(d=>d.parentId===pid).forEach(d=>{toDelete.push(d.id);if(d.type==='folder')collectChildren(d.id);});};
-    collectChildren(id);
-    documents_list=documents_list.filter(d=>!toDelete.includes(d.id));
+    if(count>0){
+      iosConfirm(`Ce dossier contient ${count} élément(s). Supprimer quand même ?`,_doDelete,{danger:true,confirmLabel:'Supprimer'});
+    } else {
+      _doDelete();
+    }
   } else {
-    if(!confirm('Supprimer ce document ?'))return;
-    documents_list=documents_list.filter(d=>d.id!==id);
+    iosConfirm('Supprimer ce document ?',_doDelete,{danger:true,confirmLabel:'Supprimer'});
   }
-  save('gef_documents',documents_list);
-  renderDocuments();
 }
 
 function renderDocuments(){
@@ -4646,12 +4664,13 @@ function ajouterNoteSection(secId){
   renderSection(secId);
 }
 function supprimerNoteSection(noteId){
-  if(!confirm('Supprimer cette note ?'))return;
-  ag_notes=ag_notes.filter(n=>n.id!==noteId);
-  lsSet('gef_ag_notes',ag_notes);
-  save('gef_ag_notes',ag_notes);
-  const p=document.querySelector('.page.active')?.id?.replace('page-','');
-  if(p)renderSection(p);
+  iosConfirm('Supprimer cette note ?',()=>{
+    ag_notes=ag_notes.filter(n=>n.id!==noteId);
+    lsSet('gef_ag_notes',ag_notes);
+    save('gef_ag_notes',ag_notes);
+    const p=document.querySelector('.page.active')?.id?.replace('page-','');
+    if(p)renderSection(p);
+  },{danger:true,confirmLabel:'Supprimer'});
 }
 // Compatibilité avec l'ancien code
 function ajouterNoteAG(){ajouterNoteSection('sec-ag');}
@@ -4940,6 +4959,25 @@ function confirmDelete(title, msg, onConfirm) {
   const btn = document.getElementById('confirm-delete-btn');
   btn.onclick = () => { closeModal('modal-confirm-delete'); onConfirm(); };
   document.getElementById('modal-confirm-delete').classList.add('open');
+}
+
+// ── ALERTE / CONFIRMATION STYLE iOS (remplacent alert()/confirm() natifs) ──
+function iosAlert(msg, title, icon) {
+  document.getElementById('ios-alert-title').textContent = title || 'Information';
+  document.getElementById('ios-alert-msg').textContent = msg;
+  document.getElementById('ios-alert-icon').textContent = icon || 'ℹ️';
+  document.getElementById('modal-ios-alert').classList.add('open');
+}
+function iosConfirm(msg, onConfirm, opts) {
+  opts = opts || {};
+  document.getElementById('ios-confirm-title').textContent = opts.title || 'Confirmer';
+  document.getElementById('ios-confirm-msg').textContent = msg;
+  document.getElementById('ios-confirm-icon').textContent = opts.icon || (opts.danger ? '🗑️' : '❓');
+  const btn = document.getElementById('ios-confirm-btn');
+  btn.textContent = opts.confirmLabel || 'Confirmer';
+  btn.style.background = opts.danger ? 'var(--red)' : '';
+  btn.onclick = () => { closeModal('modal-ios-confirm'); onConfirm(); };
+  document.getElementById('modal-ios-confirm').classList.add('open');
 }
 
 // ── RECHERCHE GLOBALE ─────────────────────────────────────────────
@@ -5259,11 +5297,12 @@ function setDemandesTab(tab){
 }
 
 async function refuserDemande(id){
-  if(!confirm('Refuser cette demande ?'))return;
-  try{
-    await db.collection('gef_demandes').doc(id).update({statut:'refusee'});
-    showToast('Demande refusée','❌');renderDemandes();
-  }catch(e){showToast('Erreur','⚠️','warn');}
+  iosConfirm('Refuser cette demande ?',async ()=>{
+    try{
+      await db.collection('gef_demandes').doc(id).update({statut:'refusee'});
+      showToast('Demande refusée','❌');renderDemandes();
+    }catch(e){showToast('Erreur','⚠️','warn');}
+  },{danger:true,confirmLabel:'Refuser'});
 }
 
 // Ouvrir modal pour UNE signature (président ou VP)
@@ -5880,6 +5919,31 @@ if(document.readyState==='loading'){
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-confirm-delete')">Annuler</button>
       <button class="btn btn-primary" id="confirm-delete-btn" style="background:var(--red);">Supprimer définitivement</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ALERTE iOS (remplace alert()) -->
+<div class="modal-overlay" id="modal-ios-alert">
+  <div class="modal" style="max-width:340px;text-align:center;">
+    <div style="font-size:38px;margin-bottom:10px;" id="ios-alert-icon">ℹ️</div>
+    <h3 style="margin-bottom:8px;" id="ios-alert-title">Information</h3>
+    <p id="ios-alert-msg" style="font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:22px;"></p>
+    <button class="btn btn-primary" style="width:100%;" onclick="closeModal('modal-ios-alert')">OK</button>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMATION iOS générique (remplace confirm()) -->
+<div class="modal-overlay" id="modal-ios-confirm">
+  <div class="modal" style="max-width:380px;">
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="font-size:40px;margin-bottom:12px;" id="ios-confirm-icon">❓</div>
+      <h3 style="margin-bottom:8px;" id="ios-confirm-title">Confirmer</h3>
+      <p id="ios-confirm-msg" style="font-size:13px;color:var(--text2);line-height:1.5;"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-ios-confirm')">Annuler</button>
+      <button class="btn btn-primary" id="ios-confirm-btn">Confirmer</button>
     </div>
   </div>
 </div>
