@@ -2234,7 +2234,7 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
     <h3 id="modal-event-title">Ajouter un événement</h3>
     <div class="form-grid">
       <div class="form-group"><label>Date *</label><input id="e-date" type="date"></div>
-      <div class="form-group"><label>Type *</label>
+      <div class="form-group"><label style="display:flex;align-items:center;justify-content:space-between;">Type *<span onclick="openTypesModal()" style="font-size:11px;font-weight:600;color:var(--red);cursor:pointer;text-transform:none;letter-spacing:0;">⚙️ Gérer</span></label>
         <select id="e-type"></select>
       </div>
       <div class="form-group full"><label>Nom / Description</label><input id="e-nom" type="text"></div>
