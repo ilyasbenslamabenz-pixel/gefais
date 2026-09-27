@@ -4170,19 +4170,20 @@ function exportRapportTxt(){
 let _currentFolder = null; // null = racine
 
 function creerDossier(){
-  const nom=prompt('Nom du dossier :');
-  if(!nom||!nom.trim())return;
-  const folder={
-    id:Date.now()+Math.random(),
-    type:'folder',
-    nom:nom.trim(),
-    date:new Date().toISOString().slice(0,10),
-    parentId:_currentFolder,
-    ajoutePar:'Moi'
-  };
-  documents_list.push(folder);
-  save('gef_documents',documents_list);
-  renderDocuments();
+  iosPrompt('Nom du dossier :','',(nom)=>{
+    if(!nom||!nom.trim())return;
+    const folder={
+      id:Date.now()+Math.random(),
+      type:'folder',
+      nom:nom.trim(),
+      date:new Date().toISOString().slice(0,10),
+      parentId:_currentFolder,
+      ajoutePar:'Moi'
+    };
+    documents_list.push(folder);
+    save('gef_documents',documents_list);
+    renderDocuments();
+  });
 }
 
 function ouvrirDossier(id){
@@ -4193,11 +4194,12 @@ function ouvrirDossier(id){
 function renommerDossier(id){
   const f=documents_list.find(d=>d.id===id);
   if(!f)return;
-  const nom=prompt('Nouveau nom :',f.nom);
-  if(!nom||!nom.trim())return;
-  f.nom=nom.trim();
-  save('gef_documents',documents_list);
-  renderDocuments();
+  iosPrompt('Nouveau nom :',f.nom,(nom)=>{
+    if(!nom||!nom.trim())return;
+    f.nom=nom.trim();
+    save('gef_documents',documents_list);
+    renderDocuments();
+  });
 }
 
 function ajouterDocuments(input){
@@ -4677,6 +4679,18 @@ function iosConfirm(msg, onConfirm, opts) {
   btn.style.background = opts.danger ? 'var(--red)' : '';
   btn.onclick = () => { closeModal('modal-ios-confirm'); onConfirm(); };
   document.getElementById('modal-ios-confirm').classList.add('open');
+}
+function iosPrompt(msg, defaultValue, onSubmit, opts) {
+  opts = opts || {};
+  document.getElementById('ios-prompt-title').textContent = opts.title || 'Saisie';
+  document.getElementById('ios-prompt-msg').textContent = msg;
+  const input = document.getElementById('ios-prompt-input');
+  input.type = opts.inputType || 'text';
+  input.value = defaultValue != null ? defaultValue : '';
+  document.getElementById('ios-prompt-btn').textContent = opts.confirmLabel || 'Valider';
+  document.getElementById('ios-prompt-btn').onclick = () => { closeModal('modal-ios-prompt'); onSubmit(input.value); };
+  document.getElementById('modal-ios-prompt').classList.add('open');
+  setTimeout(() => { input.focus(); input.select(); }, 100);
 }
 
 // ── RECHERCHE GLOBALE ─────────────────────────────────────────────
@@ -5223,7 +5237,7 @@ function partagerLienAdhesion(){
     navigator.share({title:'Adhésion GE-FAIS',text:msg,url}).catch(()=>{});
   } else {
     navigator.clipboard?.writeText(url).then(()=>showToast('Lien copié !','📋','success')).catch(()=>{
-      prompt('Copie ce lien :',url);
+      iosAlert(url,'Copie ce lien');
     });
   }
 }
@@ -5480,22 +5494,23 @@ function rerender(){
 // ── GÉNÉRATION COTISATIONS ────────────────────────────────────────
 function genererCotisationsAnnee(){
   const cur=new Date().getFullYear();
-  const anneeStr=prompt('Générer les cotisations pour quelle année ?',cur);
-  const annee=parseInt(anneeStr);
-  if(!annee||isNaN(annee))return;
-  let created=0;
-  membres.forEach(m=>{
-    if(!cotisations.find(c=>c.membreId===m.id&&c.annee===annee)){
-      cotisations.push({membreId:m.id,annee,montant:50,statut:'impaye',datePaiement:'',notes:''});
-      created++;
-    }
-  });
-  if(!created){showToast('Toutes les cotisations '+annee+' existent déjà','ℹ️');return;}
-  save('gef_cotisations',cotisations);
-  _populateCotisAnneeSel();
-  const sel=document.getElementById('cotis-filter-annee');if(sel)sel.value=annee;
-  renderCotisations();
-  showToast(created+' cotisation'+(created>1?'s':'')+' '+annee+' générée'+(created>1?'s':'!'),'✅');
+  iosPrompt('Générer les cotisations pour quelle année ?',cur,(anneeStr)=>{
+    const annee=parseInt(anneeStr);
+    if(!annee||isNaN(annee))return;
+    let created=0;
+    membres.forEach(m=>{
+      if(!cotisations.find(c=>c.membreId===m.id&&c.annee===annee)){
+        cotisations.push({membreId:m.id,annee,montant:50,statut:'impaye',datePaiement:'',notes:''});
+        created++;
+      }
+    });
+    if(!created){showToast('Toutes les cotisations '+annee+' existent déjà','ℹ️');return;}
+    save('gef_cotisations',cotisations);
+    _populateCotisAnneeSel();
+    const sel=document.getElementById('cotis-filter-annee');if(sel)sel.value=annee;
+    renderCotisations();
+    showToast(created+' cotisation'+(created>1?'s':'')+' '+annee+' générée'+(created>1?'s':'!'),'✅');
+  },{inputType:'number'});
 }
 
 function _checkCotisationsAnnee(){
@@ -5640,6 +5655,21 @@ if(document.readyState==='loading'){
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-ios-confirm')">Annuler</button>
       <button class="btn btn-primary" id="ios-confirm-btn">Confirmer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SAISIE iOS (remplace prompt()) -->
+<div class="modal-overlay" id="modal-ios-prompt">
+  <div class="modal" style="max-width:380px;">
+    <div style="text-align:center;margin-bottom:16px;">
+      <h3 style="margin-bottom:6px;" id="ios-prompt-title">Saisie</h3>
+      <p id="ios-prompt-msg" style="font-size:13px;color:var(--text2);line-height:1.5;"></p>
+    </div>
+    <input id="ios-prompt-input" type="text" style="width:100%;margin-bottom:4px;" onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('ios-prompt-btn').click();}">
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-ios-prompt')">Annuler</button>
+      <button class="btn btn-primary" id="ios-prompt-btn">Valider</button>
     </div>
   </div>
 </div>
