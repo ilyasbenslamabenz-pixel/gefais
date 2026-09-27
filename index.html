@@ -746,25 +746,6 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 .dash-finance-solde-pos{background:rgba(48,209,88,0.1);border:1.5px solid rgba(48,209,88,0.25);}
 .dash-finance-solde-neg{background:rgba(255,59,48,0.1);border:1.5px solid rgba(255,59,48,0.25);}
 
-/* ── SOUS-PAGES ÉVÉNEMENTS ── */
-.evsp-tab-bar{display:flex;gap:0;overflow-x:auto;margin-bottom:14px;background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
-.evsp-tab-bar::-webkit-scrollbar{display:none;}
-.evsp-tab{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text2);white-space:nowrap;transition:all 0.2s;border:none;background:none;font-family:-apple-system,BlinkMacSystemFont,'Plus Jakarta Sans',sans-serif;flex-shrink:0;}
-.evsp-tab.active{background:var(--card);color:var(--text);box-shadow:var(--shadow);}
-.evsp-tab-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.evsp-tab-add{font-size:18px;padding:6px 12px;color:var(--text3);}
-.evsp-tab-manage{font-size:11px;padding:6px 10px;color:var(--text3);}
-
-/* Sous-page content */
-.evsp-section-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
-
-/* Modal sous-pages */
-.sp-color-pick{width:28px;height:28px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all 0.15s;flex-shrink:0;}
-.sp-color-pick.selected{border-color:var(--text);transform:scale(1.15);}
-.manage-sp-row{display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:10px 14px;}
-.manage-sp-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.manage-sp-name{flex:1;font-size:13px;font-weight:600;color:var(--text);}
-.manage-sp-types{font-size:11px;color:var(--text3);}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes pageIn{from{opacity:0;transform:translateY(8px) scale(0.995)}to{opacity:1;transform:none}}
@@ -778,38 +759,6 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 @keyframes bounceIn{0%{transform:scale(0.3);opacity:0}50%{transform:scale(1.05)}70%{transform:scale(0.9)}100%{transform:scale(1);opacity:1}}
 @keyframes cardIn{from{opacity:0;transform:translateY(20px) scale(0.97)}to{opacity:1;transform:none}}
 
-/* ── ACTIVITÉS PAGES ── */
-.nav-sub{padding-left:28px !important;font-size:12px !important;}
-.nav-sub-add{display:flex;align-items:center;gap:6px;padding:7px 12px 7px 28px;font-size:11px;color:var(--text3);cursor:pointer;border-radius:8px;transition:all 0.15s;border:1.5px dashed var(--border);margin:4px 8px;font-family:-apple-system,BlinkMacSystemFont,'Plus Jakarta Sans',sans-serif;}
-.nav-sub-add:hover{color:var(--red);border-color:var(--red);background:var(--red-light);}
-.act-cards-grid{display:grid;grid-template-columns:1fr;gap:12px;}
-.act-add-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border:2px dashed var(--border);border-radius:14px;background:none;color:var(--text3);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:-apple-system,BlinkMacSystemFont,'Plus Jakarta Sans',sans-serif;margin-top:10px;}
-.act-add-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-light);}
-.act-section-card{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all 0.2s;box-shadow:var(--shadow);position:relative;}
-.act-section-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);}
-.act-section-card:hover .act-card-edit{opacity:1;}
-.act-card-icon{font-size:30px;flex-shrink:0;width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;}
-.act-card-body{flex:1;min-width:0;}
-.act-card-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:2px;}
-.act-card-count{font-size:24px;font-weight:900;color:var(--text);letter-spacing:-1px;line-height:1.1;}
-.act-card-sub{font-size:11px;color:var(--text3);margin-top:3px;}
-.act-card-arrow{font-size:22px;color:var(--text3);font-weight:300;flex-shrink:0;}
-.act-card-edit{position:absolute;top:10px;right:38px;opacity:0;transition:opacity 0.15s;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:4px 8px;font-size:12px;cursor:pointer;}
-.act-event-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);}
-.act-event-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;gap:10px;}
-.act-event-title{font-size:14px;font-weight:700;color:var(--text);}
-.act-event-date{font-size:11px;color:var(--text3);margin-top:2px;}
-.act-event-pct{font-size:22px;font-weight:800;flex-shrink:0;}
-.act-event-bar{height:5px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-bottom:8px;}
-.act-event-fill{height:100%;border-radius:4px;transition:width 0.6s ease;}
-.act-event-members{display:flex;gap:4px;flex-wrap:wrap;}
-.act-member-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.act-note-item{background:var(--bg3);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
-.act-note-text{font-size:13px;color:var(--text);flex:1;}
-.act-note-date{font-size:10px;color:var(--text3);white-space:nowrap;}
-/* Section modal color chips */
-.sec-color-chip{width:28px;height:28px;border-radius:50%;cursor:pointer;transition:all 0.15s;border:2px solid transparent;}
-.sec-color-chip.selected{border-color:#fff;box-shadow:0 0 0 3px currentColor,0 0 0 5px var(--border);transform:scale(1.1);}
 
 /* PIÈCES JOINTES COMPTA */
 .attach-thumb{width:64px;height:64px;border-radius:10px;object-fit:cover;border:1.5px solid var(--border);cursor:pointer;transition:transform 0.15s;}
@@ -1297,14 +1246,14 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 
 /* ── FINITIONS STYLE iOS ── */
 /* Retour tactile natif sur tous les éléments cliquables */
-.nav-item:active,.bottom-nav-item:active,.type-option:active,.card:active,.act-section-card:active,
+.nav-item:active,.bottom-nav-item:active,.type-option:active,.card:active,
 .member-card-v2:active,.cotis-card-v2:active,.compta-card-v2:active,.doc-card:active,
-.dh-kpi-card:active,.kpi-band-card:active,.evsp-tab:active,.pres-view-btn:active{
+.dh-kpi-card:active,.kpi-band-card:active,.pres-view-btn:active{
   transform:scale(0.975);transition:transform 0.12s cubic-bezier(0.4,0,0.2,1);
 }
 .bottom-nav-item:active{transform:scale(0.9);}
 /* Rebond de défilement natif iOS sur toutes les zones scrollables */
-.main,.modal,#sidebar,.evsp-tab-bar,.table-wrap{-webkit-overflow-scrolling:touch;}
+.main,.modal,#sidebar,.table-wrap{-webkit-overflow-scrolling:touch;}
 /* Curseur de sélection texte teinté comme sur iOS */
 ::selection{background:rgba(255,59,48,0.25);}
 </style>
@@ -2135,51 +2084,6 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
   </main>
 </div>
 
-<!-- ═══ MODAL SECTION ═══ -->
-<div class="modal-overlay" id="modal-section">
-  <div class="modal">
-    <h3 id="modal-section-title">Nouvelle sous-page</h3>
-    <div class="form-grid">
-      <div class="form-group">
-        <label>Emoji</label>
-        <input id="sec-emoji" type="text" placeholder="🤝" maxlength="4" style="font-size:24px;text-align:center;width:80px;">
-      </div>
-      <div class="form-group">
-        <label>Nom de la sous-page *</label>
-        <input id="sec-nom" type="text" placeholder="ex: Maraudes, Foyer, Sport…">
-      </div>
-      <div class="form-group">
-        <label>Type d'événement filtré *</label>
-        <input id="sec-type" type="text" placeholder="ex: Maraude, Réunion, Sport…" list="sec-type-list">
-        <datalist id="sec-type-list"></datalist>
-      </div>
-      <div class="form-group">
-        <label>Couleur</label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;" id="sec-colors">
-          <div class="sec-color-chip" data-color="var(--red)" style="background:var(--red);" onclick="selectSectionColor('var(--red)',this)"></div>
-          <div class="sec-color-chip" data-color="#c49a00" style="background:#c49a00;" onclick="selectSectionColor('#c49a00',this)"></div>
-          <div class="sec-color-chip" data-color="#2563eb" style="background:#2563eb;" onclick="selectSectionColor('#2563eb',this)"></div>
-          <div class="sec-color-chip" data-color="#7c3aed" style="background:#7c3aed;" onclick="selectSectionColor('#7c3aed',this)"></div>
-          <div class="sec-color-chip" data-color="#16a34a" style="background:#16a34a;" onclick="selectSectionColor('#16a34a',this)"></div>
-          <div class="sec-color-chip" data-color="#0891b2" style="background:#0891b2;" onclick="selectSectionColor('#0891b2',this)"></div>
-          <div class="sec-color-chip" data-color="#ea580c" style="background:#ea580c;" onclick="selectSectionColor('#ea580c',this)"></div>
-          <div class="sec-color-chip" data-color="#db2777" style="background:#db2777;" onclick="selectSectionColor('#db2777',this)"></div>
-        </div>
-        <input type="hidden" id="sec-color" value="#c49a00">
-      </div>
-      <div class="form-group full">
-        <label>Description (optionnel)</label>
-        <input id="sec-desc" type="text" placeholder="ex: Suivi des maraudes solidaires">
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" id="sec-delete-btn" style="display:none;color:var(--red);border-color:var(--red);" onclick="deleteSection()">Supprimer</button>
-      <button class="btn btn-secondary" onclick="closeModal('modal-section')">Annuler</button>
-      <button class="btn btn-primary" onclick="saveSection()">Enregistrer</button>
-    </div>
-  </div>
-</div>
-
 <!-- MODAL MEMBRE -->
 <div class="modal-overlay" id="modal-membre">
   <div class="modal">
@@ -2312,54 +2216,6 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
   <button id="photo-viewer-close" onclick="closePhotoViewer()">✕</button>
   <img id="photo-viewer-img" src="" alt="Justificatif">
   <button id="photo-viewer-dl" onclick="telechargerPhoto()">⬇️ Télécharger</button>
-</div>
-
-<!-- MODAL TYPES ÉVÉNEMENTS -->
-<div class="modal-overlay" id="modal-subpage">
-  <div class="modal">
-    <h3 id="modal-subpage-title">Nouvelle sous-page</h3>
-    <div class="form-grid">
-      <div class="form-group"><label>Emoji</label>
-        <input type="text" id="sp-emoji" maxlength="2" placeholder="🏠" style="width:60px;">
-      </div>
-      <div class="form-group"><label>Nom de la sous-page</label>
-        <input type="text" id="sp-nom" placeholder="Ex: Soirées, Permanences…">
-      </div>
-      <div class="form-group full"><label>Couleur</label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;" id="sp-colors">
-          <div class="sp-color-pick" data-color="var(--red)" style="background:var(--red);" onclick="selectSpColor('var(--red)',this)"></div>
-          <div class="sp-color-pick" data-color="#c49a00" style="background:#c49a00;" onclick="selectSpColor('#c49a00',this)"></div>
-          <div class="sp-color-pick" data-color="#2563eb" style="background:#2563eb;" onclick="selectSpColor('#2563eb',this)"></div>
-          <div class="sp-color-pick" data-color="#7c3aed" style="background:#7c3aed;" onclick="selectSpColor('#7c3aed',this)"></div>
-          <div class="sp-color-pick" data-color="#16a34a" style="background:#16a34a;" onclick="selectSpColor('#16a34a',this)"></div>
-          <div class="sp-color-pick" data-color="#0891b2" style="background:#0891b2;" onclick="selectSpColor('#0891b2',this)"></div>
-          <div class="sp-color-pick" data-color="#ea580c" style="background:#ea580c;" onclick="selectSpColor('#ea580c',this)"></div>
-          <div class="sp-color-pick" data-color="#9ca3af" style="background:#9ca3af;" onclick="selectSpColor('#9ca3af',this)"></div>
-        </div>
-        <input type="hidden" id="sp-couleur" value="var(--red)">
-      </div>
-      <div class="form-group full"><label>Types d'événements inclus</label>
-        <p style="font-size:11px;color:var(--text3);margin-bottom:8px;">Sélectionnez quels types d'événements apparaissent dans cette sous-page.</p>
-        <div id="sp-types-checks" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-subpage')">Annuler</button>
-      <button class="btn btn-primary" onclick="saveSubpage()">Enregistrer</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-manage-subpages">
-  <div class="modal">
-    <h3>📑 Gérer les sous-pages</h3>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:16px;">Créez et organisez vos sous-pages pour les Événements.</p>
-    <div id="manage-sp-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
-    <button class="btn btn-primary btn-sm" onclick="openNewSubpage()">+ Nouvelle sous-page</button>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-manage-subpages')">Fermer</button>
-    </div>
-  </div>
 </div>
 
 <div class="modal-overlay" id="modal-types">
@@ -2565,116 +2421,6 @@ const DEFAULT_EVENT_SUBPAGES=[
   {id:5,nom:'Réunions',emoji:'🗣️',couleur:'var(--red)',types:['Réunion']},
 ];
 let event_subpages=DEFAULT_EVENT_SUBPAGES;
-let _activeSubpage=1; // id de l'onglet actif
-let _editingSubpage=null;
-let _spSelectedColor='var(--red)';
-
-function saveSubpage(){
-  const nom=document.getElementById('sp-nom').value.trim();
-  const emoji=document.getElementById('sp-emoji').value.trim()||'📅';
-  const couleur=document.getElementById('sp-couleur').value||'var(--red)';
-  const checks=document.querySelectorAll('#sp-types-checks input[type=checkbox]:checked');
-  const types=[...checks].map(c=>c.value);
-  if(!nom){iosAlert('Nom requis.');return;}
-  if(_editingSubpage){
-    const sp=event_subpages.find(s=>s.id===_editingSubpage);
-    if(sp){sp.nom=nom;sp.emoji=emoji;sp.couleur=couleur;sp.types=types;}
-  } else {
-    const newId=Math.max(0,...event_subpages.map(s=>s.id))+1;
-    event_subpages.push({id:newId,nom,emoji,couleur,types});
-    _activeSubpage=newId;
-  }
-  save('gef_event_subpages',event_subpages);
-  closeModal('modal-subpage');
-  renderManageSubpages();
-  renderEvents();
-}
-
-function openNewSubpage(){
-  _editingSubpage=null;_spSelectedColor='var(--red)';
-  document.getElementById('modal-subpage-title').textContent='Nouvelle sous-page';
-  document.getElementById('sp-nom').value='';
-  document.getElementById('sp-emoji').value='';
-  document.getElementById('sp-couleur').value='var(--red)';
-  _renderSpTypeChecks([]);
-  document.querySelectorAll('.sp-color-pick').forEach(el=>el.classList.remove('selected'));
-  document.querySelector('.sp-color-pick[data-color="var(--red)"]')?.classList.add('selected');
-  closeModal('modal-manage-subpages');
-  document.getElementById('modal-subpage').classList.add('open');
-}
-
-function editSubpage(id){
-  const sp=event_subpages.find(s=>s.id===id);
-  if(!sp)return;
-  _editingSubpage=id;_spSelectedColor=sp.couleur;
-  document.getElementById('modal-subpage-title').textContent='Modifier la sous-page';
-  document.getElementById('sp-nom').value=sp.nom;
-  document.getElementById('sp-emoji').value=sp.emoji;
-  document.getElementById('sp-couleur').value=sp.couleur;
-  _renderSpTypeChecks(sp.types);
-  document.querySelectorAll('.sp-color-pick').forEach(el=>el.classList.remove('selected'));
-  document.querySelector(`.sp-color-pick[data-color="${sp.couleur}"]`)?.classList.add('selected');
-  closeModal('modal-manage-subpages');
-  document.getElementById('modal-subpage').classList.add('open');
-}
-
-function deleteSubpage(id){
-  iosConfirm('Supprimer cette sous-page ?',()=>{
-    event_subpages=event_subpages.filter(s=>s.id!==id);
-    if(_activeSubpage===id)_activeSubpage=1;
-    save('gef_event_subpages',event_subpages);
-    renderManageSubpages();
-    renderEvents();
-  },{danger:true,confirmLabel:'Supprimer'});
-}
-
-function selectSpColor(color,el){
-  _spSelectedColor=color;
-  document.getElementById('sp-couleur').value=color;
-  document.querySelectorAll('.sp-color-pick').forEach(e=>e.classList.remove('selected'));
-  el.classList.add('selected');
-}
-
-function _renderSpTypeChecks(selected){
-  const el=document.getElementById('sp-types-checks');
-  if(!el)return;
-  el.innerHTML=eventTypes.map(t=>`
-    <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 10px;">
-      <input type="checkbox" value="${t}" ${selected.includes(t)?'checked':''} style="accent-color:var(--red);">
-      ${t}
-    </label>`).join('');
-}
-
-function openManageSubpages(){
-  renderManageSubpages();
-  document.getElementById('modal-manage-subpages').classList.add('open');
-}
-
-function renderManageSubpages(){
-  const el=document.getElementById('manage-sp-list');
-  if(!el)return;
-  el.innerHTML=event_subpages.map(sp=>`
-    <div class="manage-sp-row">
-      <div class="manage-sp-dot" style="background:${sp.couleur};"></div>
-      <div style="font-size:16px;">${sp.emoji}</div>
-      <div style="flex:1;min-width:0;">
-        <div class="manage-sp-name">${sp.nom}</div>
-        <div class="manage-sp-types">${sp.types.length?sp.types.join(', '):'Tous les types'}</div>
-      </div>
-      ${sp.isDefault?'<span style="font-size:10px;color:var(--text3);padding:0 4px;">défaut</span>':
-        `<button class="btn-icon" onclick="editSubpage(${sp.id})">✏️</button>
-         <button class="btn-icon" onclick="deleteSubpage(${sp.id})">🗑️</button>`}
-    </div>`).join('');
-}
-
-function _updateSidebarSubpages(){
-  // Sous-pages désactivées - no-op
-}
-
-function navToSubpage(id){
-  _activeSubpage=id;
-  navTo('evenements','Événements');
-}
 
 const DEFAULT_EVENT_TYPES=['Réunion','Maraude','Formation','Sortie','Permanence','Autre'];
 
@@ -2752,7 +2498,6 @@ let emailHistorique=[];
 let editingMembre=null,editingEvent=null,editingCompta=null,editingCotisation=null,currentEventId=null;
 let _openEventId=null;
 let documents_list=[];
-let ag_notes=[];
 const _donData=lsGet('gef_don_data',{twint:null,bank:null,iban:'CH•• •••• •••• •••• •••• •',benef:'Association GE-FAIS',banque:'',message:'Don GE-FAIS'});
 const _lastSave={};
 
@@ -2844,7 +2589,6 @@ async function initApp(){
   eventTypes=lsGet('gef_event_types',DEFAULT_EVENT_TYPES);
   emailHistorique=lsGet('gef_email_historique',[]);
   documents_list=lsGet('gef_documents',[]);
-  ag_notes=lsGet('gef_ag_notes',[]);
   event_subpages=lsGet('gef_event_subpages',DEFAULT_EVENT_SUBPAGES);
   const cachedDon=lsGet('gef_don_data',null);
   if(cachedDon)Object.assign(_donData,cachedDon);
@@ -3625,11 +3369,6 @@ function renderEvents(){
   }
 }
 function evPage(dir){renderEvents._page=(renderEvents._page||0)+dir;renderEvents();}
-
-function setActiveSubpage(id){
-  _activeSubpage=id;
-  renderEvents();
-}
 
 function toggleEventRow(eid){
   const wasOpen=_openEventId===eid;
@@ -4645,46 +4384,6 @@ function renderDocuments(){
     dz.ondragleave=()=>dz.classList.remove('drag-over');
     dz.ondrop=(e)=>{e.preventDefault();dz.classList.remove('drag-over');ajouterDocuments({files:e.dataTransfer.files});};
   }
-}
-
-// ── SECTIONS DYNAMIQUES ──────────────────────────────────────────
-
-// ── RENDU D'UNE SECTION ───────────────────────────────────────────
-function renderSection(secId){
-  // Sections dynamiques désactivées - no-op
-}
-
-// ── NOTES SECTIONS ───────────────────────────────────────────────
-function ajouterNoteSection(secId){
-  const texte=prompt('Note / ordre du jour :');
-  if(!texte||!texte.trim())return;
-  ag_notes.push({id:Date.now(),texte:texte.trim(),date:new Date().toISOString().slice(0,10),secId});
-  lsSet('gef_ag_notes',ag_notes);
-  save('gef_ag_notes',ag_notes);
-  renderSection(secId);
-}
-function supprimerNoteSection(noteId){
-  iosConfirm('Supprimer cette note ?',()=>{
-    ag_notes=ag_notes.filter(n=>n.id!==noteId);
-    lsSet('gef_ag_notes',ag_notes);
-    save('gef_ag_notes',ag_notes);
-    const p=document.querySelector('.page.active')?.id?.replace('page-','');
-    if(p)renderSection(p);
-  },{danger:true,confirmLabel:'Supprimer'});
-}
-// Compatibilité avec l'ancien code
-function ajouterNoteAG(){ajouterNoteSection('sec-ag');}
-function supprimerNoteAG(id){supprimerNoteSection(id);}
-
-// ── RENDER ACTIVITÉS ─────────────────────────────────────────────
-function renderActivites(){
-  // Page Activités désactivée - no-op
-}
-
-// Navigation depuis une carte Activités → Événements sur le bon onglet
-function goToSubpage(spId){
-  _activeSubpage=spId;
-  navTo('evenements','Événements');
 }
 
 function openEventModalType(type){
@@ -5760,9 +5459,6 @@ document.addEventListener('keydown',function(e){
   if(saveBtn){e.preventDefault();saveBtn.click();}
 });
 // Raccourci clavier Ctrl+K / Cmd+K pour la recherche
-function selectSectionColor(c,el){selectSpColor(c,el);}
-function deleteSection(){deleteSubpage(_editingSubpage);}
-function saveSection(){saveSubpage();}
 
 // ── FAB ───────────────────────────────────────────────────────────
 let _fabOpen=false;
