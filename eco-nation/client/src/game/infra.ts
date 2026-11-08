@@ -86,15 +86,15 @@ export function createInfrastructure(scene: Scene, grid: Grid, country: CountryD
   };
 
   const roots: Mesh[] = [];
-  const SCALE: Partial<Record<Infra['type'], number>> = { aeroport: 1.3, port: 1.2, centrale_nucleaire: 1.1, parc_solaire: 1.3, barrage: 1.3, ecole: 0.8 };
+  const SCALE: Partial<Record<Infra['type'], number>> = { aeroport: 0.75, port: 0.9, centrale_nucleaire: 0.35, centrale_charbon: 0.35, centrale_gaz: 0.3, parc_solaire: 0.45, barrage: 0.35, zone_industrielle: 0.45, zone_commerciale: 0.3, stade: 0.45, universite: 0.4, hopital: 0.28, usine: 0.3, ferme: 0.25 };
   for (const i of country.infra) {
     const y = grid.y(i.x, i.z);
-    const sc = SCALE[i.type] ?? 1;
+    const sc = SCALE[i.type] ?? 0.22;
     const before = smokeSources.length;
     if (i.type === 'parc_eolien') {
       const node = new TransformNode('wind', scene);
       node.position.set(i.x, y, i.z);
-      node.scaling.setAll(1.2);
+      node.scaling.setAll(i.name.includes('mer') ? 0.6 : 0.3);
       const towers: Mesh[] = [];
       for (let k = 0; k < 9; k++) {
         const x = ((k % 3) - 1) * 1.2;
@@ -153,17 +153,17 @@ export function createInfrastructure(scene: Scene, grid: Grid, country: CountryD
     const ps = new ParticleSystem('smoke', 120, scene);
     ps.particleTexture = tex;
     ps.emitter = s.pos;
-    ps.minEmitBox = new Vector3(-0.05, 0, -0.05);
-    ps.maxEmitBox = new Vector3(0.05, 0, 0.05);
+    ps.minEmitBox = new Vector3(-0.01, 0, -0.01);
+    ps.maxEmitBox = new Vector3(0.01, 0, 0.01);
     ps.color1 = s.steam ? new Color4(1, 1, 1, 0.55) : new Color4(0.75, 0.75, 0.76, 0.5);
     ps.color2 = s.steam ? new Color4(0.95, 0.96, 1, 0.45) : new Color4(0.55, 0.56, 0.58, 0.45);
     ps.colorDead = new Color4(0.8, 0.8, 0.8, 0);
-    ps.minSize = 0.4; ps.maxSize = 1.4;
+    ps.minSize = 0.06; ps.maxSize = 0.22;
     ps.minLifeTime = 3; ps.maxLifeTime = 6;
     ps.emitRate = 8;
     ps.direction1 = new Vector3(0.1, 0.5, 0); ps.direction2 = new Vector3(0.3, 0.8, 0.1);
-    ps.minEmitPower = 0.4; ps.maxEmitPower = 0.8;
-    ps.gravity = new Vector3(0.15, 0.05, 0);
+    ps.minEmitPower = 0.06; ps.maxEmitPower = 0.12;
+    ps.gravity = new Vector3(0.03, 0.01, 0);
     ps.blendMode = ParticleSystem.BLENDMODE_STANDARD;
     ps.start();
     return { ps, steam: s.steam };

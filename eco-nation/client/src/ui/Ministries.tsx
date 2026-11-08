@@ -264,7 +264,7 @@ export function PopulationPanel() {
   const pop = D.cohorts.reduce((s, v) => s + v, 0);
   return (
     <Drawer title="Population & société" icon="👥" wide>
-      <Tabs value={tab} onChange={setTab} tabs={[['satisfaction', 'Satisfaction'], ['demo', 'Démographie'], ['villes', 'Villes']]} />
+      <Tabs value={tab} onChange={setTab} tabs={[['satisfaction', 'Satisfaction'], ['demo', 'Démographie'], ['villes', 'Quartiers']]} />
       {tab === 'satisfaction' && (
         <>
           <div className="kpis">
@@ -312,11 +312,11 @@ export function PopulationPanel() {
       {tab === 'villes' && (
         <div className="table-wrap">
           <table className="table clickable">
-            <thead><tr><th>Ville</th><th>Type</th><th>Population</th><th>Chômage</th><th>Revenu/hab.</th><th>Satisfaction</th></tr></thead>
+            <thead><tr><th>Quartier</th><th>Type</th><th>Population</th><th>Chômage</th><th>Revenu/hab.</th><th>Satisfaction</th></tr></thead>
             <tbody>
               {country.cities.map((c, i) => ({ c, s: snap.cities[i] })).sort((a, b) => b.s.population - a.s.population).map(({ c, s }) => (
                 <tr key={c.id} onClick={() => { set({ selection: { kind: 'city', id: c.id } }); camApi.focus(c.x, c.z, c.kind === 'metropole' ? 40 : 20); }}>
-                  <td>{c.capital ? '★ ' : ''}{c.name}</td><td>{c.kind === 'metropole' ? 'Grande ville' : c.kind === 'ville' ? 'Ville moyenne' : 'Commune'}</td>
+                  <td>{c.capital ? '★ ' : ''}{c.name}</td><td>{c.kind === 'metropole' ? 'Grand quartier' : c.kind === 'ville' ? 'Arrondissement' : 'Quartier périphérique'}</td>
                   <td>{people(s.population)}</td><td>{pct(s.unemployment)}</td><td>{eur(s.income)}</td><td>{Math.round(s.satisfaction)}</td>
                 </tr>
               ))}

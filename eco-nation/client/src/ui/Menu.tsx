@@ -33,7 +33,7 @@ export function MainMenu() {
       <div className="menu-bg" />
       <div className="menu-card">
         <h1 className="logo">ECO <span>NATION</span></h1>
-        <p className="tagline">Gouvernez un pays pendant des décennies. Chaque décision compte.</p>
+        <p className="tagline">Gouvernez une cité-État de 10 millions d'habitants pendant des décennies. Chaque décision compte.</p>
         {view === 'home' && (
           <div className="menu-buttons">
             <button className="btn primary big" disabled={!connected || busy} onClick={start}>{busy ? 'Ouverture du pays…' : "▶ Gouverner la République d'Ilyas"}</button>
@@ -48,9 +48,9 @@ export function MainMenu() {
         {view === 'new' && (
           <div className="menu-form">
             <label>Nom du pays<input className="input" value={cfg.name} maxLength={40} onChange={(e) => setCfg({ ...cfg, name: e.target.value })} /></label>
-            <label>Grandes villes : <b>{cfg.metropoles}</b><input type="range" min={1} max={8} value={cfg.metropoles} onChange={(e) => setCfg({ ...cfg, metropoles: Number(e.target.value) })} /></label>
-            <label>Villes moyennes : <b>{cfg.villes}</b><input type="range" min={0} max={30} value={cfg.villes} onChange={(e) => setCfg({ ...cfg, villes: Number(e.target.value) })} /></label>
-            <label>Communes : <b>{cfg.communes}</b><input type="range" min={0} max={60} value={cfg.communes} onChange={(e) => setCfg({ ...cfg, communes: Number(e.target.value) })} /></label>
+            <label>Grands quartiers : <b>{cfg.metropoles}</b><input type="range" min={1} max={6} value={cfg.metropoles} onChange={(e) => setCfg({ ...cfg, metropoles: Number(e.target.value) })} /></label>
+            <label>Arrondissements : <b>{cfg.villes}</b><input type="range" min={0} max={20} value={cfg.villes} onChange={(e) => setCfg({ ...cfg, villes: Number(e.target.value) })} /></label>
+            <label>Quartiers périphériques : <b>{cfg.communes}</b><input type="range" min={0} max={40} value={cfg.communes} onChange={(e) => setCfg({ ...cfg, communes: Number(e.target.value) })} /></label>
             <label>Population initiale : <b>{cfg.population.toFixed(1).replace('.', ',')} millions</b><input type="range" min={2} max={60} step={0.2} value={cfg.population} onChange={(e) => setCfg({ ...cfg, population: Number(e.target.value) })} /></label>
             <label>Graine de génération<input className="input" type="number" value={cfg.seed} onChange={(e) => setCfg({ ...cfg, seed: Number(e.target.value) })} /></label>
             <div className="btn-row">
@@ -86,7 +86,7 @@ export function MainMenu() {
         )}
         {view === 'tuto' && (
           <div className="menu-form tuto-text">
-            <p><b>1.</b> Cliquez sur « Gouverner la République d'Ilyas » : le pays est entièrement construit et fonctionnel (villes, routes, écoles, hôpitaux, usines, fermes, centrales, population, économie, impôts, dette). Vous n'avez rien à construire : vous gouvernez.</p>
+            <p><b>1.</b> Cliquez sur « Gouverner la République d'Ilyas » : la cité-État est entièrement construite et fonctionnelle : une mégapole de 10 millions d'habitants avec ses quartiers, périphériques, métro, port, aéroport, écoles, hôpitaux, usines, centrales, son économie, ses impôts et sa dette. Vous n'avez rien à construire : vous gouvernez.</p>
             <p><b>2.</b> Ouvrez un ministère dans le dock de gauche, modifiez les curseurs, puis « Adopter les réformes » : elles entrent en vigueur le mois suivant.</p>
             <p><b>3.</b> Lancez le temps (▶, ×2, ×5, ×10). Chaque pas est un mois. Suivez les effets dans la barre du haut et le Centre de contrôle.</p>
             <p><b>4.</b> Les effets ont des délais : l'emploi, les services publics et les émissions s'ajustent progressivement.</p>

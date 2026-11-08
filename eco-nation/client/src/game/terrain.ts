@@ -3,8 +3,8 @@ import { HALF_D, HALF_W, MAP_D, MAP_W, makeHeightFn } from '../../../shared/sim/
 import { fbm } from '../../../shared/noise';
 import type { CountryDef } from '../../../shared/sim/types';
 
-export const VS = 6; // exagération verticale : 1 km d'altitude = 6 unités (1 unité = 1 km au sol)
-export const RES = 1;
+export const VS = 2; // exagération verticale du relief (1 unité = 1 km au sol)
+export const RES = 0.125; // maille de la grille de hauteurs (km)
 
 export interface Grid {
   nx: number;
@@ -58,7 +58,7 @@ export function distToPolyline(x: number, z: number, pts: [number, number][]) {
   for (let i = 0; i < pts.length - 1; i++) {
     const [ax, az] = pts[i];
     const [bx, bz] = pts[i + 1];
-    if (Math.abs(x - ax) > 6 && Math.abs(x - bx) > 6) continue;
+    if (Math.abs(x - ax) > 2 && Math.abs(x - bx) > 2) continue;
     const dx = bx - ax;
     const dz = bz - az;
     const l2 = dx * dx + dz * dz;

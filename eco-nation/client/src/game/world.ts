@@ -13,11 +13,11 @@ import { createCities } from './cities';
 import { createInfrastructure } from './infra';
 import { createAirSea, createTraffic, weatherFor } from './life';
 
-const Q: Record<Quality, { scale: number; step: number; trees: number; cars: number; shadows: number; precip: number; glow: boolean }> = {
-  low: { scale: 1.25, step: 2, trees: 4000, cars: 500, shadows: 0, precip: 1500, glow: false },
-  medium: { scale: 1, step: 1, trees: 10000, cars: 1100, shadows: 1024, precip: 3000, glow: true },
-  high: { scale: 1 / Math.min(2, window.devicePixelRatio || 1), step: 1, trees: 18000, cars: 2000, shadows: 2048, precip: 5000, glow: true },
-};
+const Q: Record<Quality, { scale: number; step: number; block: number; trees: number; cars: number; shadows: number; precip: number; glow: boolean }> = {
+  low: { scale: 1.25, step: 3, block: 0.28, trees: 6000, cars: 1500, shadows: 0, precip: 1500, glow: false },
+  medium: { scale: 1, step: 2, block: 0.2, trees: 15000, cars: 3500, shadows: 1024, precip: 3000, glow: true },
+  high: { scale: 1 / Math.min(2, window.devicePixelRatio || 1), step: 1, block: 0.2, trees: 30000, cars: 6000, shadows: 2048, precip: 5000, glow: true },
+}
 
 export const camApi = { focus: (_x: number, _z: number, _dist?: number) => {} };
 
@@ -28,23 +28,23 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
   const scene = new Scene(engine);
   scene.clearColor = new Color4(0.55, 0.75, 0.95, 1);
   scene.fogMode = Scene.FOGMODE_LINEAR;
-  scene.fogStart = 260;
-  scene.fogEnd = 900;
+  scene.fogStart = 40;
+  scene.fogEnd = 140;
   scene.fogColor = new Color3(0.7, 0.82, 0.95);
   const grid: Grid = buildGrid(country);
 
   // Caméra stratégique : glisser = déplacer, clic droit = pivoter, molette = zoom
   const cap = country.cities.find((c) => c.capital) ?? country.cities[0];
-  const camera = new ArcRotateCamera('cam', -Math.PI / 2.4, 0.95, 90, new Vector3(cap.x, grid.y(cap.x, cap.z), cap.z), scene);
+  const camera = new ArcRotateCamera('cam', -Math.PI / 2.4, 0.9, 16, new Vector3(cap.x, grid.y(cap.x, cap.z), cap.z), scene);
   camera.attachControl(canvas, true);
-  camera.lowerRadiusLimit = 4;
-  camera.upperRadiusLimit = 420;
+  camera.lowerRadiusLimit = 0.25;
+  camera.upperRadiusLimit = 95;
   camera.lowerBetaLimit = 0.15;
   camera.upperBetaLimit = 1.38;
-  camera.minZ = 0.3;
-  camera.maxZ = 4000;
+  camera.minZ = 0.02;
+  camera.maxZ = 2500;
   camera.wheelDeltaPercentage = 0.02;
-  camera.panningSensibility = 60;
+  camera.panningSensibility = 900;
   camera.mapPanning = true;
   camera.inertia = 0.85;
   camera.panningInertia = 0.85;
@@ -67,10 +67,10 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
     shadow = new CascadedShadowGenerator(q.shadows, sun);
     shadow.numCascades = 3;
     shadow.lambda = 0.85;
-    shadow.shadowMaxZ = 260;
+    shadow.shadowMaxZ = 18;
     shadow.stabilizeCascades = true;
     shadow.filteringQuality = CascadedShadowGenerator.QUALITY_MEDIUM;
-    shadow.bias = 0.004;
+    shadow.bias = 0.002;
   }
   const glow = q.glow ? new GlowLayer('glow', scene, { mainTextureSamples: 1, blurKernelSize: 32 }) : null;
   if (glow) glow.intensity = 0;
@@ -83,7 +83,7 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
   skyMat.rayleigh = 2;
   skyMat.luminance = 1;
   skyMat.fogEnabled = false;
-  const skybox = MeshBuilder.CreateBox('skybox', { size: 3500 }, scene);
+  const skybox = MeshBuilder.CreateBox('skybox', { size: 2000 }, scene);
   skybox.material = skyMat;
   skybox.infiniteDistance = true;
   skybox.isPickable = false;
@@ -104,7 +104,7 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
   starMat.disableLighting = true;
   starMat.backFaceCulling = false;
   starMat.fogEnabled = false;
-  const stars = MeshBuilder.CreateSphere('stars', { diameter: 3200, segments: 16, sideOrientation: 1 }, scene);
+  const stars = MeshBuilder.CreateSphere('stars', { diameter: 1800, segments: 16, sideOrientation: 1 }, scene);
   stars.material = starMat;
   stars.infiniteDistance = true;
   stars.isPickable = false;
@@ -113,7 +113,7 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
   const terrain = createTerrain(scene, grid, country, q.step);
   createWaterAndNetwork(scene, grid, country);
   const forests = createForests(scene, grid, country, q.trees);
-  const cities = createCities(scene, grid, country);
+  const cities = createCities(scene, grid, country, q.block);
   const infra = createInfrastructure(scene, grid, country);
   const traffic = createTraffic(scene, grid, country, q.cars);
   const airsea = createAirSea(scene, grid, country);
@@ -131,8 +131,8 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
   const precip = new ParticleSystem('precip', q.precip, scene);
   precip.particleTexture = dropTex;
   precip.emitter = new Vector3();
-  precip.minEmitBox = new Vector3(-60, 30, -60);
-  precip.maxEmitBox = new Vector3(60, 40, 60);
+  precip.minEmitBox = new Vector3(-6, 3, -6);
+  precip.maxEmitBox = new Vector3(6, 5, 6);
   precip.minLifeTime = 1.2; precip.maxLifeTime = 1.6;
   precip.blendMode = ParticleSystem.BLENDMODE_STANDARD;
 
@@ -145,8 +145,8 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
   ring.isPickable = false;
   ring.setEnabled(false);
   const pickers: Mesh[] = country.cities.map((c) => {
-    const m = MeshBuilder.CreateCylinder('picker', { diameter: 2, height: 1.5, tessellation: 20 }, scene);
-    m.position.set(c.x, grid.y(c.x, c.z) + 0.6, c.z);
+    const m = MeshBuilder.CreateCylinder('picker', { diameter: 2, height: 0.12, tessellation: 20 }, scene);
+    m.position.set(c.x, grid.y(c.x, c.z) + 0.05, c.z);
     m.scaling.set(c.radius * 1.1, 1, c.radius * 1.1);
     m.visibility = 0;
     m.metadata = { kind: 'city', id: c.id };
@@ -189,7 +189,7 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
   window.addEventListener('keydown', kd);
   window.addEventListener('keyup', ku);
   let anim: { from: Vector3; to: Vector3; r0: number; r1: number; t: number } | null = null;
-  camApi.focus = (x, z, dist = 25) => { anim = { from: camera.target.clone(), to: new Vector3(x, grid.y(x, z), z), r0: camera.radius, r1: dist, t: 0 }; };
+  camApi.focus = (x, z, dist = 4) => { anim = { from: camera.target.clone(), to: new Vector3(x, grid.y(x, z), z), r0: camera.radius, r1: dist, t: 0 }; };
 
   // Réactions aux instantanés du serveur
   let initialPop: number[] | null = null;
@@ -221,8 +221,8 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
         const snow = w === 'neige';
         precip.color1 = snow ? new Color4(1, 1, 1, 0.9) : new Color4(0.75, 0.85, 1, 0.6);
         precip.color2 = precip.color1;
-        precip.minSize = snow ? 0.25 : 0.08; precip.maxSize = snow ? 0.4 : 0.14;
-        precip.gravity = new Vector3(0, snow ? -6 : -45, 0);
+        precip.minSize = snow ? 0.025 : 0.008; precip.maxSize = snow ? 0.04 : 0.014;
+        precip.gravity = new Vector3(0, snow ? -0.8 : -6, 0);
         precip.emitRate = q.precip * (w === 'orage' ? 1.2 : 0.8);
         precip.start();
       } else precip.stop();
@@ -236,11 +236,11 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
   });
   const updateRing = (sel: ReturnType<typeof useStore.getState>['selection']) => {
     let x = 0, z = 0, r = 0;
-    if (sel?.kind === 'city') { const c = country.cities[sel.id]; x = c.x; z = c.z; r = c.radius * 1.3; }
-    if (sel?.kind === 'infra') { const i = country.infra.find((k) => k.id === sel.id); if (i) { x = i.x; z = i.z; r = i.type === 'aeroport' ? 3.5 : 1.8; } }
+    if (sel?.kind === 'city') { const c = country.cities[sel.id]; x = c.x; z = c.z; r = c.radius * 1.1; }
+    if (sel?.kind === 'infra') { const i = country.infra.find((k) => k.id === sel.id); if (i) { x = i.x; z = i.z; r = i.type === 'aeroport' ? 1.6 : 0.3; } }
     ring.setEnabled(r > 0);
-    ring.position.set(x, grid.y(x, z) + 0.4, z);
-    ring.scaling.set(r, 1, r);
+    ring.position.set(x, grid.y(x, z) + 0.05, z);
+    ring.scaling.set(r, Math.max(0.05, r * 0.3), r);
   };
   applySnap();
 
@@ -262,7 +262,7 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
     skyMat.luminance = 1.05 - cloudy * 0.4;
     skyMat.turbidity = 5 + cloudy * 12;
     sun.direction = sunDir.scale(-1);
-    sun.position = camera.target.add(sunDir.scale(300));
+    sun.position = camera.target.add(sunDir.scale(40));
     sun.intensity = Math.max(0, elev) * 2.6 * (1 - cloudy * 0.6);
     const dusk = 1 - Math.min(1, Math.abs(elev) * 4);
     sun.diffuse.set(1, 0.93 - dusk * 0.3, 0.85 - dusk * 0.45);
@@ -273,8 +273,8 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
     const fogDay = cloudy > 0.4 ? new Color3(0.68, 0.72, 0.77) : new Color3(0.72, 0.83, 0.95);
     scene.fogColor = Color3.Lerp(fogDay, new Color3(0.03, 0.05, 0.1), night);
     scene.clearColor = new Color4(scene.fogColor.r, scene.fogColor.g, scene.fogColor.b, 1);
-    scene.fogStart = weather === 'brouillard' ? 15 : 260 - cloudy * 80;
-    scene.fogEnd = weather === 'brouillard' ? 140 : 950 - cloudy * 300;
+    scene.fogStart = weather === 'brouillard' ? 1 : 30 + camera.radius * 0.8 - cloudy * 10;
+    scene.fogEnd = weather === 'brouillard' ? 12 + camera.radius * 0.5 : 110 + camera.radius * 1.6 - cloudy * 30;
     if (glow) glow.intensity = night * 0.8;
     // déplacement clavier
     const speed = camera.radius * 0.9 * dt;
@@ -295,13 +295,13 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
       camera.radius = anim.r0 + (anim.r1 - anim.r0) * e;
       if (anim.t >= 1) anim = null;
     }
-    camera.target.x = Math.max(-200, Math.min(200, camera.target.x));
-    camera.target.z = Math.max(-160, Math.min(160, camera.target.z));
+    camera.target.x = Math.max(-34, Math.min(34, camera.target.x));
+    camera.target.z = Math.max(-26, Math.min(26, camera.target.z));
     camera.target.y = grid.y(camera.target.x, camera.target.z);
-    const minY = grid.y(camera.position.x, camera.position.z) + 2;
+    const minY = grid.y(camera.position.x, camera.position.z) + 0.05;
     if (camera.position.y < minY) camera.beta = Math.max(camera.lowerBetaLimit!, camera.beta - 0.02);
     // météo et vie
-    (precip.emitter as Vector3).copyFrom(camera.position);
+    (precip.emitter as Vector3).set(camera.position.x, camera.position.y - 4, camera.position.z);
     traffic.update(dt);
     airsea.update(dt);
     infra.animate(dt);
@@ -315,10 +315,10 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
     const tm = scene.getTransformMatrix();
     country.cities.forEach((c, i) => {
       const el = labels[i];
-      const world = new Vector3(c.x, grid.y(c.x, c.z) + (c.kind === 'metropole' ? 3 : 1.2), c.z);
+      const world = new Vector3(c.x, grid.y(c.x, c.z) + (c.kind === 'metropole' ? 0.45 : 0.15), c.z);
       const p = Vector3.Project(world, Matrix.IdentityReadOnly, tm, vp);
       const dist = Vector3.Distance(camera.position, world);
-      const maxD = c.kind === 'metropole' ? 650 : c.kind === 'ville' ? 220 : 90;
+      const maxD = c.kind === 'metropole' ? 160 : c.kind === 'ville' ? 55 : 28;
       const sx = (p.x / rw) * cw;
       const sy = (p.y / rh) * ch;
       const vis = show && p.z > 0 && p.z < 1 && dist < maxD && sx > -50 && sx < cw + 50 && sy > -20 && sy < ch + 20;

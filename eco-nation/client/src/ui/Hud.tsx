@@ -144,7 +144,7 @@ export function Inspector() {
     return (
       <div className="inspector">
         <header><h3>{c.capital ? '★ ' : ''}{c.name}</h3><button className="icon-btn" onClick={() => set({ selection: null })}>✕</button></header>
-        <p className="muted">{c.capital ? 'Capitale · ' : ''}{c.kind === 'metropole' ? 'Grande ville' : c.kind === 'ville' ? 'Ville moyenne' : 'Commune'}{c.coastal ? ' · littorale' : ''}</p>
+        <p className="muted">{c.capital ? 'Centre historique et politique · ' : ''}{c.kind === 'metropole' ? 'Grand quartier' : c.kind === 'ville' ? 'Arrondissement' : 'Quartier périphérique'}{c.coastal ? ' · littorale' : ''}</p>
         <div className="kpis compact">
           <Kpi label="Habitants" value={people(s.population)} />
           <Kpi label="Chômage" value={pct(s.unemployment)} />
@@ -153,7 +153,7 @@ export function Inspector() {
           <Kpi label="Logements" value={int(s.housingUnits)} />
           <Kpi label="Recettes locales" value={money(s.localRevenue)} sub="€/an" />
         </div>
-        <h4>Spécialisation économique</h4>
+        <h4>Activités du quartier</h4>
         {top.map((t) => <div key={t.i} className="spec">{SECTORS[t.i].icon} {SECTORS[t.i].name} <b>{pct(t.v, 0)}</b></div>)}
         {infra.length > 0 && <><h4>Équipements</h4>{infra.map((i) => <button key={i.id} className="link block" onClick={() => set({ selection: { kind: 'infra', id: i.id } })}>{INFRA_LABEL[i.type]} — {i.name}</button>)}</>}
       </div>
@@ -282,13 +282,13 @@ export function SettingsPanel() {
         <p className="muted small">Basse : sans ombres, relief allégé, moins d'arbres et de véhicules.</p>
       </Section>
       <Section title="Affichage">
-        <Toggle label="Noms des villes sur la carte" value={settings.labels} onChange={(v) => setSettings({ labels: v })} />
+        <Toggle label="Noms des quartiers sur la carte" value={settings.labels} onChange={(v) => setSettings({ labels: v })} />
         <label className="slider"><div className="slider-top"><span>Durée d'une journée (cycle jour/nuit)</span><b>{settings.dayLength} s</b></div>
           <input type="range" min={60} max={600} step={30} value={settings.dayLength} onChange={(e) => setSettings({ dayLength: Number(e.target.value) })} /></label>
       </Section>
       <Section title="Commandes">
         <table className="table keys"><tbody>
-          {[['Clic gauche + glisser', 'Déplacer la carte'], ['Clic droit + glisser', 'Pivoter / incliner'], ['Molette', 'Zoom'], ['ZQSD / WASD / flèches', 'Déplacer la caméra'], ['A / E (Q / E)', 'Pivoter'], ['Clic', 'Sélectionner une ville ou un équipement'], ['Espace', 'Pause / reprise'], ['1 · 2 · 3 · 4', 'Vitesse ×1 · ×2 · ×5 · ×10']].map(([k, v]) => <tr key={k}><td><span className="key">{k}</span></td><td>{v}</td></tr>)}
+          {[['Clic gauche + glisser', 'Déplacer la carte'], ['Clic droit + glisser', 'Pivoter / incliner'], ['Molette', 'Zoom'], ['ZQSD / WASD / flèches', 'Déplacer la caméra'], ['A / E (Q / E)', 'Pivoter'], ['Clic', 'Sélectionner un quartier ou un équipement'], ['Espace', 'Pause / reprise'], ['1 · 2 · 3 · 4', 'Vitesse ×1 · ×2 · ×5 · ×10']].map(([k, v]) => <tr key={k}><td><span className="key">{k}</span></td><td>{v}</td></tr>)}
         </tbody></table>
       </Section>
     </Drawer>
@@ -323,7 +323,7 @@ export function HelpPanel() {
 
 const TUTORIAL = [
   { title: 'Bienvenue au gouvernement', text: 'Vous êtes chef du gouvernement. La barre du haut résume l\'état du pays : trésorerie, population, PIB, croissance, chômage, inflation, solde public, dette, satisfaction, émissions. Survolez chaque indicateur pour voir sa définition.' },
-  { title: 'La carte', text: 'Glissez pour vous déplacer, clic droit pour pivoter, molette pour zoomer. Cliquez sur une ville ou un équipement pour l\'inspecter. Le trafic, les fumées et la taille des villes reflètent l\'économie.' },
+  { title: 'La carte', text: 'Glissez pour vous déplacer, clic droit pour pivoter, molette pour zoomer. Cliquez sur un quartier ou un équipement pour l\'inspecter. Le trafic, les fumées et la densité des quartiers reflètent l\'économie.' },
   { title: 'Le temps', text: 'Le jeu est en pause. Utilisez les boutons ▶ ×2 ×5 ×10 (ou Espace et 1-4). Chaque pas correspond à un mois.' },
   { title: 'Les ministères', text: 'Le dock à gauche ouvre les ministères : Finances (budget, dette), Fiscalité (impôts A à H), Économie, Travail, Population. Modifiez une politique puis cliquez sur « Adopter les réformes ».' },
   { title: 'Conséquences', text: 'Chaque mesure a des effets directs et indirects, avec des délais. Exemple : baisser l\'impôt sur les sociétés stimule l\'investissement mais réduit les recettes. Suivez tout dans le Centre de contrôle (📊). Bonne gouvernance !' },

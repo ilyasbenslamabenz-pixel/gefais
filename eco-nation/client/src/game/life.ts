@@ -7,7 +7,7 @@ import { ENV, densify, type Grid } from './terrain';
 
 interface Path { pts: Vector3[]; cum: number[]; len: number }
 function makePath(points: [number, number][], grid: Grid, lift: number): Path {
-  const pts = densify(points, 0.7).map(([x, z]) => new Vector3(x, Math.max(0.04, grid.y(x, z)) + lift, z));
+  const pts = densify(points, 0.15).map(([x, z]) => new Vector3(x, Math.max(0.03, grid.y(x, z)) + lift, z));
   const cum = [0];
   for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + Vector3.Distance(pts[i], pts[i - 1]));
   return { pts, cum, len: cum[cum.length - 1] };
@@ -24,21 +24,21 @@ function at(p: Path, d: number, out: Vector3, dir: Vector3) {
 
 export function createTraffic(scene: Scene, grid: Grid, country: CountryDef, maxCars: number) {
   const rnd = mulberry32(country.seed + 77);
-  const roads = country.links.filter((l) => l.kind !== 'rail').map((l) => ({ p: makePath(l.points, grid, 0.11), kind: l.kind }));
-  const rails = country.links.filter((l) => l.kind === 'rail').map((l) => makePath(l.points, grid, 0.14));
+  const roads = country.links.filter((l) => l.kind !== 'rail').map((l) => ({ p: makePath(l.points, grid, 0.008), kind: l.kind }));
+  const rails = country.links.filter((l) => l.kind === 'rail').map((l) => makePath(l.points, grid, 0.01));
   const totalLen = roads.reduce((s, r) => s + r.p.len * (r.kind === 'autoroute' ? 3 : 1), 0) || 1;
   const cars: { r: number; d: number; v: number; lane: number }[] = [];
   roads.forEach((r, ri) => {
     const n = Math.round((maxCars * r.p.len * (r.kind === 'autoroute' ? 3 : 1)) / totalLen);
     for (let k = 0; k < n; k++) {
       const fwd = rnd() < 0.5;
-      cars.push({ r: ri, d: rnd() * r.p.len, v: (r.kind === 'autoroute' ? 2.2 : 1.3) * (0.8 + rnd() * 0.4) * (fwd ? 1 : -1), lane: fwd ? 1 : -1 });
+      cars.push({ r: ri, d: rnd() * r.p.len, v: (r.kind === 'autoroute' ? 0.09 : 0.05) * (0.8 + rnd() * 0.4) * (fwd ? 1 : -1), lane: fwd ? 1 : -1 });
     }
   });
-  const trains = rails.map((p) => ({ p, d: rnd() * p.len, v: 3.5 * (rnd() < 0.5 ? 1 : -1) }));
+  const trains = rails.map((p) => ({ p, d: rnd() * p.len, v: 0.14 * (rnd() < 0.5 ? 1 : -1) }));
 
-  const car = MeshBuilder.CreateBox('cars', { width: 0.1, height: 0.07, depth: 0.2 }, scene);
-  car.bakeTransformIntoVertices(Matrix.Translation(0, 0.035, 0));
+  const car = MeshBuilder.CreateBox('cars', { width: 0.007, height: 0.005, depth: 0.014 }, scene);
+  car.bakeTransformIntoVertices(Matrix.Translation(0, 0.0025, 0));
   const carMat = new StandardMaterial('carMat', scene);
   carMat.diffuseColor = Color3.White();
   carMat.specularColor = new Color3(0.4, 0.4, 0.4);
@@ -51,8 +51,8 @@ export function createTraffic(scene: Scene, grid: Grid, country: CountryDef, max
   car.thinInstanceSetBuffer('matrix', carBuf, 16, false);
   car.thinInstanceSetBuffer('color', carCol, 4, true);
 
-  const wagon = MeshBuilder.CreateBox('trains', { width: 0.14, height: 0.12, depth: 0.55 }, scene);
-  wagon.bakeTransformIntoVertices(Matrix.Translation(0, 0.06, 0));
+  const wagon = MeshBuilder.CreateBox('trains', { width: 0.01, height: 0.01, depth: 0.045 }, scene);
+  wagon.bakeTransformIntoVertices(Matrix.Translation(0, 0.005, 0));
   const tMat = new StandardMaterial('trainMat', scene);
   tMat.diffuseColor = Color3.FromHexString('#e63946');
   wagon.material = tMat;
@@ -74,7 +74,7 @@ export function createTraffic(scene: Scene, grid: Grid, country: CountryDef, max
       const r = roads[c.r];
       c.d += c.v * dt;
       at(r.p, c.d, v, dir);
-      const side = r.kind === 'autoroute' ? 0.1 : 0.06;
+      const side = r.kind === 'autoroute' ? 0.013 : 0.008;
       v.x += -dir.z * side * c.lane;
       v.z += dir.x * side * c.lane;
       Quaternion.FromEulerAnglesToRef(0, Math.atan2(dir.x * c.lane, dir.z * c.lane), 0, q);
@@ -87,7 +87,7 @@ export function createTraffic(scene: Scene, grid: Grid, country: CountryDef, max
     for (const t of trains) {
       t.d += t.v * dt;
       for (let w = 0; w < 4; w++) {
-        at(t.p, t.d - Math.sign(t.v) * w * 0.6, v, dir);
+        at(t.p, t.d - Math.sign(t.v) * w * 0.05, v, dir);
         Quaternion.FromEulerAnglesToRef(0, Math.atan2(dir.x, dir.z), 0, q);
         Matrix.ComposeToRef(one, q, v, m);
         m.copyToArray(trainBuf, k++ * 16);
@@ -112,16 +112,16 @@ export function createAirSea(scene: Scene, grid: Grid, country: CountryDef) {
   deck.diffuseColor = Color3.FromHexString('#e76f51');
   const planes = airports.map(() => {
     const n = new TransformNode('plane', scene);
-    const body = MeshBuilder.CreateBox('pb', { width: 0.12, height: 0.1, depth: 0.9 }, scene);
-    const wing = MeshBuilder.CreateBox('pw', { width: 1.0, height: 0.03, depth: 0.2 }, scene);
+    const body = MeshBuilder.CreateBox('pb', { width: 0.006, height: 0.006, depth: 0.05 }, scene);
+    const wing = MeshBuilder.CreateBox('pw', { width: 0.05, height: 0.002, depth: 0.012 }, scene);
     for (const p of [body, wing]) { p.material = white; p.parent = n; p.isPickable = false; }
     return n;
   });
   const ships = ports.flatMap(() => [0, 1].map(() => {
     const n = new TransformNode('ship', scene);
-    const h = MeshBuilder.CreateBox('sh', { width: 0.5, height: 0.18, depth: 2.2 }, scene);
-    const d = MeshBuilder.CreateBox('sd', { width: 0.4, height: 0.25, depth: 0.5 }, scene);
-    h.material = hull; d.material = deck; d.position.set(0, 0.2, -0.6);
+    const h = MeshBuilder.CreateBox('sh', { width: 0.04, height: 0.015, depth: 0.22 }, scene);
+    const d = MeshBuilder.CreateBox('sd', { width: 0.03, height: 0.02, depth: 0.05 }, scene);
+    h.material = hull; d.material = deck; d.position.set(0, 0.016, -0.06);
     for (const p of [h, d]) { p.parent = n; p.isPickable = false; }
     return n;
   }));
@@ -133,10 +133,10 @@ export function createAirSea(scene: Scene, grid: Grid, country: CountryDef) {
         const g = planes[i];
         const cycle = (t * 0.05 + i * 0.37) % 1;
         const dx = Math.cos(a.rot), dz = -Math.sin(a.rot);
-        const dist = cycle < 0.15 ? (cycle / 0.15) * 2.5 : 2.5 + (cycle - 0.15) * 160;
-        const alt = cycle < 0.08 ? 0.05 : Math.min(14, (cycle - 0.08) * 60);
-        g.position.set(a.x + dx * (dist - 2), grid.y(a.x, a.z) + 0.1 + alt, a.z + dz * (dist - 2));
-        g.rotation.set(cycle > 0.08 && alt < 14 ? -0.15 : 0, a.rot + Math.PI / 2, 0);
+        const dist = cycle < 0.15 ? (cycle / 0.15) * 1.6 : 1.6 + (cycle - 0.15) * 50;
+        const alt = cycle < 0.08 ? 0.003 : Math.min(2.5, (cycle - 0.08) * 10);
+        g.position.set(a.x + dx * (dist - 1.2), grid.y(a.x, a.z) + 0.005 + alt, a.z + dz * (dist - 1.2));
+        g.rotation.set(cycle > 0.08 && alt < 2.5 ? -0.15 : 0, a.rot + Math.PI / 2, 0);
         g.setEnabled(cycle < 0.95);
       });
       white.emissiveColor.set(ENV.night * 0.8, ENV.night * 0.8, ENV.night * 0.8);
@@ -144,9 +144,9 @@ export function createAirSea(scene: Scene, grid: Grid, country: CountryDef) {
         for (let k = 0; k < 2; k++) {
           const g = ships[i * 2 + k];
           const ph = (t * 0.01 + k * 0.5 + i * 0.21) % 1;
-          const z = p.z + (k - 0.5) * 4 + Math.sin(ph * 6) * 0.5;
-          const x = Math.min(p.x - 2 - Math.sin(ph * Math.PI) * 30, coastX(country.seed, z) - 2);
-          g.position.set(x, 0.05, z);
+          const z = p.z + (k - 0.5) * 0.8 + Math.sin(ph * 6) * 0.2;
+          const x = Math.min(p.x - 0.3 - Math.sin(ph * Math.PI) * 6, coastX(country.seed, z) - 0.4);
+          g.position.set(x, 0.035, z);
           g.rotation.y = Math.PI / 2 + (ph > 0.5 ? Math.PI : 0);
         }
       });
