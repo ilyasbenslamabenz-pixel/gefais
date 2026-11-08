@@ -11,7 +11,8 @@ import { ENV, buildGrid, type Grid } from './terrain';
 import { createForests, createTerrain, createWaterAndNetwork } from './landscape';
 import { createCities } from './cities';
 import { createInfrastructure } from './infra';
-import { createAirSea, createTraffic, weatherFor } from './life';
+import { createTraffic, weatherFor } from './life';
+import { createAirSea } from './airsea'; // --- aéroport et port ---
 
 const Q: Record<Quality, { scale: number; step: number; block: number; trees: number; cars: number; shadows: number; precip: number; glow: boolean }> = {
   low: { scale: 1.25, step: 3, block: 0.28, trees: 6000, cars: 1500, shadows: 0, precip: 1500, glow: false },
