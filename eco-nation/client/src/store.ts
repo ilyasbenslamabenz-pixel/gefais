@@ -5,7 +5,10 @@ import type { CountryDef, Notice, Policy } from '../../shared/sim/types';
 
 export type Panel = null | 'finances' | 'fiscalite' | 'travail' | 'economie' | 'population' | 'stats' | 'notifications' | 'settings' | 'help'
   | 'politique' | 'international' | 'evenements' | 'objectifs' | 'energie' | 'environnement'
-  | 'transports' | 'industrie' | 'agriculture' | 'dechets';
+  | 'transports' | 'industrie' | 'agriculture' | 'dechets'
+
+  // --- modules services publics/recherche/construction ---
+  | 'sante' | 'education' | 'logement' | 'securite' | 'recherche' | 'construction';
 export type Quality = 'low' | 'medium' | 'high';
 export type Selection = null | { kind: 'city'; id: number } | { kind: 'infra'; id: number };
 

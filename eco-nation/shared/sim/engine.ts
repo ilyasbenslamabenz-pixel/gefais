@@ -16,6 +16,9 @@ import { DEFAULT_ENERGY_POLICY } from './energyData';
 import { applyEnergyAction, energyHistory, energyStep, initEnergy, isEnergyAction, sanitizeEnergyPolicy, type EnergyAction } from './energy';
 import { applyEnvAction, environmentHistory, environmentStep, initEnvironment, isEnvAction, type EnvAction } from './environment';
 import { applySectorAction, defaultSectorPolicies, initSectors, recordSectorHistory, sanitizeSectorPolicies, sectorsStep, SECTOR_HISTORY_KEYS, type SectorAction } from './sectorModules';
+// --- modules services publics/recherche/construction ---
+import { applyServicesAction, defaultServicesPolicy, ensureServicesModules, initServicesModules, recordServicesHistory, sanitizeServicesPolicy, servicesModulesStep, servicesPostStep, type ServicesAction } from './services';
+export type { ServicesAction };
 
 export const SIM_VERSION = 1;
 export const START_YEAR = 2030;
@@ -55,6 +58,7 @@ export function defaultPolicy(gdp: number): Policy {
     trade: { tariff: 0 },
     energy: { ...DEFAULT_ENERGY_POLICY },
     ...defaultSectorPolicies(),
+    ...defaultServicesPolicy(), // --- modules services publics/recherche/construction ---
   };
 }
 
@@ -122,6 +126,7 @@ export function sanitizePolicy(input: Policy, current: Policy): Policy {
     trade: { tariff: num(i.trade?.tariff, 0, 0.5, c.trade?.tariff ?? 0) },
     energy: sanitizeEnergyPolicy(i.energy, c.energy), // --- module énergie ---
     ...sanitizeSectorPolicies(i, c),
+    ...sanitizeServicesPolicy(i, c), // --- modules services publics/recherche/construction ---
   };
 }
 
@@ -202,6 +207,8 @@ export function createGame(cfgIn: Partial<CountryConfig> = {}, id = 'local', nam
   initEnergy(S);
   initEnvironment(S);
   initSectors(S, true); // --- modules transports/industrie/agriculture/déchets ---
+  initServicesModules(S); // --- modules services publics/recherche/construction ---
+  S.services = servicesStep(S, S.policy, true); // qualités initiales lues dans les modules (0,80 par construction)
   S.satisfaction = satisfactionStep(S, S.policy, true);
   citiesStep(S, S.policy, true);
   const pop = cohorts.reduce((s, v) => s + v, 0);
@@ -249,6 +256,7 @@ function calibrate(S: GameState) {
 
 // ---------- Pas mensuel ----------
 export function tick(S: GameState): void {
+  ensureServicesModules(S); // --- modules services publics/recherche/construction --- (anciennes sauvegardes)
   if (S.pending && S.pending.month <= S.month + 1) {
     describePolicyChange(S, S.policy, S.pending.policy);
     S.policy = S.pending.policy;
@@ -285,6 +293,8 @@ export function tick(S: GameState): void {
   S.macro.inflation = ph.length >= 12 ? S.macro.priceLevel / p12 - 1 : S.macro.expectedInflation;
   // 4. Catégories, services, satisfaction, villes
   updateCategories(S);
+  // --- modules services publics/recherche/construction ---
+  servicesModulesStep(S, (kind, title, text) => pushNotice(S, kind, title, text));
   S.services = servicesStep(S, P, false);
   S.satisfaction = satisfactionStep(S, P, false);
   citiesStep(S, P, false);
@@ -292,6 +302,7 @@ export function tick(S: GameState): void {
   removeExtraBudget(S);
   politicsStep(S); // popularité, groupes d'intérêt, censure, élections
   victoryStep(S); // victoires et défaites
+  servicesPostStep(S); // --- modules services publics/recherche/construction ---
   recordHistory(S);
   // 5. Indexation automatique
   if (P.finance.indexBudgets) {
@@ -383,6 +394,7 @@ function recordHistory(S: GameState) {
   for (const [k, v] of Object.entries(A.spending)) push('dep_' + k, v);
   // --- module énergie ---
   for (const [k, v] of Object.entries({ ...energyHistory(S), ...environmentHistory(S) })) push(k, v);
+  recordServicesHistory(S, push); // --- modules services publics/recherche/construction ---
 }
 
 export function pushNotice(S: GameState, kind: Notice['kind'], title: string, text: string) {
@@ -428,6 +440,12 @@ function describePolicyChange(S: GameState, a: Policy, b: Policy) {
   if (JSON.stringify(a.industry) !== JSON.stringify(b.industry)) changes.push('politique industrielle');
   if (JSON.stringify(a.agriculture) !== JSON.stringify(b.agriculture)) changes.push('politique agricole');
   if (JSON.stringify(a.waste) !== JSON.stringify(b.waste)) changes.push('gestion des déchets');
+  // --- modules services publics/recherche/construction ---
+  if (JSON.stringify(a.health) !== JSON.stringify(b.health)) changes.push('politique de santé');
+  if (JSON.stringify(a.education) !== JSON.stringify(b.education)) changes.push('politique éducative');
+  if (JSON.stringify(a.housing) !== JSON.stringify(b.housing)) changes.push('politique du logement');
+  if (JSON.stringify(a.security) !== JSON.stringify(b.security)) changes.push('sécurité et justice');
+  if (JSON.stringify(a.research) !== JSON.stringify(b.research)) changes.push('recherche');
   const budgetChanged = BUDGET_LINES.some((k) => Math.abs(a.budget[k] - b.budget[k]) > 1);
   if (budgetChanged) changes.push('budget');
   if ((a.trade?.tariff ?? 0) !== (b.trade?.tariff ?? 0)) changes.push('droits de douane');
@@ -536,6 +554,12 @@ export function applyProgramAction(S: GameState, a: SectorAction): { ok: boolean
   const r = applySectorAction(S, a);
   if (r.ok) pushNotice(S, 'info', 'Programme engagé', r.msg);
   return r;
+}
+
+// --- modules services publics/recherche/construction ---
+/** Action d'un ministère (recrutement, programme d'investissement, plan logement, recherche). Voir `services.ts`. */
+export function applyServiceAction(S: GameState, a: ServicesAction) {
+  return applyServicesAction(S, a, (kind, title, text) => pushNotice(S, kind, title, text));
 }
 
 /** Données envoyées au client à chaque mois (sans la géographie ni l'historique complet). */

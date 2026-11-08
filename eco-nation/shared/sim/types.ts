@@ -11,6 +11,13 @@ import type { TransportPolicy, TransportState } from './transport';
 import type { IndustryPolicy, IndustryState } from './industry';
 import type { AgriculturePolicy, AgricultureState } from './agriculture';
 import type { WastePolicy, WasteState } from './waste';
+// --- modules services publics/recherche/construction ---
+import type { HealthPolicy, HealthState } from './health';
+import type { EducationPolicy, EducationState } from './education';
+import type { HousingPolicy, HousingState } from './housing';
+import type { SecurityPolicy, SecurityState } from './security';
+import type { ResearchPolicy, ResearchState } from './research';
+import type { ConstructionState } from './construction';
 
 // ---------- Décisions du joueur ----------
 export interface Bracket { upTo: number | null; rate: number }
@@ -66,6 +73,12 @@ export interface Policy {
   industry?: IndustryPolicy;
   agriculture?: AgriculturePolicy;
   waste?: WastePolicy;
+  // --- modules services publics/recherche/construction ---
+  health: HealthPolicy;
+  education: EducationPolicy;
+  housing: HousingPolicy;
+  security: SecurityPolicy;
+  research: ResearchPolicy;
 }
 
 // ---------- Pays (géographie, statique) ----------
@@ -88,7 +101,11 @@ export type InfraType =
   | 'centrale_charbon' | 'centrale_gaz' | 'centrale_nucleaire' | 'barrage' | 'parc_eolien' | 'parc_solaire'
   | 'zone_industrielle' | 'zone_commerciale' | 'commissariat' | 'stade' | 'caserne' | 'usine' | 'ferme'
   // module énergie : sites ajoutés automatiquement par le moteur
-  | 'centrale_fioul' | 'centrale_geothermique' | 'centrale_biomasse' | 'parc_eolien_mer' | 'stockage_batteries';
+  | 'centrale_fioul' | 'centrale_geothermique' | 'centrale_biomasse' | 'parc_eolien_mer' | 'stockage_batteries'
+
+  // --- modules services publics/recherche/construction ---
+  | 'clinique' | 'centre_medical' | 'college' | 'lycee' | 'centre_formation' | 'laboratoire' | 'caserne_pompiers' | 'tribunal' | 'prison'
+  | 'zone_residentielle' | 'eco_quartier' | 'logements_sociaux' | 'centrale_smr';
 
 export interface Infra {
   id: number;
@@ -106,8 +123,13 @@ export interface Infra {
   emissions: number; // tCO2/an
   level: number;
   builtYear: number;
-  status?: 'construction' | 'active' | 'closed'; // absent = en service ; sites énergétiques ajoutés par le moteur
-  serviceMonth?: number; // mois (depuis le début de partie) de mise en service prévue ou effective
+  status?: 'construction' | 'active' | 'closed' | 'chantier'; // absent = en service ; 'construction' (énergie, secteurs) ou 'chantier' (équipements publics) = en travaux
+  serviceMonth?: number; // mois de mise en service prévue ou effective
+  progress?: number; // avancement du chantier 0..1
+  condition?: number; // état du bâti 0..1 (entretien financé par le ministère de tutelle)
+  custom?: boolean; // construit pendant la partie (entretien et recettes comptés en « équipements »)
+  revenue?: number; // recettes publiques annuelles (€/an, prix de base)
+  renovated?: boolean; // rénovation énergétique déjà réalisée
 }
 
 export interface Link { a: number; b: number; kind: 'autoroute' | 'nationale' | 'rail'; points: [number, number][] }
@@ -245,7 +267,8 @@ export type RevenueKey =
   | 'entreprisesPubliques' | 'infrastructures' | 'divers' | 'douanes';
 
 export type SpendingKey = BudgetLine | 'retraites' | 'chomage' | 'allocations' | 'creditActivite' | 'interets'
-  | 'energie' | 'ecologie'; // module énergie : investissements et soutiens énergétiques ; environnement, biodiversité, compensation
+  | 'energie' | 'ecologie' // module énergie
+  | 'equipements'; // équipements publics construits pendant la partie
 
 export interface Demography {
   cohorts: number[]; // population par tranche de 5 ans
@@ -305,6 +328,13 @@ export interface GameState {
   industry?: IndustryState;
   agriculture?: AgricultureState;
   waste?: WasteState;
+  // --- modules services publics/recherche/construction ---
+  health?: HealthState;
+  education?: EducationState;
+  housing?: HousingState;
+  security?: SecurityState;
+  research?: ResearchState;
+  construction?: ConstructionState;
 }
 
 export type Occ = Occupation;

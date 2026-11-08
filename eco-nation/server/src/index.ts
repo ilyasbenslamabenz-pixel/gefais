@@ -6,6 +6,9 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { Server, type Socket } from 'socket.io';
 import { applyAction, applyGovAction, applyProgramAction, createGame, migrate, schedulePolicy, snapshot, tick, type FinanceAction, type GovAction, type GameAction, type SectorAction } from '../../shared/sim/engine';
+// --- modules services publics/recherche/construction ---
+import { applyServiceAction, type ServicesAction } from '../../shared/sim/engine';
+import { cityFacilities } from '../../shared/sim/services';
 import type { CountryConfig, GameState, Policy } from '../../shared/sim/types';
 import { db } from './db';
 
@@ -27,6 +30,15 @@ interface Live {
   lastNotice: number;
   unloadTimer: NodeJS.Timeout | null;
   overNotified: boolean; // fin de mandat déjà signalée
+  infraVersion: number; // dernière version de `country.infra` envoyée aux clients
+}
+
+/** Renvoie la liste des équipements aux clients si elle a changé (chantiers ouverts, mises en service, démolitions). */
+function emitInfra(L: Live) {
+  const v = L.state.construction?.infraVersion ?? 0;
+  if (v === L.infraVersion) return;
+  L.infraVersion = v;
+  io.to(L.state.id).emit('game:infra', { infra: L.state.country.infra, version: v });
 }
 const live = new Map<string, Live>();
 
@@ -76,6 +88,7 @@ function step(L: Live) {
     setSpeed(L, 0); // fin de mandat : la partie est suspendue jusqu'à la décision du joueur
     io.to(S.id).emit('game:over', S.victory.defeat);
   } else if (S.victory?.status !== 'defaite') L.overNotified = false;
+  emitInfra(L);
   if (S.month - L.lastSavedMonth >= 12) void persist(L); // sauvegarde automatique annuelle
   const dt = performance.now() - t0;
   if (dt > 200) console.warn(`Pas de simulation lent : ${dt.toFixed(0)} ms`);
@@ -87,7 +100,7 @@ async function openGame(id: string, owner: string): Promise<Live | null> {
   const raw = await db.load(id, owner);
   if (!raw) return null;
   const state = migrate(JSON.parse(raw) as GameState);
-  const L: Live = { state, owner, speed: 0, timer: null, sockets: new Set(), lastSavedMonth: state.month, lastNotice: state.noticeSeq - 1, unloadTimer: null, overNotified: state.victory?.status === 'defaite' };
+  const L: Live = { state, owner, speed: 0, timer: null, sockets: new Set(), lastSavedMonth: state.month, lastNotice: state.noticeSeq - 1, unloadTimer: null, overNotified: state.victory?.status === 'defaite', infraVersion: state.construction?.infraVersion ?? 0 };
   live.set(id, L);
   return L;
 }
@@ -242,6 +255,34 @@ io.on('connection', (socket: Socket) => {
     if (r.ok) io.to(current.state.id).emit('game:tick', { snap: snapshot(current.state), last: null, notices: current.state.notices.filter((n) => n.id > current!.lastNotice) });
     if (r.ok) current.lastNotice = current.state.noticeSeq - 1;
     ack(cb)(r);
+  });
+  // --- modules services publics/recherche/construction ---
+  // Actions des ministères : recrutements, programmes d'investissement (placement automatique validé côté serveur),
+  // plans logement, recherche. `game:build` est un alias historique de `game:service`.
+  const onService = (a: ServicesAction, cb: unknown) => {
+    if (!current) return ack(cb)({ ok: false, code: 'AUCUNE_PARTIE', msg: 'Aucune partie ouverte' });
+    if (!a || typeof a !== 'object' || typeof (a as { type?: unknown }).type !== 'string') return ack(cb)({ ok: false, code: 'ACTION_INCONNUE', msg: 'Action invalide' });
+    let r;
+    try {
+      r = applyServiceAction(current.state, a);
+    } catch (e) {
+      console.error(e);
+      return ack(cb)({ ok: false, code: 'ERREUR', msg: 'Action impossible' });
+    }
+    if (r.ok) {
+      const L = current;
+      io.to(L.state.id).emit('game:tick', { snap: snapshot(L.state), last: null, notices: L.state.notices.filter((n) => n.id > L.lastNotice) });
+      L.lastNotice = L.state.noticeSeq - 1;
+      emitInfra(L);
+    }
+    ack(cb)(r);
+  };
+  socket.on('game:service', onService);
+  socket.on('game:build', onService);
+
+  socket.on('game:facilities', (cb) => {
+    if (!current) return ack(cb)({ ok: false, msg: 'Aucune partie ouverte' });
+    ack(cb)({ ok: true, facilities: cityFacilities(current.state) });
   });
 
   socket.on('game:save', async (cb) => {
