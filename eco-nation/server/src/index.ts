@@ -35,7 +35,9 @@ interface Live {
 
 /** Renvoie la liste des équipements aux clients si elle a changé (chantiers ouverts, mises en service, démolitions). */
 function emitInfra(L: Live) {
-  const v = L.state.construction?.infraVersion ?? 0;
+  // signature : version du module de construction + nombre d'équipements + chantiers en cours (sites énergétiques et sectoriels inclus)
+  const inf = L.state.country.infra;
+  const v = (L.state.construction?.infraVersion ?? 0) * 1e6 + inf.length * 1000 + inf.filter((i) => i.status).length;
   if (v === L.infraVersion) return;
   L.infraVersion = v;
   io.to(L.state.id).emit('game:infra', { infra: L.state.country.infra, version: v });
@@ -100,7 +102,7 @@ async function openGame(id: string, owner: string): Promise<Live | null> {
   const raw = await db.load(id, owner);
   if (!raw) return null;
   const state = migrate(JSON.parse(raw) as GameState);
-  const L: Live = { state, owner, speed: 0, timer: null, sockets: new Set(), lastSavedMonth: state.month, lastNotice: state.noticeSeq - 1, unloadTimer: null, overNotified: state.victory?.status === 'defaite', infraVersion: state.construction?.infraVersion ?? 0 };
+  const L: Live = { state, owner, speed: 0, timer: null, sockets: new Set(), lastSavedMonth: state.month, lastNotice: state.noticeSeq - 1, unloadTimer: null, overNotified: state.victory?.status === 'defaite', infraVersion: -1 };
   live.set(id, L);
   return L;
 }

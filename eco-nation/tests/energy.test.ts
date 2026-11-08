@@ -136,8 +136,10 @@ describe('Bilan énergétique et émissions', () => {
     const cons = E.roll.reduce((s, r) => s + r.cons, 0);
     expect(f.byCarrier.elec / cons).toBeGreaterThan(0.97);
     expect(f.byCarrier.elec / cons).toBeLessThan(1.03);
-    // part renouvelable de l'électricité ≠ part renouvelable de l'énergie finale
-    expect(Math.abs(E.elecRenShare - f.renewableShare)).toBeGreaterThan(0.005);
+    // part renouvelable de l'énergie finale ≠ part renouvelable de l'électricité : elle se rapporte à toute l'énergie
+    // finale et inclut des renouvelables non électriques (biomasse, biocarburants, chaleur)
+    expect(f.renewableShare).toBeGreaterThan(E.elecRenShare * (f.byCarrier.elec / f.total) + 0.001);
+    expect(f.renewableShare).toBeLessThan(1);
   });
 
   it('les absorptions et la compensation ne réduisent jamais les émissions brutes', () => {

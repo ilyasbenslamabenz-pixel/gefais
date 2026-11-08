@@ -33,6 +33,7 @@ export function createInfrastructure(scene: Scene, grid: Grid, country: CountryD
     parts.push(c);
   };
   const rotors: TransformNode[] = [];
+  const nodes: TransformNode[] = [];
   const smokeSources: { pos: Vector3; steam: boolean }[] = [];
 
   const build = (i: Infra) => {
@@ -80,7 +81,24 @@ export function createInfrastructure(scene: Scene, grid: Grid, country: CountryD
         smokeSources.push({ pos: new Vector3(0.35, 0.95, 0.2), steam: false });
         break;
       case 'ferme': box('#a4161a', 0, 0, 0, 0.35, 0.22, 0.22); box('#e9d8a6', 0.35, 0, 0.1, 0.18, 0.4, 0.18); box('#6a994e', 0, 0, 0.6, 1.2, 0.01, 0.8); break;
-      case 'parc_eolien': break;
+      case 'clinique': case 'centre_medical': box('#f4f6f8', 0, 0, 0, 0.6, 0.35, 0.45); box('#2a9d8f', 0, 0.35, 0, 0.22, 0.04, 0.08, 0.6); box('#2a9d8f', 0, 0.35, 0, 0.08, 0.04, 0.22, 0.6); break;
+      case 'college': case 'lycee': case 'centre_formation': box('#f4a261', 0, 0, 0, 0.6, 0.25, 0.35); box('#e76f51', 0.4, 0, 0.3, 0.25, 0.2, 0.25); break;
+      case 'laboratoire': box('#dee2e6', 0, 0, 0, 0.7, 0.3, 0.4); { const s2 = MeshBuilder.CreateSphere('p', { diameter: 0.3, slice: 0.5 }, scene); s2.position.set(0.2, 0.3, 0); s2.material = mat('#4cc9f0'); parts.push(s2); } break;
+      case 'caserne_pompiers': box('#c1121f', 0, 0, 0, 0.5, 0.25, 0.35); box('#f1faee', 0, 0.25, 0, 0.52, 0.04, 0.37); box('#c1121f', 0.3, 0, 0, 0.12, 0.6, 0.12); break;
+      case 'tribunal': box('#e9ecef', 0, 0, 0, 0.7, 0.35, 0.45); for (let k = 0; k < 5; k++) cyl('#f8f9fa', -0.28 + k * 0.14, 0, 0.25, 0.03, 0.3); box('#adb5bd', 0, 0.35, 0, 0.75, 0.06, 0.5); break;
+      case 'prison': box('#6c757d', 0, 0, 0, 1.2, 0.08, 1.2); box('#495057', 0, 0, 0, 0.5, 0.3, 0.5); for (const [x, z] of [[-0.55, -0.55], [0.55, -0.55], [-0.55, 0.55], [0.55, 0.55]]) cyl('#343a40', x, 0, z, 0.06, 0.4); break;
+      case 'zone_residentielle': for (let k = 0; k < 6; k++) box(['#e8dcc8', '#d9b99b', '#f1ece2'][k % 3], ((k % 3) - 1) * 0.45, 0, (Math.floor(k / 3) - 0.5) * 0.5, 0.3, 0.2 + (k % 2) * 0.15, 0.3); break;
+      case 'eco_quartier': for (let k = 0; k < 6; k++) { const x = ((k % 3) - 1) * 0.45, z = (Math.floor(k / 3) - 0.5) * 0.5; box('#f1ece2', x, 0, z, 0.3, 0.22, 0.3); box('#52b788', x, 0.22, z, 0.31, 0.03, 0.31); } break;
+      case 'logements_sociaux': for (let k = 0; k < 3; k++) box('#cdb4db', (k - 1) * 0.4, 0, 0, 0.28, 0.6 + k * 0.1, 0.28); break;
+      case 'centrale_smr': { const s2 = MeshBuilder.CreateSphere('p', { diameter: 0.7, slice: 0.5 }, scene); s2.material = mat('#ced4da'); parts.push(s2); } box('#adb5bd', 0.6, 0, 0, 0.5, 0.3, 0.4); break;
+      case 'centrale_fioul': case 'centrale_biomasse':
+        box(i.type === 'centrale_biomasse' ? '#8d6e63' : '#868e96', 0, 0, 0, 0.8, 0.4, 0.5); cyl('#6c757d', 0.3, 0, 0.35, 0.09, 1.0);
+        smokeSources.push({ pos: new Vector3(0.3, 1.05, 0.35), steam: false });
+        break;
+      case 'centrale_geothermique': box('#dee2e6', 0, 0, 0, 0.7, 0.3, 0.4); cyl('#e9ecef', 0.5, 0, 0, 0.25, 0.5, 0, 0.18); smokeSources.push({ pos: new Vector3(0.5, 0.55, 0), steam: true }); break;
+      case 'stockage_batteries': for (let k = 0; k < 8; k++) box('#3a86ff', ((k % 4) - 1.5) * 0.3, 0, (Math.floor(k / 4) - 0.5) * 0.35, 0.25, 0.15, 0.6, 0.15); break;
+      case 'parc_eolien': case 'parc_eolien_mer': break;
+      default: box('#adb5bd', 0, 0, 0, 0.5, 0.3, 0.5); break;
     }
     return parts.slice();
   };
@@ -91,10 +109,11 @@ export function createInfrastructure(scene: Scene, grid: Grid, country: CountryD
     const y = grid.y(i.x, i.z);
     const sc = SCALE[i.type] ?? 0.22;
     const before = smokeSources.length;
-    if (i.type === 'parc_eolien') {
+    if (i.type === 'parc_eolien' || i.type === 'parc_eolien_mer') {
       const node = new TransformNode('wind', scene);
       node.position.set(i.x, y, i.z);
-      node.scaling.setAll(i.name.includes('mer') ? 0.6 : 0.3);
+      node.scaling.setAll(i.type === 'parc_eolien_mer' || i.name.includes('mer') ? 0.6 : 0.3);
+      nodes.push(node);
       const towers: Mesh[] = [];
       for (let k = 0; k < 9; k++) {
         const x = ((k % 3) - 1) * 1.2;
@@ -124,6 +143,18 @@ export function createInfrastructure(scene: Scene, grid: Grid, country: CountryD
     }
     const ps = build(i);
     if (!ps.length) continue;
+    // chantier : maquette translucide orangée + grue ; fermé : grisé
+    if (i.status === 'construction' || i.status === 'chantier') {
+      const site = mat('#ffb703', 0.4);
+      site.alpha = 0.55;
+      for (const p of ps) p.material = site;
+      box('#f77f00', 0.7, 0, 0.7, 0.06, 1.4, 0.06); box('#f77f00', 0.35, 1.35, 0.7, 0.8, 0.05, 0.05);
+      ps.push(...parts.slice(-2));
+      smokeSources.length = before;
+    } else if (i.status === 'closed') {
+      for (const p of ps) p.material = mat('#5c5f66');
+      smokeSources.length = before;
+    }
     const merged = Mesh.MergeMeshes(ps, true, true, undefined, false, true)!;
     merged.position.set(i.x, y, i.z);
     merged.rotation.y = i.rot;
@@ -174,5 +205,11 @@ export function createInfrastructure(scene: Scene, grid: Grid, country: CountryD
     animate: (dt: number) => { for (const r of rotors) r.rotation.z += dt * 2.2; },
     /** Débit des fumées proportionnel aux émissions industrielles et électriques (relatives à l'état initial). */
     setEmissionFactor: (k: number) => { for (const s of systems) s.ps.emitRate = s.steam ? 8 : Math.max(0, 8 * k); },
+    dispose: () => {
+      for (const s of systems) s.ps.dispose();
+      for (const r of roots) r.dispose();
+      for (const n of nodes) n.dispose(false, true);
+      tex.dispose();
+    },
   };
 }

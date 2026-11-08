@@ -100,17 +100,44 @@ const MINISTRIES: { id: Panel; icon: string; label: string }[] = [
   { id: 'stats', icon: '📊', label: 'Statistiques' },
 ];
 
+const POLES: { id: string; icon: string; label: string; items: Panel[] }[] = [
+  { id: 'eco', icon: '💶', label: 'Économie', items: ['finances', 'fiscalite', 'economie', 'travail', 'industrie'] },
+  { id: 'social', icon: '🤝', label: 'Social', items: ['population', 'sante', 'education', 'logement', 'securite'] },
+  { id: 'terr', icon: '🌍', label: 'Territoire', items: ['energie', 'environnement', 'transports', 'agriculture', 'dechets', 'construction', 'recherche'] },
+  { id: 'etat', icon: '🏛️', label: 'État', items: ['politique', 'international', 'evenements', 'objectifs'] },
+];
+
 export function Dock() {
   const panel = useStore((s) => s.panel);
   const unread = useStore((s) => s.unread);
   const pendingEvents = useStore((s) => s.snap?.events?.active.length ?? 0);
   const set = useStore((s) => s.set);
-  const toggle = (p: Panel) => set({ panel: panel === p ? null : p, ...(p === 'notifications' ? { unread: 0 } : {}) });
+  const [open, setOpen] = useState<string | null>(null);
+  const toggle = (p: Panel) => { set({ panel: panel === p ? null : p, ...(p === 'notifications' ? { unread: 0 } : {}) }); setOpen(null); };
+  const byId = (id: Panel) => MINISTRIES.find((m) => m.id === id)!;
   return (
     <nav className="dock">
-      {MINISTRIES.map((m) => (
-        <button key={m.id} className={panel === m.id ? 'on' : ''} onClick={() => toggle(m.id)}><span>{m.icon}</span><em>{m.label}</em>{m.id === 'evenements' && pendingEvents > 0 && <i className="badge">{pendingEvents}</i>}</button>
-      ))}
+      {POLES.map((pole) => {
+        const active = pole.items.includes(panel);
+        return (
+          <div key={pole.id} className="pole">
+            <button className={active || open === pole.id ? 'on' : ''} onClick={() => setOpen(open === pole.id ? null : pole.id)}>
+              <span>{pole.icon}</span><em>{pole.label}</em>
+              {pole.id === 'etat' && pendingEvents > 0 && <i className="badge">{pendingEvents}</i>}
+            </button>
+            {open === pole.id && (
+              <div className="flyout">
+                {pole.items.map((id) => { const m = byId(id); return (
+                  <button key={id} className={panel === id ? 'on' : ''} onClick={() => toggle(id)}>
+                    <span>{m.icon}</span>{m.label}{id === 'evenements' && pendingEvents > 0 && <i className="badge">{pendingEvents}</i>}
+                  </button>
+                ); })}
+              </div>
+            )}
+          </div>
+        );
+      })}
+      <button className={panel === 'stats' ? 'on' : ''} onClick={() => toggle('stats')}><span>📊</span><em>Statistiques</em></button>
       <div className="dock-sep" />
       <button className={panel === 'notifications' ? 'on' : ''} onClick={() => toggle('notifications')}><span>🔔</span><em>Alertes</em>{unread > 0 && <i className="badge">{unread}</i>}</button>
       <button className={panel === 'help' ? 'on' : ''} onClick={() => toggle('help')}><span>❓</span><em>Aide</em></button>
@@ -159,6 +186,10 @@ const INFRA_LABEL: Record<string, string> = {
   hopital: 'Hôpital', universite: 'Université', ecole: 'Établissement scolaire', aeroport: 'Aéroport', port: 'Port', gare: 'Gare',
   centrale_charbon: 'Centrale à charbon', centrale_gaz: 'Centrale à gaz', centrale_nucleaire: 'Centrale nucléaire', barrage: 'Barrage hydroélectrique',
   parc_eolien: 'Parc éolien', parc_solaire: 'Centrale solaire', zone_industrielle: 'Zone industrielle', zone_commerciale: 'Zone commerciale', commissariat: 'Commissariat', stade: 'Stade', caserne: 'Centre de secours (pompiers)', usine: 'Usine', ferme: 'Exploitation agricole',
+  clinique: 'Clinique', centre_medical: 'Centre médical', college: 'Collège', lycee: 'Lycée', centre_formation: 'Centre de formation', laboratoire: 'Laboratoire de recherche',
+  caserne_pompiers: 'Caserne de pompiers', tribunal: 'Tribunal', prison: 'Établissement pénitentiaire', zone_residentielle: 'Nouveau quartier résidentiel', eco_quartier: 'Écoquartier',
+  logements_sociaux: 'Logements sociaux', centrale_smr: 'Petit réacteur modulaire', centrale_fioul: 'Turbine à fioul', centrale_geothermique: 'Centrale géothermique',
+  centrale_biomasse: 'Centrale biomasse', parc_eolien_mer: 'Parc éolien en mer', stockage_batteries: 'Stockage par batteries',
 };
 
 export function Inspector() {
@@ -208,7 +239,7 @@ export function Inspector() {
         <Kpi label="Émissions directes" value={i.emissions >= 1e5 ? `${dec1(i.emissions / 1e6)} Mt CO₂` : `${int(i.emissions)} t CO₂`} sub="par an" />
         <Kpi label="Niveau" value={String(i.level)} />
       </div>
-      <p className="muted small">La construction, l'amélioration et la fermeture d'équipements arrivent avec le ministère de l'Énergie et le système de construction (phases 4 et 6).</p>
+      <p className="muted small">Amélioration, rénovation, fermeture et nouveaux programmes : ministères Équipements, Énergie, Transports, Santé, Éducation…</p>
       {city && <button className="link" onClick={() => { set({ selection: { kind: 'city', id: city.id } }); camApi.focus(city.x, city.z); }}>← Voir {city.name}</button>}
     </div>
   );

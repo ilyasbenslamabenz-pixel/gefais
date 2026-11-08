@@ -114,7 +114,7 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
   createWaterAndNetwork(scene, grid, country);
   const forests = createForests(scene, grid, country, q.trees);
   const cities = createCities(scene, grid, country, q.block);
-  const infra = createInfrastructure(scene, grid, country);
+  let infra = createInfrastructure(scene, grid, country);
   const traffic = createTraffic(scene, grid, country, q.cars);
   const airsea = createAirSea(scene, grid, country);
   if (shadow) {
@@ -193,6 +193,7 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
 
   // Réactions aux instantanés du serveur
   let initialPop: number[] | null = null;
+  let lastEmFactor = -1;
   let initialEmp = 0;
   let initialEm = 0;
   let lastMonth = -1;
@@ -206,7 +207,8 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
     }
     cities.update(snap.cities.map((c, i) => c.population / Math.max(1, initialPop![i])));
     traffic.setActivity(snap.demography.employed / Math.max(1, initialEmp));
-    infra.setEmissionFactor(snap.accounts.emissions / Math.max(1, initialEm));
+    const ef = snap.accounts.emissions / Math.max(1, initialEm);
+    if (Math.abs(ef - lastEmFactor) > 0.005) { infra.setEmissionFactor(ef); lastEmFactor = ef; }
     if (snap.month !== lastMonth) {
       lastMonth = snap.month;
       const m = snap.month % 12;
@@ -232,12 +234,20 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
   let weather = weatherFor(country.seed, 0);
   const unsub = useStore.subscribe((s, prev) => {
     if (s.snap !== prev.snap) applySnap();
+    // nouveaux équipements, chantiers, mises en service : seuls les équipements sont reconstruits
+    if (s.country && prev.country && s.country.infra !== prev.country.infra) {
+      infra.dispose();
+      infra = createInfrastructure(scene, grid, s.country);
+      if (shadow) for (const r of infra.roots) shadow.addShadowCaster(r);
+      lastEmFactor = -1;
+      applySnap();
+    }
     if (s.selection !== prev.selection) updateRing(s.selection);
   });
   const updateRing = (sel: ReturnType<typeof useStore.getState>['selection']) => {
     let x = 0, z = 0, r = 0;
     if (sel?.kind === 'city') { const c = country.cities[sel.id]; x = c.x; z = c.z; r = c.radius * 1.1; }
-    if (sel?.kind === 'infra') { const i = country.infra.find((k) => k.id === sel.id); if (i) { x = i.x; z = i.z; r = i.type === 'aeroport' ? 1.6 : 0.3; } }
+    if (sel?.kind === 'infra') { const i = (useStore.getState().country ?? country).infra.find((k) => k.id === sel.id); if (i) { x = i.x; z = i.z; r = i.type === 'aeroport' ? 1.6 : 0.3; } }
     ring.setEnabled(r > 0);
     ring.position.set(x, grid.y(x, z) + 0.05, z);
     ring.scaling.set(r, Math.max(0.05, r * 0.3), r);
