@@ -1,5 +1,12 @@
 // Types centraux de la simulation (partagés client / serveur).
 import type { Branch, BudgetLine, CategoryId, Occupation, SectorId, VatCategory, VatClass } from './data';
+// --- modules services publics/recherche/construction ---
+import type { HealthPolicy, HealthState } from './health';
+import type { EducationPolicy, EducationState } from './education';
+import type { HousingPolicy, HousingState } from './housing';
+import type { SecurityPolicy, SecurityState } from './security';
+import type { ResearchPolicy, ResearchState } from './research';
+import type { ConstructionState } from './construction';
 
 // ---------- Décisions du joueur ----------
 export interface Bracket { upTo: number | null; rate: number }
@@ -45,6 +52,12 @@ export interface Policy {
   };
   budget: Record<BudgetLine, number>; // dépenses discrétionnaires annuelles (€)
   finance: { indexBudgets: boolean; autoBorrow: boolean; minCash: number };
+  // --- modules services publics/recherche/construction ---
+  health: HealthPolicy;
+  education: EducationPolicy;
+  housing: HousingPolicy;
+  security: SecurityPolicy;
+  research: ResearchPolicy;
 }
 
 // ---------- Pays (géographie, statique) ----------
@@ -65,7 +78,10 @@ export interface CityDef {
 export type InfraType =
   | 'hopital' | 'universite' | 'ecole' | 'aeroport' | 'port' | 'gare'
   | 'centrale_charbon' | 'centrale_gaz' | 'centrale_nucleaire' | 'barrage' | 'parc_eolien' | 'parc_solaire'
-  | 'zone_industrielle' | 'zone_commerciale' | 'commissariat' | 'stade';
+  | 'zone_industrielle' | 'zone_commerciale' | 'commissariat' | 'stade'
+  // --- modules services publics/recherche/construction ---
+  | 'clinique' | 'centre_medical' | 'college' | 'lycee' | 'centre_formation' | 'laboratoire' | 'caserne_pompiers' | 'tribunal' | 'prison'
+  | 'zone_residentielle' | 'eco_quartier' | 'logements_sociaux' | 'centrale_smr';
 
 export interface Infra {
   id: number;
@@ -83,6 +99,13 @@ export interface Infra {
   emissions: number; // tCO2/an
   level: number;
   builtYear: number;
+  // --- modules services publics/recherche/construction ---
+  status?: 'chantier'; // absent = en service ; 'chantier' = en construction (aucun effet avant la mise en service)
+  progress?: number; // avancement du chantier 0..1
+  condition?: number; // état du bâti 0..1 (entretien financé par le ministère de tutelle)
+  custom?: boolean; // construit pendant la partie (entretien et recettes comptés en « équipements »)
+  revenue?: number; // recettes publiques annuelles (€/an, prix de base)
+  renovated?: boolean; // rénovation énergétique déjà réalisée
 }
 
 export interface Link { a: number; b: number; kind: 'autoroute' | 'nationale' | 'rail'; points: [number, number][] }
@@ -214,7 +237,7 @@ export type RevenueKey =
   | 'carbone' | 'carburants' | 'emissionsIndustrielles' | 'dechets' | 'vehicules' | 'energivores'
   | 'entreprisesPubliques' | 'infrastructures' | 'divers';
 
-export type SpendingKey = BudgetLine | 'retraites' | 'chomage' | 'allocations' | 'creditActivite' | 'interets';
+export type SpendingKey = BudgetLine | 'retraites' | 'chomage' | 'allocations' | 'creditActivite' | 'interets' | 'equipements';
 
 export interface Demography {
   cohorts: number[]; // population par tranche de 5 ans
@@ -262,6 +285,13 @@ export interface GameState {
   history: Record<string, number[]>;
   notices: Notice[];
   noticeSeq: number;
+  // --- modules services publics/recherche/construction ---
+  health?: HealthState;
+  education?: EducationState;
+  housing?: HousingState;
+  security?: SecurityState;
+  research?: ResearchState;
+  construction?: ConstructionState;
 }
 
 export type Occ = Occupation;

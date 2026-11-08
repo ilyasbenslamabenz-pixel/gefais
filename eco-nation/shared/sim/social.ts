@@ -3,6 +3,7 @@ import { BUDGET_DEFS, CATEGORY_IDS, SECTORS, type CategoryId } from './data';
 import { averageConsumptionTax } from './fiscal';
 import { clamp } from './economy';
 import type { GameState, Policy, Services } from './types';
+import { modeledQuality } from './services';
 
 export const FACTORS = ['pouvoirAchat', 'fiscalite', 'emploi', 'sante', 'education', 'securite', 'transports', 'logement', 'inegalites', 'environnement', 'services', 'stabilite', 'libertes'] as const;
 export type Factor = (typeof FACTORS)[number];
@@ -38,6 +39,9 @@ export function servicesStep(S: GameState, P: Policy, calibrate: boolean): Servi
   const next = { ...S.services };
   for (const b of BUDGET_DEFS) {
     if (!(b.id in next)) continue;
+    // --- modules services publics/recherche/construction --- : santé, éducation, sécurité, logement modélisés
+    const modeled = modeledQuality(S, b.id);
+    if (modeled !== null) { next[b.id as keyof Services] = modeled; continue; }
     const need = pop * b.refPerCapita * priceRel;
     let target = serviceTarget(P.budget[b.id] / Math.max(1, need));
     if (b.id === 'sante') {

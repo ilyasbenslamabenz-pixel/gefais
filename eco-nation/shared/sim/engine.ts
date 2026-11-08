@@ -6,6 +6,9 @@ import { INVEST_TARGET, clamp, economyStep, participationRate } from './economy'
 import { averageConsumptionTax, sanitizeBrackets } from './fiscal';
 import { airQuality, categoryIncome, citiesStep, satisfactionStep, servicesStep } from './social';
 import type { Accounts, CountryConfig, Demography, GameState, Notice, Policy, Services } from './types';
+// --- modules services publics/recherche/construction ---
+import { applyServicesAction, defaultServicesPolicy, ensureServicesModules, initServicesModules, recordServicesHistory, sanitizeServicesPolicy, servicesModulesStep, servicesPostStep, type ServicesAction } from './services';
+export type { ServicesAction };
 
 export const SIM_VERSION = 1;
 export const START_YEAR = 2030;
@@ -42,6 +45,7 @@ export function defaultPolicy(gdp: number): Policy {
     labour: { minWage: 1800, hours: 35, hiringAid: 1500, benefitRate: 0.57, benefitMonths: 24, retirementAge: 64, pensionRate: 0.52, familyAllowance: 140 },
     budget,
     finance: { indexBudgets: true, autoBorrow: true, minCash: Math.round(gdp * 0.015) },
+    ...defaultServicesPolicy(), // --- modules services publics/recherche/construction ---
   };
 }
 
@@ -106,6 +110,7 @@ export function sanitizePolicy(input: Policy, current: Policy): Policy {
     },
     budget,
     finance: { indexBudgets: i.finance?.indexBudgets ?? c.finance.indexBudgets, autoBorrow: i.finance?.autoBorrow ?? c.finance.autoBorrow, minCash: num(i.finance?.minCash, 0, 1e12, c.finance.minCash) },
+    ...sanitizeServicesPolicy(i, c), // --- modules services publics/recherche/construction ---
   };
 }
 
@@ -182,6 +187,8 @@ export function createGame(cfgIn: Partial<CountryConfig> = {}, id = 'local', nam
   S.sectors.forEach((s, i) => { s.output = s.employees * SECTORS[i].productivity; s.profit = s.output * 0.15; });
   calibrate(S);
   updateCategories(S);
+  initServicesModules(S); // --- modules services publics/recherche/construction ---
+  S.services = servicesStep(S, S.policy, true); // qualités initiales lues dans les modules (0,80 par construction)
   S.satisfaction = satisfactionStep(S, S.policy, true);
   citiesStep(S, S.policy, true);
   const pop = cohorts.reduce((s, v) => s + v, 0);
@@ -228,6 +235,7 @@ function calibrate(S: GameState) {
 
 // ---------- Pas mensuel ----------
 export function tick(S: GameState): void {
+  ensureServicesModules(S); // --- modules services publics/recherche/construction --- (anciennes sauvegardes)
   if (S.pending && S.pending.month <= S.month + 1) {
     describePolicyChange(S, S.policy, S.pending.policy);
     S.policy = S.pending.policy;
@@ -254,9 +262,12 @@ export function tick(S: GameState): void {
   S.macro.inflation = ph.length >= 12 ? S.macro.priceLevel / p12 - 1 : S.macro.expectedInflation;
   // 4. Catégories, services, satisfaction, villes
   updateCategories(S);
+  // --- modules services publics/recherche/construction ---
+  servicesModulesStep(S, (kind, title, text) => pushNotice(S, kind, title, text));
   S.services = servicesStep(S, P, false);
   S.satisfaction = satisfactionStep(S, P, false);
   citiesStep(S, P, false);
+  servicesPostStep(S); // --- modules services publics/recherche/construction ---
   recordHistory(S);
   // 5. Indexation automatique
   if (P.finance.indexBudgets) {
@@ -326,6 +337,7 @@ function recordHistory(S: GameState) {
   push('productivityGrowth', S.macro.productivityGrowth);
   for (const [k, v] of Object.entries(A.revenue)) push('rev_' + k, v);
   for (const [k, v] of Object.entries(A.spending)) push('dep_' + k, v);
+  recordServicesHistory(S, push); // --- modules services publics/recherche/construction ---
 }
 
 export function pushNotice(S: GameState, kind: Notice['kind'], title: string, text: string) {
@@ -366,6 +378,12 @@ function describePolicyChange(S: GameState, a: Policy, b: Policy) {
   if (JSON.stringify(a.eco) !== JSON.stringify(b.eco)) changes.push('fiscalité écologique');
   if (JSON.stringify(a.contributions) !== JSON.stringify(b.contributions)) changes.push('cotisations sociales');
   if (JSON.stringify(a.labour) !== JSON.stringify(b.labour)) changes.push('droit du travail et protection sociale');
+  // --- modules services publics/recherche/construction ---
+  if (JSON.stringify(a.health) !== JSON.stringify(b.health)) changes.push('politique de santé');
+  if (JSON.stringify(a.education) !== JSON.stringify(b.education)) changes.push('politique éducative');
+  if (JSON.stringify(a.housing) !== JSON.stringify(b.housing)) changes.push('politique du logement');
+  if (JSON.stringify(a.security) !== JSON.stringify(b.security)) changes.push('sécurité et justice');
+  if (JSON.stringify(a.research) !== JSON.stringify(b.research)) changes.push('recherche');
   const budgetChanged = BUDGET_LINES.some((k) => Math.abs(a.budget[k] - b.budget[k]) > 1);
   if (budgetChanged) changes.push('budget');
   if (changes.length) pushNotice(S, 'info', 'Réformes en vigueur', `Entrée en vigueur : ${changes.join(', ')}.`);
@@ -414,6 +432,12 @@ export function applyAction(S: GameState, a: FinanceAction): { ok: boolean; msg:
     return { ok: true, msg: `${fmtB(amount)} retirés du fonds de réserve` };
   }
   return { ok: false, msg: 'Action inconnue' };
+}
+
+// --- modules services publics/recherche/construction ---
+/** Action d'un ministère (recrutement, programme d'investissement, plan logement, recherche). Voir `services.ts`. */
+export function applyServiceAction(S: GameState, a: ServicesAction) {
+  return applyServicesAction(S, a, (kind, title, text) => pushNotice(S, kind, title, text));
 }
 
 /** Données envoyées au client à chaque mois (sans la géographie ni l'historique complet). */
