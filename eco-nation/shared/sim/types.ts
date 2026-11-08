@@ -65,7 +65,7 @@ export interface CityDef {
 export type InfraType =
   | 'hopital' | 'universite' | 'ecole' | 'aeroport' | 'port' | 'gare'
   | 'centrale_charbon' | 'centrale_gaz' | 'centrale_nucleaire' | 'barrage' | 'parc_eolien' | 'parc_solaire'
-  | 'zone_industrielle' | 'zone_commerciale' | 'commissariat' | 'stade';
+  | 'zone_industrielle' | 'zone_commerciale' | 'commissariat' | 'stade' | 'caserne' | 'usine' | 'ferme';
 
 export interface Infra {
   id: number;

@@ -36,7 +36,8 @@ export function MainMenu() {
         <p className="tagline">Gouvernez un pays pendant des décennies. Chaque décision compte.</p>
         {view === 'home' && (
           <div className="menu-buttons">
-            <button className="btn primary big" disabled={!connected} onClick={() => setView('new')}>Nouvelle partie</button>
+            <button className="btn primary big" disabled={!connected || busy} onClick={start}>{busy ? 'Ouverture du pays…' : "▶ Gouverner la République d'Ilyas"}</button>
+            <button className="btn big" disabled={!connected} onClick={() => setView('new')}>Nouvelle partie personnalisée</button>
             <button className="btn big" disabled={!last} onClick={() => last && openGame(last.id)}>Continuer{last ? ` — ${last.name}, ${dateOf(last.month)}` : ''}</button>
             <button className="btn big" disabled={!games.length} onClick={() => setView('load')}>Charger une sauvegarde</button>
             <button className="btn big" onClick={() => setView('settings')}>Paramètres</button>
@@ -85,7 +86,7 @@ export function MainMenu() {
         )}
         {view === 'tuto' && (
           <div className="menu-form tuto-text">
-            <p><b>1.</b> Créez une partie : le pays est déjà construit, avec sa population, ses villes, son économie, ses impôts et sa dette.</p>
+            <p><b>1.</b> Cliquez sur « Gouverner la République d'Ilyas » : le pays est entièrement construit et fonctionnel (villes, routes, écoles, hôpitaux, usines, fermes, centrales, population, économie, impôts, dette). Vous n'avez rien à construire : vous gouvernez.</p>
             <p><b>2.</b> Ouvrez un ministère dans le dock de gauche, modifiez les curseurs, puis « Adopter les réformes » : elles entrent en vigueur le mois suivant.</p>
             <p><b>3.</b> Lancez le temps (▶, ×2, ×5, ×10). Chaque pas est un mois. Suivez les effets dans la barre du haut et le Centre de contrôle.</p>
             <p><b>4.</b> Les effets ont des délais : l'emploi, les services publics et les émissions s'ajustent progressivement.</p>

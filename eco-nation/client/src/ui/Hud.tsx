@@ -125,7 +125,7 @@ function countChanges(a: unknown, b: unknown): number {
 const INFRA_LABEL: Record<string, string> = {
   hopital: 'Hôpital', universite: 'Université', ecole: 'Établissement scolaire', aeroport: 'Aéroport', port: 'Port', gare: 'Gare',
   centrale_charbon: 'Centrale à charbon', centrale_gaz: 'Centrale à gaz', centrale_nucleaire: 'Centrale nucléaire', barrage: 'Barrage hydroélectrique',
-  parc_eolien: 'Parc éolien', parc_solaire: 'Centrale solaire', zone_industrielle: 'Zone industrielle', zone_commerciale: 'Zone commerciale', commissariat: 'Commissariat', stade: 'Stade',
+  parc_eolien: 'Parc éolien', parc_solaire: 'Centrale solaire', zone_industrielle: 'Zone industrielle', zone_commerciale: 'Zone commerciale', commissariat: 'Commissariat', stade: 'Stade', caserne: 'Centre de secours (pompiers)', usine: 'Usine', ferme: 'Exploitation agricole',
 };
 
 export function Inspector() {

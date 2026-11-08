@@ -237,7 +237,7 @@ export function createForests(scene: Scene, grid: Grid, country: CountryDef, cou
     if (country.cities.some((c) => Math.hypot(c.x - x, c.z - z) < c.radius * 1.2)) continue;
     if (country.lakes.some((l) => Math.hypot(l.x - x, l.z - z) < l.r * 1.4)) continue;
     if (country.rivers.some((r) => distToPolyline(x, z, r.points) < 1.2)) continue;
-    placed.push({ x, z, s: 0.55 + rnd() * 0.7, y: grid.y(x, z), hue: rnd() });
+    placed.push({ x, z, s: 0.28 + rnd() * 0.32, y: grid.y(x, z), hue: rnd() });
   }
   const crown = MeshBuilder.CreateCylinder('tree', { diameterTop: 0, diameterBottom: 0.55, height: 1.0, tessellation: 6 }, scene);
   crown.bakeTransformIntoVertices(Matrix.Translation(0, 0.75, 0));

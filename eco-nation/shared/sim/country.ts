@@ -292,6 +292,19 @@ export function generateCountry(cfg: CountryConfig): CountryDef {
   for (const c of country.cities.filter((q) => q.kind === 'commune')) {
     const [x, z] = near(c, 0.4);
     add('ecole', `École de ${c.name}`, c.id, x, z, { capacity: 250, capacityUnit: 'élèves', employees: 18, maintenance: 1.6e6, energyMWh: 300, emissions: 40 });
+    for (let k = 0; k < 2; k++) { const [fx, fz] = near(c, 2.5 + rnd() * 2); add('ferme', `Exploitation agricole de ${c.name}${k ? ' ' + (k + 1) : ''}`, c.id, fx, fz, { capacity: 180, capacityUnit: 'ha', employees: 6, maintenance: 0, energyMWh: 250, emissions: 900 }); }
+  }
+  // Équipements complémentaires : le pays est entièrement équipé dès le départ
+  for (const c of [...metroSorted, ...villes]) {
+    const big = c.kind === 'metropole';
+    for (let k = 0; k < (big ? 4 : 1); k++) { const [x, z] = near(c, 0.25 + rnd() * 0.5); add('ecole', `${big ? 'Groupe scolaire' : 'Collège'} de ${c.name}${k ? ' ' + (k + 1) : ''}`, c.id, x, z, { capacity: big ? 1800 : 900, capacityUnit: 'élèves', employees: big ? 140 : 70, maintenance: big ? 1.2e7 : 6e6, energyMWh: 1600, emissions: 200 }); }
+    { const [x, z] = near(c, 0.45); add('caserne', `Centre de secours de ${c.name}`, c.id, x, z, { capacity: big ? 260 : 70, capacityUnit: 'pompiers', employees: big ? 260 : 70, maintenance: big ? 2.4e7 : 6e6, energyMWh: 900, emissions: 150 }); }
+    if (!big) { const [x, z] = near(c, 0.35); add('commissariat', `Commissariat de ${c.name}`, c.id, x, z, { capacity: 160, capacityUnit: 'agents', employees: 160, maintenance: 1.1e7, energyMWh: 600, emissions: 80 }); }
+    const ind = country.infra.find((i) => i.cityId === c.id && i.type === 'zone_industrielle');
+    if (ind) for (let k = 0; k < (big ? 3 : 2); k++) {
+      const a = rnd() * Math.PI * 2;
+      add('usine', `Usine ${['métallurgique', 'chimique', 'agroalimentaire', 'automobile', 'électronique'][Math.floor(rnd() * 5)]} de ${c.name}`, c.id, ind.x + Math.cos(a) * 2.2, ind.z + Math.sin(a) * 2.2, { capacity: 600 + Math.floor(rnd() * 1400), capacityUnit: 'salariés', employees: 600 + Math.floor(rnd() * 1400), maintenance: 0, energyMWh: 120000, emissions: 60000 });
+    }
   }
   // Production d'électricité (bilan détaillé en phase 4)
   const industrialTown = villes.find((v) => country.infra.some((i) => i.cityId === v.id && i.type === 'zone_industrielle')) ?? villes[0];
@@ -300,7 +313,7 @@ export function generateCountry(cfg: CountryConfig): CountryDef {
   for (let i = 0; i < 2; i++) { const [x, z] = site(metroSorted[(i + 1) % metroSorted.length], 3.2); add('centrale_gaz', `Centrale à gaz n°${i + 1}`, null, x, z, { capacity: 800, capacityUnit: 'MW', employees: 120, maintenance: 3e7, energyMWh: -3.5e6, emissions: 1.3e6 }); }
   { const rp = country.rivers[1].points; const p = rp[Math.floor(rp.length * 0.6)]; add('centrale_nucleaire', 'Centrale nucléaire du Val', null, p[0] + 1.5, p[1] + 1.5, { capacity: 3600, capacityUnit: 'MW', employees: 1800, maintenance: 4e8, energyMWh: -2.6e7, emissions: 0 }); }
   { const l = country.lakes[0]; add('barrage', 'Barrage des Cimes', null, l.x - l.r - 0.5, l.z, { capacity: 600, capacityUnit: 'MW', employees: 60, maintenance: 1.5e7, energyMWh: -2.1e6, emissions: 0, rot: Math.PI / 2 }); }
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 6; i++) {
     for (let t = 0; t < 100; t++) {
       const z = -HALF_D + 30 + rnd() * (MAP_D - 60);
       const x = coastX(seed, z) + 4 + rnd() * 60;
@@ -311,7 +324,7 @@ export function generateCountry(cfg: CountryConfig): CountryDef {
       }
     }
   }
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < 4; i++) {
     for (let t = 0; t < 100; t++) {
       const x = -80 + rnd() * 160;
       const z = 50 + rnd() * 70;

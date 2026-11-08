@@ -74,6 +74,12 @@ export function createInfrastructure(scene: Scene, grid: Grid, country: CountryD
       case 'zone_commerciale': box('#e9ecef', 0, 0, 0, 1.4, 0.2, 0.8); box('#ffb703', 0, 0.2, 0.41, 0.8, 0.06, 0.02, 0.6); box('#495057', 0, 0, 1.1, 1.6, 0.01, 0.9); break;
       case 'commissariat': box('#1d3557', 0, 0, 0, 0.4, 0.25, 0.3); box('#a8dadc', 0, 0.25, 0, 0.1, 0.06, 0.1, 0.8); break;
       case 'stade': cyl('#ced4da', 0, 0, 0, 0.6, 0.18); cyl('#52b788', 0, 0.01, 0, 0.45, 0.18); break;
+      case 'caserne': box('#c1121f', 0, 0, 0, 0.5, 0.25, 0.35); box('#f1faee', 0, 0.25, 0, 0.52, 0.04, 0.37); box('#c1121f', 0.3, 0, 0, 0.12, 0.6, 0.12); break;
+      case 'usine':
+        box('#8d99ae', 0, 0, 0, 0.9, 0.35, 0.6); box('#6c757d', 0, 0.35, 0, 0.9, 0.12, 0.2, 0, 0, 0.5); cyl('#495057', 0.35, 0, 0.2, 0.07, 0.9);
+        smokeSources.push({ pos: new Vector3(0.35, 0.95, 0.2), steam: false });
+        break;
+      case 'ferme': box('#a4161a', 0, 0, 0, 0.35, 0.22, 0.22); box('#e9d8a6', 0.35, 0, 0.1, 0.18, 0.4, 0.18); box('#6a994e', 0, 0, 0.6, 1.2, 0.01, 0.8); break;
       case 'parc_eolien': break;
     }
     return parts.slice();

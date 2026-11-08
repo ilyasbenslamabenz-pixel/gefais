@@ -14,9 +14,9 @@ import { createInfrastructure } from './infra';
 import { createAirSea, createTraffic, weatherFor } from './life';
 
 const Q: Record<Quality, { scale: number; step: number; trees: number; cars: number; shadows: number; precip: number; glow: boolean }> = {
-  low: { scale: 1.25, step: 2, trees: 2500, cars: 500, shadows: 0, precip: 1500, glow: false },
-  medium: { scale: 1, step: 1, trees: 6000, cars: 1100, shadows: 1024, precip: 3000, glow: true },
-  high: { scale: 1 / Math.min(2, window.devicePixelRatio || 1), step: 1, trees: 11000, cars: 2000, shadows: 2048, precip: 5000, glow: true },
+  low: { scale: 1.25, step: 2, trees: 4000, cars: 500, shadows: 0, precip: 1500, glow: false },
+  medium: { scale: 1, step: 1, trees: 10000, cars: 1100, shadows: 1024, precip: 3000, glow: true },
+  high: { scale: 1 / Math.min(2, window.devicePixelRatio || 1), step: 1, trees: 18000, cars: 2000, shadows: 2048, precip: 5000, glow: true },
 };
 
 export const camApi = { focus: (_x: number, _z: number, _dist?: number) => {} };
