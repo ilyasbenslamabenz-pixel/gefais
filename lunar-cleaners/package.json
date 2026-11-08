@@ -1,0 +1,40 @@
+{
+  "name": "lunar-cleaners",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Lunar Cleaners - jeu 3D multijoueur coopératif de nettoyage lunaire (navigateur)",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k -n server,client -c cyan,magenta \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "tsx watch server/src/index.ts",
+    "dev:client": "vite --config client/vite.config.ts",
+    "build": "vite build --config client/vite.config.ts",
+    "start": "NODE_ENV=production tsx server/src/index.ts",
+    "typecheck": "tsc -p client/tsconfig.json --noEmit && tsc -p server/tsconfig.json --noEmit"
+  },
+  "engines": {
+    "node": ">=22.13"
+  },
+  "dependencies": {
+    "express": "^5.3.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "socket.io": "^4.8.4",
+    "socket.io-client": "^4.8.4",
+    "three": "^0.187.0",
+    "tsx": "^4.23.15",
+    "zustand": "^5.1.0",
+    "@react-three/fiber": "^9.8.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/three": "^0.187.0",
+    "@vitejs/plugin-react": "^6.2.1",
+    "concurrently": "^10.0.7",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.6"
+  }
+}
