@@ -98,3 +98,35 @@ L'état initial est **calibré** pour être à l'équilibre (exportations résid
 | 5 | Politique, parlement, lois, élections, international, crises | À venir |
 | 6 | Recherche, événements, missions, progression | À venir |
 | 7 | Optimisation, équilibrage, finitions graphiques | À venir |
+
+## 9. Services publics, recherche et construction
+
+| Module | Fichier | Sortie lue par les autres moteurs |
+|---|---|---|
+| Effectifs (délais de recrutement, plan de financement) | `sim/workforce.ts` | — |
+| Santé | `sim/health.ts` | `services.sante` (démographie : espérance de vie) |
+| Éducation | `sim/education.ts` | `services.education`, `education.humanCapital` (productivité différée) |
+| Logement | `sim/housing.ts` | `services.logement` (→ `housingPressure` : natalité, migrations), `housing.energyFactor` |
+| Sécurité et justice | `sim/security.ts` | `services.securite` |
+| Recherche | `sim/research.ts` | `research.unlocked`, `research.effects` (multiplicateurs énergie, secteurs, services) |
+| Construction | `sim/construction.ts` | `country.infra` (`status: 'chantier'` puis en service), poste de dépense `equipements` |
+| Orchestration | `sim/services.ts` | initialisation, pas mensuel, actions, historique |
+
+**Principe commun.** Le budget d'un ministère (€/an, ramené aux prix de base par l'indice des salaires publics) finance un plan : postes budgétés (médecins, enseignants, policiers…), lits ou places ouverts, fonctionnement, investissement, prévention. Les effectifs rejoignent les postes avec un délai (3 à 18 mois) et un vivier limité (formation : 3 à 6 ans de retard) ; une coupe se traduit par des départs non remplacés, un fonctionnement comprimé puis une dégradation progressive (surcharge → démissions). La qualité vaut `0,05 + 0,75 · r^0,7` où `r` est la capacité rapportée aux besoins (Cobb-Douglas des moyens) : 0,80 à l'état initial, calibré à l'équilibre.
+
+**Le pays est entièrement équipé au départ** : les équipements de la carte sont complétés par des capacités agrégées (petits établissements), réparties par quartier au prorata de la population (`cityFacilities`). Le joueur gère ; il ne place rien à la main.
+
+**Actions (Socket.IO `game:service`, alias `game:build` ; moteur `applyServiceAction(S, a)`)** — réponse `{ ok, code?, msg, … }` :
+
+| Action | Effet | Codes d'erreur |
+|---|---|---|
+| `{ type: 'recruter', service: 'sante'\|'education'\|'securite', role, count }` | postes créés, budget relevé de leur coût annuel, prise de poste après le délai du métier (rôles : `medecins`, `infirmiers`, `enseignants`, `chercheurs`, `policiers`, `pompiers`, `magistrats`) | `MONTANT`, `METIER_INCONNU` |
+| `{ type: 'programme', building, cityId, count? }` | 1 à 10 équipements dans le quartier `cityId` ; emplacement choisi et validé par le moteur ; visibles aussitôt dans `country.infra` (`status: 'chantier'`, `progress`) | `TYPE_INCONNU`, `QUARTIER_INCONNU`, `AUCUN_EMPLACEMENT`, `TECHNOLOGIE`, `FINANCEMENT`, `TROP_DE_CHANTIERS` |
+| `{ type: 'ameliorer' \| 'renover' \| 'demolir', infraId }` | niveau +1 (capacité +30 %) / remise à neuf (énergie −20 %) / suppression | `INTROUVABLE`, `EN_CHANTIER`, `NIVEAU_MAX`, `BON_ETAT`, `FINANCEMENT` |
+| `{ type: 'annulerChantier', siteId }` | arrêt (sommes engagées perdues) | `INTROUVABLE` |
+| `{ type: 'planLogement', kind: 'renovation'\|'social', units, months? }`, `{ type: 'annulerPlanLogement', planId }` | plan ponctuel payé au fil de l'eau | `MONTANT`, `INTROUVABLE` |
+| `{ type: 'rechercher', tech }`, `{ type: 'fileRecherche', techs }`, `{ type: 'annulerRecherche' }` | programme technologique | `TECHNOLOGIE_INCONNUE`, `PREREQUIS`, `DEJA_DEBLOQUEE` |
+
+Validation d'un emplacement (`validatePlacement(S, type, x, z)`) : dans les limites de la carte, terre ferme (`makeHeightFn` > 0,02 km), hors lac et lit de rivière, pente ≤ maximum du type, écart ≥ somme des emprises + 0,1 km avec tout autre équipement, distance à une voie (autoroute, avenue ; l'intérieur d'un quartier est desservi) ≤ 0,3 à 1 km selon le type, contraintes propres (littoral, cours d'eau, quartier habité), technologie, financement (sans emprunt automatique) et 40 chantiers simultanés au plus. Codes : `HORS_CARTE`, `MER`, `LAC`, `RIVIERE`, `PENTE`, `TROP_PROCHE`, `LOIN_ROUTE`, `LOIN_QUARTIER`, `COTE`, `EAU`, `TECHNOLOGIE`, `FINANCEMENT`, `TROP_DE_CHANTIERS`.
+
+Le serveur émet `game:infra { infra, version }` dès que `country.infra` change (chantier ouvert, mise en service, démolition) ; `game:facilities` renvoie les parcs par quartier.

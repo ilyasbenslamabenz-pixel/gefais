@@ -10,6 +10,14 @@ import { LineChart, monthLabel } from './charts';
 import { IND } from './indicators';
 import { FiscalitePanel } from './Fiscalite';
 import { EconomiePanel, FinancesPanel, PopulationPanel, TravailPanel } from './Ministries';
+// --- modules services publics/recherche/construction ---
+import { SantePanel } from './Sante';
+import { EducationPanel } from './Education';
+import { LogementPanel } from './Logement';
+import { SecuritePanel } from './Securite';
+import { RecherchePanel } from './Recherche';
+import { ConstructionPanel } from './Construction';
+import { BUILDINGS } from '../../../shared/sim/construction';
 import { WEATHER_LABEL, weatherFor } from '../game/Life';
 import { camApi } from '../game/MapScene';
 
@@ -65,6 +73,13 @@ const MINISTRIES: { id: Panel; icon: string; label: string }[] = [
   { id: 'economie', icon: '📈', label: 'Économie' },
   { id: 'travail', icon: '👷', label: 'Travail' },
   { id: 'population', icon: '👥', label: 'Population' },
+  // --- modules services publics/recherche/construction ---
+  { id: 'sante', icon: '🏥', label: 'Santé' },
+  { id: 'education', icon: '🎓', label: 'Éducation' },
+  { id: 'logement', icon: '🏠', label: 'Logement' },
+  { id: 'securite', icon: '🚓', label: 'Sécurité' },
+  { id: 'recherche', icon: '🔬', label: 'Recherche' },
+  { id: 'construction', icon: '🏗️', label: 'Équipements' },
   { id: 'stats', icon: '📊', label: 'Statistiques' },
 ];
 
@@ -155,7 +170,7 @@ export function Inspector() {
         </div>
         <h4>Spécialisation économique</h4>
         {top.map((t) => <div key={t.i} className="spec">{SECTORS[t.i].icon} {SECTORS[t.i].name} <b>{pct(t.v, 0)}</b></div>)}
-        {infra.length > 0 && <><h4>Équipements</h4>{infra.map((i) => <button key={i.id} className="link block" onClick={() => set({ selection: { kind: 'infra', id: i.id } })}>{INFRA_LABEL[i.type]} — {i.name}</button>)}</>}
+        {infra.length > 0 && <><h4>Équipements</h4>{infra.map((i) => <button key={i.id} className="link block" onClick={() => set({ selection: { kind: 'infra', id: i.id } })}>{INFRA_LABEL[i.type] ?? BUILDINGS[i.type]?.name}{i.status === 'chantier' ? ' (en construction)' : ''} — {i.name}</button>)}</>}
       </div>
     );
   }
@@ -166,7 +181,7 @@ export function Inspector() {
   return (
     <div className="inspector">
       <header><h3>{i.name}</h3><button className="icon-btn" onClick={() => set({ selection: null })}>✕</button></header>
-      <p className="muted">{INFRA_LABEL[i.type]}{city ? ` · ${city.name}` : ''} · mise en service {i.builtYear}</p>
+      <p className="muted">{INFRA_LABEL[i.type] ?? BUILDINGS[i.type]?.name}{city ? ` · ${city.name}` : ''}{i.status === 'chantier' ? ` · en construction (${Math.round((i.progress ?? 0) * 100)} %), mise en service prévue en ${i.builtYear}` : ` · mise en service ${i.builtYear}`}</p>
       <div className="kpis compact">
         <Kpi label="Capacité" value={`${int(i.capacity)} ${i.capacityUnit}`} />
         <Kpi label="Emplois" value={int(i.employees)} />
@@ -212,6 +227,7 @@ export function StatsPanel() {
     ['Social', ['satisfaction', 'trust', 'meanWage', 'medianWage', 'disposablePerCap', 'gini', 'poverty', 'lifeExpectancy']],
     ['Démographie', ['population', 'employment', 'births', 'deaths', 'migration']],
     ['Écologie', ['emissions']],
+    ['Services publics', ['sante_qualite', 'sante_attente', 'edu_reussite', 'edu_decrochage', 'edu_capitalHumain', 'logement_prix', 'logement_tension', 'crime', 'recherche_technologies', 'equipements']], // --- modules services publics/recherche/construction ---
   ];
   const unitOf = (k: string) => IND[k]?.unit;
   const sameUnit = keys.every((k) => unitOf(k) === unitOf(keys[0]));
@@ -364,6 +380,13 @@ export function Panels() {
     case 'notifications': return <Notifications />;
     case 'settings': return <SettingsPanel />;
     case 'help': return <HelpPanel />;
+    // --- modules services publics/recherche/construction ---
+    case 'sante': return <SantePanel />;
+    case 'education': return <EducationPanel />;
+    case 'logement': return <LogementPanel />;
+    case 'securite': return <SecuritePanel />;
+    case 'recherche': return <RecherchePanel />;
+    case 'construction': return <ConstructionPanel />;
     default: return null;
   }
 }

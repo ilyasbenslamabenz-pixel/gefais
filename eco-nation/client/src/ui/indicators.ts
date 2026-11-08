@@ -39,6 +39,18 @@ export const IND: Record<string, IndicatorDef> = {
   failures: { label: 'Faillites', unit: '/an', period: 'rythme annuel', def: 'Défaillances d\'entreprises annualisées.', fmt: int, good: 'down' },
   disposablePerCap: { label: 'Revenu disponible / habitant', unit: '€/an', period: 'rythme annuel', def: 'Revenus nets des ménages après impôts et prestations, par habitant.', fmt: money, good: 'up' },
   productivityGrowth: { label: 'Gains de productivité', unit: '%/an', period: 'tendance', def: 'Progression annuelle de la productivité (investissement, recherche, éducation, formation, infrastructures).', fmt: (v) => pct(v, 2), good: 'up' },
+  // --- modules services publics/recherche/construction ---
+  sante_qualite: { label: 'Qualité des soins', unit: '/100', period: 'mensuel', def: 'Capacité de soins (médecins, infirmiers, lits, approvisionnement, état des établissements) rapportée aux besoins pondérés par l\'âge.', fmt: (v) => `${Math.round(v * 100)}`, good: 'up' },
+  sante_attente: { label: 'Attente pour un spécialiste', unit: 'jours', period: 'mensuel', def: 'Délai moyen d\'accès à une consultation spécialisée.', fmt: (v) => `${Math.round(v)} j`, good: 'down' },
+  sante_medecins: { label: 'Médecins en poste', unit: 'personnes', period: 'fin de mois', def: 'Médecins du système de santé public.', fmt: int, good: 'up' },
+  edu_reussite: { label: 'Réussite au baccalauréat', unit: '%', period: 'mensuel', def: 'Part des candidats reçus.', fmt: (v) => pct(v), good: 'up' },
+  edu_decrochage: { label: 'Décrochage scolaire', unit: '%', period: 'mensuel', def: 'Part des jeunes sortant du système scolaire sans diplôme.', fmt: (v) => pct(v), good: 'down' },
+  edu_capitalHumain: { label: 'Capital humain', unit: '/100', period: 'stock lent', def: 'Qualification moyenne de la population active ; détermine la productivité future.', fmt: (v) => `${Math.round(v * 100)}`, good: 'up' },
+  logement_prix: { label: 'Prix des logements', unit: '€/m²', period: 'mensuel', def: 'Prix moyen au mètre carré (euros courants).', fmt: (v) => `${int(v)} €/m²` },
+  logement_tension: { label: 'Tension du logement', unit: '100 = équilibre', period: 'mensuel', def: 'Ménages (population / 2,2) rapportés aux logements disponibles hors vacance de rotation.', fmt: (v) => dec1(v * 100), good: 'down' },
+  crime: { label: 'Criminalité', unit: '‰ hab./an', period: 'mensuel', def: 'Crimes et délits enregistrés pour 1 000 habitants par an.', fmt: (v) => `${dec1(v)} ‰`, good: 'down' },
+  recherche_technologies: { label: 'Technologies maîtrisées', unit: 'nombre', period: 'fin de mois', def: 'Technologies débloquées dans l\'arbre technologique.', fmt: int, good: 'up' },
+  equipements: { label: 'Dépenses d\'équipement', unit: '€/an', period: 'rythme annuel', def: 'Chantiers, entretien des équipements construits, programmes de logement et démolitions (hors budgets des ministères).', fmt: money },
 };
 
 export const REVENUE_LABELS: Record<string, string> = {
@@ -53,4 +65,5 @@ export const SPENDING_LABELS: Record<string, string> = {
   sante: 'Santé', education: 'Éducation', securite: 'Sécurité & justice', defense: 'Défense', transports: 'Transports publics', infrastructures: 'Infrastructures',
   environnement: 'Environnement', administration: 'Administration', logement: 'Aides au logement', subventions: 'Subventions', recherche: 'Recherche', formation: 'Formation professionnelle',
   retraites: 'Retraites', chomage: 'Allocations chômage', allocations: 'Prestations familiales', creditActivite: "Crédit d'activité et aides à l'embauche", interets: 'Intérêts de la dette',
+  equipements: 'Équipements et construction publique', // --- modules services publics/recherche/construction ---
 };

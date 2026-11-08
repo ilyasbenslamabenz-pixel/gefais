@@ -3,6 +3,8 @@ import { io } from 'socket.io-client';
 import { useStore } from './store';
 import type { Snapshot, FinanceAction } from '../../shared/sim/engine';
 import type { CountryDef, Notice, Policy } from '../../shared/sim/types';
+import type { ServicesAction } from '../../shared/sim/engine';
+import type { CityFacilities } from '../../shared/sim/services';
 
 const KEY = 'eco_player';
 export const player: string = (() => {
@@ -80,7 +82,24 @@ export function financeAction(a: FinanceAction): Promise<boolean> {
     resolve(r.ok);
   }));
 }
-export const saveNow = () => socket.emit('game:save', (r: { ok: boolean }) => st().toast(r.ok ? 'Partie sauvegardée.' : 'Échec de la sauvegarde', r.ok ? 'good' : 'bad'));
+// --- modules services publics/recherche/construction ---
+socket.on('game:infra', (m: { infra: CountryDef['infra'] }) => {
+  const c = st().country;
+  if (c && Array.isArray(m?.infra)) st().set({ country: { ...c, infra: m.infra } });
+});
+export interface ServiceReply { ok: boolean; code?: string; msg: string; [k: string]: unknown }
+/** Action d'un ministère : recrutement, programme d'investissement, plan logement, recherche, travaux. */
+export function serviceAction(a: ServicesAction, quiet = false): Promise<ServiceReply> {
+  return new Promise((resolve) => socket.emit('game:service', a, (r: ServiceReply) => {
+    if (!quiet || !r.ok) st().toast(r.msg, r.ok ? 'good' : 'bad');
+    resolve(r);
+  }));
+}
+export function fetchFacilities(): Promise<CityFacilities[]> {
+  return new Promise((resolve) => socket.emit('game:facilities', (r: { ok: boolean; facilities?: CityFacilities[] }) => resolve(r.ok ? r.facilities ?? [] : [])));
+}
+
+export const saveNow =() => socket.emit('game:save', (r: { ok: boolean }) => st().toast(r.ok ? 'Partie sauvegardée.' : 'Échec de la sauvegarde', r.ok ? 'good' : 'bad'));
 export function leaveGame() {
   setSpeed(0);
   socket.emit('game:save', () => {});
