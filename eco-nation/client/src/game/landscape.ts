@@ -1,11 +1,12 @@
 // Paysage Babylon.js : relief texturé (textures Poly Haven CC0, mélange par altitude/pente/saison),
 // mer, lacs, rivières, routes, voies ferrées et forêts (instances fines).
-import { Color3, Matrix, Mesh, MeshBuilder, Quaternion, StandardMaterial, Texture, Vector3, VertexData, type Scene } from '@babylonjs/core';
+import { Color3, Matrix, Mesh, MeshBuilder, Quaternion, RawTexture, StandardMaterial, Texture, Vector3, VertexData, type Scene } from '@babylonjs/core';
 import { CustomMaterial } from '@babylonjs/materials/custom/customMaterial';
 import { mulberry32 } from '../../../shared/noise';
 import { HALF_D, HALF_W, MAP_D, MAP_W, coastX, parkMask, urbanDensity } from '../../../shared/sim/country';
 import type { CountryDef } from '../../../shared/sim/types';
 import { ENV, RES, VS, densify, distToPolyline, forestMask, type Grid } from './terrain';
+import { MASK_H, MASK_W, QUAY_HALF, createRoads, getNetwork, riverMask, setTerrainStep } from './roads';
 
 const TEX = (name: string, scene: Scene) => {
   const t = new Texture(`/assets/textures/${name}.jpg`, scene);
@@ -13,8 +14,15 @@ const TEX = (name: string, scene: Scene) => {
   t.anisotropicFilteringLevel = 8;
   return t;
 };
+const ACG = (id: string, scene: Scene) => {
+  const t = new Texture(`/assets/acg/${id}/color.jpg`, scene);
+  t.wrapU = t.wrapV = Texture.WRAP_ADDRESSMODE;
+  t.anisotropicFilteringLevel = 8;
+  return t;
+};
 
 export function createTerrain(scene: Scene, grid: Grid, country: CountryDef, step: number) {
+  setTerrainStep(step); // les routes épousent exactement ce maillage
   const nx = Math.floor((grid.nx - 1) / step) + 1;
   const nz = Math.floor((grid.nz - 1) / step) + 1;
   const positions = new Float32Array(nx * nz * 3);
@@ -65,6 +73,12 @@ export function createTerrain(scene: Scene, grid: Grid, country: CountryDef, ste
   mat.AddUniform('tSnow', 'sampler2D', TEX('snow_02', scene));
   mat.AddUniform('tDirt', 'sampler2D', TEX('dirt_aerial_02', scene));
   mat.AddUniform('tUrban', 'sampler2D', TEX('aerial_asphalt_01', scene));
+  mat.AddUniform('tRoadA', 'sampler2D', ACG('Road012A', scene));
+  mat.AddUniform('tPave', 'sampler2D', ACG('PavingStones138', scene));
+  // chenaux des rivières : le relief est découpé entre les quais
+  const mask = RawTexture.CreateLuminanceTexture(riverMask(getNetwork(grid, country)), MASK_W, MASK_H, scene, false, false, Texture.BILINEAR_SAMPLINGMODE);
+  mask.wrapU = mask.wrapV = Texture.CLAMP_ADDRESSMODE;
+  mat.AddUniform('tRiverMask', 'sampler2D', mask);
   mat.AddUniform('uWinter', 'float', 0);
   mat.AddUniform('uAutumn', 'float', 0);
   mat.AddUniform('uSnow', 'float', 0);
@@ -81,8 +95,12 @@ export function createTerrain(scene: Scene, grid: Grid, country: CountryDef, ste
     float enFbm(vec2 p) { return enNoise(p) * 0.5 + enNoise(p * 2.03) * 0.25 + enNoise(p * 4.1) * 0.125; }
     varying float vUrban; varying float vPark;
   `);
+  const FW = ((scene.getEngine() as unknown as { webGLVersion?: number }).webGLVersion ?? 2) >= 2 ? 'length(fwidth(p))' : 'length(vPositionW - vEyePosition.xyz) * 0.0016';
   mat.Fragment_Custom_Diffuse(/* glsl */ `
     vec2 p = vPositionW.xz;
+    float enLight = 0.0;
+    float rivD = texture2D(tRiverMask, vec2((p.x + ${HALF_W.toFixed(1)}) / ${(HALF_W * 2).toFixed(1)}, (p.y + ${HALF_D.toFixed(1)}) / ${(HALF_D * 2).toFixed(1)})).r * 0.5;
+    if (rivD < ${(QUAY_HALF - 0.0015).toFixed(4)}) discard;
     float h = vPositionW.y / ${VS.toFixed(1)};
     float slope = 1.0 - clamp(vNormalW.y, 0.0, 1.0);
     float n1 = enFbm(p * 0.4);
@@ -118,25 +136,80 @@ export function createTerrain(scene: Scene, grid: Grid, country: CountryDef, ste
     col = mix(col, snowT, snow);
     // villes
     float urban = smoothstep(0.08, 0.35, vUrban);
-    // trame des rues (îlots de 200 m) et grands boulevards (1 km)
-    vec2 g = abs(fract(p / 0.2 + 0.5) - 0.5) * 0.2;
-    float street = 1.0 - smoothstep(0.009, 0.014, min(g.x, g.y));
-    vec2 g2 = abs(fract(p + 0.5) - 0.5);
-    float boulevard = 1.0 - smoothstep(0.018, 0.026, min(g2.x, g2.y));
+    // --- trame des rues : îlots de 200 m, boulevards tous les 1 km (motif procédural antialiasé) ---
+    float fw = max(${FW}, 1e-5);
+    vec2 kk = floor(p / 0.2 + 0.5);
+    vec2 dd = p - kk * 0.2;               // .x : distance à la rue nord-sud, .y : à la rue est-ouest
+    vec2 ad = abs(dd);
+    vec2 isB = 1.0 - step(0.5, mod(kk, 5.0));
+    vec2 C = mix(vec2(0.0046), vec2(0.0102), isB);   // demi-chaussée
+    vec2 S = mix(vec2(0.0075), vec2(0.016), isB);    // bord extérieur du trottoir
+    vec2 road2 = clamp((C - ad) / fw + 0.5, 0.0, 1.0);
+    vec2 side2 = clamp((S - ad) / fw + 0.5, 0.0, 1.0);
+    float road = max(road2.x, road2.y);
+    float walk = max(side2.x, side2.y) * (1.0 - road);
+    vec3 asph = texture2D(tRoadA, p / 0.007).rgb * 0.92;
+    vec3 pave = mix(texture2D(tPave, p / 0.0035).rgb, vec3(0.6, 0.59, 0.56), 0.5);
+    vec3 marks = vec3(0.0);
+    float mk = 0.0;
+    // marquages : axe pointillé (rues), voies et terre-plein (boulevards), passages piétons
+    for (int a = 0; a < 2; a++) {
+      float across = a == 0 ? ad.y : ad.x;     // rue est-ouest (a = 0) puis nord-sud
+      float along = a == 0 ? p.x : p.y;
+      float crossD = a == 0 ? ad.x : ad.y;     // distance à la rue transversale
+      float Cx = a == 0 ? C.x : C.y;
+      float Cs = a == 0 ? C.y : C.x;
+      float boul = a == 0 ? isB.y : isB.x;
+      float outside = step(Cx + 0.0045, crossD);
+      float onRoad = clamp((Cs - across) / fw + 0.5, 0.0, 1.0);
+      float fade = 1.0 - smoothstep(0.0004, 0.0016, fw);
+      float dash = step(0.5, fract(along / 0.0065));
+      float lw = max(0.00013, fw);
+      float axisLine = (1.0 - boul) * dash * (1.0 - smoothstep(lw * 0.5, lw, across)) * min(1.0, 0.00013 / fw) * outside;
+      float dashB = step(0.66, fract(along / 0.009));
+      float laneB = boul * dashB * (1.0 - smoothstep(lw * 0.5, lw, abs(across - 0.0045))) * min(1.0, 0.00015 / fw) * outside;
+      float parkB = boul * (1.0 - smoothstep(lw * 0.5, lw, abs(across - 0.0079))) * min(1.0, 0.00012 / fw) * outside;
+      mk = max(mk, (axisLine + laneB + parkB) * fade * onRoad);
+      // terre-plein planté des boulevards (interrompu aux carrefours)
+      float med = boul * clamp((0.0012 - across) / fw + 0.5, 0.0, 1.0) * step(Cx + 0.0050, crossD);
+      marks = mix(marks, vec3(-1.0), med); // repère : on peint plus bas
+      // passage piéton juste avant le carrefour
+      float zone = step(Cx + 0.0006, crossD) * step(crossD, Cx + 0.0044) * onRoad;
+      float per = 0.001;
+      float st = smoothstep(0.25 - fw / per, 0.25 + fw / per, abs(fract(across / per) - 0.5));
+      st = mix(st, 0.5, clamp(fw / per * 2.0 - 0.5, 0.0, 1.0));
+      mk = max(mk, zone * st * 0.95);
+    }
     vec3 block = mix(urb * 0.9, vec3(0.5, 0.52, 0.48), 0.4);
-    vec3 cityCol = mix(block, urb * 0.6, max(street, boulevard) * 0.8);
+    vec3 streetCol = mix(asph, vec3(0.92, 0.92, 0.88), mk);
+    streetCol = mix(streetCol, veg * vec3(0.8, 1.05, 0.75), step(marks.x, -0.5) * 0.9);
+    vec3 cityCol = block;
+    cityCol = mix(cityCol, pave * 0.95, walk);
+    cityCol = mix(cityCol, streetCol, road);
+    // vue lointaine : moyenne du motif pour éviter le moiré
+    float far = smoothstep(0.0025, 0.009, fw);
+    cityCol = mix(cityCol, mix(block, asph * 0.9, 0.16), far);
+    // parcs urbains (dans les îlots seulement)
+    float parkK = smoothstep(0.3, 0.6, vPark) * (1.0 - max(road, walk) * (1.0 - far));
+    cityCol = mix(cityCol, veg * vec3(0.85, 1.1, 0.8), parkK);
     col = mix(col, cityCol, urban * 0.92);
-    // parcs urbains
-    col = mix(col, veg * vec3(0.85, 1.1, 0.8), smoothstep(0.3, 0.6, vPark) * urban);
+    // éclairage public : flaques de lumière le long des rues
+    float pool = 0.0;
+    for (int a = 0; a < 2; a++) {
+      float across = a == 0 ? ad.y : ad.x;
+      float along = a == 0 ? p.x : p.y;
+      float boul = a == 0 ? isB.y : isB.x;
+      float sp = mix(0.034, 0.03, boul);
+      float f = (fract(along / sp + 0.5) - 0.5) * sp;
+      pool = max(pool, exp(-(f * f) / 0.00006) * exp(-(across * across) / mix(0.00005, 0.00016, boul)));
+    }
+    enLight = urban * (1.0 - vPark * 0.7) * ((0.06 + 0.9 * pool * (1.0 - far)) * max(road, walk) + 0.05 + far * 0.12);
     col *= 1.0 - uWet * 0.12;
     diffuseColor = col;
   `);
   mat.Fragment_Before_FragColor(/* glsl */ `
-    // éclairage public la nuit dans les zones urbaines
-    float urbanN = smoothstep(0.1, 0.4, vUrban) * (1.0 - vPark);
-    vec2 gn = abs(fract(vPositionW.xz / 0.2 + 0.5) - 0.5) * 0.2;
-    float lamp = 1.0 - smoothstep(0.004, 0.016, min(gn.x, gn.y));
-    color.rgb += urbanN * uNight * vec3(0.95, 0.65, 0.3) * (0.15 + 0.85 * lamp);
+    // éclairage public la nuit (lumière chaude)
+    color.rgb += uNight * vec3(1.0, 0.7, 0.4) * enLight;
   `);
   mat.onBindObservable.add(() => {
     const e = mat.getEffect();
@@ -224,10 +297,9 @@ export function createWaterAndNetwork(scene: Scene, grid: Grid, country: Country
     d.isPickable = false;
   }
   const riverMesh = mergeRibbons('rivers', country.rivers.map((r) => r.points), 0.34, grid, 0.03, 0.02, scene, new Color3(0.2, 0.47, 0.66));
-  const roads = mergeRibbons('autoroutes', country.links.filter((l) => l.kind === 'autoroute').map((l) => l.points), 0.055, grid, 0.006, 0.03, scene, new Color3(0.2, 0.21, 0.23));
-  const nat = mergeRibbons('nationales', country.links.filter((l) => l.kind === 'nationale').map((l) => l.points), 0.032, grid, 0.005, 0.03, scene, new Color3(0.3, 0.31, 0.33));
-  const rails = mergeRibbons('rails', country.links.filter((l) => l.kind === 'rail').map((l) => l.points), 0.02, grid, 0.008, 0.03, scene, new Color3(0.5, 0.25, 0.25));
-  return { sea, seaMat, riverMesh, roads, nat, rails };
+  // routes, voies ferrées, ponts, quais et équipements de rue (roads.ts)
+  const network = createRoads(scene, grid, country);
+  return { sea, seaMat, riverMesh, roads: network.roads, network };
 }
 
 /** Forêts : des milliers d'arbres en instances fines (un seul appel de rendu). */

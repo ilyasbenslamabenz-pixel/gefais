@@ -190,6 +190,8 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
   window.addEventListener('keyup', ku);
   let anim: { from: Vector3; to: Vector3; r0: number; r1: number; t: number } | null = null;
   camApi.focus = (x, z, dist = 4) => { anim = { from: camera.target.clone(), to: new Vector3(x, grid.y(x, z), z), r0: camera.radius, r1: dist, t: 0 }; };
+  // --- routes et circulation --- : placement immédiat de la caméra (captures de vérification)
+  (camApi as unknown as Record<string, unknown>).view = (x: number, z: number, dist: number, alpha: number, beta: number) => { anim = null; camera.target = new Vector3(x, grid.y(x, z), z); camera.radius = dist; camera.alpha = alpha; camera.beta = beta; };
 
   // Réactions aux instantanés du serveur
   let initialPop: number[] | null = null;
