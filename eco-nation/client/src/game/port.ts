@@ -146,6 +146,7 @@ export function buildPort(scene: Scene, grid: Grid, inf: Infra, P: PortLayout, l
 
   // ---- parc à conteneurs ----
   const box = newInst();
+  const cars = newInst();
   const put = (x: number, h: number, z: number, ry: number) => addInst(box, X0 + x, top + 0.0004 + h * 0.0026, Z + z, ry, 0.0121, 0.0025, 0.00238, CONTAINER_COLS[Math.floor(rnd() * CONTAINER_COLS.length)]);
   const blockLen = 0.2, aisle = 0.04, rowW = 0.0026, rows = 6;
   for (let x = yardX0 + 0.012; x < yardX1 - 0.02; x += 0.036) {
@@ -215,7 +216,7 @@ export function buildPort(scene: Scene, grid: Grid, inf: Infra, P: PortLayout, l
     for (let q = 0; q < 8; q++) k.cyl(0.02 + (q % 4) * 0.018, top, -0.2 + Math.floor(q / 4) * 0.018, 0.0085, 0.0085, 0.04, '#d9d4c7', { tess: 12, mat: M.concrete });
     k.box(0.05, top, -0.17, 0.08, 0.05, 0.012, '#c8c2b4', { mat: M.concrete });
     // dépôt pétrolier : réservoirs dans leurs cuvettes de rétention
-    for (let i = 0; i < 9; i++) for (let j = 0; j < 6; j++) {
+    for (let i = 0; i < 22; i++) for (let j = 0; j < 6; j++) {
       const x = -0.85 + i * 0.1, z = -1.62 + j * 0.105;
       if (x > east(z) - 0.15) continue;
       const r = 0.026 + rnd() * 0.012;
@@ -232,6 +233,30 @@ export function buildPort(scene: Scene, grid: Grid, inf: Infra, P: PortLayout, l
     for (const dz of [-0.03, 0, 0.03]) { k.box(-1.865, top + 0.003, -1.25 + dz, 0.002, 0.014, 0.002, '#adb5bd'); k.beam(new Vector3(-1.865, top + 0.016, -1.25 + dz), new Vector3(-1.877, top + 0.009, -1.25 + dz), 0.001, 0.001, '#adb5bd'); }
     for (const dz of [-0.09, 0.09]) k.cyl(-1.865, SEA_Y - 0.005, -1.25 + dz, 0.006, 0.006, top - SEA_Y + 0.01, '#8d99ae', { tess: 10 });
     for (let x = -1.8; x < -1.0; x += 0.06) lightAt(x, top + 0.008, -1.25, '#ffc77a', 1.6);
+    // zone logistique : entrepôts, dépôts de conteneurs vides, parkings poids lourds
+    const logi = ['#c9d1d9', '#aebdcc', '#d6d0c4', '#b9c6b0', '#e2e2dc'];
+    for (let x = 0.42; x < 2.2; x += 0.2) for (let z = zC0 + 0.05; z < zC1 - 0.12; z += 0.16) {
+      if (x + 0.09 > Math.min(east(z), east(z + 0.12)) - 0.08) continue;
+      const r = rnd();
+      if (r < 0.55) {
+        k.box(x, top, z + 0.06, 0.16, 0.012 + rnd() * 0.006, 0.11, logi[Math.floor(rnd() * logi.length)], { mat: M.steel });
+        k.box(x, top + 0.0195, z + 0.06, 0.162, 0.0008, 0.112, '#c3c7cb', { mat: M.metal });
+        for (let d = -0.07; d <= 0.07; d += 0.012) k.box(x + d, top, z + 0.003, 0.009, 0.006, 0.002, '#3d4a57');
+      } else if (r < 0.8) {
+        k.rect(x, top + 0.0003, z + 0.06, 0.17, 0.12, '#6b6d70', M.asphalt);
+        for (let a = 0; a < 12; a++) for (let b = 0; b < 30; b++) if (rnd() < 0.75) { const h = 1 + Math.floor(rnd() * 5); for (let j = 0; j < h; j++) put(x - 0.07 + a * 0.0128, j, z + 0.008 + b * 0.0034, 0); }
+      } else {
+        k.rect(x, top + 0.0003, z + 0.06, 0.17, 0.12, '#55575a', M.asphalt);
+        for (let a = 0; a < 8; a++) for (let b = 0; b < 30; b++) if (rnd() < 0.6) { k.box(x - 0.07 + a * 0.02, top, z + 0.01 + b * 0.0034, 0.016, 0.0036, 0.0025, CONTAINER_COLS[Math.floor(rnd() * 16)], { mat: M.steel }); }
+      }
+    }
+    // terminal roulier : voitures neuves alignées
+    for (let x = 0.15; x < 2.2; x += 0.13) for (let z = -0.85; z < -0.36; z += 0.12) {
+      if (x + 0.06 > Math.min(east(z), east(z + 0.1)) - 0.08) continue;
+      k.rect(x, top + 0.0003, z + 0.05, 0.12, 0.1, '#505255', M.asphalt);
+      const cc = ['#f1f1ef', '#1d1d1f', '#a8adb3', '#2f4f6f', '#8c1c13'][Math.floor(rnd() * 5)];
+      for (let a = 0; a < 24; a++) for (let b = 0; b < 18; b++) if (rnd() < 0.85) addInst(cars, X0 + x - 0.055 + a * 0.0046, top + 0.0003, Z + z + 0.006 + b * 0.0052, 0, 0.0019, 0.0014, 0.0043, rnd() < 0.7 ? cc : '#d9d9d9');
+    }
     // remorqueurs à quai (fond de darse)
     for (let q = 0; q < 3; q++) {
       const x = 0.15 - q * 0.04, z = -0.07;
@@ -294,6 +319,8 @@ export function buildPort(scene: Scene, grid: Grid, inf: Infra, P: PortLayout, l
   const extra: Mesh[] = [];
   const cm = applyInst(unitBox(scene, 'port-conteneurs', M.steel), box);
   if (cm) { cm.receiveShadows = true; extra.push(cm); }
+  const carm = applyInst(unitBox(scene, 'port-voitures'), cars);
+  if (carm) extra.push(carm);
   const am = (() => {
     const kk = new Kit();
     // accropode simplifié : deux pavés croisés

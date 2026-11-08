@@ -3,7 +3,7 @@
 // feux en instances fines et maillages réutilisables (avions, navires, voitures, conteneurs).
 // Toutes les dimensions sont en km réels (1 unité = 1 km).
 import {
-  Color3, CreateBoxVertexData, CreateCylinderVertexData, CreateGroundVertexData, CreateSphereVertexData, DynamicTexture, Engine, Matrix, Mesh, Quaternion, StandardMaterial, Texture, Vector3, VertexBuffer, VertexData,
+  Color3, CreateBoxVertexData, CreateCylinderVertexData, CreateSphereVertexData, Engine, Matrix, Mesh, Quaternion, StandardMaterial, Texture, Vector3, VertexBuffer, VertexData,
   type Scene,
 } from '@babylonjs/core';
 import { CustomMaterial } from '@babylonjs/materials/custom/customMaterial';
@@ -317,8 +317,9 @@ export function infraMaterial(scene: Scene) {
       else if (id < 6.5) det = texture2D(tBrick, wp / vec2(0.021, 0.021)).rgb * 1.2;
       else det = texture2D(tOffice, wp / vec2(0.03, 0.03)).rgb * 1.3;
     } else if (id < 8.5 && id > 7.5) {
-      float n = iNoise(gp * 9.0) * 0.5 + iNoise(gp * 40.0) * 0.3 + iNoise(gp * 1.3) * 0.2;
-      det = mix(vec3(0.72, 0.8, 0.55), vec3(1.12, 1.1, 0.9), n);
+      float n = iNoise(gp * 9.0) * 0.35 + iNoise(gp * 40.0) * 0.25 + iNoise(gp * 1.2) * 0.4;
+      float mow = 0.93 + 0.07 * step(0.5, fract(gp.x / 0.03 + iNoise(gp * 0.7) * 2.0));
+      det = mix(vec3(0.62, 0.74, 0.48), vec3(1.18, 1.12, 0.86), n) * mow;
     } else if (id > 8.5) {
       det = texture2D(tPave, uvp / 0.006).rgb / 0.56;
     }
@@ -419,22 +420,10 @@ const poolMats = new WeakMap<Scene, StandardMaterial>();
 function poolMaterial(scene: Scene) {
   let mat = poolMats.get(scene);
   if (mat) return mat;
-  const tex = new DynamicTexture('halo', 64, scene, false);
-  const ctx = tex.getContext() as CanvasRenderingContext2D;
-  const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
-  g.addColorStop(0, 'rgba(255,255,255,1)');
-  g.addColorStop(0.35, 'rgba(255,255,255,0.45)');
-  g.addColorStop(1, 'rgba(255,255,255,0)');
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, 64, 64);
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, 64, 64);
-  tex.update();
   mat = new StandardMaterial('haloMat', scene);
   mat.disableLighting = true;
   mat.diffuseColor = Color3.Black();
   mat.specularColor = Color3.Black();
-  mat.emissiveTexture = tex;
   mat.emissiveColor = Color3.White();
   mat.alphaMode = Engine.ALPHA_ADD;
   mat.alpha = 0.99;
@@ -453,7 +442,19 @@ export function buildPools(scene: Scene, name: string, L: LightSet) {
   const n = L.pos.length / 3;
   if (!n) return null;
   const mesh = new Mesh(name, scene);
-  CreateGroundVertexData({ width: 1, height: 1 }).applyToMesh(mesh);
+  // disque à dégradé radial par couleurs de sommets (centre lumineux, bord noir = transparent en additif)
+  const pos: number[] = [0, 0, 0], col: number[] = [1, 1, 1, 1], ind: number[] = [];
+  const seg = 16, rings: [number, number][] = [[0.18, 0.6], [0.32, 0.3], [0.5, 0]];
+  rings.forEach(([r, c]) => { for (let q = 0; q < seg; q++) { const a = (q / seg) * Math.PI * 2; pos.push(Math.cos(a) * r, 0, Math.sin(a) * r); col.push(c, c, c, 1); } });
+  for (let q = 0; q < seg; q++) ind.push(0, 1 + ((q + 1) % seg), 1 + q);
+  for (let rr = 0; rr < rings.length - 1; rr++) for (let q = 0; q < seg; q++) {
+    const a = 1 + rr * seg + q, b = 1 + rr * seg + ((q + 1) % seg);
+    ind.push(a, b, a + seg, b, b + seg, a + seg);
+  }
+  const vd = new VertexData();
+  vd.positions = pos; vd.colors = col; vd.indices = ind;
+  vd.normals = pos.map((_, k) => (k % 3 === 1 ? 1 : 0));
+  vd.applyToMesh(mesh);
   mesh.material = poolMaterial(scene);
   const mats = new Float32Array(n * 16);
   const m = new Matrix();

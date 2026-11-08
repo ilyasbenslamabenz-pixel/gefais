@@ -197,7 +197,8 @@ export function createInfrastructure(scene: Scene, grid: Grid, country: CountryD
         for (let q = 0; q < 3; q++) pylon(k, 0.5 + q * 0.012, 0.02, 0.02 + fy);
         finish(k, i, 'solaire');
         const pk = new Kit();
-        pk.box(0, 0, 0, 1, 0.00012, 0.0042, '#1b2a44', { rx: -0.44 });
+        pk.box(0, 0, 0, 1, 0.00012, 0.0042, '#34507e', { rx: -0.44 });
+        pk.box(0, 0.00013, 0, 1, 0.00002, 0.0001, '#c9d1d9', { rx: -0.44 });
         pk.box(0, -0.0013, 0.0012, 1, 0.0013, 0.0002, '#8d99ae');
         pk.box(0, -0.0013, -0.0012, 1, 0.0008, 0.0002, '#8d99ae');
         const pm = applyInst(pk.build('panneaux', scene), panels);
@@ -247,7 +248,7 @@ export function createInfrastructure(scene: Scene, grid: Grid, country: CountryD
       // plateforme terrassée (talus jusqu'au sol)
       const drop = py - Math.min(y, grid.y(i.x + R, i.z), grid.y(i.x - R, i.z), grid.y(i.x, i.z + R), grid.y(i.x, i.z - R)) + 0.01;
       const green = ['centrale_nucleaire', 'centrale_charbon', 'centrale_gaz', 'stade', 'universite'].includes(i.type);
-      k.lathe([[R * 1.25, -drop], [R * 1.02, -0.0002], [0.0001, -0.0002]], 0, 0, 0, green ? '#8b9a6b' : '#a3a099', { tess: 20, mat: green ? M.grass : M.concrete });
+      k.lathe([[R * 1.25, -drop], [R * 1.02, -0.0002], [0.0001, -0.0002]], 0, 0, 0, green ? '#9a9c6c' : '#a3a099', { tess: 20, mat: green ? M.grass : M.concrete });
     }
     switch (i.type) {
       case 'centrale_nucleaire': {
@@ -264,7 +265,7 @@ export function createInfrastructure(scene: Scene, grid: Grid, country: CountryD
           k.cyl(x + 0.05, 0, 0.0, 0.0025, 0.002, 0.07, '#c9c6bf', { tess: 8, mat: M.concrete });
           // tour aéroréfrigérante
           coolingTower(k, x, -0.2, 1);
-          pushSmoke(k, i, x, 0.17, -0.2, true, 0.14);
+          pushSmoke(k, i, x, 0.17, -0.2, true, 0.06);
         }
         k.box(-0.36, 0, 0.24, 0.12, 0.016, 0.06, '#ffffff', { mat: M.office });
         k.rect(-0.2, 0.0006, 0.26, 0.16, 0.06, '#505255', M.asphalt);
@@ -287,7 +288,7 @@ export function createInfrastructure(scene: Scene, grid: Grid, country: CountryD
           chimney(k, -0.12, 0.05, 0.18, 0.008, true);
           pushSmoke(k, i, -0.12, 0.184, 0.05, false, 0.045);
           coolingTower(k, 0.18, -0.12, 0.75);
-          pushSmoke(k, i, 0.18, 0.126, -0.12, true, 0.1);
+          pushSmoke(k, i, 0.18, 0.126, -0.12, true, 0.045);
           for (let q = 0; q < 3; q++) k.gable(-0.05 + q * 0.0, 0, 0.14 + q * 0.05, 0.22, 0.014, 0.04, q === 1 ? '#3a3a3a' : '#262626');
           k.beam(new Vector3(0.06, 0.004, 0.13), new Vector3(0, 0.07, 0.03), 0.003, 0.004, '#8d99ae');
         } else k.cyl(0.06, 0, -0.07, 0.02, 0.02, 0.02, i.type === 'centrale_biomasse' ? '#8d6e63' : '#e9ecef', { tess: 14 });

@@ -125,16 +125,28 @@ export function buildAirport(scene: Scene, grid: Grid, inf: Infra, L: AirportLay
 
   // plateforme engazonnée et talus
   const [hu, hv] = half;
-  k.rect(0, yG, 0, hu * 2, hv * 2, '#6f8d4c', M.grass);
+  k.rect(0, yG, 0, hu * 2, hv * 2, '#859056', M.grass);
   {
     let ymin = y;
     for (let a = -1; a <= 1.001; a += 0.25) for (let b = -1; b <= 1.001; b += 0.5) { const [x, z] = L.toWorld(a * hu * 1.1, b * hv * 1.2); ymin = Math.min(ymin, grid.y(x, z)); }
-    const dy = -(y - ymin) - 0.01, e = 0.25;
+    const dy = -(y - ymin) - 0.006, e = Math.max(0.3, (y - ymin) * 12);
     const c = [[-hu, -hv], [hu, -hv], [hu, hv], [-hu, hv]];
     for (let s = 0; s < 4; s++) {
       const [a0, b0] = c[s], [a1, b1] = c[(s + 1) % 4];
       const o0 = [a0 + Math.sign(a0) * e, b0 + Math.sign(b0) * e], o1 = [a1 + Math.sign(a1) * e, b1 + Math.sign(b1) * e];
-      k.quad([a0, 0, b0], [a1, 0, b1], [o1[0], dy, o1[1]], [o0[0], dy, o0[1]], '#6a8448', M.grass);
+      k.quad([a0, 0, b0], [a1, 0, b1], [o1[0], dy, o1[1]], [o0[0], dy, o0[1]], '#8c9258', M.grass);
+    }
+  }
+
+  // route de service et clôture périphériques
+  {
+    const ih = hu - 0.04, iv = hv - 0.04;
+    const ring: [number, number][] = [[-ih, -iv], [ih, -iv], [ih, iv], [-ih, iv], [-ih, -iv]];
+    for (let q = 0; q < 4; q++) {
+      k.strip(ring[q][0], ring[q][1], ring[q + 1][0], ring[q + 1][1], 0.007, yT - 0.0003, '#6a6c6e', M.asphalt);
+      const [a0, b0] = ring[q], [a1, b1] = ring[q + 1];
+      const f = 0.02 / Math.max(ih, iv);
+      k.beam(new Vector3(a0 * (1 + f), yG + 0.001, b0 * (1 + f)), new Vector3(a1 * (1 + f), yG + 0.001, b1 * (1 + f)), 0.0003, 0.0022, '#8f969c');
     }
   }
 
