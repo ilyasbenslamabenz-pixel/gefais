@@ -10,6 +10,10 @@ import { LineChart, monthLabel } from './charts';
 import { IND } from './indicators';
 import { FiscalitePanel } from './Fiscalite';
 import { EconomiePanel, FinancesPanel, PopulationPanel, TravailPanel } from './Ministries';
+import { PolitiquePanel } from './Politique';
+import { InternationalPanel } from './International';
+import { EvenementsPanel, EventOverlay } from './Evenements';
+import { ObjectifsPanel } from './Objectifs';
 import { WEATHER_LABEL, weatherFor } from '../game/Life';
 import { camApi } from '../game/MapScene';
 
@@ -65,18 +69,23 @@ const MINISTRIES: { id: Panel; icon: string; label: string }[] = [
   { id: 'economie', icon: '📈', label: 'Économie' },
   { id: 'travail', icon: '👷', label: 'Travail' },
   { id: 'population', icon: '👥', label: 'Population' },
+  { id: 'politique', icon: '🏛️', label: 'Politique' },
+  { id: 'international', icon: '🌐', label: 'International' },
+  { id: 'evenements', icon: '⚠️', label: 'Événements' },
+  { id: 'objectifs', icon: '🏆', label: 'Objectifs' },
   { id: 'stats', icon: '📊', label: 'Statistiques' },
 ];
 
 export function Dock() {
   const panel = useStore((s) => s.panel);
   const unread = useStore((s) => s.unread);
+  const pendingEvents = useStore((s) => s.snap?.events?.active.length ?? 0);
   const set = useStore((s) => s.set);
   const toggle = (p: Panel) => set({ panel: panel === p ? null : p, ...(p === 'notifications' ? { unread: 0 } : {}) });
   return (
     <nav className="dock">
       {MINISTRIES.map((m) => (
-        <button key={m.id} className={panel === m.id ? 'on' : ''} onClick={() => toggle(m.id)}><span>{m.icon}</span><em>{m.label}</em></button>
+        <button key={m.id} className={panel === m.id ? 'on' : ''} onClick={() => toggle(m.id)}><span>{m.icon}</span><em>{m.label}</em>{m.id === 'evenements' && pendingEvents > 0 && <i className="badge">{pendingEvents}</i>}</button>
       ))}
       <div className="dock-sep" />
       <button className={panel === 'notifications' ? 'on' : ''} onClick={() => toggle('notifications')}><span>🔔</span><em>Alertes</em>{unread > 0 && <i className="badge">{unread}</i>}</button>
@@ -353,6 +362,15 @@ export function Toasts() {
 }
 
 export function Panels() {
+  return <><PanelContent /><GameOverlays /></>;
+}
+
+/** Superpositions : fenêtre de décision des événements en attente. */
+export function GameOverlays() {
+  return <EventOverlay />;
+}
+
+function PanelContent() {
   const panel = useStore((s) => s.panel);
   switch (panel) {
     case 'finances': return <FinancesPanel />;
@@ -364,6 +382,10 @@ export function Panels() {
     case 'notifications': return <Notifications />;
     case 'settings': return <SettingsPanel />;
     case 'help': return <HelpPanel />;
+    case 'politique': return <PolitiquePanel />;
+    case 'international': return <InternationalPanel />;
+    case 'evenements': return <EvenementsPanel />;
+    case 'objectifs': return <ObjectifsPanel />;
     default: return null;
   }
 }

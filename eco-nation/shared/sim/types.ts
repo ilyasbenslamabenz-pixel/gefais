@@ -1,5 +1,9 @@
 // Types centraux de la simulation (partagés client / serveur).
 import type { Branch, BudgetLine, CategoryId, Occupation, SectorId, VatCategory, VatClass } from './data';
+import type { PoliticsState } from './politics';
+import type { InternationalState } from './international';
+import type { EventsState } from './events';
+import type { VictoryState } from './victory';
 
 // ---------- Décisions du joueur ----------
 export interface Bracket { upTo: number | null; rate: number }
@@ -45,6 +49,10 @@ export interface Policy {
   };
   budget: Record<BudgetLine, number>; // dépenses discrétionnaires annuelles (€)
   finance: { indexBudgets: boolean; autoBorrow: boolean; minCash: number };
+  /** Politique commerciale (module international). Optionnelle pour la compatibilité des anciennes sauvegardes. */
+  trade?: {
+    tariff: number; // droits de douane moyens sur les importations (0..0,5) : renchérissent les importations, provoquent des représailles
+  };
 }
 
 // ---------- Pays (géographie, statique) ----------
@@ -206,13 +214,18 @@ export interface Accounts {
   medianWage: number;
   failures: number; // faillites annualisées
   creations: number;
+  // Champs optionnels renseignés par le module énergie / environnement s'il existe (lus par victory.ts et events.ts).
+  renewableShareElec?: number; // part renouvelable de la production électrique (0..1)
+  renewableShareFinal?: number; // part renouvelable de la consommation finale d'énergie (0..1)
+  netEmissions?: number; // émissions nettes (émissions − absorptions), tCO2/an
+  energyImportDependence?: number; // part de l'énergie consommée importée (0..1)
 }
 
 export type RevenueKey =
   | 'impotRevenu' | 'impotCapital' | 'impotSocietes' | 'tva' | 'cotisationsPatronales' | 'cotisationsSalariales'
   | 'patrimoine' | 'foncier' | 'transactions' | 'vacance' | 'taxesLocales'
   | 'carbone' | 'carburants' | 'emissionsIndustrielles' | 'dechets' | 'vehicules' | 'energivores'
-  | 'entreprisesPubliques' | 'infrastructures' | 'divers';
+  | 'entreprisesPubliques' | 'infrastructures' | 'divers' | 'douanes';
 
 export type SpendingKey = BudgetLine | 'retraites' | 'chomage' | 'allocations' | 'creditActivite' | 'interets';
 
@@ -262,6 +275,11 @@ export interface GameState {
   history: Record<string, number[]>;
   notices: Notice[];
   noticeSeq: number;
+  // --- modules politique / international / événements / victoire (optionnels : anciennes sauvegardes) ---
+  politics?: PoliticsState;
+  international?: InternationalState;
+  events?: EventsState;
+  victory?: VictoryState;
 }
 
 export type Occ = Occupation;

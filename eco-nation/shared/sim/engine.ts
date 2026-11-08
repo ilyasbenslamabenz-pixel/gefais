@@ -6,6 +6,11 @@ import { INVEST_TARGET, clamp, economyStep, participationRate } from './economy'
 import { averageConsumptionTax, sanitizeBrackets } from './fiscal';
 import { airQuality, categoryIncome, citiesStep, satisfactionStep, servicesStep } from './social';
 import type { Accounts, CountryConfig, Demography, GameState, Notice, Policy, Services } from './types';
+// --- modules politique/international/événements/victoire ---
+import { applyPoliticalAction, initPolitics, legislativeStep, politicsStep, splitReform, submitBills, type Bill, type PoliticalAction } from './politics';
+import { applyDiplomaticAction, initInternational, internationalStep, type DiplomaticAction } from './international';
+import { applyExtraBudget, eventsStep, initEvents, removeExtraBudget, resolveEvent } from './events';
+import { continueAfterDefeat, initVictory, victoryStep } from './victory';
 
 export const SIM_VERSION = 1;
 export const START_YEAR = 2030;
@@ -42,6 +47,7 @@ export function defaultPolicy(gdp: number): Policy {
     labour: { minWage: 1800, hours: 35, hiringAid: 1500, benefitRate: 0.57, benefitMonths: 24, retirementAge: 64, pensionRate: 0.52, familyAllowance: 140 },
     budget,
     finance: { indexBudgets: true, autoBorrow: true, minCash: Math.round(gdp * 0.015) },
+    trade: { tariff: 0 },
   };
 }
 
@@ -106,6 +112,7 @@ export function sanitizePolicy(input: Policy, current: Policy): Policy {
     },
     budget,
     finance: { indexBudgets: i.finance?.indexBudgets ?? c.finance.indexBudgets, autoBorrow: i.finance?.autoBorrow ?? c.finance.autoBorrow, minCash: num(i.finance?.minCash, 0, 1e12, c.finance.minCash) },
+    trade: { tariff: num(i.trade?.tariff, 0, 0.5, c.trade?.tariff ?? 0) },
   };
 }
 
@@ -195,6 +202,7 @@ export function createGame(cfgIn: Partial<CountryConfig> = {}, id = 'local', nam
   S.satisfaction = satisfactionStep(S, S.policy, true);
   citiesStep(S, S.policy, true);
   S.macro.consTaxRate = averageConsumptionTax(S.policy);
+  initModules(S);
   recordHistory(S);
   pushNotice(S, 'info', 'Prise de fonctions', `Vous dirigez désormais ${S.name}. Le pays compte ${fmtM(pop)} d'habitants pour un PIB de ${fmtB(S.accounts.gdp)}.`);
   return S;
@@ -236,6 +244,11 @@ export function tick(S: GameState): void {
   const P = S.policy;
   const before = snapshotIndicators(S);
   S.month += 1;
+  // --- modules politique/international/événements/victoire ---
+  legislativeStep(S); // votes des projets de loi (une loi adoptée s'applique dès ce mois)
+  eventsStep(S); // effets temporaires, options par défaut à échéance, tirage d'un événement
+  internationalStep(S); // voisins, accords, représailles, facteurs macro (demande, énergie, prix mondiaux)
+  applyExtraBudget(S); // crédits exceptionnels du mois (comptabilisés dans les dépenses)
   // 1. Démographie
   S.demography = demographyStep(S.demography, {
     healthQuality: S.services.sante,
@@ -257,6 +270,10 @@ export function tick(S: GameState): void {
   S.services = servicesStep(S, P, false);
   S.satisfaction = satisfactionStep(S, P, false);
   citiesStep(S, P, false);
+  // --- modules politique/international/événements/victoire ---
+  removeExtraBudget(S);
+  politicsStep(S); // popularité, groupes d'intérêt, censure, élections
+  victoryStep(S); // victoires et défaites
   recordHistory(S);
   // 5. Indexation automatique
   if (P.finance.indexBudgets) {
@@ -279,6 +296,8 @@ export const HISTORY_KEYS = [
   'gdp', 'gdpReal', 'growth', 'inflation', 'priceLevel', 'unemployment', 'population', 'employment', 'debt', 'debtRatio', 'deficitRatio', 'balance',
   'revenue', 'spending', 'cash', 'satisfaction', 'trust', 'emissions', 'meanWage', 'medianWage', 'gini', 'poverty', 'births', 'deaths', 'migration',
   'lifeExpectancy', 'exports', 'imports', 'consumption', 'investment', 'policyRate', 'marketRate', 'firms', 'failures', 'disposablePerCap', 'productivityGrowth',
+  // --- modules politique/international/événements/victoire ---
+  'govPopularity', 'coalitionSeats', 'tariff', 'retaliation', 'intlDemand', 'intlEnergy',
 ] as const;
 
 function recordHistory(S: GameState) {
@@ -324,6 +343,19 @@ function recordHistory(S: GameState) {
   push('failures', A.failures);
   push('disposablePerCap', A.disposableIncome / Math.max(1, pop));
   push('productivityGrowth', S.macro.productivityGrowth);
+  // --- modules politique/international/événements/victoire ---
+  if (S.politics) {
+    const Pol = S.politics;
+    push('govPopularity', Pol.parties.filter((p) => Pol.coalition.includes(p.id)).reduce((s, p) => s + p.popularity, 0));
+    push('coalitionSeats', Pol.parties.filter((p) => Pol.coalition.includes(p.id)).reduce((s, p) => s + p.seats, 0));
+    for (const p of Pol.parties) push('party_' + p.id, p.popularity);
+  }
+  if (S.international) {
+    push('tariff', S.policy.trade?.tariff ?? 0);
+    push('retaliation', S.international.retaliation);
+    push('intlDemand', S.international.demandFactor);
+    push('intlEnergy', S.international.energyFactor);
+  }
   for (const [k, v] of Object.entries(A.revenue)) push('rev_' + k, v);
   for (const [k, v] of Object.entries(A.spending)) push('dep_' + k, v);
 }
@@ -368,13 +400,56 @@ function describePolicyChange(S: GameState, a: Policy, b: Policy) {
   if (JSON.stringify(a.labour) !== JSON.stringify(b.labour)) changes.push('droit du travail et protection sociale');
   const budgetChanged = BUDGET_LINES.some((k) => Math.abs(a.budget[k] - b.budget[k]) > 1);
   if (budgetChanged) changes.push('budget');
+  if ((a.trade?.tariff ?? 0) !== (b.trade?.tariff ?? 0)) changes.push('droits de douane');
   if (changes.length) pushNotice(S, 'info', 'Réformes en vigueur', `Entrée en vigueur : ${changes.join(', ')}.`);
 }
 
-/** Programme une nouvelle politique : elle entre en vigueur au début du mois suivant. */
-export function schedulePolicy(S: GameState, proposal: Policy) {
+/**
+ * Programme une nouvelle politique : elle entre en vigueur au début du mois suivant.
+ * - Par défaut (procédure directe, utilisée par les tests et les scripts) : toute la politique est appliquée telle quelle.
+ * - Avec `{ parliament: true }` (utilisé par le serveur) : les petits ajustements restent des décrets (mois suivant),
+ *   les changements majeurs (voir LAW_THRESHOLDS dans politics.ts) deviennent des projets de loi votés au début du mois
+ *   suivant ; une loi rejetée n'entre pas en vigueur.
+ */
+export function schedulePolicy(S: GameState, proposal: Policy, opts: { parliament?: boolean } = {}): { bills: Bill[] } {
   const base = S.pending?.policy ?? S.policy;
-  S.pending = { month: S.month + 1, policy: sanitizePolicy(proposal, base) };
+  const sanitized = sanitizePolicy(proposal, base);
+  if (!opts.parliament || !S.politics) {
+    S.pending = { month: S.month + 1, policy: sanitized };
+    return { bills: [] };
+  }
+  const { decree, bills } = splitReform(S, base, sanitized);
+  S.pending = { month: S.month + 1, policy: decree };
+  submitBills(S, bills);
+  return { bills };
+}
+
+/** Initialise les modules politique, international, événements et victoire (nouvelle partie ou ancienne sauvegarde). */
+export function initModules(S: GameState) {
+  if (!S.policy.trade) S.policy.trade = { tariff: 0 };
+  if (S.pending && !S.pending.policy.trade) S.pending.policy.trade = { tariff: 0 };
+  if (!S.events) S.events = initEvents();
+  if (!S.politics) initPolitics(S);
+  if (!S.international) S.international = initInternational(S);
+  if (!S.victory) initVictory(S);
+}
+
+/** Actions de gouvernement hors politique fiscale : décisions d'événements, diplomatie, parlement, poursuite après défaite. */
+export type GovAction =
+  | { type: 'evenement'; uid: number; option: string }
+  | DiplomaticAction
+  | PoliticalAction
+  | { type: 'continuer' };
+
+export function applyGovAction(S: GameState, a: GovAction): { ok: boolean; msg: string } {
+  if (!a || typeof a !== 'object') return { ok: false, msg: 'Action invalide' };
+  switch (a.type) {
+    case 'evenement': return resolveEvent(S, Number(a.uid), String(a.option));
+    case 'accord': case 'rompreAccord': case 'diplomatie': return applyDiplomaticAction(S, a);
+    case 'confiance': case 'dissolution': case 'coalition': case 'retirerLoi': return applyPoliticalAction(S, a);
+    case 'continuer': return continueAfterDefeat(S);
+    default: return { ok: false, msg: 'Action inconnue' };
+  }
 }
 
 export type FinanceAction = { type: 'bonds'; amount: number } | { type: 'repay'; amount: number } | { type: 'toReserve'; amount: number } | { type: 'fromReserve'; amount: number };
@@ -426,6 +501,7 @@ export function snapshot(S: GameState) {
 export type Snapshot = ReturnType<typeof snapshot>;
 
 export function migrate(S: GameState): GameState {
+  initModules(S); // anciennes sauvegardes : modules politique/international/événements/victoire
   return S; // point d'entrée des futures migrations de sauvegardes
 }
 

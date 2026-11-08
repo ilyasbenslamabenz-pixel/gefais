@@ -1,7 +1,9 @@
 // Communication avec le serveur : REST (parties) et Socket.IO (simulation en direct).
 import { io } from 'socket.io-client';
 import { useStore } from './store';
-import type { Snapshot, FinanceAction } from '../../shared/sim/engine';
+import type { Snapshot, FinanceAction, GovAction } from '../../shared/sim/engine';
+import type { GameEvent } from '../../shared/sim/events';
+import type { ElectionResult } from '../../shared/sim/politics';
 import type { CountryDef, Notice, Policy } from '../../shared/sim/types';
 
 const KEY = 'eco_player';
@@ -33,6 +35,10 @@ socket.on('game:tick', (m: { snap: Snapshot; last: Record<string, number> | null
   for (const n of m.notices ?? []) if (n.kind !== 'info' || n.title.startsWith('Réformes')) s.toast(`${n.title} — ${n.text}`, n.kind);
 });
 socket.on('game:speed', (speed: number) => st().set({ speed }));
+// --- modules politique/international/événements/victoire ---
+socket.on('game:event', (ev: GameEvent) => st().toast(`${ev.icon} ${ev.title} : décision attendue !`, ev.kind === 'opportunite' ? 'good' : 'warn'));
+socket.on('game:election', (e: ElectionResult) => st().toast(`🗳️ Élections : ${e.text}`, e.outcome === 'defaite' ? 'bad' : e.outcome === 'cohabitation' ? 'warn' : 'good'));
+socket.on('game:over', (d: { text: string } | null) => { st().toast(`⛔ ${d?.text ?? 'Fin de mandat'}`, 'bad'); st().set({ panel: 'objectifs' }); });
 socket.on('game:pending', (pending: Snapshot['pending']) => {
   const s = st();
   if (s.snap) s.set({ snap: { ...s.snap, pending } });
@@ -67,8 +73,12 @@ export function openGame(id: string, silent = false): Promise<boolean> {
 export const setSpeed = (s: number) => socket.emit('game:speed', s);
 export const stepOnce = () => socket.emit('game:step');
 export function submitPolicy(p: Policy): Promise<boolean> {
-  return new Promise((resolve) => socket.emit('game:policy', p, (r: { ok: boolean; msg?: string }) => {
-    if (r.ok) { st().set({ draft: null }); st().toast('Réformes adoptées : entrée en vigueur au 1er du mois prochain.', 'good'); }
+  return new Promise((resolve) => socket.emit('game:policy', p, (r: { ok: boolean; msg?: string; bills?: { id: number; title: string }[] }) => {
+    if (r.ok) {
+      st().set({ draft: null });
+      if (r.bills?.length) st().toast(`Décrets programmés au mois prochain ; ${r.bills.length} projet${r.bills.length > 1 ? 's' : ''} de loi soumis au vote du parlement.`, 'info');
+      else st().toast('Décrets adoptés : entrée en vigueur au 1er du mois prochain.', 'good');
+    }
     else st().toast(r.msg || 'Réforme refusée', 'bad');
     resolve(r.ok);
   }));
@@ -76,6 +86,13 @@ export function submitPolicy(p: Policy): Promise<boolean> {
 export const cancelPending = () => socket.emit('game:cancelPending', () => st().toast('Réformes en attente annulées.'));
 export function financeAction(a: FinanceAction): Promise<boolean> {
   return new Promise((resolve) => socket.emit('game:action', a, (r: { ok: boolean; msg: string }) => {
+    st().toast(r.msg, r.ok ? 'good' : 'bad');
+    resolve(r.ok);
+  }));
+}
+/** Décision d'événement, diplomatie, accord, action parlementaire ou poursuite après défaite. */
+export function govAction(a: GovAction): Promise<boolean> {
+  return new Promise((resolve) => socket.emit('game:gov', a, (r: { ok: boolean; msg: string }) => {
     st().toast(r.msg, r.ok ? 'good' : 'bad');
     resolve(r.ok);
   }));
