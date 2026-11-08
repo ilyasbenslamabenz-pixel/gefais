@@ -10,6 +10,8 @@ import { LineChart, monthLabel } from './charts';
 import { IND } from './indicators';
 import { FiscalitePanel } from './Fiscalite';
 import { EconomiePanel, FinancesPanel, PopulationPanel, TravailPanel } from './Ministries';
+import { EnergiePanel } from './Energie';
+import { EnvironnementPanel } from './Environnement';
 import { WEATHER_LABEL, weatherFor } from '../game/Life';
 import { camApi } from '../game/MapScene';
 
@@ -65,6 +67,8 @@ const MINISTRIES: { id: Panel; icon: string; label: string }[] = [
   { id: 'economie', icon: '📈', label: 'Économie' },
   { id: 'travail', icon: '👷', label: 'Travail' },
   { id: 'population', icon: '👥', label: 'Population' },
+  { id: 'energie', icon: '⚡', label: 'Énergie' },
+  { id: 'environnement', icon: '🌳', label: 'Environnement' },
   { id: 'stats', icon: '📊', label: 'Statistiques' },
 ];
 
@@ -360,6 +364,8 @@ export function Panels() {
     case 'travail': return <TravailPanel />;
     case 'economie': return <EconomiePanel />;
     case 'population': return <PopulationPanel />;
+    case 'energie': return <EnergiePanel />;
+    case 'environnement': return <EnvironnementPanel />;
     case 'stats': return <StatsPanel />;
     case 'notifications': return <Notifications />;
     case 'settings': return <SettingsPanel />;

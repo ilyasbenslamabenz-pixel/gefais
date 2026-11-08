@@ -14,7 +14,7 @@ import {
   annuity, type BuildId, type Carrier, type ElecGroup, type EnergyPolicy, type TechId,
 } from './energyData';
 import { INFRA_TECH, addSite, closeSites } from './energySites';
-import type { GameState, Policy } from './types';
+import type { GameState, Infra, Policy } from './types';
 
 // ---------- Types ----------
 export interface PlantFleet { mw: number; publicMw: number; initialMw: number }
@@ -130,6 +130,8 @@ export interface EnergyState {
   finance: Record<'capex' | 'decommission' | 'om' | 'support' | 'ev' | 'heatPumps' | 'charging' | 'renovation' | 'grid' | 'offsets' | 'revenue', number>;
   roll: MonthRec[];
   goals: Goal[];
+  /** Sites énergétiques de la carte (copie de country.infra, envoyée à chaque instantané pour que la carte suive constructions et fermetures). */
+  sites: Infra[];
   calib: {
     kElec: number; // calibrage de l'électricité stationnaire
     fScale: Record<string, number>; // calibrage des combustibles fossiles par secteur
@@ -487,7 +489,7 @@ export function initEnergy(S: GameState): EnergyState {
     balance: null as unknown as ElecBalance, final: null as unknown as FinalEnergy, emissions: null as unknown as EmissionsAccount,
     elecRenShare: 0.15, elecRenShareMonth: 0.15, airPollutants: 0, jobs: { operation: 0, construction: 0 }, importDependence: 0,
     finance: { capex: 0, decommission: 0, om: 0, support: 0, ev: 0, heatPumps: 0, charging: 0, renovation: 0, grid: 0, offsets: 0, revenue: 0 },
-    roll: [], goals: [],
+    roll: [], goals: [], sites: [],
     calib: {
       kElec: 1, fScale: {}, other0: {}, econ0: {}, fossilFinal0: 0, retail0: 70 + NETWORK_COST + SUPPLY_MARGIN,
       carbon0: P.eco.carbon, industrial0: P.eco.industrial, vehicle0: P.eco.vehicle, fuel0: P.eco.fuel, air0: 0, interconnect0: 0,
@@ -550,6 +552,7 @@ export function initEnergy(S: GameState): EnergyState {
   d = computeDemand(S, P, E);
   finishMonth(S, P, E, d, last!, true);
   E.calib.air0 = E.airPollutants;
+  refreshSites(S);
   S.macro.energyPrice = 1;
   return E;
 }
@@ -716,6 +719,13 @@ export function energyStep(S: GameState, P: Policy): void {
   // 8. Investissements de marché
   if (EP.autoInvest) marketInvestment(S, P, E, EP);
   E.jobs = jobsOf(E, S.month);
+  refreshSites(S);
+}
+
+/** Met à jour la liste des sites énergétiques transmise au client. */
+export function refreshSites(S: GameState) {
+  if (!S.energy) return;
+  S.energy.sites = S.country.infra.filter((i) => INFRA_TECH[i.type] !== undefined).map((i) => ({ ...i }));
 }
 
 /** Calcule les indicateurs du mois, la comptabilité carbone brute et l'indice de prix de l'énergie. */
@@ -1018,6 +1028,12 @@ export function closeQuote(S: GameState, tech: BuildId, mw: number) {
 }
 
 export function applyEnergyAction(S: GameState, a: EnergyAction): { ok: boolean; msg: string } {
+  const r = applyEnergyActionInner(S, a);
+  if (r.ok) refreshSites(S);
+  return r;
+}
+
+function applyEnergyActionInner(S: GameState, a: EnergyAction): { ok: boolean; msg: string } {
   const E = S.energy;
   if (!E) return { ok: false, msg: 'Module énergie indisponible' };
   if (a.type === 'energyCancel') {

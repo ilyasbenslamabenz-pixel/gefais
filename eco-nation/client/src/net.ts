@@ -1,7 +1,7 @@
 // Communication avec le serveur : REST (parties) et Socket.IO (simulation en direct).
 import { io } from 'socket.io-client';
 import { useStore } from './store';
-import type { Snapshot, FinanceAction } from '../../shared/sim/engine';
+import type { Snapshot, FinanceAction, GameAction } from '../../shared/sim/engine';
 import type { CountryDef, Notice, Policy } from '../../shared/sim/types';
 
 const KEY = 'eco_player';
@@ -75,6 +75,13 @@ export function submitPolicy(p: Policy): Promise<boolean> {
 }
 export const cancelPending = () => socket.emit('game:cancelPending', () => st().toast('Réformes en attente annulées.'));
 export function financeAction(a: FinanceAction): Promise<boolean> {
+  return new Promise((resolve) => socket.emit('game:action', a, (r: { ok: boolean; msg: string }) => {
+    st().toast(r.msg, r.ok ? 'good' : 'bad');
+    resolve(r.ok);
+  }));
+}
+/** Programmes énergétiques et environnementaux (construction, fermeture, reboisement…) : même canal que les opérations financières. */
+export function gameAction(a: GameAction): Promise<boolean> {
   return new Promise((resolve) => socket.emit('game:action', a, (r: { ok: boolean; msg: string }) => {
     st().toast(r.msg, r.ok ? 'good' : 'bad');
     resolve(r.ok);
