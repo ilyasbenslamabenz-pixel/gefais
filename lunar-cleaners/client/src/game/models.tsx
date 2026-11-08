@@ -7,8 +7,8 @@ import type { PlayerLook } from '../../../shared/protocol';
 // ---------- Géométries partagées ----------
 const geo = {
   torso: new THREE.CapsuleGeometry(0.3, 0.38, 6, 14),
-  helmet: new THREE.SphereGeometry(0.33, 24, 18),
-  visor: new THREE.SphereGeometry(0.335, 24, 16, -Math.PI * 0.42, Math.PI * 0.84, Math.PI * 0.28, Math.PI * 0.38),
+  helmet: new THREE.SphereGeometry(0.33, 32, 24),
+  visor: new THREE.SphereGeometry(0.333, 32, 20, -Math.PI * 0.36, Math.PI * 0.72, Math.PI * 0.3, Math.PI * 0.36),
   limb: new THREE.CapsuleGeometry(0.1, 0.36, 4, 10),
   leg: new THREE.CapsuleGeometry(0.12, 0.34, 4, 10),
   boot: new THREE.BoxGeometry(0.22, 0.14, 0.32),
@@ -20,6 +20,8 @@ const geo = {
   torus: new THREE.TorusGeometry(0.22, 0.03, 8, 24),
   cone: new THREE.ConeGeometry(1, 1, 12),
   disc: new THREE.CylinderGeometry(1, 1, 1, 28),
+  // arc pour les yeux rieurs « ^ ^ »
+  arc: new THREE.TorusGeometry(0.22, 0.045, 6, 16, Math.PI),
 };
 
 const matCache = new Map<string, THREE.MeshStandardMaterial>();
@@ -120,106 +122,156 @@ export const Astronaut = forwardRef<THREE.Group, { look: PlayerLook; tool: numbe
   const legL = useRef<THREE.Group>(null);
   const legR = useRef<THREE.Group>(null);
   const body = useRef<THREE.Group>(null);
+  const head = useRef<THREE.Group>(null);
+  const eyesOpen = useRef<THREE.Group>(null);
+  const eyesHappy = useRef<THREE.Group>(null);
   const phase = useRef(0);
   const spin = useRef(0);
-  const suit = mat(look.suit, { r: 0.55 });
+  const blink = useRef(2 + Math.random() * 3);
+  const suit = mat(look.suit, { r: 0.5 });
   const accent = mat(look.accent, { r: 0.45 });
-  const visor = useMemo(() => new THREE.MeshStandardMaterial({ color: look.visor, roughness: 0.08, metalness: 0.9, emissive: look.visor, emissiveIntensity: 0.25 }), [look.visor]);
+  const glass = mat('#10131f', { r: 0.06, m: 0.6 });
+  const led = mat(look.visor, { e: look.visor, ei: 2.2, r: 0.4 });
   const dark = mat('#2b2f3a', { r: 0.6 });
+  const grey = mat('#c9cfdb', { r: 0.5 });
 
   useFrame((_, dt) => {
     const a = anim.current;
     const sp = Math.min(a.speed, 12);
     phase.current += dt * (2 + sp * 1.4);
-    const swing = a.air ? 0 : Math.min(1, sp / 5) * 0.75;
+    const swing = a.air ? 0 : Math.min(1, sp / 5) * 0.8;
     const s = Math.sin(phase.current) * swing;
     spin.current = a.cleaning ? 1 : 0;
     if (legL.current && legR.current) {
       if (a.sit) {
         legL.current.rotation.x = legR.current.rotation.x = -1.4;
       } else if (a.air) {
-        legL.current.rotation.x = THREE.MathUtils.lerp(legL.current.rotation.x, -0.5, 0.1);
-        legR.current.rotation.x = THREE.MathUtils.lerp(legR.current.rotation.x, 0.3, 0.1);
+        legL.current.rotation.x = THREE.MathUtils.lerp(legL.current.rotation.x, -0.6, 0.1);
+        legR.current.rotation.x = THREE.MathUtils.lerp(legR.current.rotation.x, 0.35, 0.1);
       } else {
         legL.current.rotation.x = s;
         legR.current.rotation.x = -s;
       }
     }
     if (armL.current && armR.current) {
-      armL.current.rotation.x = a.air ? -2.4 : -s * 0.8;
-      armL.current.rotation.z = a.air ? 0.4 : 0.12;
+      armL.current.rotation.x = a.air ? -2.5 : -s * 0.9;
+      armL.current.rotation.z = a.air ? 0.5 : 0.18;
       if (tool === 5 || tool === 6) {
-        armR.current.rotation.x = -0.75;
-        armR.current.rotation.z = 0.25;
-        armL.current.rotation.x = -0.75;
-        armL.current.rotation.z = -0.25;
+        armR.current.rotation.x = -0.8;
+        armR.current.rotation.z = 0.3;
+        armL.current.rotation.x = -0.8;
+        armL.current.rotation.z = -0.3;
       } else if (a.cleaning) {
-        const scrub = Math.sin(phase.current * (tool <= 2 ? 3.5 : 1.6) + 1) * (tool <= 2 ? 0.35 : 0.1);
+        const scrub = Math.sin(phase.current * (tool <= 2 ? 3.5 : 1.6) + 1) * (tool <= 2 ? 0.4 : 0.12);
         armR.current.rotation.x = -1.0 + scrub;
         armR.current.rotation.z = -0.1;
+        armL.current.rotation.x = -0.7 + scrub * 0.5;
+        armL.current.rotation.z = -0.2;
       } else {
-        armR.current.rotation.x = a.air ? -2.4 : s * 0.8 - 0.25;
-        armR.current.rotation.z = a.air ? -0.4 : -0.12;
+        armR.current.rotation.x = a.air ? -2.5 : s * 0.9 - 0.2;
+        armR.current.rotation.z = a.air ? -0.5 : -0.18;
       }
     }
-    if (body.current) body.current.position.y = a.air || a.sit ? 0 : Math.abs(Math.sin(phase.current)) * 0.05 * swing;
+    if (body.current) {
+      const bob = a.air || a.sit ? 0 : Math.abs(Math.sin(phase.current)) * 0.06 * swing;
+      body.current.position.y = bob;
+      // petit dandinement en marchant, se penche en avant en nettoyant
+      body.current.rotation.z = Math.sin(phase.current) * 0.05 * swing;
+      body.current.rotation.x = THREE.MathUtils.lerp(body.current.rotation.x, a.cleaning ? 0.12 : 0, 0.1);
+    }
+    if (head.current) head.current.rotation.z = Math.sin(phase.current * 0.5) * 0.04 * swing;
+    // yeux LED : clignement + yeux rieurs quand on nettoie
+    blink.current -= dt;
+    let sy = 1;
+    if (blink.current < 0) {
+      sy = 0.1;
+      if (blink.current < -0.12) blink.current = 2 + Math.random() * 4;
+    }
+    if (eyesOpen.current && eyesHappy.current) {
+      const happy = a.cleaning || a.air;
+      eyesOpen.current.visible = !happy;
+      eyesHappy.current.visible = happy;
+      eyesOpen.current.scale.y = sy;
+    }
   });
 
   return (
     <group ref={ref}>
       <group ref={body}>
-        {/* torse */}
-        <Part g={geo.torso} m={suit} p={[0, 1.02, 0]} />
-        <Part g={geo.box} m={accent} p={[0, 1.1, 0.27]} s={[0.26, 0.16, 0.06]} />
-        <Part g={geo.box} m={mat('#7ee8a2', { e: '#7ee8a2', ei: 0.8 })} p={[0.06, 1.12, 0.305]} s={[0.05, 0.05, 0.02]} />
-        <Part g={geo.box} m={mat('#ff6b6b', { e: '#ff6b6b', ei: 0.8 })} p={[-0.06, 1.12, 0.305]} s={[0.05, 0.05, 0.02]} />
-        <Part g={geo.cyl} m={accent} p={[0, 0.8, 0]} s={[0.31, 0.08, 0.31]} />
-        {/* sac dorsal */}
-        <Part g={geo.pack} m={suit} p={[0, 1.08, -0.3]} />
-        <Part g={geo.cyl} m={accent} p={[0.13, 1.3, -0.36]} s={[0.06, 0.18, 0.06]} />
-        <Part g={geo.cyl} m={accent} p={[-0.13, 1.3, -0.36]} s={[0.06, 0.18, 0.06]} />
-        {tool === 4 && <Part g={geo.cyl} m={mat('#45b7ff', { r: 0.3, m: 0.3 })} p={[0, 1.1, -0.5]} s={[0.2, 0.6, 0.2]} />}
-        {/* casque */}
-        <Part g={geo.helmet} m={suit} p={[0, 1.6, 0]} />
-        <mesh geometry={geo.visor} material={visor} position={[0, 1.6, 0]} rotation={[0, Math.PI / 2, 0]} />
-        <Part g={geo.torus} m={accent} p={[0, 1.36, 0]} r={[Math.PI / 2, 0, 0]} s={1.15} />
-        {look.hat === 'antenna' && (
-          <>
-            <Part g={geo.cyl} m={dark} p={[0.18, 1.98, -0.05]} s={[0.012, 0.3, 0.012]} />
-            <Part g={geo.sphere} m={mat(look.accent, { e: look.accent, ei: 1 })} p={[0.18, 2.14, -0.05]} s={0.05} />
-          </>
-        )}
-        {look.hat === 'crest' && <Part g={geo.box} m={accent} p={[0, 1.92, -0.02]} s={[0.05, 0.16, 0.42]} />}
-        {look.hat === 'halo' && <Part g={geo.torus} m={mat('#ffd93d', { e: '#ffd93d', ei: 1.2 })} p={[0, 2.08, 0]} r={[Math.PI / 2, 0, 0]} s={0.9} shadow={false} />}
-        {look.hat === 'cap' && (
-          <>
-            <Part g={geo.cyl} m={accent} p={[0, 1.9, 0]} s={[0.26, 0.1, 0.26]} />
-            <Part g={geo.box} m={accent} p={[0, 1.87, 0.25]} s={[0.3, 0.03, 0.2]} />
-          </>
-        )}
-        {/* bras */}
-        <group ref={armL} position={[-0.38, 1.22, 0]}>
-          <Part g={geo.limb} m={suit} p={[0, -0.24, 0]} />
-          <Part g={geo.hand} m={accent} p={[0, -0.5, 0]} />
+        {/* torse trapu */}
+        <Part g={geo.torso} m={suit} p={[0, 0.98, 0]} s={[1.12, 0.92, 1.0]} />
+        <Part g={geo.cyl} m={accent} p={[0, 0.92, 0]} s={[0.345, 0.07, 0.31]} />
+        <Part g={geo.box} m={grey} p={[0, 1.08, 0.3]} s={[0.3, 0.2, 0.06]} />
+        <Part g={geo.box} m={mat('#7ee8a2', { e: '#7ee8a2', ei: 1.2 })} p={[-0.07, 1.11, 0.335]} s={[0.05, 0.05, 0.02]} shadow={false} />
+        <Part g={geo.box} m={mat('#ffd93d', { e: '#ffd93d', ei: 1.2 })} p={[0, 1.11, 0.335]} s={[0.05, 0.05, 0.02]} shadow={false} />
+        <Part g={geo.box} m={mat('#ff6b6b', { e: '#ff6b6b', ei: 1.2 })} p={[0.07, 1.11, 0.335]} s={[0.05, 0.05, 0.02]} shadow={false} />
+        <Part g={geo.box} m={accent} p={[0, 1.03, 0.335]} s={[0.22, 0.03, 0.02]} />
+        <Part g={geo.cyl} m={dark} p={[0, 0.66, 0]} s={[0.3, 0.1, 0.27]} />
+        {/* sac dorsal arrondi */}
+        <Part g={geo.box} m={suit} p={[0, 1.04, -0.32]} s={[0.5, 0.56, 0.26]} />
+        <Part g={geo.box} m={accent} p={[0, 0.86, -0.46]} s={[0.4, 0.08, 0.04]} />
+        <Part g={geo.cyl} m={grey} p={[0.15, 1.3, -0.38]} s={[0.07, 0.18, 0.07]} />
+        <Part g={geo.cyl} m={grey} p={[-0.15, 1.3, -0.38]} s={[0.07, 0.18, 0.07]} />
+        {tool === 4 && <Part g={geo.cyl} m={mat('#45b7ff', { r: 0.3, m: 0.3 })} p={[0, 1.1, -0.55]} s={[0.22, 0.62, 0.22]} />}
+        {/* gros casque avec visière-écran */}
+        <group ref={head}>
+          <Part g={geo.torus} m={grey} p={[0, 1.27, 0]} r={[Math.PI / 2, 0, 0]} s={[1.45, 1.45, 2.2]} />
+          <Part g={geo.helmet} m={suit} p={[0, 1.66, 0]} s={1.36} />
+          <mesh geometry={geo.visor} material={glass} position={[0, 1.66, 0.01]} rotation={[0, Math.PI / 2, 0]} scale={1.37} />
+          <Part g={geo.disc} m={accent} p={[0.45, 1.66, 0]} r={[0, 0, Math.PI / 2]} s={[0.11, 0.06, 0.11]} />
+          <Part g={geo.disc} m={accent} p={[-0.45, 1.66, 0]} r={[0, 0, Math.PI / 2]} s={[0.11, 0.06, 0.11]} />
+          <group ref={eyesOpen}>
+            <Part g={geo.sphere} m={led} p={[-0.12, 1.66, 0.447]} s={[0.045, 0.075, 0.02]} shadow={false} />
+            <Part g={geo.sphere} m={led} p={[0.12, 1.66, 0.447]} s={[0.045, 0.075, 0.02]} shadow={false} />
+          </group>
+          <group ref={eyesHappy} visible={false}>
+            <mesh geometry={geo.arc} material={led} position={[-0.12, 1.64, 0.447]} scale={[0.26, 0.26, 0.4]} />
+            <mesh geometry={geo.arc} material={led} position={[0.12, 1.64, 0.447]} scale={[0.26, 0.26, 0.4]} />
+          </group>
+          {look.hat === 'antenna' && (
+            <>
+              <Part g={geo.cyl} m={dark} p={[0.24, 2.12, -0.06]} s={[0.014, 0.32, 0.014]} />
+              <Part g={geo.sphere} m={mat(look.accent, { e: look.accent, ei: 1.5 })} p={[0.24, 2.3, -0.06]} s={0.06} />
+            </>
+          )}
+          {look.hat === 'crest' && <Part g={geo.box} m={accent} p={[0, 2.08, -0.04]} s={[0.07, 0.18, 0.56]} />}
+          {look.hat === 'halo' && <Part g={geo.torus} m={mat('#ffd93d', { e: '#ffd93d', ei: 1.4 })} p={[0, 2.26, 0]} r={[Math.PI / 2, 0, 0]} s={1.1} shadow={false} />}
+          {look.hat === 'cap' && (
+            <>
+              <Part g={geo.cyl} m={accent} p={[0, 2.04, 0]} s={[0.34, 0.1, 0.34]} />
+              <Part g={geo.box} m={accent} p={[0, 2.0, 0.33]} s={[0.38, 0.03, 0.24]} />
+            </>
+          )}
         </group>
-        <group ref={armR} position={[0.38, 1.22, 0]}>
-          <Part g={geo.limb} m={suit} p={[0, -0.24, 0]} />
-          <Part g={geo.hand} m={accent} p={[0, -0.5, 0]} />
+        {/* bras */}
+        <group ref={armL} position={[-0.43, 1.18, 0]}>
+          <Part g={geo.sphere} m={suit} s={0.15} />
+          <Part g={geo.limb} m={suit} p={[0, -0.22, 0]} s={[1.25, 0.85, 1.25]} />
+          <Part g={geo.cyl} m={accent} p={[0, -0.22, 0]} s={[0.13, 0.05, 0.13]} />
+          <Part g={geo.hand} m={grey} p={[0, -0.44, 0]} s={1.25} />
+        </group>
+        <group ref={armR} position={[0.43, 1.18, 0]}>
+          <Part g={geo.sphere} m={suit} s={0.15} />
+          <Part g={geo.limb} m={suit} p={[0, -0.22, 0]} s={[1.25, 0.85, 1.25]} />
+          <Part g={geo.cyl} m={accent} p={[0, -0.22, 0]} s={[0.13, 0.05, 0.13]} />
+          <Part g={geo.hand} m={grey} p={[0, -0.44, 0]} s={1.25} />
           {tool < 5 && (
-            <group position={[0, -0.52, 0.02]} rotation={[0, 0, 0]}>
+            <group position={[0, -0.46, 0.02]}>
               <ToolModel id={tool} spin={spin} />
             </group>
           )}
         </group>
       </group>
-      {/* jambes */}
-      <group ref={legL} position={[-0.15, 0.62, 0]}>
-        <Part g={geo.leg} m={suit} p={[0, -0.26, 0]} />
-        <Part g={geo.boot} m={dark} p={[0, -0.52, 0.04]} />
+      {/* jambes courtes et grosses bottes */}
+      <group ref={legL} position={[-0.16, 0.56, 0]}>
+        <Part g={geo.leg} m={suit} p={[0, -0.2, 0]} s={[1.15, 0.75, 1.15]} />
+        <Part g={geo.cyl} m={accent} p={[0, -0.2, 0]} s={[0.145, 0.05, 0.145]} />
+        <Part g={geo.boot} m={grey} p={[0, -0.44, 0.05]} s={[1.15, 1.2, 1.1]} />
       </group>
-      <group ref={legR} position={[0.15, 0.62, 0]}>
-        <Part g={geo.leg} m={suit} p={[0, -0.26, 0]} />
-        <Part g={geo.boot} m={dark} p={[0, -0.52, 0.04]} />
+      <group ref={legR} position={[0.16, 0.56, 0]}>
+        <Part g={geo.leg} m={suit} p={[0, -0.2, 0]} s={[1.15, 0.75, 1.15]} />
+        <Part g={geo.cyl} m={accent} p={[0, -0.2, 0]} s={[0.145, 0.05, 0.145]} />
+        <Part g={geo.boot} m={grey} p={[0, -0.44, 0.05]} s={[1.15, 1.2, 1.1]} />
       </group>
       {tool === 7 && !anim.current.sit && <HoverScrubber spin={spin} />}
       {(tool === 5 || tool === 6) && <FloorMachine id={tool} spin={spin} />}
@@ -317,7 +369,9 @@ export function VehicleModel({ id, spin, color }: { id: string; spin: MutableRef
       return (
         <group>
           <Part g={geo.disc} m={body} p={[0, 0.35, 0]} s={[1.0, 0.35, 1.0]} />
-          <Part g={geo.disc} m={dark} p={[0, 0.56, 0]} s={[0.8, 0.08, 0.8]} />
+          <Part g={geo.disc} m={mat('#ff8c42', { r: 0.4 })} p={[0, 0.38, 0]} s={[1.02, 0.1, 1.02]} />
+          <Part g={geo.disc} m={mat('#d9dee8', { r: 0.3 })} p={[0, 0.56, 0]} s={[0.8, 0.06, 0.8]} />
+          <Part g={geo.disc} m={dark} p={[0, 0.6, 0.35]} s={[0.22, 0.04, 0.22]} />
           <Part g={geo.disc} m={glow} p={[0, 0.12, 0]} s={[0.95, 0.04, 0.95]} shadow={false} />
           <Part g={geo.box} m={lights} p={[0, 0.4, 0.98]} s={[0.5, 0.08, 0.05]} shadow={false} />
           <Brush p={[0.55, 0.12, 0.6]} s={0.3} spin={spin} />

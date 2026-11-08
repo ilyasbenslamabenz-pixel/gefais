@@ -70,29 +70,31 @@ export function Terrain({ segments }: { segments: number }) {
           float n2 = lcNoise(vWPos.xz * 0.23 + 7.0);
           float n3 = lcNoise(vWPos.xz * 3.1);
           float dustAmt = smoothstep(0.03, 0.42, rawDust + (n3 - 0.5) * 0.08);
-          // sol propre : régolithe bleu-gris éclatant avec reflets
-          vec3 cleanCol = mix(vec3(0.36, 0.45, 0.66), vec3(0.50, 0.60, 0.80), n1 * 0.7 + n2 * 0.3);
+          // sol balayé : régolithe clair, lisse, légèrement lavande
+          vec3 cleanCol = mix(vec3(0.70, 0.72, 0.80), vec3(0.82, 0.83, 0.90), n1 * 0.6 + n2 * 0.4);
           float speck = step(0.985, lcHash(floor(vWPos.xz * 14.0)));
-          cleanCol += speck * vec3(0.18, 0.22, 0.26);
-          // poussière : beige/sable avec variations
-          vec3 dustCol = mix(vec3(0.50, 0.42, 0.32), vec3(0.62, 0.53, 0.40), n2);
-          dustCol = mix(dustCol, vec3(0.40, 0.33, 0.25), n3 * 0.4 * rawDust);
+          cleanCol += speck * vec3(0.12, 0.13, 0.16);
+          // poussière : gris chaud granuleux, plus sombre là où elle est épaisse
+          float grain = lcNoise(vWPos.xz * 7.0);
+          vec3 dustCol = mix(vec3(0.44, 0.42, 0.45), vec3(0.54, 0.51, 0.53), n2);
+          dustCol *= 0.82 + 0.28 * grain;
+          dustCol = mix(dustCol, vec3(0.36, 0.34, 0.37), smoothstep(0.55, 1.0, rawDust) * 0.6);
           // hors zone jouable : roche plus sombre
           float edge = 1.0 - inside;
           vec3 col = mix(cleanCol, dustCol, dustAmt);
           float rim = smoothstep(0.02, 0.14, rawDust) * (1.0 - smoothstep(0.14, 0.38, rawDust));
-          col *= 1.0 - rim * 0.28;
-          col = mix(col, vec3(0.42, 0.39, 0.37) * (0.8 + 0.3 * n1), edge);
+          col *= 1.0 - rim * 0.38;
+          col = mix(col, vec3(0.46, 0.44, 0.47) * (0.8 + 0.3 * n1), edge);
           diffuseColor.rgb = col;
           `,
         )
         .replace(
           '#include <roughnessmap_fragment>',
-          '#include <roughnessmap_fragment>\nroughnessFactor = mix(0.42, 0.97, max(dustAmt, edge));',
+          '#include <roughnessmap_fragment>\nroughnessFactor = mix(0.55, 0.98, max(dustAmt, edge));',
         )
         .replace(
           '#include <emissivemap_fragment>',
-          '#include <emissivemap_fragment>\ntotalEmissiveRadiance += vec3(0.05, 0.09, 0.16) * (1.0 - dustAmt) * (1.0 - edge);',
+          '#include <emissivemap_fragment>\ntotalEmissiveRadiance += vec3(0.035, 0.04, 0.065) * (1.0 - dustAmt) * (1.0 - edge);',
         );
     };
     return m;

@@ -64,7 +64,7 @@ export interface VehicleDef {
 }
 
 export const VEHICLES: VehicleDef[] = [
-  { id: 'robot', name: 'Petit robot aspirateur', speed: 9, accel: 14, turn: 3.2, radius: 1.5, power: 260, capacityBonus: 120, price: 1200, level: 4, desc: 'Disque aspirateur sur coussin magnétique. Agile et économique.', color: '#4ecdc4', size: 1.1 },
+  { id: 'robot', name: 'Petit robot aspirateur', speed: 9, accel: 14, turn: 3.2, radius: 1.5, power: 260, capacityBonus: 120, price: 1200, level: 4, desc: 'Disque aspirateur sur coussin magnétique. Agile et économique.', color: '#eef1f6', size: 1.1 },
   { id: 'tractor', name: 'Mini-tracteur lunaire', speed: 11, accel: 10, turn: 2.4, radius: 2.3, power: 320, capacityBonus: 300, price: 5000, level: 6, desc: 'Tracteur à roues géantes équipé d\'une brosse frontale.', color: '#ff8c42', size: 1.6 },
   { id: 'industrial', name: 'Véhicule industriel', speed: 12, accel: 8, turn: 1.9, radius: 3.4, power: 400, capacityBonus: 700, price: 14000, level: 8, desc: 'Balayeuse lourde à trois rotors. Avale tout sur son passage.', color: '#ffd93d', size: 2.2 },
   { id: 'truck', name: 'Camion de collecte', speed: 15, accel: 7, turn: 1.6, radius: 2.6, power: 360, capacityBonus: 2500, price: 25000, level: 10, desc: 'Énorme benne de collecte. Idéal pour les longs trajets.', color: '#6bcB77', size: 2.6 },

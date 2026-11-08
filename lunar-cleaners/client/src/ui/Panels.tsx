@@ -251,7 +251,7 @@ function MissionsPanel() {
 
 // ---------- Profil ----------
 const SUITS = ['#f4f4f8', '#ffd93d', '#ff8c42', '#ff6b6b', '#6bcB77', '#4ecdc4', '#45b7ff', '#a66bff', '#ff6bd6', '#3a4150'];
-const VISORS = ['#ffb347', '#6ff3ff', '#ff6bd6', '#7ee8a2', '#ffd93d', '#c46bff', '#1d1f2b', '#ff4d6d'];
+const VISORS = ['#6ff3ff', '#ffb347', '#ff6bd6', '#7ee8a2', '#ffd93d', '#c46bff', '#ffffff', '#ff4d6d'];
 const HATS: { id: PlayerLook['hat']; label: string }[] = [
   { id: 'none', label: 'Aucun' }, { id: 'antenna', label: 'Antenne' }, { id: 'crest', label: 'Crête' }, { id: 'halo', label: 'Auréole' }, { id: 'cap', label: 'Casquette' },
 ];
@@ -290,7 +290,7 @@ function ProfilePanel() {
           <input className="input" value={name} maxLength={16} onChange={(e) => setName(e.target.value)} />
           <h3>Combinaison</h3>
           <Swatches list={SUITS} k="suit" />
-          <h3>Visière</h3>
+          <h3>Yeux LED de la visière</h3>
           <Swatches list={VISORS} k="visor" />
           <h3>Accents</h3>
           <Swatches list={SUITS.concat(['#7ee8a2', '#6ff3ff'])} k="accent" />

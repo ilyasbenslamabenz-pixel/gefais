@@ -30,7 +30,7 @@ function SunLight({ size, shadows }: { size: number; shadows: boolean }) {
   return (
     <directionalLight
       ref={light}
-      intensity={2.6}
+      intensity={2.3}
       color="#fff4e0"
       castShadow={shadows}
       shadow-mapSize={[size, size]}
@@ -64,7 +64,7 @@ export function GameScene() {
         scene.fog = new THREE.Fog('#0b0d1c', 140, 330);
       }}
     >
-      <hemisphereLight args={['#9fb8ff', '#5a4a3a', 0.45]} />
+      <hemisphereLight args={['#d6deff', '#7d7688', 0.75]} />
       <ambientLight intensity={0.18} color="#b0c0ff" />
       <directionalLight position={earthLight} intensity={0.45} color="#7fb2ff" />
       <SunLight size={q.shadowSize} shadows={q.shadows} />

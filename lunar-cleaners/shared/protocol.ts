@@ -8,7 +8,7 @@ export interface PlayerLook {
   hat: 'none' | 'antenna' | 'crest' | 'halo' | 'cap';
 }
 
-export const DEFAULT_LOOK: PlayerLook = { suit: '#f4f4f8', visor: '#ffb347', accent: '#4ecdc4', hat: 'antenna' };
+export const DEFAULT_LOOK: PlayerLook = { suit: '#f4f4f8', visor: '#6ff3ff', accent: '#ff8c42', hat: 'antenna' };
 
 export interface DailyState extends DailyDef {
   progress: number;

@@ -5,11 +5,11 @@ import * as THREE from 'three';
 import { fbm } from '../../../shared/noise';
 
 export const SUN_DIR = new THREE.Vector3(0.55, 0.62, 0.35).normalize();
-export const EARTH_DIR = new THREE.Vector3(-0.45, 0.42, -0.79).normalize();
+export const EARTH_DIR = new THREE.Vector3(-0.42, 0.3, -0.86).normalize();
 
 function makeEarthTexture() {
-  const w = 512;
-  const h = 256;
+  const w = 768;
+  const h = 384;
   const c = document.createElement('canvas');
   c.width = w;
   c.height = h;
@@ -113,11 +113,11 @@ export function Sky({ starCount = 2500 }: { starCount?: number }) {
       </points>
       <group position={earthPos}>
         <mesh ref={earth} rotation={[0.4, 0, 0.2]}>
-          <sphereGeometry args={[58, 48, 32]} />
+          <sphereGeometry args={[105, 64, 40]} />
           <meshStandardMaterial map={earthTex} roughness={0.7} emissive="#1a3a6a" emissiveIntensity={0.15} fog={false} />
         </mesh>
         <mesh scale={1.12}>
-          <sphereGeometry args={[58, 48, 32]} />
+          <sphereGeometry args={[105, 64, 40]} />
           <primitive object={atmoMat} attach="material" />
         </mesh>
       </group>
