@@ -1,5 +1,9 @@
 // Types centraux de la simulation (partagés client / serveur).
 import type { Branch, BudgetLine, CategoryId, Occupation, SectorId, VatCategory, VatClass } from './data';
+import type { TransportPolicy, TransportState } from './transport';
+import type { IndustryPolicy, IndustryState } from './industry';
+import type { AgriculturePolicy, AgricultureState } from './agriculture';
+import type { WastePolicy, WasteState } from './waste';
 
 // ---------- Décisions du joueur ----------
 export interface Bracket { upTo: number | null; rate: number }
@@ -45,6 +49,11 @@ export interface Policy {
   };
   budget: Record<BudgetLine, number>; // dépenses discrétionnaires annuelles (€)
   finance: { indexBudgets: boolean; autoBorrow: boolean; minCash: number };
+  // --- politiques sectorielles (phase 4b) ---
+  transport?: TransportPolicy;
+  industry?: IndustryPolicy;
+  agriculture?: AgriculturePolicy;
+  waste?: WastePolicy;
 }
 
 // ---------- Pays (géographie, statique) ----------
@@ -262,6 +271,11 @@ export interface GameState {
   history: Record<string, number[]>;
   notices: Notice[];
   noticeSeq: number;
+  // --- moteurs transports/industrie/agriculture/déchets (phase 4b) ---
+  transport?: TransportState;
+  industry?: IndustryState;
+  agriculture?: AgricultureState;
+  waste?: WasteState;
 }
 
 export type Occ = Occupation;

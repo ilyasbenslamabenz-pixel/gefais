@@ -6,6 +6,7 @@ import { INVEST_TARGET, clamp, economyStep, participationRate } from './economy'
 import { averageConsumptionTax, sanitizeBrackets } from './fiscal';
 import { airQuality, categoryIncome, citiesStep, satisfactionStep, servicesStep } from './social';
 import type { Accounts, CountryConfig, Demography, GameState, Notice, Policy, Services } from './types';
+import { applySectorAction, defaultSectorPolicies, initSectors, recordSectorHistory, sanitizeSectorPolicies, sectorsStep, SECTOR_HISTORY_KEYS, type SectorAction } from './sectorModules';
 
 export const SIM_VERSION = 1;
 export const START_YEAR = 2030;
@@ -42,6 +43,7 @@ export function defaultPolicy(gdp: number): Policy {
     labour: { minWage: 1800, hours: 35, hiringAid: 1500, benefitRate: 0.57, benefitMonths: 24, retirementAge: 64, pensionRate: 0.52, familyAllowance: 140 },
     budget,
     finance: { indexBudgets: true, autoBorrow: true, minCash: Math.round(gdp * 0.015) },
+    ...defaultSectorPolicies(),
   };
 }
 
@@ -106,6 +108,7 @@ export function sanitizePolicy(input: Policy, current: Policy): Policy {
     },
     budget,
     finance: { indexBudgets: i.finance?.indexBudgets ?? c.finance.indexBudgets, autoBorrow: i.finance?.autoBorrow ?? c.finance.autoBorrow, minCash: num(i.finance?.minCash, 0, 1e12, c.finance.minCash) },
+    ...sanitizeSectorPolicies(i, c),
   };
 }
 
@@ -182,6 +185,7 @@ export function createGame(cfgIn: Partial<CountryConfig> = {}, id = 'local', nam
   S.sectors.forEach((s, i) => { s.output = s.employees * SECTORS[i].productivity; s.profit = s.output * 0.15; });
   calibrate(S);
   updateCategories(S);
+  initSectors(S, true); // --- modules transports/industrie/agriculture/déchets ---
   S.satisfaction = satisfactionStep(S, S.policy, true);
   citiesStep(S, S.policy, true);
   const pop = cohorts.reduce((s, v) => s + v, 0);
@@ -248,6 +252,8 @@ export function tick(S: GameState): void {
   });
   // 2. Économie, fiscalité, finances publiques
   S.accounts = economyStep(S, P, { calibrate: false });
+  // --- modules transports/industrie/agriculture/déchets ---
+  sectorsStep(S);
   // 3. Inflation mesurée sur 12 mois
   const ph = S.history.priceLevel ?? [];
   const p12 = ph.length >= 12 ? ph[ph.length - 12] : ph[0] ?? 1;
@@ -324,6 +330,7 @@ function recordHistory(S: GameState) {
   push('failures', A.failures);
   push('disposablePerCap', A.disposableIncome / Math.max(1, pop));
   push('productivityGrowth', S.macro.productivityGrowth);
+  recordSectorHistory(S, push);
   for (const [k, v] of Object.entries(A.revenue)) push('rev_' + k, v);
   for (const [k, v] of Object.entries(A.spending)) push('dep_' + k, v);
 }
@@ -366,6 +373,10 @@ function describePolicyChange(S: GameState, a: Policy, b: Policy) {
   if (JSON.stringify(a.eco) !== JSON.stringify(b.eco)) changes.push('fiscalité écologique');
   if (JSON.stringify(a.contributions) !== JSON.stringify(b.contributions)) changes.push('cotisations sociales');
   if (JSON.stringify(a.labour) !== JSON.stringify(b.labour)) changes.push('droit du travail et protection sociale');
+  if (JSON.stringify(a.transport) !== JSON.stringify(b.transport)) changes.push('transports');
+  if (JSON.stringify(a.industry) !== JSON.stringify(b.industry)) changes.push('politique industrielle');
+  if (JSON.stringify(a.agriculture) !== JSON.stringify(b.agriculture)) changes.push('politique agricole');
+  if (JSON.stringify(a.waste) !== JSON.stringify(b.waste)) changes.push('gestion des déchets');
   const budgetChanged = BUDGET_LINES.some((k) => Math.abs(a.budget[k] - b.budget[k]) > 1);
   if (budgetChanged) changes.push('budget');
   if (changes.length) pushNotice(S, 'info', 'Réformes en vigueur', `Entrée en vigueur : ${changes.join(', ')}.`);
@@ -414,6 +425,17 @@ export function applyAction(S: GameState, a: FinanceAction): { ok: boolean; msg:
     return { ok: true, msg: `${fmtB(amount)} retirés du fonds de réserve` };
   }
   return { ok: false, msg: 'Action inconnue' };
+}
+
+// --- actions des modules transports/industrie/agriculture/déchets ---
+export type { SectorAction };
+export { SECTOR_HISTORY_KEYS };
+
+/** Programmes sectoriels (lignes, véhicules, installations, plans) : placés automatiquement, payés pendant les travaux. */
+export function applyProgramAction(S: GameState, a: SectorAction): { ok: boolean; msg: string } {
+  const r = applySectorAction(S, a);
+  if (r.ok) pushNotice(S, 'info', 'Programme engagé', r.msg);
+  return r;
 }
 
 /** Données envoyées au client à chaque mois (sans la géographie ni l'historique complet). */
