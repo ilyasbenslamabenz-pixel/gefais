@@ -1,4 +1,4 @@
-// Ministère des Affaires étrangères et du Commerce extérieur : voisins, relations, accords, droits de douane.
+// Ministère des Affaires étrangères et du Commerce extérieur de la cité-État : États voisins, relations, accords, droits de douane.
 import { useState } from 'react';
 import { AGREEMENT_EFFECTS, AGREEMENT_MIN_RELATION, AGREEMENT_NAMES, type AgreementKind } from '../../../shared/sim/international';
 import { useStore } from '../store';
@@ -13,7 +13,7 @@ export function InternationalPanel() {
   const [tab, setTab] = useState<'voisins' | 'commerce'>('voisins');
   return (
     <Drawer title="Affaires étrangères & commerce extérieur" icon="🌐" wide>
-      <Tabs value={tab} onChange={setTab} tabs={[['voisins', 'Pays voisins & accords'], ['commerce', 'Commerce & droits de douane']]} />
+      <Tabs value={tab} onChange={setTab} tabs={[['voisins', 'États voisins & accords'], ['commerce', 'Commerce & droits de douane']]} />
       {tab === 'voisins' ? <Voisins /> : <Commerce />}
     </Drawer>
   );
@@ -27,8 +27,8 @@ function Voisins() {
     <>
       <div className="kpis">
         <Kpi label="Relations moyennes" value={`${Math.round(I.avgRelation)}/100`} tone={I.avgRelation < 40 ? 'bad' : I.avgRelation > 65 ? 'good' : undefined} hint="Moyenne pondérée par nos exportations." />
-        <Kpi label="Demande étrangère" value={`× ${dec2(I.demandFactor)}`} hint="Facteur appliqué à la demande mondiale adressée à nos exportations (cycle des voisins, accords, chocs)." />
-        <Kpi label="Prix de l'énergie importée" value={`× ${dec2(I.energyFactor)}`} hint="Facteur appliqué à l'indice du prix de l'énergie (voisins exportateurs, accords énergétiques, crises)." />
+        <Kpi label="Demande étrangère" value={`× ${dec2(I.demandFactor)}`} hint="Facteur appliqué à la demande adressée aux exportations de la cité-État, port et place financière compris (conjoncture des États voisins, accords, chocs)." />
+        <Kpi label="Prix de l'énergie importée" value={`× ${dec2(I.energyFactor)}`} hint="Facteur appliqué à l'indice du prix de l'énergie, presque entièrement importée par la cité-État (États exportateurs, accords énergétiques, crises)." />
         <Kpi label="Représailles commerciales" value={pct(I.retaliation)} tone={I.retaliation > 0.02 ? 'bad' : undefined} />
       </div>
       {I.neighbors.map((n) => (
@@ -36,10 +36,10 @@ function Voisins() {
           <div className="kpis compact">
             <Kpi label="PIB" value={money(n.gdp)} sub="€/an" />
             <Kpi label="Croissance" value={pct(n.growth)} tone={n.growth < 0 ? 'bad' : undefined} />
-            <Kpi label="Conjoncture" value={`${n.gap >= 0 ? '+' : ''}${pct(n.gap)}`} hint="Écart de production : au-dessus de 0, le pays achète davantage nos produits." />
+            <Kpi label="Conjoncture" value={`${n.gap >= 0 ? '+' : ''}${pct(n.gap)}`} hint="Écart de production : au-dessus de 0, cet État achète davantage nos biens et services." />
             <Kpi label="Part de nos exportations" value={pct(n.exportWeight, 0)} />
             <Kpi label="Énergie" value={n.energyExporter ? `exportateur (indice ${dec2(n.energyPrice)})` : 'importateur'} />
-            <Kpi label="Droits de rétorsion" value={pct(n.retaliation)} tone={n.retaliation > 0.01 ? 'bad' : undefined} hint={`Ce pays tolère jusqu'à ${pct(n.tolerance)} de droits de douane avant de riposter.`} />
+            <Kpi label="Droits de rétorsion" value={pct(n.retaliation)} tone={n.retaliation > 0.01 ? 'bad' : undefined} hint={`Cet État tolère jusqu'à ${pct(n.tolerance)} de droits de douane avant de riposter.`} />
           </div>
           <div className="bar-row"><span className="bar-label">Relations diplomatiques</span><div style={{ flex: 1 }}><Meter value={n.relation} /></div><span className="bar-val">{Math.round(n.relation)}/100</span></div>
           <table className="table">

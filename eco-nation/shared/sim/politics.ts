@@ -85,7 +85,9 @@ export interface Bill {
 
 export interface PartyState { id: PartyId; popularity: number; seats: number; mood: number }
 export interface InterestGroupState { id: string; support: number; mood: number }
-export interface ElectionResult { month: number; shares: Record<PartyId, number>; seats: Record<PartyId, number>; coalitionSeats: number; outcome: 'majorite' | 'coalition_elargie' | 'cohabitation' | 'defaite'; text: string; anticipated: boolean }
+/** Résultat d'un arrondissement / quartier de la cité-État (entrée de `country.cities`). */
+export interface DistrictResult { id: number; name: string; voters: number; shares: Record<PartyId, number>; winner: PartyId }
+export interface ElectionResult { month: number; shares: Record<PartyId, number>; seats: Record<PartyId, number>; coalitionSeats: number; outcome: 'majorite' | 'coalition_elargie' | 'cohabitation' | 'defaite'; text: string; anticipated: boolean; districts?: DistrictResult[] }
 
 export interface PoliticsState {
   parties: PartyState[];
@@ -756,7 +758,9 @@ export function holdElection(S: GameState, anticipated = S.month - S.politics!.l
     }
   }
   if (outcome !== 'defaite' && seatsOf(P, P.coalition) <= half && P.mode !== 'cohabitation') P.mode = 'minorite';
-  P.elections.push({ month: S.month, shares, seats, coalitionSeats: coalSeats, outcome, text, anticipated });
+  P.elections.push({ month: S.month, shares, seats, coalitionSeats: coalSeats, outcome, text, anticipated, districts: districtResults(S, shares) });
+  // seuls les résultats détaillés des 3 dernières élections sont conservés (taille de l'instantané)
+  P.elections.slice(0, -3).forEach((e) => { delete e.districts; });
   P.lastElection = S.month;
   P.nextElection = S.month + ELECTION_INTERVAL;
   P.lowTrustMonths = 0;
@@ -764,6 +768,39 @@ export function holdElection(S: GameState, anticipated = S.month - S.politics!.l
   const ranking = [...PARTY_IDS].sort((a, b) => shares[b] - shares[a]).map((p) => `${partyDef(p).short} ${pctf(shares[p])} (${seats[p]})`).join(', ');
   pushNote(S, outcome === 'defaite' ? 'bad' : outcome === 'cohabitation' ? 'warn' : 'good', anticipated ? 'Élections législatives anticipées' : 'Élections législatives', `${text} Résultats : ${ranking}.`);
   return P.elections[P.elections.length - 1];
+}
+
+/**
+ * Résultats par arrondissement : la part nationale de chaque parti est modulée par la satisfaction locale (écart à la
+ * moyenne, au profit ou au détriment du camp gouvernemental), le revenu relatif (libéraux, centristes, écologistes dans
+ * les quartiers aisés), le chômage local (sociaux-démocrates, conservateurs) et une tradition locale fixe tirée de la graine.
+ */
+export function districtResults(S: GameState, national: Record<PartyId, number>): DistrictResult[] {
+  const defs = S.country?.cities ?? [];
+  const P = S.politics!;
+  const pop = S.cities.reduce((s, c) => s + c.population, 0);
+  const avgIncome = S.cities.reduce((s, c) => s + c.income * c.population, 0) / Math.max(1, pop);
+  const u = unemploymentOf(S);
+  return defs.map((d, k) => {
+    const cs = S.cities[k];
+    if (!cs) return null;
+    const rnd = rngFor(S, `quartier|${d.id}`);
+    const dSat = (cs.satisfaction - S.satisfaction.overall) / 15;
+    const inc = avgIncome > 0 ? cs.income / avgIncome - 1 : 0;
+    const du = cs.unemployment - u;
+    const raw = PARTY_IDS.map((p) => {
+      let m = Math.exp(P.coalition.includes(p) ? 0.5 * dSat : -0.25 * dSat);
+      if (p === 'liberaux' || p === 'centristes') m *= Math.exp(0.8 * inc);
+      if (p === 'ecologistes') m *= Math.exp(0.5 * inc);
+      if (p === 'sociaux_democrates' || p === 'conservateurs') m *= Math.exp(4 * du - 0.3 * inc);
+      m *= 0.85 + 0.3 * rnd(); // tradition politique locale
+      return national[p] * m;
+    });
+    const tot = raw.reduce((s, v) => s + v, 0) || 1;
+    const shares = Object.fromEntries(PARTY_IDS.map((p, i) => [p, raw[i] / tot])) as Record<PartyId, number>;
+    const winner = [...PARTY_IDS].sort((a, b) => shares[b] - shares[a])[0];
+    return { id: d.id, name: d.name, voters: Math.round(cs.population * 0.75), shares, winner };
+  }).filter((x): x is DistrictResult => x !== null);
 }
 
 // ---------- Actions du joueur ----------

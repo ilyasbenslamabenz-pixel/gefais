@@ -111,14 +111,14 @@ export function energyImportDependence(S: GameState): number {
   const fromEnergy = (S.accounts as { energyImportDependence?: number }).energyImportDependence;
   if (typeof fromEnergy === 'number' && Number.isFinite(fromEnergy)) return clamp(fromEnergy, 0, 1);
   const agr = S.international?.neighbors.filter((n) => n.agreements.includes('energie')).length ?? 0;
-  return clamp(0.45 * (1 - 0.15 * agr), 0.1, 1);
+  return clamp(0.8 * (1 - 0.15 * agr), 0.1, 1); // cité-État : énergie presque entièrement importée
 }
 
 // ---------- Catalogue ----------
 export const EVENT_DEFS: EventDef[] = [
   {
     id: 'crise_energetique', title: 'Crise énergétique', icon: '⚡', kind: 'crise', cooldown: 24,
-    prob: (S) => 0.002 + 0.012 * energyImportDependence(S),
+    prob: (S) => 0.001 + 0.01 * energyImportDependence(S),
     start: (S, ev) => {
       addModifier(S, 'energy', 0.35, 0.93, ev.uid, 'Crise énergétique');
       bumpTrust(S, -1);
@@ -213,7 +213,7 @@ export const EVENT_DEFS: EventDef[] = [
     start: (S, ev) => {
       addModifier(S, 'demand', -0.05, 0.96, ev.uid, 'Récession mondiale');
       S.macro.confidence = clamp(S.macro.confidence - 0.05, 0.05, 0.95);
-      return 'Les partenaires commerciaux entrent en récession : demande mondiale −5 % (résorption d\'environ 4 % par mois), confiance des entreprises −5 points.';
+      return 'Les États partenaires entrent en récession : demande adressée à la cité-État −5 % (résorption d\'environ 4 % par mois), confiance des entreprises −5 points.';
     },
     options: [
       { id: 'relance', label: 'Plan de relance', text: 'Investissements publics massifs : confiance +5 points, soutien direct à la construction et à l\'industrie. Coût : 0,8 % du PIB par an pendant 12 mois.', budget: [{ line: 'infrastructures', gdpShare: 0.008, months: 12 }],
@@ -226,55 +226,57 @@ export const EVENT_DEFS: EventDef[] = [
     defaultOption: 'rigueur',
   },
   {
-    id: 'secheresse', title: 'Sécheresse', icon: '🌵', kind: 'climat', cooldown: 12,
-    prob: (S) => (summer(S) ? 0.012 : 0.0015) * (1 + warming(S)) * (1 + modifierSum(S, 'risk:secheresse')),
+    id: 'penurie_eau', title: 'Pénurie d\'eau', icon: '🚱', kind: 'climat', cooldown: 12,
+    prob: (S) => (summer(S) ? 0.012 : 0.0015) * (1 + warming(S)) * (1 + modifierSum(S, 'risk:penurie_eau')),
     start: (S, ev) => {
-      addModifier(S, 'prod:agriculture', -0.12, 0.88, ev.uid, 'Sécheresse');
-      addModifier(S, 'prod:energie', -0.03, 0.85, ev.uid, 'Sécheresse (refroidissement, hydraulique)');
-      S.macro.priceLevel *= 1.002;
+      addModifier(S, 'prod:agriculture', -0.12, 0.88, ev.uid, 'Pénurie d\'eau');
+      addModifier(S, 'prod:energie', -0.03, 0.85, ev.uid, 'Pénurie d\'eau (refroidissement des centrales)');
+      addModifier(S, 'prod:tourisme', -0.02, 0.85, ev.uid, 'Pénurie d\'eau');
+      S.macro.priceLevel *= 1.003;
       bumpParty(S, 'ecologistes', 0.05);
-      return 'Sécheresse historique : productivité agricole −12 %, production d\'énergie −3 %, prix alimentaires +0,2 %.';
+      bumpTrust(S, -1);
+      return 'Sécheresse régionale : les réservoirs de la cité-État sont au plus bas. Ceintures maraîchères −12 %, production d\'énergie −3 %, tourisme −2 %, eau et denrées importées plus chères : niveau des prix +0,3 %.';
     },
     options: [
-      { id: 'aide', label: 'Fonds d\'urgence agricole', text: 'Agriculteurs soutenus. Coût : 0,1 % du PIB par an pendant 6 mois (subventions).', budget: [{ line: 'subventions', gdpShare: 0.001, months: 6 }],
-        apply: (S) => { bumpGroup(S, 'agriculteurs', 0.3); bumpCats(S, ['independants'], 2); return 'Fonds d\'urgence versé aux exploitants.'; } },
-      { id: 'sobriete', label: 'Restrictions d\'eau et sobriété', text: 'Sans coût : pertes agricoles réduites de 20 %, confiance −1.',
-        apply: (S, ev) => { scaleModifiers(S, ev.uid, 0.8); bumpTrust(S, -1); bumpGroup(S, 'climat', 0.1); return 'Plan de sobriété hydrique.'; } },
-      { id: 'rien', label: 'Ne rien faire', text: 'Aucun coût ; les agriculteurs sont hostiles.',
-        apply: (S) => { bumpGroup(S, 'agriculteurs', -0.3); return 'Aucune mesure.'; } },
+      { id: 'urgence', label: 'Programme d\'urgence pour l\'eau potable', text: 'Contrats d\'approvisionnement et unités de dessalement mobiles financés sur le budget : pertes réduites de 60 %, risque futur −30 %. Coût : 0,15 % du PIB par an pendant 12 mois (environnement).', budget: [{ line: 'environnement', gdpShare: 0.0015, months: 12 }],
+        apply: (S, ev) => { scaleModifiers(S, ev.uid, 0.4); addModifier(S, 'risk:penurie_eau', -0.3, 0.995, ev.uid, 'Sécurisation de l\'eau'); bumpTrust(S, 1); return 'Programme d\'urgence pour l\'eau potable financé.'; } },
+      { id: 'sobriete', label: 'Restrictions d\'eau et tarification progressive', text: 'Sans coût : pertes réduites de 20 %, confiance −1.',
+        apply: (S, ev) => { scaleModifiers(S, ev.uid, 0.8); bumpTrust(S, -1); bumpGroup(S, 'climat', 0.1); return 'Restrictions d\'usage et tarif progressif de l\'eau.'; } },
+      { id: 'rien', label: 'Ne rien faire', text: 'Aucun coût ; maraîchers et hôteliers hostiles, confiance −1.',
+        apply: (S) => { bumpGroup(S, 'agriculteurs', -0.3); bumpTrust(S, -1); return 'Aucune mesure.'; } },
     ],
     defaultOption: 'rien',
   },
   {
-    id: 'inondations', title: 'Inondations', icon: '🌊', kind: 'climat', cooldown: 12,
+    id: 'inondations', title: 'Inondation littorale', icon: '🌊', kind: 'climat', cooldown: 12,
     prob: (S) => (autumnWinter(S) ? 0.006 : 0.002) * (1 + warming(S)) * (1 + modifierSum(S, 'risk:inondations')),
     start: (S) => {
       S.services.infrastructures = clamp(S.services.infrastructures - 0.04, 0, 1);
       bumpTrust(S, -1);
-      return `Crues exceptionnelles : routes, ponts et réseaux endommagés (qualité des infrastructures −4 points). Dégâts estimés : ${md(0.004 * gdp(S))}.`;
+      return `Grande marée et crue de l'estuaire : quais, tunnels, stations de métro et réseaux des quartiers bas submergés (qualité des infrastructures −4 points). Dégâts estimés : ${md(0.004 * gdp(S))}.`;
     },
     options: [
       { id: 'reconstruction', label: 'Reconstruction rapide', text: 'Infrastructures +3 points, confiance +2. Coût : 0,3 % du PIB par an pendant 6 mois.', budget: [{ line: 'infrastructures', gdpShare: 0.003, months: 6 }],
         apply: (S) => { S.services.infrastructures = clamp(S.services.infrastructures + 0.03, 0, 1); bumpTrust(S, 2); return 'Reconstruction engagée.'; } },
-      { id: 'prevention', label: 'Reconstruction et prévention', text: 'Comme la reconstruction, plus un plan de prévention qui divise par deux le risque de crue. Coût : 0,3 % du PIB/an sur 6 mois + 0,1 % du PIB/an sur 12 mois (environnement).', budget: [{ line: 'infrastructures', gdpShare: 0.003, months: 6 }, { line: 'environnement', gdpShare: 0.001, months: 12 }],
-        apply: (S, ev) => { S.services.infrastructures = clamp(S.services.infrastructures + 0.03, 0, 1); S.services.environnement = clamp(S.services.environnement + 0.02, 0, 1); addModifier(S, 'risk:inondations', -0.5, 0.99, ev.uid, 'Plan de prévention des crues'); bumpTrust(S, 2); bumpGroup(S, 'climat', 0.1); return 'Reconstruction et plan de prévention des crues.'; } },
+      { id: 'prevention', label: 'Reconstruction et programme de protection littorale', text: 'Comme la reconstruction, plus un programme pluriannuel (digues, bassins de rétention) qui divise par deux le risque de submersion. Coût : 0,3 % du PIB/an sur 6 mois + 0,1 % du PIB/an sur 12 mois (environnement).', budget: [{ line: 'infrastructures', gdpShare: 0.003, months: 6 }, { line: 'environnement', gdpShare: 0.001, months: 12 }],
+        apply: (S, ev) => { S.services.infrastructures = clamp(S.services.infrastructures + 0.03, 0, 1); S.services.environnement = clamp(S.services.environnement + 0.02, 0, 1); addModifier(S, 'risk:inondations', -0.5, 0.99, ev.uid, 'Protection littorale'); bumpTrust(S, 2); bumpGroup(S, 'climat', 0.1); return 'Reconstruction et programme de protection littorale.'; } },
       { id: 'minimum', label: 'Aide minimale', text: 'Coût : 0,05 % du PIB par an pendant 6 mois. Confiance −2.', budget: [{ line: 'infrastructures', gdpShare: 0.0005, months: 6 }],
         apply: (S) => { bumpTrust(S, -2); return 'Aide minimale aux sinistrés.'; } },
     ],
     defaultOption: 'minimum',
   },
   {
-    id: 'canicule', title: 'Canicule', icon: '🔥', kind: 'climat', cooldown: 12,
+    id: 'canicule', title: 'Canicule urbaine', icon: '🔥', kind: 'climat', cooldown: 12,
     prob: (S) => (summer(S) ? 0.015 : 0) * (1 + warming(S)),
     start: (S, ev) => {
       S.services.sante = clamp(S.services.sante - 0.015, 0, 1);
       addModifier(S, 'energy', 0.05, 0.8, ev.uid, 'Canicule');
       addModifier(S, 'prod:agriculture', -0.04, 0.85, ev.uid, 'Canicule');
       bumpCats(S, ['retraites'], -3);
-      return 'Vague de chaleur : hôpitaux saturés (qualité des soins −1,5 point), prix de l\'énergie +5 %, rendements agricoles −4 %, retraités −3.';
+      return 'Îlots de chaleur : 40 °C dans les quartiers denses, hôpitaux saturés (qualité des soins −1,5 point), pics de climatisation (prix de l\'énergie +5 %), retraités −3.';
     },
     options: [
-      { id: 'plan', label: 'Plan canicule', text: 'Cellules de crise, climatisation des hôpitaux : soins +1 point, retraités +3. Coût : 0,05 % du PIB par an pendant 3 mois.', budget: [{ line: 'sante', gdpShare: 0.0005, months: 3 }],
+      { id: 'plan', label: 'Plan canicule', text: 'Cellules de crise par arrondissement, lieux rafraîchis, renfort des hôpitaux : soins +1 point, retraités +3. Coût : 0,05 % du PIB par an pendant 3 mois.', budget: [{ line: 'sante', gdpShare: 0.0005, months: 3 }],
         apply: (S) => { S.services.sante = clamp(S.services.sante + 0.01, 0, 1); bumpCats(S, ['retraites'], 3); return 'Plan canicule déclenché.'; } },
       { id: 'horaires', label: 'Horaires aménagés', text: 'Sans coût : production −0,5 % ce mois-ci, cadres +1.',
         apply: (S, ev) => { addModifier(S, 'prod:all', -0.005, 0.5, ev.uid, 'Horaires aménagés'); bumpCats(S, ['cadres'], 1); return 'Horaires de travail aménagés.'; } },
@@ -289,7 +291,7 @@ export const EVENT_DEFS: EventDef[] = [
     start: (S, ev) => {
       S.services.infrastructures = clamp(S.services.infrastructures - 0.02, 0, 1);
       addModifier(S, 'prod:energie', -0.04, 0.7, ev.uid, 'Tempête');
-      return 'Tempête violente : lignes électriques et toitures arrachées (infrastructures −2 points, production d\'énergie −4 %).';
+      return 'Tempête violente sur la côte : lignes électriques, grues portuaires et toitures endommagées (infrastructures −2 points, production d\'énergie −4 %).';
     },
     options: [
       { id: 'reparation', label: 'Réparations d\'urgence', text: 'Infrastructures +2 points. Coût : 0,15 % du PIB par an pendant 4 mois.', budget: [{ line: 'infrastructures', gdpShare: 0.0015, months: 4 }],
@@ -298,6 +300,44 @@ export const EVENT_DEFS: EventDef[] = [
         apply: (S) => { bumpTrust(S, -1); return 'Les opérateurs réparent à leur rythme.'; } },
     ],
     defaultOption: 'rien',
+  },
+  {
+    id: 'panne_metro', title: 'Panne géante du métro', icon: '🚇', kind: 'crise', cooldown: 18,
+    prob: (S) => (0.002 + 0.05 * Math.max(0, 0.76 - S.services.transports) + 0.03 * Math.max(0, 0.76 - S.services.infrastructures)) * (1 + modifierSum(S, 'risk:panne_metro')),
+    start: (S, ev) => {
+      S.services.transports = clamp(S.services.transports - 0.03, 0, 1);
+      addModifier(S, 'prod:all', -0.006, 0.5, ev.uid, 'Panne du métro');
+      bumpCats(S, ['employes', 'ouvriers', 'etudiants'], -3);
+      return `Panne d'alimentation et signalisation hors service : 4 lignes de métro arrêtées plusieurs jours. Production −0,6 % ce mois-ci, qualité des transports −3 points, usagers −3. Qualité du réseau avant la panne : ${Math.round(S.services.transports * 100 + 3)}/100.`;
+    },
+    options: [
+      { id: 'modernisation', label: 'Programme de modernisation du réseau', text: 'Signalisation et alimentation rénovées : transports +4 points, risque de panne −40 %. Coût : 0,25 % du PIB par an pendant 12 mois (transports publics).', budget: [{ line: 'transports', gdpShare: 0.0025, months: 12 }],
+        apply: (S, ev) => { S.services.transports = clamp(S.services.transports + 0.04, 0, 1); addModifier(S, 'risk:panne_metro', -0.4, 0.99, ev.uid, 'Réseau modernisé'); bumpCats(S, ['employes', 'ouvriers', 'etudiants'], 2); return 'Programme de modernisation du métro financé.'; } },
+      { id: 'bus', label: 'Bus de substitution et gratuité temporaire', text: 'Usagers +3, effet de la panne réduit de moitié. Coût : 0,05 % du PIB par an pendant 3 mois.', budget: [{ line: 'transports', gdpShare: 0.0005, months: 3 }],
+        apply: (S, ev) => { scaleModifiers(S, ev.uid, 0.5); bumpCats(S, ['employes', 'ouvriers', 'etudiants'], 3); return 'Bus de substitution et gratuité pendant les travaux.'; } },
+      { id: 'rien', label: 'Laisser l\'opérateur gérer', text: 'Aucun coût ; confiance −2.',
+        apply: (S) => { bumpTrust(S, -2); return 'L\'opérateur répare à son rythme.'; } },
+    ],
+    defaultOption: 'rien',
+  },
+  {
+    id: 'crise_portuaire', title: 'Blocage du port', icon: '⚓', kind: 'international', cooldown: 24,
+    prob: (S) => 0.002 + 0.006 * Math.max(0, (50 - groupSupport(S, 'cgt')) / 50) + 0.004 * Math.max(0, (50 - (S.international?.avgRelation ?? 60)) / 50),
+    start: (S, ev) => {
+      addModifier(S, 'demand', -0.03, 0.75, ev.uid, 'Blocage du port');
+      addModifier(S, 'prod:transport', -0.05, 0.7, ev.uid, 'Blocage du port');
+      S.macro.priceLevel *= 1.002;
+      return 'Grève des dockers et engorgement des routes maritimes : le port de la cité-État tourne au ralenti. Exportations −3 % (rétablissement rapide), logistique −5 %, prix des produits importés : niveau des prix +0,2 %.';
+    },
+    options: [
+      { id: 'mediation', label: 'Médiation sociale et prime de reprise', text: 'Fin rapide du blocage (effets réduits de 70 %). Coût : 0,05 % du PIB par an pendant 3 mois (subventions).', budget: [{ line: 'subventions', gdpShare: 0.0005, months: 3 }],
+        apply: (S, ev) => { scaleModifiers(S, ev.uid, 0.3); bumpGroup(S, 'cgt', 0.15); return 'Accord avec les dockers.'; } },
+      { id: 'requisition', label: 'Réquisition des terminaux', text: 'Sans coût : effets réduits de moitié, mais syndicats hostiles et confiance −1.',
+        apply: (S, ev) => { scaleModifiers(S, ev.uid, 0.5); bumpGroup(S, 'cgt', -0.3); bumpGroup(S, 'patronat', 0.1); bumpTrust(S, -1); return 'Terminaux réquisitionnés.'; } },
+      { id: 'attendre', label: 'Attendre la fin du conflit', text: 'Aucun coût, aucun effet supplémentaire.',
+        apply: () => 'Le conflit s\'éteint de lui-même.' },
+    ],
+    defaultOption: 'attendre',
   },
   {
     id: 'faillite', title: 'Faillite d\'un grand groupe industriel', icon: '🏭', kind: 'economie', cooldown: 24,
@@ -326,16 +366,16 @@ export const EVENT_DEFS: EventDef[] = [
   },
   {
     id: 'prix_alimentaires', title: 'Hausse des prix alimentaires', icon: '🥖', kind: 'economie', cooldown: 24,
-    prob: (S) => 0.0025 + 0.01 * (modifierSum(S, 'prod:agriculture') < -0.03 ? 1 : 0) + 0.005 * (modifierSum(S, 'energy') > 0.1 ? 1 : 0),
+    prob: (S) => 0.0035 + 0.01 * (modifierSum(S, 'prod:agriculture') < -0.03 ? 1 : 0) + 0.005 * (modifierSum(S, 'energy') > 0.1 ? 1 : 0),
     start: (S) => {
-      S.macro.priceLevel *= 1.004;
+      S.macro.priceLevel *= 1.005;
       bumpCats(S, MODEST, -2);
-      return 'Mauvaises récoltes mondiales : prix alimentaires en forte hausse (niveau général des prix +0,4 %), catégories modestes −2.';
+      return 'Mauvaises récoltes chez nos fournisseurs : la cité-État importe l\'essentiel de sa nourriture, les prix alimentaires flambent (niveau général des prix +0,5 %), catégories modestes −2.';
     },
     options: [
       { id: 'cheque', label: 'Chèque alimentaire', text: 'Catégories modestes +3. Coût : 0,15 % du PIB par an pendant 6 mois.', budget: [{ line: 'logement', gdpShare: 0.0015, months: 6 }],
         apply: (S) => { bumpCats(S, MODEST, 3); return 'Chèque alimentaire versé.'; } },
-      { id: 'production', label: 'Soutenir la production locale', text: 'Productivité agricole +3 % (durable), agriculteurs satisfaits. Coût : 0,1 % du PIB par an pendant 12 mois.', budget: [{ line: 'subventions', gdpShare: 0.001, months: 12 }],
+      { id: 'production', label: 'Agriculture urbaine et contrats d\'approvisionnement', text: 'Productivité agricole +3 % (durable), producteurs satisfaits. Coût : 0,1 % du PIB par an pendant 12 mois.', budget: [{ line: 'subventions', gdpShare: 0.001, months: 12 }],
         apply: (S, ev) => { addModifier(S, 'prod:agriculture', 0.03, 0.995, ev.uid, 'Soutien à la production locale'); bumpGroup(S, 'agriculteurs', 0.2); return 'Plan de soutien à l\'agriculture locale.'; } },
       { id: 'rien', label: 'Ne rien faire', text: 'Aucun coût, confiance −1.',
         apply: (S) => { bumpTrust(S, -1); return 'Aucune mesure.'; } },

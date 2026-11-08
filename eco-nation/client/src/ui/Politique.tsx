@@ -1,7 +1,7 @@
 // Ministère de l'Intérieur et des relations avec le parlement : partis, hémicycle, coalition, lois et votes,
 // élections, syndicats et associations.
 import { useState } from 'react';
-import { AXIS_NAMES, INTEREST_GROUPS, LAW_CATEGORY_NAMES, LAW_THRESHOLDS, PARTIES, PARTY_INDEX, forecastVote, type Bill, type PartyId, type PoliticsState } from '../../../shared/sim/politics';
+import { AXIS_NAMES, INTEREST_GROUPS, LAW_CATEGORY_NAMES, LAW_THRESHOLDS, PARTIES, PARTY_INDEX, forecastVote, type Bill, type ElectionResult, type PartyId, type PoliticsState } from '../../../shared/sim/politics';
 import { useStore } from '../store';
 import { govAction } from '../net';
 import { pct } from '../format';
@@ -210,6 +210,26 @@ function Groupes() {
   );
 }
 
+function Districts({ e }: { e: ElectionResult }) {
+  const [open, setOpen] = useState(false);
+  const d = e.districts!;
+  const wins = PARTIES.map((p) => ({ p, n: d.filter((x) => x.winner === p.id).length })).filter((x) => x.n > 0);
+  return (
+    <>
+      <p className="small">Arrondissements remportés : {wins.map((w) => `${w.p.short} ${w.n}`).join(' · ')} <button className="link" onClick={() => setOpen(!open)}>{open ? 'Masquer' : 'Détail par arrondissement'}</button></p>
+      {open && (
+        <table className="table">
+          <thead><tr><th>Arrondissement / quartier</th><th>Électeurs</th>{PARTIES.map((p) => <th key={p.id}>{p.short}</th>)}</tr></thead>
+          <tbody>{d.map((x) => (
+            <tr key={x.id}><td><i style={{ display: 'inline-block', width: 8, height: 8, borderRadius: 4, background: partyColor(x.winner), marginRight: 6 }} />{x.name}</td><td>{Math.round(x.voters / 1000).toLocaleString('fr-FR')} k</td>
+              {PARTIES.map((p) => <td key={p.id} style={{ fontWeight: x.winner === p.id ? 700 : 400 }}>{pct(x.shares[p.id], 0)}</td>)}</tr>
+          ))}</tbody>
+        </table>
+      )}
+    </>
+  );
+}
+
 function Elections() {
   const snap = useStore((s) => s.snap);
   const P = snap?.politics;
@@ -235,11 +255,13 @@ function Elections() {
         {P.elections.length === 0 && <p className="muted small">Aucune élection depuis votre arrivée au pouvoir.</p>}
         {[...P.elections].reverse().map((e) => (
           <div key={e.month} className={`notice ${e.outcome === 'defaite' ? 'bad' : e.outcome === 'cohabitation' ? 'warn' : 'good'}`}>
+            {/* résultats par arrondissement affichés sous le tableau national */}
             <div className="notice-head"><b>{e.anticipated ? 'Élections anticipées' : 'Élections législatives'} — {OUT[e.outcome]}</b><span>{monthLabel(e.month, snap.startYear)}</span></div>
             <p className="small">{e.text}</p>
             <table className="table"><thead><tr><th>Parti</th><th>Voix</th><th>Sièges</th></tr></thead>
               <tbody>{PARTIES.map((d) => <tr key={d.id}><td>{d.name}</td><td>{pct(e.shares[d.id])}</td><td>{e.seats[d.id]}</td></tr>)}</tbody>
             </table>
+            {e.districts && e.districts.length > 0 && <Districts e={e} />}
           </div>
         ))}
       </Section>

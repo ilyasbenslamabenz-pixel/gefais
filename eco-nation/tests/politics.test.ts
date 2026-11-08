@@ -47,6 +47,10 @@ describe('Politique : partis et parlement', () => {
     expect(e.month).toBe(48);
     expect(Object.values(e.seats).reduce((s, v) => s + v, 0)).toBe(S.politics!.seatsTotal);
     expect(S.politics!.nextElection).toBe(96);
+    // résultats par arrondissement (entrées de country.cities)
+    expect(e.districts!.length).toBe(S.country.cities.length);
+    for (const d of e.districts!) expect(Object.values(d.shares).reduce((s, v) => s + v, 0)).toBeCloseTo(1, 6);
+    expect(new Set(e.districts!.map((d) => d.winner)).size).toBeGreaterThanOrEqual(1);
   });
   it('une coalition effondrée dans les sondages perd les élections (défaite politique)', () => {
     const S = run(fresh(), 47);

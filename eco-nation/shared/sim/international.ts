@@ -1,4 +1,5 @@
-// Relations internationales : pays voisins à économie simplifiée (PIB, croissance, demande, prix de l'énergie),
+// Relations internationales de la cité-État (très ouverte : port, place financière, énergie et alimentation importées) :
+// États voisins à économie simplifiée (PIB, croissance, demande, prix de l'énergie),
 // relations diplomatiques, accords (commerce, énergie, climat, investissement), droits de douane et représailles.
 // Les effets passent par les variables existantes du moteur économique :
 //  - `macro.worldDemand` (demande adressée aux exportations), `macro.energyPrice`, `macro.worldPrice` : ajustés par des
@@ -75,7 +76,7 @@ const pushNote = (S: GameState, kind: 'info' | 'warn' | 'good' | 'bad', title: s
 
 export function initInternational(S: GameState): InternationalState {
   const rnd = mulberry32(hashString(`${S.country.seed}|voisins`));
-  const count = 3 + Math.floor(rnd() * 3); // 3 à 5 voisins
+  const count = 3 + Math.floor(rnd() * 3); // 3 à 5 États voisins
   const pool = [...NAMES];
   const neighbors: Neighbor[] = [];
   const weights: number[] = [];
@@ -200,7 +201,7 @@ export function applyDiplomaticAction(S: GameState, a: DiplomaticAction): { ok: 
   const I = S.international;
   if (!I) return { ok: false, msg: 'Module international indisponible' };
   const n = I.neighbors.find((x) => x.id === Number(a.neighbor));
-  if (!n) return { ok: false, msg: 'Pays inconnu' };
+  if (!n) return { ok: false, msg: 'État inconnu' };
   if (a.type === 'diplomatie') {
     const last = I.log.filter((l) => l.text.startsWith(`Mission diplomatique : ${n.name}`)).at(-1);
     if (last && S.month - last.month < 6) return { ok: false, msg: 'Une mission a déjà eu lieu il y a moins de 6 mois' };
