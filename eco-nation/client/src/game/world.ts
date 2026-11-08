@@ -11,7 +11,8 @@ import { ENV, buildGrid, type Grid } from './terrain';
 import { createForests, createTerrain, createWaterAndNetwork } from './landscape';
 import { createCities } from './cities';
 import { createInfrastructure } from './infra';
-import { createAirSea, createTraffic, weatherFor } from './life';
+import { createTraffic, weatherFor } from './life';
+import { createAirSea } from './airsea'; // --- aéroport et port ---
 import { upgradeWater } from './water';
 import { createPostProcessing, timeOfDay } from './post';
 
