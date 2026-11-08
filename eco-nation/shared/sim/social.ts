@@ -86,7 +86,7 @@ export function satisfactionStep(S: GameState, P: Policy, calibrate: boolean) {
     sante: sv.sante * 100,
     education: sv.education * 100,
     securite: sv.securite * 100,
-    transports: (sv.transports * 0.7 + sv.infrastructures * 0.3) * 100,
+    transports: S.transport ? S.transport.satisfaction : (sv.transports * 0.7 + sv.infrastructures * 0.3) * 100, // moteur des transports (phase 4b)
     logement: clamp(48 + 60 * (sv.logement - 0.8), 0, 100),
     inegalites: clamp(100 - (A.gini - 0.18) * 350, 0, 100),
     environnement: clamp(airQuality(S) * 100 * 0.7 + sv.environnement * 30, 0, 100),

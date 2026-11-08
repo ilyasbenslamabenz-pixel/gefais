@@ -1,7 +1,7 @@
 // Communication avec le serveur : REST (parties) et Socket.IO (simulation en direct).
 import { io } from 'socket.io-client';
 import { useStore } from './store';
-import type { Snapshot, FinanceAction, GovAction, GameAction } from '../../shared/sim/engine';
+import type { Snapshot, FinanceAction, GovAction, GameAction, SectorAction } from '../../shared/sim/engine';
 import type { GameEvent } from '../../shared/sim/events';
 import type { ElectionResult } from '../../shared/sim/politics';
 import type { CountryDef, Notice, Policy } from '../../shared/sim/types';
@@ -100,6 +100,13 @@ export function govAction(a: GovAction): Promise<boolean> {
 /** Programmes énergétiques et environnementaux (construction, fermeture, reboisement…) : même canal que les opérations financières. */
 export function gameAction(a: GameAction): Promise<boolean> {
   return new Promise((resolve) => socket.emit('game:action', a, (r: { ok: boolean; msg: string }) => {
+    st().toast(r.msg, r.ok ? 'good' : 'bad');
+    resolve(r.ok);
+  }));
+}
+/** Programme sectoriel (nouvelle ligne, installation, plan) : placé et réalisé par le moteur du serveur. */
+export function programAction(a: SectorAction): Promise<boolean> {
+  return new Promise((resolve) => socket.emit('game:program', a, (r: { ok: boolean; msg: string }) => {
     st().toast(r.msg, r.ok ? 'good' : 'bad');
     resolve(r.ok);
   }));

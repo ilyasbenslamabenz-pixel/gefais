@@ -7,6 +7,10 @@ import type { VictoryState } from './victory';
 import type { EnergyPolicy } from './energyData';
 import type { EnergyState } from './energy';
 import type { EnvironmentState } from './environment';
+import type { TransportPolicy, TransportState } from './transport';
+import type { IndustryPolicy, IndustryState } from './industry';
+import type { AgriculturePolicy, AgricultureState } from './agriculture';
+import type { WastePolicy, WasteState } from './waste';
 
 // ---------- Décisions du joueur ----------
 export interface Bracket { upTo: number | null; rate: number }
@@ -57,6 +61,11 @@ export interface Policy {
     tariff: number; // droits de douane moyens sur les importations (0..0,5) : renchérissent les importations, provoquent des représailles
   };
   energy: EnergyPolicy; // module énergie et environnement (energyData.ts)
+  // --- politiques sectorielles (phase 4b) ---
+  transport?: TransportPolicy;
+  industry?: IndustryPolicy;
+  agriculture?: AgriculturePolicy;
+  waste?: WastePolicy;
 }
 
 // ---------- Pays (géographie, statique) ----------
@@ -291,6 +300,11 @@ export interface GameState {
   victory?: VictoryState;
   energy?: EnergyState; // module énergie (energy.ts)
   environment?: EnvironmentState; // module environnement et biodiversité (environment.ts)
+  // --- moteurs transports/industrie/agriculture/déchets (phase 4b) ---
+  transport?: TransportState;
+  industry?: IndustryState;
+  agriculture?: AgricultureState;
+  waste?: WasteState;
 }
 
 export type Occ = Occupation;

@@ -5,7 +5,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { Server, type Socket } from 'socket.io';
-import { applyAction, applyGovAction, createGame, migrate, schedulePolicy, snapshot, tick, type FinanceAction, type GovAction, type GameAction } from '../../shared/sim/engine';
+import { applyAction, applyGovAction, applyProgramAction, createGame, migrate, schedulePolicy, snapshot, tick, type FinanceAction, type GovAction, type GameAction, type SectorAction } from '../../shared/sim/engine';
 import type { CountryConfig, GameState, Policy } from '../../shared/sim/types';
 import { db } from './db';
 
@@ -233,6 +233,15 @@ io.on('connection', (socket: Socket) => {
       console.error(e);
       ack(cb)({ ok: false, msg: 'Action invalide' });
     }
+  });
+  // programmes sectoriels (transports, industrie, agriculture, déchets) : placement automatique par le moteur
+  socket.on('game:program', (a: SectorAction, cb) => {
+    if (!current) return ack(cb)({ ok: false, msg: 'Aucune partie ouverte' });
+    let r: { ok: boolean; msg: string };
+    try { r = applyProgramAction(current.state, a); } catch (e) { console.error(e); r = { ok: false, msg: 'Programme invalide' }; }
+    if (r.ok) io.to(current.state.id).emit('game:tick', { snap: snapshot(current.state), last: null, notices: current.state.notices.filter((n) => n.id > current!.lastNotice) });
+    if (r.ok) current.lastNotice = current.state.noticeSeq - 1;
+    ack(cb)(r);
   });
 
   socket.on('game:save', async (cb) => {

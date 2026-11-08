@@ -18,6 +18,7 @@ import { WEATHER_LABEL, weatherFor } from '../game/life';
 import { camApi } from '../game/world';
 import { EnergiePanel } from './Energie';
 import { EnvironnementPanel } from './Environnement';
+import { AgriculturePanel, DechetsPanel, IndustriePanel, TransportsPanel } from './Secteurs';
 
 const SEASON = ['❄️ Hiver', '❄️ Hiver', '🌱 Printemps', '🌱 Printemps', '🌱 Printemps', '☀️ Été', '☀️ Été', '☀️ Été', '🍂 Automne', '🍂 Automne', '🍂 Automne', '❄️ Hiver'];
 
@@ -77,6 +78,10 @@ const MINISTRIES: { id: Panel; icon: string; label: string }[] = [
   { id: 'objectifs', icon: '🏆', label: 'Objectifs' },
   { id: 'energie', icon: '⚡', label: 'Énergie' },
   { id: 'environnement', icon: '🌳', label: 'Environnement' },
+  { id: 'transports', icon: '🚇', label: 'Transports' },
+  { id: 'industrie', icon: '🏭', label: 'Industrie' },
+  { id: 'agriculture', icon: '🌾', label: 'Agriculture' },
+  { id: 'dechets', icon: '♻️', label: 'Déchets' },
   { id: 'stats', icon: '📊', label: 'Statistiques' },
 ];
 
@@ -384,6 +389,10 @@ function PanelContent() {
     case 'population': return <PopulationPanel />;
     case 'energie': return <EnergiePanel />;
     case 'environnement': return <EnvironnementPanel />;
+    case 'transports': return <TransportsPanel />;
+    case 'industrie': return <IndustriePanel />;
+    case 'agriculture': return <AgriculturePanel />;
+    case 'dechets': return <DechetsPanel />;
     case 'stats': return <StatsPanel />;
     case 'notifications': return <Notifications />;
     case 'settings': return <SettingsPanel />;

@@ -59,6 +59,11 @@ Policy (décisions du joueur)  ──►  tick(state, policy) ──►  nouvel 
 | International | `sim/international.ts` | États voisins, relations, accords, droits de douane et représailles |
 | Événements | `sim/events.ts` | Crises déterministes, décisions, options par défaut, crédits exceptionnels |
 | Victoire | `sim/victory.ts` | Conditions de victoire, avancement, défaites |
+| Transports | `sim/transport.ts` | Réseau, flottes, demande, choix modal (logit), congestion (BPR), fret, aéroport, port, émissions, satisfaction des usagers |
+| Industrie | `sim/industry.ts` | Usines, zones, logistique, programmes (modernisation, électrification, hydrogène, chaleur, recyclage, technologies propres) |
+| Agriculture | `sim/agriculture.ts` | Terres, pratiques (conventionnel/bio/précision), intrants, eau, sols, sécheresses, autosuffisance, prix alimentaires, CH₄/N₂O |
+| Déchets | `sim/waste.ts` | Production par catégorie, filières et capacités, coûts, émissions, énergie récupérée |
+| Outils sectoriels | `sim/sectors.ts`, `sim/sectorModules.ts` | Chantiers (coût, délai, entretien), placement automatique, écritures budgétaires, facteurs technologiques, orchestration |
 
 Phases suivantes (même interface `tick`) : énergie, environnement, industrie, agriculture, transports, déchets, politique et parlement, relations internationales, crises, recherche, construction.
 
