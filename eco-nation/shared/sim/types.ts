@@ -1,5 +1,8 @@
 // Types centraux de la simulation (partagés client / serveur).
 import type { Branch, BudgetLine, CategoryId, Occupation, SectorId, VatCategory, VatClass } from './data';
+import type { EnergyPolicy } from './energyData';
+import type { EnergyState } from './energy';
+import type { EnvironmentState } from './environment';
 
 // ---------- Décisions du joueur ----------
 export interface Bracket { upTo: number | null; rate: number }
@@ -45,6 +48,7 @@ export interface Policy {
   };
   budget: Record<BudgetLine, number>; // dépenses discrétionnaires annuelles (€)
   finance: { indexBudgets: boolean; autoBorrow: boolean; minCash: number };
+  energy: EnergyPolicy; // module énergie et environnement (energyData.ts)
 }
 
 // ---------- Pays (géographie, statique) ----------
@@ -65,7 +69,9 @@ export interface CityDef {
 export type InfraType =
   | 'hopital' | 'universite' | 'ecole' | 'aeroport' | 'port' | 'gare'
   | 'centrale_charbon' | 'centrale_gaz' | 'centrale_nucleaire' | 'barrage' | 'parc_eolien' | 'parc_solaire'
-  | 'zone_industrielle' | 'zone_commerciale' | 'commissariat' | 'stade';
+  | 'zone_industrielle' | 'zone_commerciale' | 'commissariat' | 'stade'
+  // module énergie : sites ajoutés automatiquement par le moteur
+  | 'centrale_fioul' | 'centrale_geothermique' | 'centrale_biomasse' | 'parc_eolien_mer' | 'stockage_batteries';
 
 export interface Infra {
   id: number;
@@ -83,6 +89,8 @@ export interface Infra {
   emissions: number; // tCO2/an
   level: number;
   builtYear: number;
+  status?: 'construction' | 'active' | 'closed'; // absent = en service ; sites énergétiques ajoutés par le moteur
+  serviceMonth?: number; // mois (depuis le début de partie) de mise en service prévue ou effective
 }
 
 export interface Link { a: number; b: number; kind: 'autoroute' | 'nationale' | 'rail'; points: [number, number][] }
@@ -168,7 +176,7 @@ export interface Notice { id: number; month: number; kind: 'info' | 'warn' | 'go
 
 /** Comptes du dernier mois (montants annualisés, €/an). */
 export interface Accounts {
-  revenue: Record<RevenueKey, number>;
+  revenue: Record<RevenueKey, number> & { energiePublique?: number }; // energiePublique : marge des centrales publiques (module énergie)
   spending: Record<SpendingKey, number>;
   revenueTotal: number;
   spendingTotal: number;
@@ -214,7 +222,8 @@ export type RevenueKey =
   | 'carbone' | 'carburants' | 'emissionsIndustrielles' | 'dechets' | 'vehicules' | 'energivores'
   | 'entreprisesPubliques' | 'infrastructures' | 'divers';
 
-export type SpendingKey = BudgetLine | 'retraites' | 'chomage' | 'allocations' | 'creditActivite' | 'interets';
+export type SpendingKey = BudgetLine | 'retraites' | 'chomage' | 'allocations' | 'creditActivite' | 'interets'
+  | 'energie' | 'ecologie'; // module énergie : investissements et soutiens énergétiques ; environnement, biodiversité, compensation
 
 export interface Demography {
   cohorts: number[]; // population par tranche de 5 ans
@@ -262,6 +271,8 @@ export interface GameState {
   history: Record<string, number[]>;
   notices: Notice[];
   noticeSeq: number;
+  energy?: EnergyState; // module énergie (energy.ts)
+  environment?: EnvironmentState; // module environnement et biodiversité (environment.ts)
 }
 
 export type Occ = Occupation;

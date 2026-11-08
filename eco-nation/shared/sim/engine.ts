@@ -6,6 +6,10 @@ import { INVEST_TARGET, clamp, economyStep, participationRate } from './economy'
 import { averageConsumptionTax, sanitizeBrackets } from './fiscal';
 import { airQuality, categoryIncome, citiesStep, satisfactionStep, servicesStep } from './social';
 import type { Accounts, CountryConfig, Demography, GameState, Notice, Policy, Services } from './types';
+// --- module énergie ---
+import { DEFAULT_ENERGY_POLICY } from './energyData';
+import { applyEnergyAction, energyHistory, energyStep, initEnergy, isEnergyAction, sanitizeEnergyPolicy, type EnergyAction } from './energy';
+import { applyEnvAction, environmentHistory, environmentStep, initEnvironment, isEnvAction, type EnvAction } from './environment';
 
 export const SIM_VERSION = 1;
 export const START_YEAR = 2030;
@@ -42,6 +46,7 @@ export function defaultPolicy(gdp: number): Policy {
     labour: { minWage: 1800, hours: 35, hiringAid: 1500, benefitRate: 0.57, benefitMonths: 24, retirementAge: 64, pensionRate: 0.52, familyAllowance: 140 },
     budget,
     finance: { indexBudgets: true, autoBorrow: true, minCash: Math.round(gdp * 0.015) },
+    energy: { ...DEFAULT_ENERGY_POLICY },
   };
 }
 
@@ -106,6 +111,7 @@ export function sanitizePolicy(input: Policy, current: Policy): Policy {
     },
     budget,
     finance: { indexBudgets: i.finance?.indexBudgets ?? c.finance.indexBudgets, autoBorrow: i.finance?.autoBorrow ?? c.finance.autoBorrow, minCash: num(i.finance?.minCash, 0, 1e12, c.finance.minCash) },
+    energy: sanitizeEnergyPolicy(i.energy, c.energy), // --- module énergie ---
   };
 }
 
@@ -182,6 +188,9 @@ export function createGame(cfgIn: Partial<CountryConfig> = {}, id = 'local', nam
   S.sectors.forEach((s, i) => { s.output = s.employees * SECTORS[i].productivity; s.profit = s.output * 0.15; });
   calibrate(S);
   updateCategories(S);
+  // --- module énergie --- : parc électrique, bilan énergétique, émissions, environnement (calibrés sur l'état initial)
+  initEnergy(S);
+  initEnvironment(S);
   S.satisfaction = satisfactionStep(S, S.policy, true);
   citiesStep(S, S.policy, true);
   const pop = cohorts.reduce((s, v) => s + v, 0);
@@ -248,6 +257,9 @@ export function tick(S: GameState): void {
   });
   // 2. Économie, fiscalité, finances publiques
   S.accounts = economyStep(S, P, { calibrate: false });
+  // --- module énergie --- : production électrique, prix de l'énergie, émissions, environnement, flux budgétaires associés
+  energyStep(S, P);
+  environmentStep(S, P);
   // 3. Inflation mesurée sur 12 mois
   const ph = S.history.priceLevel ?? [];
   const p12 = ph.length >= 12 ? ph[ph.length - 12] : ph[0] ?? 1;
@@ -279,6 +291,10 @@ export const HISTORY_KEYS = [
   'gdp', 'gdpReal', 'growth', 'inflation', 'priceLevel', 'unemployment', 'population', 'employment', 'debt', 'debtRatio', 'deficitRatio', 'balance',
   'revenue', 'spending', 'cash', 'satisfaction', 'trust', 'emissions', 'meanWage', 'medianWage', 'gini', 'poverty', 'births', 'deaths', 'migration',
   'lifeExpectancy', 'exports', 'imports', 'consumption', 'investment', 'policyRate', 'marketRate', 'firms', 'failures', 'disposablePerCap', 'productivityGrowth',
+  // --- module énergie ---
+  'elecRenShare', 'finalRenShare', 'elecPrice', 'wholesalePrice', 'energyPrice', 'elecDemand', 'elecProduction', 'elecImports', 'elecExports', 'unserved',
+  'shortageRisk', 'capacityMargin', 'finalEnergy', 'emissionsGross', 'emissionsNet', 'absorptions', 'fossilCO2', 'footprint', 'powerCO2', 'carbonIntensityElec', 'evShare',
+  'airQuality', 'waterQuality', 'biodiversity', 'envQuality', 'forestShare', 'artifShare', 'protectedShare',
 ] as const;
 
 function recordHistory(S: GameState) {
@@ -326,6 +342,8 @@ function recordHistory(S: GameState) {
   push('productivityGrowth', S.macro.productivityGrowth);
   for (const [k, v] of Object.entries(A.revenue)) push('rev_' + k, v);
   for (const [k, v] of Object.entries(A.spending)) push('dep_' + k, v);
+  // --- module énergie ---
+  for (const [k, v] of Object.entries({ ...energyHistory(S), ...environmentHistory(S) })) push(k, v);
 }
 
 export function pushNotice(S: GameState, kind: Notice['kind'], title: string, text: string) {
@@ -366,6 +384,7 @@ function describePolicyChange(S: GameState, a: Policy, b: Policy) {
   if (JSON.stringify(a.eco) !== JSON.stringify(b.eco)) changes.push('fiscalité écologique');
   if (JSON.stringify(a.contributions) !== JSON.stringify(b.contributions)) changes.push('cotisations sociales');
   if (JSON.stringify(a.labour) !== JSON.stringify(b.labour)) changes.push('droit du travail et protection sociale');
+  if (JSON.stringify(a.energy) !== JSON.stringify(b.energy)) changes.push('politique énergétique et environnementale');
   const budgetChanged = BUDGET_LINES.some((k) => Math.abs(a.budget[k] - b.budget[k]) > 1);
   if (budgetChanged) changes.push('budget');
   if (changes.length) pushNotice(S, 'info', 'Réformes en vigueur', `Entrée en vigueur : ${changes.join(', ')}.`);
@@ -379,7 +398,13 @@ export function schedulePolicy(S: GameState, proposal: Policy) {
 
 export type FinanceAction = { type: 'bonds'; amount: number } | { type: 'repay'; amount: number } | { type: 'toReserve'; amount: number } | { type: 'fromReserve'; amount: number };
 
-export function applyAction(S: GameState, a: FinanceAction): { ok: boolean; msg: string } {
+/** Toutes les actions ponctuelles du joueur (finances, programmes énergétiques et environnementaux). */
+export type GameAction = FinanceAction | EnergyAction | EnvAction;
+
+export function applyAction(S: GameState, a: GameAction): { ok: boolean; msg: string } {
+  // --- module énergie ---
+  if (isEnergyAction(a)) return applyEnergyAction(S, a);
+  if (isEnvAction(a)) return applyEnvAction(S, a);
   const F = S.finance;
   const amount = Math.max(0, Number(a.amount) || 0);
   if (!amount) return { ok: false, msg: 'Montant invalide' };
@@ -426,6 +451,11 @@ export function snapshot(S: GameState) {
 export type Snapshot = ReturnType<typeof snapshot>;
 
 export function migrate(S: GameState): GameState {
+  // --- module énergie --- : sauvegardes antérieures au module
+  if (!S.policy.energy) S.policy.energy = { ...DEFAULT_ENERGY_POLICY };
+  if (S.pending && !S.pending.policy.energy) S.pending.policy.energy = { ...S.policy.energy };
+  if (!S.energy) initEnergy(S);
+  if (!S.environment) initEnvironment(S);
   return S; // point d'entrée des futures migrations de sauvegardes
 }
 
