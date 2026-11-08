@@ -38,6 +38,12 @@ export const IND: Record<string, IndicatorDef> = {
   firms: { label: 'Entreprises', unit: 'nombre', period: 'fin de mois', def: 'Nombre d\'entreprises actives.', fmt: int, good: 'up' },
   failures: { label: 'Faillites', unit: '/an', period: 'rythme annuel', def: 'Défaillances d\'entreprises annualisées.', fmt: int, good: 'down' },
   disposablePerCap: { label: 'Revenu disponible / habitant', unit: '€/an', period: 'rythme annuel', def: 'Revenus nets des ménages après impôts et prestations, par habitant.', fmt: money, good: 'up' },
+  govPopularity: { label: 'Popularité du gouvernement', unit: '% des intentions de vote', period: 'mensuel', def: 'Somme des intentions de vote des partis de la coalition gouvernementale.', fmt: (v) => pct(v), good: 'up' },
+  coalitionSeats: { label: 'Sièges de la coalition', unit: 'sièges', period: 'fin de mois', def: 'Nombre de sièges détenus par les partis du camp gouvernemental (sur 350).', fmt: int, good: 'up' },
+  tariff: { label: 'Droits de douane', unit: '%', period: 'mensuel', def: 'Droits de douane moyens sur les importations.', fmt: (v) => pct(v) },
+  retaliation: { label: 'Représailles commerciales', unit: '%', period: 'mensuel', def: 'Droits de rétorsion moyens appliqués par les voisins à nos exportations (pondérés par nos exportations).', fmt: (v) => pct(v), good: 'down' },
+  intlDemand: { label: 'Demande étrangère (facteur)', unit: 'indice', period: 'mensuel', def: 'Facteur appliqué à la demande mondiale : conjoncture des voisins, accords commerciaux, chocs.', fmt: (v) => v.toFixed(3).replace('.', ','), good: 'up' },
+  intlEnergy: { label: 'Prix de l\'énergie importée (facteur)', unit: 'indice', period: 'mensuel', def: 'Facteur appliqué au prix de l\'énergie : voisins exportateurs, accords énergétiques, crises.', fmt: (v) => v.toFixed(3).replace('.', ','), good: 'down' },
   productivityGrowth: { label: 'Gains de productivité', unit: '%/an', period: 'tendance', def: 'Progression annuelle de la productivité (investissement, recherche, éducation, formation, infrastructures).', fmt: (v) => pct(v, 2), good: 'up' },
 };
 
@@ -47,7 +53,7 @@ export const REVENUE_LABELS: Record<string, string> = {
   foncier: 'Impôt foncier', transactions: 'Droits de mutation', vacance: 'Taxe sur les logements vacants', taxesLocales: 'Taxes locales',
   carbone: 'Taxe carbone', carburants: 'Taxe sur les carburants', emissionsIndustrielles: 'Taxe sur les émissions industrielles', dechets: 'Taxe sur les déchets',
   vehicules: 'Taxe sur les véhicules polluants', energivores: 'Taxe sur les activités énergivores', entreprisesPubliques: 'Dividendes des entreprises publiques',
-  infrastructures: 'Péages et redevances', divers: 'Recettes diverses',
+  infrastructures: 'Péages et redevances', divers: 'Recettes diverses', douanes: 'Droits de douane',
 };
 export const SPENDING_LABELS: Record<string, string> = {
   sante: 'Santé', education: 'Éducation', securite: 'Sécurité & justice', defense: 'Défense', transports: 'Transports publics', infrastructures: 'Infrastructures',

@@ -45,7 +45,7 @@ function emptyRevenue(): Record<RevenueKey, number> {
   return {
     impotRevenu: 0, impotCapital: 0, impotSocietes: 0, tva: 0, cotisationsPatronales: 0, cotisationsSalariales: 0,
     patrimoine: 0, foncier: 0, transactions: 0, vacance: 0, taxesLocales: 0, carbone: 0, carburants: 0,
-    emissionsIndustrielles: 0, dechets: 0, vehicules: 0, energivores: 0, entreprisesPubliques: 0, infrastructures: 0, divers: 0,
+    emissionsIndustrielles: 0, dechets: 0, vehicules: 0, energivores: 0, entreprisesPubliques: 0, infrastructures: 0, divers: 0, douanes: 0,
   };
 }
 
@@ -248,6 +248,11 @@ export function economyStep(S: GameState, P: Policy, ctx: StepContext): Accounts
   const ulc = avgLC / Math.max(1, avgProd * Pl * hoursF);
   const compet = ctx.calibrate ? 1 : clamp(Math.pow((S.baseline.ulc || ulc) / ulc, 1.1) * Math.pow(Pl / M.worldPrice, -0.4) * Math.pow(M.energyPrice, -0.15), 0.4, 1.8);
   const impF = ctx.calibrate ? 1 : clamp(Math.pow(Pl / M.worldPrice, 0.8), 0.7, 1.5);
+  // politique commerciale (module international) : droits de douane sur les importations, représailles sur les exportations
+  const tariff = ctx.calibrate ? 0 : clamp(P.trade?.tariff ?? 0, 0, 0.5);
+  const tariffF = clamp(1 - 1.5 * tariff, 0.3, 1); // élasticité des importations aux droits de douane
+  const retaliationF = ctx.calibrate ? 1 : clamp(1 - 1.5 * (S.international?.retaliation ?? 0), 0.3, 1);
+  let customs = 0;
 
   // ---------- Production et emploi ----------
   let exportsTot = 0;
@@ -262,12 +267,13 @@ export function economyStep(S: GameState, P: Policy, ctx: StepContext): Accounts
     const s = S.sectors[i];
     const domestic = consSector[i] + govSector[i] + invSector[i];
     const ecoCost = ENERGY_INTENSIVE.has(def.id) ? P.eco.energyIntensive + (INDUSTRIAL_EMITTERS.has(def.id) ? (P.eco.industrial * s.emissionIntensity) / 1e6 / Pl : 0) : 0;
-    const imp = domestic * def.importShare * impF;
+    const imp = domestic * def.importShare * impF * tariffF;
+    customs += imp * tariff;
     // calibrage : l'offre (emploi × productivité) est donnée, les exportations bouclent l'équilibre
     const supply = s.employees * s.productivity * Pl * hoursF;
     const X = ctx.calibrate
       ? Math.max(def.exportShare * supply, supply - (domestic - imp))
-      : s.baseExport * M.worldPrice * M.worldDemand * compet * clamp(1 - 0.8 * ecoCost, 0.5, 1);
+      : s.baseExport * M.worldPrice * M.worldDemand * compet * clamp(1 - 0.8 * ecoCost, 0.5, 1) * retaliationF;
     const D = Math.max(0, domestic - imp + X);
     const empFactor = clamp(Math.pow((laborCost[i] / (s.productivity * Pl * hoursF)) / (S.baseline.wageCost[i] || 1), -0.35), 0.6, 1.4);
     const capacity = (s.employees * s.productivity * Pl * hoursF) / empFactor;
@@ -385,6 +391,7 @@ export function economyStep(S: GameState, P: Policy, ctx: StepContext): Accounts
   revenue.entreprisesPubliques = publicProfits;
   revenue.infrastructures = 0.004 * gdp;
   revenue.divers = 0.006 * gdp;
+  revenue.douanes = customs;
   void exciseRev;
 
   // ---------- Dépenses publiques ----------

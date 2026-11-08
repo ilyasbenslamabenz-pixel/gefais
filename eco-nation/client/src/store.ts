@@ -3,7 +3,8 @@ import { create } from 'zustand';
 import type { Snapshot } from '../../shared/sim/engine';
 import type { CountryDef, Notice, Policy } from '../../shared/sim/types';
 
-export type Panel = null | 'finances' | 'fiscalite' | 'travail' | 'economie' | 'population' | 'stats' | 'notifications' | 'settings' | 'help';
+export type Panel = null | 'finances' | 'fiscalite' | 'travail' | 'economie' | 'population' | 'stats' | 'notifications' | 'settings' | 'help'
+  | 'politique' | 'international' | 'evenements' | 'objectifs';
 export type Quality = 'low' | 'medium' | 'high';
 export type Selection = null | { kind: 'city'; id: number } | { kind: 'infra'; id: number };
 
@@ -31,6 +32,7 @@ interface State {
   toasts: Toast[];
   settings: { quality: Quality; volume: number; labels: boolean; dayLength: number };
   tutorialStep: number;
+  minimizedEvents: number[]; // événements dont la fenêtre de décision a été réduite (ils restent dans le panneau Événements)
   set: (p: Partial<State>) => void;
   toast: (text: string, kind?: Toast['kind']) => void;
   setSettings: (p: Partial<State['settings']>) => void;
@@ -40,7 +42,7 @@ interface State {
 let uid = 1;
 export const useStore = create<State>((set, get) => ({
   screen: 'menu', connected: false, gameId: null, country: null, history: {}, snap: null, speed: 0, notices: [], unread: 0,
-  panel: null, selection: null, draft: null, toasts: [], settings: loadSettings(), tutorialStep: -1,
+  panel: null, selection: null, draft: null, toasts: [], settings: loadSettings(), tutorialStep: -1, minimizedEvents: [],
   set: (p) => set(p),
   toast: (text, kind = 'info') => {
     const id = uid++;

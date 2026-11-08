@@ -5,7 +5,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { Server, type Socket } from 'socket.io';
-import { applyAction, createGame, migrate, schedulePolicy, snapshot, tick, type FinanceAction } from '../../shared/sim/engine';
+import { applyAction, applyGovAction, createGame, migrate, schedulePolicy, snapshot, tick, type FinanceAction, type GovAction } from '../../shared/sim/engine';
 import type { CountryConfig, GameState, Policy } from '../../shared/sim/types';
 import { db } from './db';
 
@@ -26,6 +26,7 @@ interface Live {
   lastSavedMonth: number;
   lastNotice: number;
   unloadTimer: NodeJS.Timeout | null;
+  overNotified: boolean; // fin de mandat déjà signalée
 }
 const live = new Map<string, Live>();
 
@@ -48,8 +49,17 @@ function setSpeed(L: Live, speed: number) {
   io.to(L.state.id).emit('game:speed', L.speed);
 }
 
+/** Diffuse l'instantané courant (après une décision du joueur, hors pas de simulation). */
+function broadcast(L: Live) {
+  const S = L.state;
+  io.to(S.id).emit('game:tick', { snap: snapshot(S), last: null, notices: S.notices.filter((n) => n.id > L.lastNotice) });
+  L.lastNotice = S.noticeSeq - 1;
+}
+
 function step(L: Live) {
   const t0 = performance.now();
+  const evBefore = new Set((L.state.events?.active ?? []).map((e) => e.uid));
+  const elecBefore = L.state.politics?.elections.length ?? 0;
   tick(L.state);
   const S = L.state;
   const last: Record<string, number> = {};
@@ -57,6 +67,15 @@ function step(L: Live) {
   const notices = S.notices.filter((n) => n.id > L.lastNotice);
   if (notices.length) L.lastNotice = notices[notices.length - 1].id;
   io.to(S.id).emit('game:tick', { snap: snapshot(S), last, notices });
+  // --- modules politique/international/événements/victoire ---
+  // nouvel événement en attente de décision : le jeu continue (pas de pause côté serveur), l'interface le met en évidence
+  for (const ev of S.events?.active ?? []) if (!evBefore.has(ev.uid)) io.to(S.id).emit('game:event', ev);
+  if ((S.politics?.elections.length ?? 0) > elecBefore) io.to(S.id).emit('game:election', S.politics!.elections.at(-1));
+  if (S.victory?.status === 'defaite' && !L.overNotified) {
+    L.overNotified = true;
+    setSpeed(L, 0); // fin de mandat : la partie est suspendue jusqu'à la décision du joueur
+    io.to(S.id).emit('game:over', S.victory.defeat);
+  } else if (S.victory?.status !== 'defaite') L.overNotified = false;
   if (S.month - L.lastSavedMonth >= 12) void persist(L); // sauvegarde automatique annuelle
   const dt = performance.now() - t0;
   if (dt > 200) console.warn(`Pas de simulation lent : ${dt.toFixed(0)} ms`);
@@ -68,7 +87,7 @@ async function openGame(id: string, owner: string): Promise<Live | null> {
   const raw = await db.load(id, owner);
   if (!raw) return null;
   const state = migrate(JSON.parse(raw) as GameState);
-  const L: Live = { state, owner, speed: 0, timer: null, sockets: new Set(), lastSavedMonth: state.month, lastNotice: state.noticeSeq - 1, unloadTimer: null };
+  const L: Live = { state, owner, speed: 0, timer: null, sockets: new Set(), lastSavedMonth: state.month, lastNotice: state.noticeSeq - 1, unloadTimer: null, overNotified: state.victory?.status === 'defaite' };
   live.set(id, L);
   return L;
 }
@@ -177,9 +196,11 @@ io.on('connection', (socket: Socket) => {
   socket.on('game:policy', (policy: Policy, cb) => {
     if (!current) return ack(cb)({ ok: false, msg: 'Aucune partie ouverte' });
     try {
-      schedulePolicy(current.state, policy);
+      // procédure parlementaire : décrets pour les petits ajustements, projets de loi votés pour les réformes majeures
+      const r = schedulePolicy(current.state, policy, { parliament: true });
       io.to(current.state.id).emit('game:pending', current.state.pending);
-      ack(cb)({ ok: true, pending: current.state.pending });
+      if (r.bills.length) broadcast(current);
+      ack(cb)({ ok: true, pending: current.state.pending, bills: r.bills.map((b) => ({ id: b.id, title: b.title, voteMonth: b.voteMonth })) });
     } catch (e) {
       console.error(e);
       ack(cb)({ ok: false, msg: 'Politique invalide' });
@@ -199,6 +220,19 @@ io.on('connection', (socket: Socket) => {
     if (r.ok) io.to(current.state.id).emit('game:tick', { snap: snapshot(current.state), last: null, notices: current.state.notices.filter((n) => n.id > current!.lastNotice) });
     if (r.ok) current.lastNotice = current.state.noticeSeq - 1;
     ack(cb)(r);
+  });
+
+  // décisions d'événements, diplomatie, accords, parlement (confiance, dissolution, coalition, retrait de loi), poursuite après défaite
+  socket.on('game:gov', (a: GovAction, cb) => {
+    if (!current) return ack(cb)({ ok: false, msg: 'Aucune partie ouverte' });
+    try {
+      const r = applyGovAction(current.state, a);
+      if (r.ok) broadcast(current);
+      ack(cb)(r);
+    } catch (e) {
+      console.error(e);
+      ack(cb)({ ok: false, msg: 'Action invalide' });
+    }
   });
 
   socket.on('game:save', async (cb) => {
