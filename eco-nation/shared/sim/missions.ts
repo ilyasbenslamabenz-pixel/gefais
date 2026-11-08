@@ -38,6 +38,8 @@ export interface MetricDef {
 
 const nf = (v: number, d = 0) => v.toLocaleString('fr-FR', { maximumFractionDigits: d, minimumFractionDigits: d });
 const pct = (d: number) => (v: number) => `${nf(v * 100, d)} %`;
+/** pourcentage à 1 décimale, sans « ,0 » final (ex. 95 % ; 94,6 %) */
+const pctT = (v: number) => `${nf(Math.round(v * 1000) / 10, 1).replace(/,0$/, '')} %`;
 const unemployment = (S: GameState) => S.demography.unemployed / Math.max(1, S.demography.labourForce);
 /** Moyenne des 12 derniers mois d'une série d'historique (lisse les saisons). */
 function avg12(S: GameState, key: string): number | undefined {
@@ -59,10 +61,10 @@ export const METRICS: Record<MetricId, MetricDef> = {
   pauvrete: { label: 'Pauvreté', phrase: 'le taux de pauvreté', icon: '🥖', dir: 'min', get: (S) => S.accounts.poverty, fmt: pct(1), scale: () => 0.005, panel: 'population' },
   attenteLogement: { label: 'Attente logement social', phrase: 'la file d\'attente des logements sociaux', icon: '🏘️', dir: 'min', get: (S) => S.housing?.socialWaiting, fmt: (v) => `${nf(v)} ménages`, scale: (v) => Math.max(500, Math.abs(v) * 0.1), panel: 'logement' },
   tensionLogement: { label: 'Tension du logement', phrase: 'la tension du marché du logement', icon: '🏠', dir: 'min', get: (S) => S.housing?.tension, fmt: (v) => `${nf(v, 2)} ménage/logement`, scale: () => 0.01, panel: 'logement' },
-  ecoles: { label: 'Occupation des écoles', phrase: 'l\'occupation des écoles', icon: '🏫', dir: 'min', get: (S) => S.education?.occupancySchool, fmt: pct(0), scale: () => 0.02, panel: 'education' },
-  universites: { label: 'Occupation des universités', phrase: 'l\'occupation des universités', icon: '🎓', dir: 'min', get: (S) => S.education?.occupancyUni, fmt: pct(0), scale: () => 0.02, panel: 'education' },
+  ecoles: { label: 'Occupation des écoles', phrase: 'l\'occupation des écoles', icon: '🏫', dir: 'min', get: (S) => S.education?.occupancySchool, fmt: pctT, scale: () => 0.02, panel: 'education' },
+  universites: { label: 'Occupation des universités', phrase: 'l\'occupation des universités', icon: '🎓', dir: 'min', get: (S) => S.education?.occupancyUni, fmt: pctT, scale: () => 0.02, panel: 'education' },
   attenteSoins: { label: 'Attente spécialiste', phrase: 'l\'attente pour un spécialiste', icon: '🏥', dir: 'min', get: (S) => S.health?.waitDays, fmt: (v) => `${nf(v)} jours`, scale: () => 2, panel: 'sante' },
-  capaciteSoins: { label: 'Capacité de soins', phrase: 'la capacité de soins', icon: '🛏️', dir: 'max', get: (S) => S.health?.ratio, fmt: pct(0), scale: () => 0.02, panel: 'sante' },
+  capaciteSoins: { label: 'Capacité de soins', phrase: 'la capacité de soins', icon: '🛏️', dir: 'max', get: (S) => S.health?.ratio, fmt: pctT, scale: () => 0.02, panel: 'sante' },
   margeElec: { label: 'Marge électrique', phrase: 'la marge de sécurité électrique', icon: '⚡', dir: 'max', get: (S) => S.energy?.balance?.margin, fmt: pct(0), scale: () => 0.05, panel: 'energie' },
   securite: { label: 'Sentiment de sécurité', phrase: 'le sentiment de sécurité', icon: '🚓', dir: 'max', get: (S) => S.security?.feeling, fmt: (v) => `${nf(v, 1)}/100`, scale: () => 1.5, panel: 'securite' },
   congestion: { label: 'Congestion', phrase: 'la congestion routière', icon: '🚇', dir: 'min', get: (S) => S.transport?.congestion, fmt: (v) => `indice ${nf(v, 2)}`, scale: () => 0.02, panel: 'transports' },
