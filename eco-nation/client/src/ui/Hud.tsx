@@ -1,0 +1,387 @@
+// Interface de jeu : barre supérieure, contrôle du temps, dock des ministères, réformes, inspection, notifications, statistiques.
+import { useEffect, useState } from 'react';
+import { HISTORY_KEYS } from '../../../shared/sim/engine';
+import { SECTORS } from '../../../shared/sim/data';
+import { useStore, type Panel } from '../store';
+import { cancelPending, leaveGame, saveNow, setSpeed, stepOnce, submitPolicy, copyGame, openGame } from '../net';
+import { dec1, eur, int, money, pct, people } from '../format';
+import { Drawer, Kpi, Section, Tabs, Toggle } from './common';
+import { LineChart, monthLabel } from './charts';
+import { IND } from './indicators';
+import { FiscalitePanel } from './Fiscalite';
+import { EconomiePanel, FinancesPanel, PopulationPanel, TravailPanel } from './Ministries';
+import { WEATHER_LABEL, weatherFor } from '../game/Life';
+import { camApi } from '../game/MapScene';
+
+const SEASON = ['❄️ Hiver', '❄️ Hiver', '🌱 Printemps', '🌱 Printemps', '🌱 Printemps', '☀️ Été', '☀️ Été', '☀️ Été', '🍂 Automne', '🍂 Automne', '🍂 Automne', '❄️ Hiver'];
+
+export function TopBar() {
+  const snap = useStore((s) => s.snap);
+  const country = useStore((s) => s.country);
+  const speed = useStore((s) => s.speed);
+  if (!snap || !country) return null;
+  const A = snap.accounts;
+  const u = snap.demography.unemployed / snap.demography.labourForce;
+  const pop = snap.demography.cohorts.reduce((s, v) => s + v, 0);
+  const g = snap.last.growth ?? 0;
+  const weather = weatherFor(country.seed, snap.month);
+  const Item = ({ k, label, value, tone }: { k: string; label: string; value: string; tone?: string }) => (
+    <div className={`tb-item ${tone ?? ''}`} title={IND[k] ? `${IND[k].label} — ${IND[k].def} (${IND[k].unit}, ${IND[k].period})` : label}>
+      <span>{label}</span><b>{value}</b>
+    </div>
+  );
+  return (
+    <header className="topbar">
+      <div className="tb-brand"><b>ECO NATION</b><span>{snap.name}</span></div>
+      <div className="tb-date">
+        <b>{snap.date}</b>
+        <span>{SEASON[snap.month % 12]} · {WEATHER_LABEL[weather]}</span>
+      </div>
+      <div className="tb-speed">
+        {[0, 1, 2, 5, 10].map((s) => (
+          <button key={s} className={speed === s ? 'on' : ''} onClick={() => setSpeed(s)} title={s === 0 ? 'Pause (Espace)' : `Vitesse ×${s}`}>{s === 0 ? '⏸' : s === 1 ? '▶' : `×${s}`}</button>
+        ))}
+        <button onClick={stepOnce} disabled={speed !== 0} title="Avancer d'un mois">⏭</button>
+      </div>
+      <div className="tb-items">
+        <Item k="cash" label="Trésorerie" value={money(snap.finance.cash)} tone={snap.finance.cash < 0 ? 'bad' : ''} />
+        <Item k="population" label="Population" value={people(pop)} />
+        <Item k="gdp" label="PIB" value={money(A.gdp)} />
+        <Item k="growth" label="Croissance" value={pct(g)} tone={g < 0 ? 'bad' : g > 0.02 ? 'good' : ''} />
+        <Item k="unemployment" label="Chômage" value={pct(u)} tone={u > 0.1 ? 'bad' : u < 0.06 ? 'good' : ''} />
+        <Item k="inflation" label="Inflation" value={pct(snap.macro.inflation)} tone={snap.macro.inflation > 0.05 || snap.macro.inflation < 0 ? 'bad' : ''} />
+        <Item k="deficitRatio" label={A.balance >= 0 ? 'Excédent' : 'Déficit'} value={pct(Math.abs(A.balance) / A.gdp)} tone={A.balance / A.gdp < -0.04 ? 'bad' : A.balance >= 0 ? 'good' : ''} />
+        <Item k="debtRatio" label="Dette" value={pct(snap.finance.debt / A.gdp, 0)} tone={snap.finance.debt / A.gdp > 1 ? 'bad' : ''} />
+        <Item k="satisfaction" label="Satisfaction" value={`${Math.round(snap.satisfaction.overall)}/100`} tone={snap.satisfaction.overall < 40 ? 'bad' : snap.satisfaction.overall > 60 ? 'good' : ''} />
+        <Item k="emissions" label="CO₂" value={`${dec1(A.emissions / 1e6)} Mt`} />
+      </div>
+    </header>
+  );
+}
+
+const MINISTRIES: { id: Panel; icon: string; label: string }[] = [
+  { id: 'finances', icon: '🏦', label: 'Finances' },
+  { id: 'fiscalite', icon: '🧾', label: 'Fiscalité' },
+  { id: 'economie', icon: '📈', label: 'Économie' },
+  { id: 'travail', icon: '👷', label: 'Travail' },
+  { id: 'population', icon: '👥', label: 'Population' },
+  { id: 'stats', icon: '📊', label: 'Statistiques' },
+];
+
+export function Dock() {
+  const panel = useStore((s) => s.panel);
+  const unread = useStore((s) => s.unread);
+  const set = useStore((s) => s.set);
+  const toggle = (p: Panel) => set({ panel: panel === p ? null : p, ...(p === 'notifications' ? { unread: 0 } : {}) });
+  return (
+    <nav className="dock">
+      {MINISTRIES.map((m) => (
+        <button key={m.id} className={panel === m.id ? 'on' : ''} onClick={() => toggle(m.id)}><span>{m.icon}</span><em>{m.label}</em></button>
+      ))}
+      <div className="dock-sep" />
+      <button className={panel === 'notifications' ? 'on' : ''} onClick={() => toggle('notifications')}><span>🔔</span><em>Alertes</em>{unread > 0 && <i className="badge">{unread}</i>}</button>
+      <button className={panel === 'help' ? 'on' : ''} onClick={() => toggle('help')}><span>❓</span><em>Aide</em></button>
+      <button className={panel === 'settings' ? 'on' : ''} onClick={() => toggle('settings')}><span>⚙️</span><em>Menu</em></button>
+    </nav>
+  );
+}
+
+export function ReformBar() {
+  const draft = useStore((s) => s.draft);
+  const snap = useStore((s) => s.snap);
+  const set = useStore((s) => s.set);
+  if (!snap) return null;
+  const pending = snap.pending;
+  if (!draft && !pending) return null;
+  const base = pending?.policy ?? snap.policy;
+  const changes = draft ? countChanges(base, draft) : 0;
+  return (
+    <div className="reformbar">
+      {draft && changes > 0 ? (
+        <>
+          <span>📝 <b>{changes}</b> modification{changes > 1 ? 's' : ''} en préparation — entrée en vigueur au 1er {monthLabel(snap.month + 1, snap.startYear)}</span>
+          <button className="btn ghost" onClick={() => set({ draft: null })}>Abandonner</button>
+          <button className="btn primary" onClick={() => submitPolicy(draft)}>✅ Adopter les réformes</button>
+        </>
+      ) : pending ? (
+        <>
+          <span>⏳ Réformes adoptées, en vigueur au 1er {monthLabel(pending.month, snap.startYear)}</span>
+          <button className="btn ghost" onClick={cancelPending}>Annuler</button>
+        </>
+      ) : <span className="muted">Aucune modification</span>}
+    </div>
+  );
+}
+
+function countChanges(a: unknown, b: unknown): number {
+  if (typeof a === 'number' && typeof b === 'number') return Math.abs(a - b) > Math.max(1e-6, Math.abs(a) * 1e-6) ? 1 : 0;
+  if (typeof a !== 'object' || typeof b !== 'object' || !a || !b) return a === b ? 0 : 1;
+  let n = 0;
+  const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
+  for (const k of keys) n += countChanges((a as Record<string, unknown>)[k], (b as Record<string, unknown>)[k]);
+  return n;
+}
+
+const INFRA_LABEL: Record<string, string> = {
+  hopital: 'Hôpital', universite: 'Université', ecole: 'Établissement scolaire', aeroport: 'Aéroport', port: 'Port', gare: 'Gare',
+  centrale_charbon: 'Centrale à charbon', centrale_gaz: 'Centrale à gaz', centrale_nucleaire: 'Centrale nucléaire', barrage: 'Barrage hydroélectrique',
+  parc_eolien: 'Parc éolien', parc_solaire: 'Centrale solaire', zone_industrielle: 'Zone industrielle', zone_commerciale: 'Zone commerciale', commissariat: 'Commissariat', stade: 'Stade',
+};
+
+export function Inspector() {
+  const sel = useStore((s) => s.selection);
+  const snap = useStore((s) => s.snap);
+  const country = useStore((s) => s.country);
+  const set = useStore((s) => s.set);
+  if (!sel || !snap || !country) return null;
+  if (sel.kind === 'city') {
+    const c = country.cities[sel.id];
+    const s = snap.cities[sel.id];
+    const w = c.sectorWeights;
+    const tot = w.reduce((a, b) => a + b, 0);
+    const top = w.map((v, i) => ({ i, v: v / tot })).sort((a, b) => b.v - a.v).slice(0, 4);
+    const infra = country.infra.filter((i) => i.cityId === c.id);
+    return (
+      <div className="inspector">
+        <header><h3>{c.capital ? '★ ' : ''}{c.name}</h3><button className="icon-btn" onClick={() => set({ selection: null })}>✕</button></header>
+        <p className="muted">{c.capital ? 'Capitale · ' : ''}{c.kind === 'metropole' ? 'Grande ville' : c.kind === 'ville' ? 'Ville moyenne' : 'Commune'}{c.coastal ? ' · littorale' : ''}</p>
+        <div className="kpis compact">
+          <Kpi label="Habitants" value={people(s.population)} />
+          <Kpi label="Chômage" value={pct(s.unemployment)} />
+          <Kpi label="Revenu disponible" value={eur(s.income)} sub="par habitant/an" />
+          <Kpi label="Satisfaction" value={`${Math.round(s.satisfaction)}/100`} />
+          <Kpi label="Logements" value={int(s.housingUnits)} />
+          <Kpi label="Recettes locales" value={money(s.localRevenue)} sub="€/an" />
+        </div>
+        <h4>Spécialisation économique</h4>
+        {top.map((t) => <div key={t.i} className="spec">{SECTORS[t.i].icon} {SECTORS[t.i].name} <b>{pct(t.v, 0)}</b></div>)}
+        {infra.length > 0 && <><h4>Équipements</h4>{infra.map((i) => <button key={i.id} className="link block" onClick={() => set({ selection: { kind: 'infra', id: i.id } })}>{INFRA_LABEL[i.type]} — {i.name}</button>)}</>}
+      </div>
+    );
+  }
+  const i = country.infra.find((q) => q.id === sel.id);
+  if (!i) return null;
+  const city = i.cityId !== null ? country.cities[i.cityId] : null;
+  const produces = i.energyMWh < 0;
+  return (
+    <div className="inspector">
+      <header><h3>{i.name}</h3><button className="icon-btn" onClick={() => set({ selection: null })}>✕</button></header>
+      <p className="muted">{INFRA_LABEL[i.type]}{city ? ` · ${city.name}` : ''} · mise en service {i.builtYear}</p>
+      <div className="kpis compact">
+        <Kpi label="Capacité" value={`${int(i.capacity)} ${i.capacityUnit}`} />
+        <Kpi label="Emplois" value={int(i.employees)} />
+        <Kpi label="Coût d'entretien" value={money(i.maintenance)} sub="€/an" />
+        <Kpi label={produces ? 'Production électrique' : 'Consommation électrique'} value={`${dec1(Math.abs(i.energyMWh) / 1000)} GWh`} sub="par an" />
+        <Kpi label="Émissions directes" value={i.emissions >= 1e5 ? `${dec1(i.emissions / 1e6)} Mt CO₂` : `${int(i.emissions)} t CO₂`} sub="par an" />
+        <Kpi label="Niveau" value={String(i.level)} />
+      </div>
+      <p className="muted small">La construction, l'amélioration et la fermeture d'équipements arrivent avec le ministère de l'Énergie et le système de construction (phases 4 et 6).</p>
+      {city && <button className="link" onClick={() => { set({ selection: { kind: 'city', id: city.id } }); camApi.focus(city.x, city.z); }}>← Voir {city.name}</button>}
+    </div>
+  );
+}
+
+export function Notifications() {
+  const notices = useStore((s) => s.notices);
+  const snap = useStore((s) => s.snap);
+  if (!snap) return null;
+  return (
+    <Drawer title="Notifications" icon="🔔">
+      {[...notices].reverse().map((n) => (
+        <div key={n.id} className={`notice ${n.kind}`}>
+          <div className="notice-head"><b>{n.title}</b><span>{monthLabel(n.month, snap.startYear)}</span></div>
+          <p>{n.text}</p>
+        </div>
+      ))}
+    </Drawer>
+  );
+}
+
+const STAT_COLORS = ['#4cc9f0', '#f7b801', '#ef476f', '#06d6a0', '#b388eb'];
+export function StatsPanel() {
+  const history = useStore((s) => s.history);
+  const snap = useStore((s) => s.snap);
+  const [keys, setKeys] = useState<string[]>(['growth', 'unemployment', 'inflation']);
+  const [years, setYears] = useState<number | 'all'>(10);
+  const [yA, setYA] = useState(0);
+  const [yB, setYB] = useState(-1);
+  if (!snap) return null;
+  const groups: [string, string[]][] = [
+    ['Économie', ['gdp', 'gdpReal', 'growth', 'inflation', 'unemployment', 'productivityGrowth', 'consumption', 'investment', 'exports', 'imports', 'firms', 'failures']],
+    ['Finances', ['revenue', 'spending', 'balance', 'deficitRatio', 'debt', 'debtRatio', 'cash', 'marketRate', 'policyRate']],
+    ['Social', ['satisfaction', 'trust', 'meanWage', 'medianWage', 'disposablePerCap', 'gini', 'poverty', 'lifeExpectancy']],
+    ['Démographie', ['population', 'employment', 'births', 'deaths', 'migration']],
+    ['Écologie', ['emissions']],
+  ];
+  const unitOf = (k: string) => IND[k]?.unit;
+  const sameUnit = keys.every((k) => unitOf(k) === unitOf(keys[0]));
+  const toggle = (k: string) => setKeys((ks) => (ks.includes(k) ? ks.filter((x) => x !== k) : [...ks.slice(-4), k]));
+  const nYears = Math.floor(((history.gdp?.length ?? 1) - 1) / 12);
+  const yearIdx = (y: number) => Math.min((history.gdp?.length ?? 1) - 1, y * 12);
+  const bYear = yB < 0 ? nYears : yB;
+  return (
+    <Drawer title="Centre de contrôle national" icon="📊" wide>
+      <Section title="Indicateurs (cliquez pour comparer, 5 max)">
+        {groups.map(([g, ks]) => (
+          <div key={g} className="chip-group"><span>{g}</span>{ks.map((k) => <button key={k} className={`chip ${keys.includes(k) ? 'on' : ''}`} onClick={() => toggle(k)}>{IND[k]?.label ?? k}</button>)}</div>
+        ))}
+      </Section>
+      <Tabs<string> value={String(years)} onChange={(v) => setYears(v === 'all' ? 'all' : Number(v))} tabs={[['10', '10 ans'], ['20', '20 ans'], ['50', '50 ans'], ['all', 'Depuis le début']]} />
+      {sameUnit ? (
+        <LineChart years={years} height={240} fmt={IND[keys[0]]?.fmt ?? String} series={keys.map((k, i) => ({ key: k, label: IND[k]?.label ?? k, values: history[k] ?? [], color: STAT_COLORS[i] }))} />
+      ) : keys.map((k, i) => (
+        <LineChart key={k} years={years} height={140} fmt={IND[k]?.fmt ?? String} series={[{ key: k, label: `${IND[k]?.label} (${IND[k]?.unit})`, values: history[k] ?? [], color: STAT_COLORS[i] }]} />
+      ))}
+      <Section title="Définitions">
+        {keys.map((k) => <p key={k} className="small"><b>{IND[k]?.label}</b> — {IND[k]?.def} <em className="muted">Unité : {IND[k]?.unit} · période : {IND[k]?.period}.</em></p>)}
+      </Section>
+      <Section title="Comparer deux années">
+        <div className="row">
+          <label>Année A <select value={yA} onChange={(e) => setYA(Number(e.target.value))}>{Array.from({ length: nYears + 1 }, (_, y) => <option key={y} value={y}>{snap.startYear + y}</option>)}</select></label>
+          <label>Année B <select value={bYear} onChange={(e) => setYB(Number(e.target.value))}>{Array.from({ length: nYears + 1 }, (_, y) => <option key={y} value={y}>{snap.startYear + y}</option>)}</select></label>
+        </div>
+        <table className="table">
+          <thead><tr><th>Indicateur</th><th>{snap.startYear + yA}</th><th>{snap.startYear + bYear}</th><th>Écart</th></tr></thead>
+          <tbody>
+            {HISTORY_KEYS.filter((k) => IND[k]).map((k) => {
+              const a = history[k]?.[yearIdx(yA)];
+              const b = history[k]?.[yearIdx(bYear)];
+              if (a === undefined || b === undefined) return null;
+              const d = b - a;
+              const better = IND[k].good ? (IND[k].good === 'up' ? d > 0 : d < 0) : null;
+              return <tr key={k}><td>{IND[k].label}</td><td>{IND[k].fmt(a)}</td><td>{IND[k].fmt(b)}</td><td className={better === null || Math.abs(d) < 1e-9 ? '' : better ? 'good' : 'bad'}>{(d >= 0 ? '+' : '') + IND[k].fmt(d)}</td></tr>;
+            })}
+          </tbody>
+        </table>
+      </Section>
+    </Drawer>
+  );
+}
+
+export function SettingsPanel() {
+  const settings = useStore((s) => s.settings);
+  const setSettings = useStore((s) => s.setSettings);
+  const snap = useStore((s) => s.snap);
+  const gameId = useStore((s) => s.gameId);
+  const [name, setName] = useState('');
+  return (
+    <Drawer title="Menu & paramètres" icon="⚙️">
+      <Section title="Partie">
+        <div className="btn-row">
+          <button className="btn" onClick={saveNow}>💾 Sauvegarder</button>
+          <button className="btn danger" onClick={leaveGame}>🚪 Menu principal</button>
+        </div>
+        <div className="row">
+          <input className="input" placeholder={`${snap?.name ?? ''} — ${snap?.date ?? ''}`} value={name} onChange={(e) => setName(e.target.value)} />
+          <button className="btn" onClick={async () => { if (!gameId) return; const r = await copyGame(gameId, name || `${snap?.name} — ${snap?.date}`); useStore.getState().toast('Copie de sauvegarde créée.', 'good'); setName(''); void r; }}>Sauvegarder sous…</button>
+        </div>
+        <p className="muted small">Sauvegarde automatique chaque année simulée et à la fermeture.</p>
+      </Section>
+      <Section title="Qualité graphique">
+        <Tabs value={settings.quality} onChange={(q) => setSettings({ quality: q })} tabs={[['low', 'Basse'], ['medium', 'Moyenne'], ['high', 'Haute']]} />
+        <p className="muted small">Basse : sans ombres, relief allégé, moins d'arbres et de véhicules.</p>
+      </Section>
+      <Section title="Affichage">
+        <Toggle label="Noms des villes sur la carte" value={settings.labels} onChange={(v) => setSettings({ labels: v })} />
+        <label className="slider"><div className="slider-top"><span>Durée d'une journée (cycle jour/nuit)</span><b>{settings.dayLength} s</b></div>
+          <input type="range" min={60} max={600} step={30} value={settings.dayLength} onChange={(e) => setSettings({ dayLength: Number(e.target.value) })} /></label>
+      </Section>
+      <Section title="Commandes">
+        <table className="table keys"><tbody>
+          {[['Clic gauche + glisser', 'Déplacer la carte'], ['Clic droit + glisser', 'Pivoter / incliner'], ['Molette', 'Zoom'], ['ZQSD / WASD / flèches', 'Déplacer la caméra'], ['A / E (Q / E)', 'Pivoter'], ['Clic', 'Sélectionner une ville ou un équipement'], ['Espace', 'Pause / reprise'], ['1 · 2 · 3 · 4', 'Vitesse ×1 · ×2 · ×5 · ×10']].map(([k, v]) => <tr key={k}><td><span className="key">{k}</span></td><td>{v}</td></tr>)}
+        </tbody></table>
+      </Section>
+    </Drawer>
+  );
+}
+
+export function HelpPanel() {
+  const set = useStore((s) => s.set);
+  return (
+    <Drawer title="Aide & tutoriel" icon="❓">
+      <button className="btn primary" onClick={() => set({ tutorialStep: 0, panel: null })}>▶ Relancer le tutoriel</button>
+      <Section title="Objectif">
+        <p>Vous dirigez le gouvernement. Chaque décision (impôts, budget, droit du travail) modifie les revenus de millions d'habitants, l'activité des entreprises, les finances publiques et la satisfaction. Tous les indicateurs sont calculés par le moteur de simulation à partir de ces décisions.</p>
+      </Section>
+      <Section title="Prendre une décision">
+        <ol className="small">
+          <li>Ouvrez un ministère dans le dock à gauche.</li>
+          <li>Modifiez les curseurs : les valeurs modifiées s'affichent en jaune avec la valeur actuelle.</li>
+          <li>Cliquez sur <b>Adopter les réformes</b> : elles entrent en vigueur le 1er du mois suivant.</li>
+          <li>Lancez le temps (▶) et suivez les effets dans les indicateurs et le centre de contrôle.</li>
+        </ol>
+      </Section>
+      <Section title="Délais et inerties">
+        <p className="small">L'emploi s'ajuste d'environ 7 % de l'écart par mois, les services publics de 3,5 %, la décarbonation de 1,2 %. Les effets d'une réforme se mesurent donc sur plusieurs mois ou années.</p>
+      </Section>
+      <Section title="Feuille de route">
+        <p className="small">Disponible : carte 3D, population, villes, économie, fiscalité complète, budget, dette, emploi, salaires, satisfaction. À venir : énergie, environnement, transports, industrie, agriculture, déchets, parlement et élections, relations internationales, crises, recherche, construction.</p>
+      </Section>
+    </Drawer>
+  );
+}
+
+const TUTORIAL = [
+  { title: 'Bienvenue au gouvernement', text: 'Vous êtes chef du gouvernement. La barre du haut résume l\'état du pays : trésorerie, population, PIB, croissance, chômage, inflation, solde public, dette, satisfaction, émissions. Survolez chaque indicateur pour voir sa définition.' },
+  { title: 'La carte', text: 'Glissez pour vous déplacer, clic droit pour pivoter, molette pour zoomer. Cliquez sur une ville ou un équipement pour l\'inspecter. Le trafic, les fumées et la taille des villes reflètent l\'économie.' },
+  { title: 'Le temps', text: 'Le jeu est en pause. Utilisez les boutons ▶ ×2 ×5 ×10 (ou Espace et 1-4). Chaque pas correspond à un mois.' },
+  { title: 'Les ministères', text: 'Le dock à gauche ouvre les ministères : Finances (budget, dette), Fiscalité (impôts A à H), Économie, Travail, Population. Modifiez une politique puis cliquez sur « Adopter les réformes ».' },
+  { title: 'Conséquences', text: 'Chaque mesure a des effets directs et indirects, avec des délais. Exemple : baisser l\'impôt sur les sociétés stimule l\'investissement mais réduit les recettes. Suivez tout dans le Centre de contrôle (📊). Bonne gouvernance !' },
+];
+
+export function Tutorial() {
+  const step = useStore((s) => s.tutorialStep);
+  const set = useStore((s) => s.set);
+  if (step < 0 || step >= TUTORIAL.length) return null;
+  const t = TUTORIAL[step];
+  return (
+    <div className="tutorial">
+      <div className="tut-step">Étape {step + 1}/{TUTORIAL.length}</div>
+      <h3>{t.title}</h3>
+      <p>{t.text}</p>
+      <div className="btn-row">
+        <button className="btn ghost" onClick={() => { set({ tutorialStep: -1 }); localStorage.setItem('eco_tuto', '1'); }}>Passer</button>
+        <button className="btn primary" onClick={() => { const n = step + 1; set({ tutorialStep: n >= TUTORIAL.length ? -1 : n }); if (n >= TUTORIAL.length) localStorage.setItem('eco_tuto', '1'); }}>{step + 1 < TUTORIAL.length ? 'Suivant' : 'Commencer'}</button>
+      </div>
+    </div>
+  );
+}
+
+export function Toasts() {
+  const toasts = useStore((s) => s.toasts);
+  return <div className="toasts">{toasts.map((t) => <div key={t.id} className={`toast ${t.kind}`}>{t.text}</div>)}</div>;
+}
+
+export function Panels() {
+  const panel = useStore((s) => s.panel);
+  switch (panel) {
+    case 'finances': return <FinancesPanel />;
+    case 'fiscalite': return <FiscalitePanel />;
+    case 'travail': return <TravailPanel />;
+    case 'economie': return <EconomiePanel />;
+    case 'population': return <PopulationPanel />;
+    case 'stats': return <StatsPanel />;
+    case 'notifications': return <Notifications />;
+    case 'settings': return <SettingsPanel />;
+    case 'help': return <HelpPanel />;
+    default: return null;
+  }
+}
+
+export function useHotkeys() {
+  useEffect(() => {
+    const h = (e: KeyboardEvent) => {
+      if ((e.target as HTMLElement).closest('input,textarea,select')) return;
+      const st = useStore.getState();
+      if (st.screen !== 'game') return;
+      if (e.code === 'Space') { e.preventDefault(); setSpeed(st.speed === 0 ? 1 : 0); }
+      const map: Record<string, number> = { Digit1: 1, Digit2: 2, Digit3: 5, Digit4: 10 };
+      if (map[e.code]) setSpeed(map[e.code]);
+      if (e.code === 'Escape') st.set({ panel: null, selection: null });
+    };
+    window.addEventListener('keydown', h);
+    return () => window.removeEventListener('keydown', h);
+  }, []);
+}
+
+export { openGame, Kpi };

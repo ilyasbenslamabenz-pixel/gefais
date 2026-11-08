@@ -1,0 +1,88 @@
+// Communication avec le serveur : REST (parties) et Socket.IO (simulation en direct).
+import { io } from 'socket.io-client';
+import { useStore } from './store';
+import type { Snapshot, FinanceAction } from '../../shared/sim/engine';
+import type { CountryDef, Notice, Policy } from '../../shared/sim/types';
+
+const KEY = 'eco_player';
+export const player: string = (() => {
+  let t = localStorage.getItem(KEY);
+  if (!t || !/^[a-f0-9]{32}$/.test(t)) {
+    t = Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) => b.toString(16).padStart(2, '0')).join('');
+    localStorage.setItem(KEY, t);
+  }
+  return t;
+})();
+
+const st = () => useStore.getState();
+export const socket = io(import.meta.env.VITE_SERVER_URL || undefined, { transports: ['websocket', 'polling'], auth: { player } });
+
+socket.on('connect', () => {
+  st().set({ connected: true });
+  const id = st().gameId;
+  if (id && st().screen === 'game') void openGame(id, true);
+});
+socket.on('disconnect', () => st().set({ connected: false }));
+
+socket.on('game:tick', (m: { snap: Snapshot; last: Record<string, number> | null; notices: Notice[] }) => {
+  const s = st();
+  const history = s.history;
+  if (m.last) for (const [k, v] of Object.entries(m.last)) (history[k] ??= []).push(v);
+  const notices = m.notices?.length ? [...s.notices, ...m.notices].slice(-80) : s.notices;
+  s.set({ snap: m.snap, history: { ...history }, notices, unread: s.unread + (m.notices?.length ?? 0) });
+  for (const n of m.notices ?? []) if (n.kind !== 'info' || n.title.startsWith('Réformes')) s.toast(`${n.title} — ${n.text}`, n.kind);
+});
+socket.on('game:speed', (speed: number) => st().set({ speed }));
+socket.on('game:pending', (pending: Snapshot['pending']) => {
+  const s = st();
+  if (s.snap) s.set({ snap: { ...s.snap, pending } });
+});
+
+async function api<T>(url: string, init?: RequestInit): Promise<T> {
+  const r = await fetch(url, { ...init, headers: { 'content-type': 'application/json', 'x-player': player, ...(init?.headers || {}) } });
+  if (!r.ok) throw new Error((await r.json().catch(() => ({})))?.error || r.statusText);
+  return r.json();
+}
+
+export interface GameMeta { id: string; name: string; month: number; updatedAt: number; createdAt: number }
+export const listGames = () => api<GameMeta[]>('/api/games');
+export const createGameReq = (cfg: Record<string, unknown>) => api<{ id: string }>('/api/games', { method: 'POST', body: JSON.stringify(cfg) });
+export const copyGame = (id: string, name: string) => api<{ id: string }>(`/api/games/${id}/copy`, { method: 'POST', body: JSON.stringify({ name }) });
+export const deleteGame = (id: string) => api<{ ok: boolean }>(`/api/games/${id}`, { method: 'DELETE' });
+
+export function openGame(id: string, silent = false): Promise<boolean> {
+  return new Promise((resolve) => {
+    socket.emit('game:open', { id }, (r: { ok: boolean; msg?: string; country: CountryDef; history: Record<string, number[]>; snap: Snapshot; speed: number }) => {
+      if (!r.ok) {
+        st().toast(r.msg || 'Impossible d\'ouvrir la partie', 'bad');
+        return resolve(false);
+      }
+      localStorage.setItem('eco_last', id);
+      st().set({ screen: 'game', gameId: id, country: r.country, history: r.history, snap: r.snap, speed: r.speed, notices: r.snap.notices, unread: 0, draft: silent ? st().draft : null, selection: null });
+      resolve(true);
+    });
+  });
+}
+
+export const setSpeed = (s: number) => socket.emit('game:speed', s);
+export const stepOnce = () => socket.emit('game:step');
+export function submitPolicy(p: Policy): Promise<boolean> {
+  return new Promise((resolve) => socket.emit('game:policy', p, (r: { ok: boolean; msg?: string }) => {
+    if (r.ok) { st().set({ draft: null }); st().toast('Réformes adoptées : entrée en vigueur au 1er du mois prochain.', 'good'); }
+    else st().toast(r.msg || 'Réforme refusée', 'bad');
+    resolve(r.ok);
+  }));
+}
+export const cancelPending = () => socket.emit('game:cancelPending', () => st().toast('Réformes en attente annulées.'));
+export function financeAction(a: FinanceAction): Promise<boolean> {
+  return new Promise((resolve) => socket.emit('game:action', a, (r: { ok: boolean; msg: string }) => {
+    st().toast(r.msg, r.ok ? 'good' : 'bad');
+    resolve(r.ok);
+  }));
+}
+export const saveNow = () => socket.emit('game:save', (r: { ok: boolean }) => st().toast(r.ok ? 'Partie sauvegardée.' : 'Échec de la sauvegarde', r.ok ? 'good' : 'bad'));
+export function leaveGame() {
+  setSpeed(0);
+  socket.emit('game:save', () => {});
+  st().set({ screen: 'menu', gameId: null, snap: null, country: null, panel: null, draft: null });
+}
