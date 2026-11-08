@@ -1,5 +1,6 @@
 // Définitions des indicateurs : libellé, unité, période et définition (affichées dans l'interface).
 import { money, people, pct, dec1, int } from '../format';
+import { ENERGY_IND } from './energyIndicators';
 
 export interface IndicatorDef { label: string; unit: string; period: string; def: string; fmt: (v: number) => string; good?: 'up' | 'down' }
 
@@ -45,6 +46,7 @@ export const IND: Record<string, IndicatorDef> = {
   intlDemand: { label: 'Demande étrangère (facteur)', unit: 'indice', period: 'mensuel', def: 'Facteur appliqué à la demande mondiale : conjoncture des voisins, accords commerciaux, chocs.', fmt: (v) => v.toFixed(3).replace('.', ','), good: 'up' },
   intlEnergy: { label: 'Prix de l\'énergie importée (facteur)', unit: 'indice', period: 'mensuel', def: 'Facteur appliqué au prix de l\'énergie : voisins exportateurs, accords énergétiques, crises.', fmt: (v) => v.toFixed(3).replace('.', ','), good: 'down' },
   productivityGrowth: { label: 'Gains de productivité', unit: '%/an', period: 'tendance', def: 'Progression annuelle de la productivité (investissement, recherche, éducation, formation, infrastructures).', fmt: (v) => pct(v, 2), good: 'up' },
+  ...ENERGY_IND, // module énergie et environnement
 };
 
 export const REVENUE_LABELS: Record<string, string> = {
@@ -54,9 +56,11 @@ export const REVENUE_LABELS: Record<string, string> = {
   carbone: 'Taxe carbone', carburants: 'Taxe sur les carburants', emissionsIndustrielles: 'Taxe sur les émissions industrielles', dechets: 'Taxe sur les déchets',
   vehicules: 'Taxe sur les véhicules polluants', energivores: 'Taxe sur les activités énergivores', entreprisesPubliques: 'Dividendes des entreprises publiques',
   infrastructures: 'Péages et redevances', divers: 'Recettes diverses', douanes: 'Droits de douane',
+  energiePublique: 'Ventes des centrales publiques (marge)',
 };
 export const SPENDING_LABELS: Record<string, string> = {
   sante: 'Santé', education: 'Éducation', securite: 'Sécurité & justice', defense: 'Défense', transports: 'Transports publics', infrastructures: 'Infrastructures',
   environnement: 'Environnement', administration: 'Administration', logement: 'Aides au logement', subventions: 'Subventions', recherche: 'Recherche', formation: 'Formation professionnelle',
+  energie: 'Énergie (investissements et soutiens)', ecologie: 'Environnement, biodiversité et compensation',
   retraites: 'Retraites', chomage: 'Allocations chômage', allocations: 'Prestations familiales', creditActivite: "Crédit d'activité et aides à l'embauche", interets: 'Intérêts de la dette',
 };

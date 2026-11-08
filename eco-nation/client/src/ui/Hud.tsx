@@ -16,6 +16,8 @@ import { EvenementsPanel, EventOverlay } from './Evenements';
 import { ObjectifsPanel } from './Objectifs';
 import { WEATHER_LABEL, weatherFor } from '../game/life';
 import { camApi } from '../game/world';
+import { EnergiePanel } from './Energie';
+import { EnvironnementPanel } from './Environnement';
 
 const SEASON = ['❄️ Hiver', '❄️ Hiver', '🌱 Printemps', '🌱 Printemps', '🌱 Printemps', '☀️ Été', '☀️ Été', '☀️ Été', '🍂 Automne', '🍂 Automne', '🍂 Automne', '❄️ Hiver'];
 
@@ -73,6 +75,8 @@ const MINISTRIES: { id: Panel; icon: string; label: string }[] = [
   { id: 'international', icon: '🌐', label: 'International' },
   { id: 'evenements', icon: '⚠️', label: 'Événements' },
   { id: 'objectifs', icon: '🏆', label: 'Objectifs' },
+  { id: 'energie', icon: '⚡', label: 'Énergie' },
+  { id: 'environnement', icon: '🌳', label: 'Environnement' },
   { id: 'stats', icon: '📊', label: 'Statistiques' },
 ];
 
@@ -378,6 +382,8 @@ function PanelContent() {
     case 'travail': return <TravailPanel />;
     case 'economie': return <EconomiePanel />;
     case 'population': return <PopulationPanel />;
+    case 'energie': return <EnergiePanel />;
+    case 'environnement': return <EnvironnementPanel />;
     case 'stats': return <StatsPanel />;
     case 'notifications': return <Notifications />;
     case 'settings': return <SettingsPanel />;

@@ -1,7 +1,7 @@
 // Communication avec le serveur : REST (parties) et Socket.IO (simulation en direct).
 import { io } from 'socket.io-client';
 import { useStore } from './store';
-import type { Snapshot, FinanceAction, GovAction } from '../../shared/sim/engine';
+import type { Snapshot, FinanceAction, GovAction, GameAction } from '../../shared/sim/engine';
 import type { GameEvent } from '../../shared/sim/events';
 import type { ElectionResult } from '../../shared/sim/politics';
 import type { CountryDef, Notice, Policy } from '../../shared/sim/types';
@@ -93,6 +93,13 @@ export function financeAction(a: FinanceAction): Promise<boolean> {
 /** Décision d'événement, diplomatie, accord, action parlementaire ou poursuite après défaite. */
 export function govAction(a: GovAction): Promise<boolean> {
   return new Promise((resolve) => socket.emit('game:gov', a, (r: { ok: boolean; msg: string }) => {
+    st().toast(r.msg, r.ok ? 'good' : 'bad');
+    resolve(r.ok);
+  }));
+}
+/** Programmes énergétiques et environnementaux (construction, fermeture, reboisement…) : même canal que les opérations financières. */
+export function gameAction(a: GameAction): Promise<boolean> {
+  return new Promise((resolve) => socket.emit('game:action', a, (r: { ok: boolean; msg: string }) => {
     st().toast(r.msg, r.ok ? 'good' : 'bad');
     resolve(r.ok);
   }));

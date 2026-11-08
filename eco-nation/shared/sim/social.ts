@@ -52,6 +52,7 @@ export function servicesStep(S: GameState, P: Policy, calibrate: boolean): Servi
 }
 
 export function airQuality(S: GameState) {
+  if (S.environment) return S.environment.airQuality; // module environnement : polluants locaux réels (énergie, transports, chauffage, industrie, agriculture)
   const pop = S.demography.cohorts.reduce((s, v) => s + v, 0);
   const perCap = S.accounts.emissions / Math.max(1, pop);
   return clamp(1 - 0.35 * perCap / Math.max(0.1, S.baseline.emissionsPerCap), 0, 1);

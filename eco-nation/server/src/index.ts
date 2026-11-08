@@ -5,7 +5,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { Server, type Socket } from 'socket.io';
-import { applyAction, applyGovAction, createGame, migrate, schedulePolicy, snapshot, tick, type FinanceAction, type GovAction } from '../../shared/sim/engine';
+import { applyAction, applyGovAction, createGame, migrate, schedulePolicy, snapshot, tick, type FinanceAction, type GovAction, type GameAction } from '../../shared/sim/engine';
 import type { CountryConfig, GameState, Policy } from '../../shared/sim/types';
 import { db } from './db';
 
@@ -214,7 +214,7 @@ io.on('connection', (socket: Socket) => {
     ack(cb)({ ok: true });
   });
 
-  socket.on('game:action', (a: FinanceAction, cb) => {
+  socket.on('game:action', (a: GameAction, cb) => { // finances, programmes énergétiques et environnementaux
     if (!current) return ack(cb)({ ok: false, msg: 'Aucune partie ouverte' });
     const r = applyAction(current.state, a);
     if (r.ok) io.to(current.state.id).emit('game:tick', { snap: snapshot(current.state), last: null, notices: current.state.notices.filter((n) => n.id > current!.lastNotice) });
