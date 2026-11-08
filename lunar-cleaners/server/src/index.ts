@@ -47,7 +47,7 @@ app.get('/api/health', (_req, res) => {
   res.json({ ok: true, rooms: rooms.size, players: sessions.size });
 });
 app.get('/api/rooms', (_req, res) => res.json(publicRooms()));
-app.get('/api/leaderboard', (_req, res) => res.json(leaderboard(20)));
+app.get('/api/leaderboard', async (_req, res) => res.json(await leaderboard(20)));
 
 const dist = path.resolve(process.cwd(), 'client/dist');
 if (fs.existsSync(dist)) {
@@ -64,11 +64,11 @@ const byToken = new Map<string, Session>();
 function persist(s: Session) {
   if (!s.saveDirty) return;
   s.saveDirty = false;
-  try {
-    saveProfile(s.token, s.profile);
-  } catch (e) {
+  const snapshot = JSON.parse(JSON.stringify(s.profile));
+  saveProfile(s.token, snapshot).catch((e) => {
     console.error('Erreur de sauvegarde', e);
-  }
+    s.saveDirty = true;
+  });
 }
 
 setInterval(() => sessions.forEach(persist), 10000);
@@ -90,14 +90,14 @@ const safeAck = (a: unknown): Ack => (typeof a === 'function' ? (a as Ack) : () 
 io.on('connection', (socket) => {
   let s: Session | null = null;
 
-  socket.on('hello', (msg: { token?: string; name?: string; look?: unknown }, ack) => {
+  socket.on('hello', async (msg: { token?: string; name?: string; look?: unknown }, ack) => {
     const reply = safeAck(ack);
     let token = typeof msg?.token === 'string' && /^[a-f0-9]{32}$/.test(msg.token) ? msg.token : '';
-    let profile = token ? loadProfile(token) : null;
+    let profile = token ? await loadProfile(token).catch(() => null) : null;
     if (!token || !profile) {
       token = token || crypto.randomBytes(16).toString('hex');
       profile = newProfile(msg?.name ?? '', msg?.look as never);
-      saveProfile(token, profile);
+      await saveProfile(token, profile).catch((e) => console.error(e));
     } else {
       profile = migrateProfile(profile);
     }
@@ -226,7 +226,7 @@ io.on('connection', (socket) => {
     io.to(s.room.id).emit('chat', { from: s.profile.name, color: s.profile.look.accent, text: t, t: now });
   }));
 
-  socket.on('leaderboard', need((_s, ack) => safeAck(ack)(leaderboard(20))));
+  socket.on('leaderboard', need((_s, ack) => { leaderboard(20).then((r) => safeAck(ack)(r)).catch(() => safeAck(ack)([])); }));
 
   socket.on('disconnect', () => {
     if (!s) return;
@@ -238,12 +238,9 @@ io.on('connection', (socket) => {
   });
 });
 
-function shutdown() {
+async function shutdown() {
   console.log('\nSauvegarde des profils...');
-  sessions.forEach((s) => {
-    s.saveDirty = true;
-    persist(s);
-  });
+  await Promise.allSettled([...sessions.values()].map((s) => saveProfile(s.token, s.profile)));
   process.exit(0);
 }
 process.on('SIGINT', shutdown);

@@ -4,7 +4,7 @@ Jeu vidéo 3D **multijoueur coopératif** jouable directement dans le navigateur
 
 - **Frontend** : React 19, TypeScript, Three.js, React Three Fiber, Zustand, Vite
 - **Backend** : Node.js, Express, Socket.IO (serveur autoritaire)
-- **Base de données** : SQLite (module natif `node:sqlite`, aucune compilation requise)
+- **Base de données** : PostgreSQL (production, via `DATABASE_URL`) ou SQLite (développement, par défaut, module natif `node:sqlite`)
 
 ---
 
@@ -42,7 +42,9 @@ Variables d'environnement :
 | Variable | Défaut | Rôle |
 |---|---|---|
 | `PORT` | `3001` | Port HTTP du serveur |
-| `DATA_DIR` | `server/data` | Dossier de la base SQLite (`lunar.db`) |
+| `DATABASE_URL` | — | Active PostgreSQL (ex. `postgresql://user:mdp@hote:5432/lunar`). Sans elle : SQLite |
+| `PGSSL` | — | `1` pour se connecter en SSL (hébergeurs PostgreSQL managés) |
+| `DATA_DIR` | `server/data` | Dossier de la base SQLite (`lunar.db`) si PostgreSQL n'est pas utilisé |
 | `CORS_ORIGIN` | toutes | Origines autorisées (séparées par des virgules) si le client est hébergé ailleurs |
 | `VITE_SERVER_URL` | même origine | (build client) URL du serveur si le client est hébergé séparément |
 
@@ -128,7 +130,7 @@ lunar-cleaners/
 │   ├── index.ts       Express + Socket.IO : sessions, parties, achats, ventes, chat
 │   ├── room.ts        Simulation d'une partie (poussière, débris, zones, tempêtes, diffusion)
 │   ├── profiles.ts    Économie et progression des joueurs
-│   └── db.ts          Persistance SQLite
+│   └── db.ts          Persistance PostgreSQL ou SQLite
 └── client/src/
     ├── game/          Scène 3D (terrain + shader de poussière, ciel, décors, modèles, joueurs, particules)
     ├── ui/            Menu, HUD, panneaux, contrôles clavier/souris/tactile
