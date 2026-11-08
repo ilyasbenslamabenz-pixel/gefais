@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import type { Snapshot } from '../../shared/sim/engine';
 import type { CountryDef, Notice, Policy } from '../../shared/sim/types';
 
-export type Panel = null | 'finances' | 'fiscalite' | 'travail' | 'economie' | 'population' | 'stats' | 'notifications' | 'settings' | 'help';
+export type Panel = null | 'finances' | 'fiscalite' | 'travail' | 'economie' | 'population' | 'transports' | 'industrie' | 'agriculture' | 'dechets' | 'stats' | 'notifications' | 'settings' | 'help';
 export type Quality = 'low' | 'medium' | 'high';
 export type Selection = null | { kind: 'city'; id: number } | { kind: 'infra'; id: number };
 
