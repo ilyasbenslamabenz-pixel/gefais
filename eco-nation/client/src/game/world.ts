@@ -118,11 +118,11 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
   const traffic = createTraffic(scene, grid, country, q.cars);
   const airsea = createAirSea(scene, grid, country);
   if (shadow) {
-    shadow.addShadowCaster(cities.box);
-    shadow.addShadowCaster(cities.roof);
+    // --- bâtiments --- : chaque gabarit instancié projette ses ombres (la boîte de sélection est invisible)
+    for (const m of cities.shadowCasters) shadow.addShadowCaster(m);
     shadow.addShadowCaster(forests.tree);
     for (const r of infra.roots) shadow.addShadowCaster(r);
-    for (const m of [terrain, cities.box]) m.receiveShadows = true;
+    terrain.receiveShadows = true; // --- bâtiments --- : les gabarits reçoivent déjà les ombres
   }
 
   // Précipitations autour de la caméra
