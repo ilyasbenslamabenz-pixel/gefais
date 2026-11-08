@@ -189,7 +189,8 @@ export function buildingMaterial(scene: Scene, name: string, o: MatOptions) {
         emis = nightPhoto * mix(vec3(1.0, 0.82, 0.6), vec3(1.0), hf) * on * (0.45 + 0.55 * win);
         emis += win * step(hc, 0.10 * vB.w) * litColor(bHash(cell * 1.7 + 3.1)) * 0.5;
       } else {
-        float on = step(hc, vB.w * mix(0.55, 1.1, hf));
+        // rez-de-chaussée : vitrines et halls plus souvent éclairés
+        float on = step(hc, vB.w * mix(0.55, 1.1, hf) * (floorId < 0.5 ? 1.8 : 1.0));
         emis = win * on * litColor(bHash(cell * 1.7 + 3.1 + seed)) * (0.55 + 0.6 * bHash(cell + 9.1));
       }
       alb = mix(alb, alb * 0.4, gMask);
@@ -261,7 +262,7 @@ export function balconyMaterial(scene: Scene) {
   mat.Vertex_MainEnd('vB = bdata; vPart = pinfo.x;');
   mat.Fragment_Definitions(GLSL_COMMON + 'varying vec4 vB; varying float vPart;');
   mat.Fragment_Custom_Diffuse(/* glsl */ `
-    vec3 bc = vPart > 2.5 ? (vB.y < 0.5 ? vec3(0.62, 0.70, 0.74) : vec3(0.16, 0.16, 0.17)) : vec3(0.80, 0.79, 0.76);
+    vec3 bc = vPart > 2.5 ? (vB.y < 0.5 ? vec3(0.36, 0.42, 0.47) : vec3(0.14, 0.14, 0.15)) : vec3(0.62, 0.61, 0.58);
     diffuseColor = bc * (0.9 + 0.2 * vB.z);
   `);
   return mat;

@@ -8,7 +8,7 @@
 // - zones industrielles et portuaires : entrepôts, sheds, hangars cintrés, silos.
 // Tout est dessiné en instances fines (un appel de rendu par gabarit). La population de chaque quartier,
 // calculée par le serveur, fait apparaître ou disparaître des bâtiments (rang de visibilité par bâtiment).
-import { Matrix, MeshBuilder, type Camera, type Material, type Mesh, type Scene, type Vector3 } from '@babylonjs/core';
+import { GlowLayer, Matrix, MeshBuilder, type Camera, type Material, type Mesh, type Scene, type Vector3 } from '@babylonjs/core';
 import { fbm, mulberry32 } from '../../../shared/noise';
 import { HALF_D, HALF_W, parkMask, urbanDensity } from '../../../shared/sim/country';
 import type { CountryDef } from '../../../shared/sim/types';
@@ -22,7 +22,7 @@ const CELL = 0.2; // trame des rues peinte par le terrain (km)
 const FLOOR = 0.003; // hauteur d'étage d'habitation (km)
 const OFFICE = 0.0036; // hauteur d'étage de bureaux (km)
 /** Rayon (km) autour du point visé dans lequel les pavillons sont dessinés ; au-delà, le jardin les peint. */
-const houseRange = (camR: number) => Math.max(2.5, Math.min(9, camR));
+const houseRange = (camR: number) => Math.max(2.5, Math.min(6, camR));
 
 // indices des couches de façade de chaque matériau
 const TW = { f001: 0, f002: 1, f003: 2, f005: 3, f006: 4, f017: 5, metal: 6 } as const;
@@ -160,7 +160,7 @@ export function createCities(scene: Scene, grid: Grid, country: CountryDef, bloc
         float hl = bHash(vec2(floor(fm.x / 0.0032), seed * 33.0));
         emis = lin * step(hl, vB.w * 0.9) * litColor(fract(hl * 7.7)) * 0.9;
       } else if (rl < 2.5) {
-        alb = texture2D(tileTex, fm / 0.0035).rgb * vec3(1.0, 0.95, 0.92) * (0.85 + 0.25 * seed);
+        alb = texture2D(tileTex, fm / 0.0035).rgb * vec3(0.92, 0.86, 0.84) * (0.8 + 0.25 * seed);
       } else {
         vec3 sl = texture2D(slateTex, fm / 0.0035).rgb;
         alb = vec3(dot(sl, vec3(0.33))) * vec3(0.55, 0.58, 0.64);
@@ -188,11 +188,11 @@ export function createCities(scene: Scene, grid: Grid, country: CountryDef, bloc
           float g = bNoise(vPositionW.xz * 600.0) * 0.6 + bNoise(vPositionW.xz * 2600.0) * 0.4;
           alb = mix(vec3(0.19, 0.26, 0.13), vec3(0.27, 0.32, 0.17), g);
           // cours d'immeubles : pavés et gravier autour des pelouses
-          if (vB.y > 0.5) alb = mix(alb, vec3(0.50, 0.48, 0.44) * (0.92 + 0.12 * bNoise(vPositionW.xz * 3000.0)), smoothstep(0.38, 0.5, bNoise(vPositionW.xz * 45.0 + seed * 9.0)));
+          if (vB.y > 0.5) alb = mix(alb, vec3(0.42, 0.40, 0.37) * (0.92 + 0.12 * bNoise(vPositionW.xz * 3000.0)), smoothstep(0.38, 0.5, bNoise(vPositionW.xz * 45.0 + seed * 9.0)));
           alb = mix(alb, vec3(0.16, 0.24, 0.11), step(0.72, bNoise(vPositionW.xz * 1400.0 + 3.0)));
           vec2 lp = abs(fract(vPositionW.xz / 0.018) - 0.5);
-          alb = mix(alb, vec3(0.13, 0.20, 0.09), step(0.47, max(lp.x, lp.y)) * 0.8);
-          alb = mix(alb, vec3(0.62, 0.62, 0.58), step(0.85, bNoise(vPositionW.xz * 300.0 + 9.0)) * 0.5);
+          alb = mix(alb, vec3(0.13, 0.20, 0.09), step(0.47, max(lp.x, lp.y)) * 0.8 * step(vB.y, 0.5)); // haies entre parcelles (lotissements)
+          alb = mix(alb, vec3(0.48, 0.46, 0.42), smoothstep(0.8, 0.9, bNoise(vPositionW.xz * 90.0 + 9.0)) * 0.6); // allées, terrasses
           // au-delà du rayon des pavillons détaillés : toits peints le long des rues (imposteur)
           float far = smoothstep(uView.z * 0.9, uView.z, distance(vPositionW.xz, uView.xy));
           if (far > 0.0 && vB.y < 0.5) {
@@ -243,13 +243,14 @@ export function createCities(scene: Scene, grid: Grid, country: CountryDef, bloc
     hBox: mk(boxTemplate('bldHabBox', scene), habMat, midR),
     hMans: mk(mansardTemplate('bldHabMansard', scene), habMat, lotR),
     hRing: mk(ringTemplate('bldHabRing', scene, 0.1), habMat, lotR, true),
+    hMansAll: mk(mansardTemplate('bldHabMansardAll', scene), habMat, midR), // îlots entamés par une voie
     hHouse: mk(houseTemplate('bldHabHouse', scene), habMat, houseRange),
     iBox: mk(boxTemplate('bldIndBox', scene), indMat),
     iShed: mk(shedTemplate('bldIndShed', scene), indMat),
     iVault: mk(vaultTemplate('bldIndVault', scene), indMat),
     iSilo: mk(siloTemplate('bldIndSilo', scene), indMat),
     det: mk(boxTemplate('bldDetails', scene), indMat, (r) => clamp(r * 1.2, 1.5, 4)), // petits volumes : édicules, antennes, héliports
-    tree: mk(treeTemplate('bldTrees', scene), treeMat, (r) => clamp(r * 0.9, 2, 7)),
+    tree: mk(treeTemplate('bldTrees', scene), treeMat, (r) => clamp(r * 0.8, 1.5, 5)),
     balc: mk(balconyTemplate('bldBalconies', scene), balcMat, (r) => clamp(r, 1.5, 3)),
   };
 
@@ -307,7 +308,7 @@ export function createCities(scene: Scene, grid: Grid, country: CountryDef, bloc
     B.balc.add(bid, x, y0 + FLOOR, z, len, FLOOR, 0.0015, rot, [Math.min(23, floors - 1), dark ? 1 : 0, rnd(), 0], [1, 1, 1, 0]);
   };
   const edicule = (bid: number, x: number, y: number, z: number, s: number) => {
-    if (!detail) return;
+    if (!detail || rnd() < 0.4) return;
     putAt(B.det, bid, x + R(-s, s) * 0.25, y, z + R(-s, s) * 0.25, R(0.004, 0.008), R(0.003, 0.006), R(0.0025, 0.0045), 0, IN.equip, 0, 0, [1, 1, 1]);
   };
 
@@ -466,32 +467,38 @@ export function createCities(scene: Scene, grid: Grid, country: CountryDef, bloc
     if (rnd() < 0.5 && mode !== 'modern') sides.push({ x: (r.x0 + r.x1) / 2, z: (r.z0 + r.z1) / 2 + R(-0.02, 0.02), len: W - 2 * dW, rot: 0 });
     const floorsBase = mode === 'hauss' ? 6 : mode === 'ville' ? 4 : 7;
     const roofKind = mode === 'hauss' ? HR.zinc : mode === 'ville' ? (rnd() < 0.7 ? HR.tiles : HR.slate) : HR.flat;
+    // lots : on vérifie d'abord les emprises ; un îlot entamé par une voie garde ses lots détaillés à
+    // toute distance (pas de volume d'îlot lointain qui recouvrirait la voie)
+    const lots: { cx: number; cz: number; lw: number; rot: number }[] = [];
     for (const sd of sides) {
       const ux = Math.cos(sd.rot), uz = -Math.sin(sd.rot); // axe local x dans le monde
       let t = -sd.len / 2;
       while (t < sd.len / 2 - 0.004) {
         let lw = mode === 'modern' ? R(0.03, 0.05) : R(0.014, 0.028);
         if (t + lw > sd.len / 2 - 0.01) lw = sd.len / 2 - t;
-        const cx = sd.x + ux * (t + lw / 2), cz = sd.z + uz * (t + lw / 2);
-        const bid = newBld(0.06);
-        const floors = Math.max(3, floorsBase + Math.floor(R(-1, 1.6)));
-        if (mode === 'modern') {
-          const h = floors * FLOOR;
-          const lay = pick([HB.resid, HB.resid, HB.brick, HB.brick2]);
-          const y = put(B.hBox, bid, cx, cz, lw, dW, h, sd.rot, lay, HR.flat, R(0.3, 0.6), pick(PAL.render));
-          if (lay === HB.resid) balconies(bid, cx + Math.sin(sd.rot) * dW / 2, cz + Math.cos(sd.rot) * dW / 2, lw * 0.85, sd.rot, y, floors, rnd() < 0.5);
-          edicule(bid, cx, y + h, cz, lw);
-        } else {
-          const wallH = 0.0045 + (floors - 1) * 0.0031;
-          const lay = mode === 'hauss' ? (rnd() < 0.92 ? HB.hauss : HB.brick2) : pick([HB.hauss, HB.hauss, HB.brick, HB.brick2, HB.resid]);
-          const tint = mode === 'hauss' ? pick(PAL.stone) : pick(PAL.pastel);
-          put(B.hMans, bid, cx, cz, lw + 0.0004, dW, wallH / 0.78, sd.rot, lay, roofKind, R(0.3, 0.65), tint);
-        }
+        lots.push({ cx: sd.x + ux * (t + lw / 2), cz: sd.z + uz * (t + lw / 2), lw, rot: sd.rot });
         t += lw;
       }
     }
+    const intact = lots.every((l) => { const c = Math.abs(Math.cos(l.rot)), s2 = Math.abs(Math.sin(l.rot)); return clear(l.cx, l.cz, (l.lw * c + dW * s2) / 2, (l.lw * s2 + dW * c) / 2); });
+    for (const { cx, cz, lw, rot } of lots) {
+      const bid = newBld(0.06);
+      const floors = Math.max(3, floorsBase + Math.floor(R(-1, 1.6)));
+      if (mode === 'modern') {
+        const h = floors * FLOOR;
+        const lay = pick([HB.resid, HB.resid, HB.brick, HB.brick2]);
+        const y = put(B.hBox, bid, cx, cz, lw, dW, h, rot, lay, HR.flat, R(0.3, 0.6), pick(PAL.render));
+        if (lay === HB.resid) balconies(bid, cx + Math.sin(rot) * dW / 2, cz + Math.cos(rot) * dW / 2, lw * 0.85, rot, y, floors, rnd() < 0.5);
+        edicule(bid, cx, y + h, cz, lw);
+      } else {
+        const wallH = 0.0045 + (floors - 1) * 0.0031;
+        const lay = mode === 'hauss' ? (rnd() < 0.92 ? HB.hauss : HB.brick2) : pick([HB.hauss, HB.hauss, HB.brick, HB.brick2, HB.resid]);
+        const tint = mode === 'hauss' ? pick(PAL.stone) : pick(PAL.pastel);
+        put(intact ? B.hMans : B.hMansAll, bid, cx, cz, lw + 0.0004, dW, wallH / 0.78, rot, lay, roofKind, R(0.3, 0.65), tint);
+      }
+    }
     // niveau de détail lointain : l'îlot entier en un volume
-    if (mode !== 'modern') {
+    if (mode !== 'modern' && intact) {
       const rid = newBld(0.1);
       const H = (0.0045 + (floorsBase - 1) * 0.0031) / 0.78;
       noClear = true;
@@ -499,9 +506,11 @@ export function createCities(scene: Scene, grid: Grid, country: CountryDef, bloc
       noClear = false;
     }
     // cour intérieure : jardin et arbres
-    noClear = true;
-    put(B.iBox, newBld(0), (r.x0 + r.x1) / 2, (r.z0 + r.z1) / 2, W - 2 * dW, D - 2 * dW, 0.0005, 0, IN.garden, 1, 0, [1, 1, 1]);
-    noClear = false;
+    if (intact || clear((r.x0 + r.x1) / 2, (r.z0 + r.z1) / 2, W / 2 - dW, D / 2 - dW)) {
+      noClear = true;
+      put(B.iBox, newBld(0), (r.x0 + r.x1) / 2, (r.z0 + r.z1) / 2, W - 2 * dW, D - 2 * dW, 0.0005, 0, IN.garden, 1, 0, [1, 1, 1]);
+      noClear = false;
+    }
     const nt = detail ? 4 + Math.floor(rnd() * 6) : 2 + Math.floor(rnd() * 3);
     for (let k = 0; k < nt; k++) tree(R(r.x0 + dW + 0.01, r.x1 - dW - 0.01), R(r.z0 + dW + 0.01, r.z1 - dW - 0.01), R(0.011, 0.018));
   };
@@ -553,7 +562,7 @@ export function createCities(scene: Scene, grid: Grid, country: CountryDef, bloc
       perimeterBlock(r, 'modern');
       return;
     }
-    const nt = detail ? 4 + Math.floor(rnd() * 6) : 2;
+    const nt = detail ? 2 + Math.floor(rnd() * 4) : 2;
     for (let k = 0; k < nt; k++) tree(R(r.x0 + 0.01, r.x1 - 0.01), R(cz - 0.03, cz + 0.03), R(0.01, 0.016));
   };
 
@@ -580,7 +589,7 @@ export function createCities(scene: Scene, grid: Grid, country: CountryDef, bloc
         }
       }
     }
-    const nt = detail ? 3 + Math.floor(rnd() * 4) : 1;
+    const nt = detail ? 2 + Math.floor(rnd() * 3) : 1;
     for (let k = 0; k < nt; k++) tree(R(r.x0, r.x1), R(r.z0, r.z1), R(0.009, 0.015));
   };
 
@@ -594,7 +603,7 @@ export function createCities(scene: Scene, grid: Grid, country: CountryDef, bloc
     for (let sdi = 0; sdi < sides; sdi++) {
       const horiz = sdi < 2;
       const len = horiz ? W : D - 0.05;
-      const lot = R(0.016, 0.022);
+      const lot = detail ? R(0.024, 0.03) : R(0.02, 0.026);
       const n = Math.max(1, Math.floor(len / lot));
       for (let k = 0; k < n; k++) {
         if (rnd() < 0.1) continue;
@@ -611,7 +620,7 @@ export function createCities(scene: Scene, grid: Grid, country: CountryDef, bloc
         const h = (two ? 0.0058 : 0.0031) / 0.6;
         put(B.hHouse, bid, x, z, w, d, h * R(0.95, 1.1), rot, HB.house, rnd() < 0.65 ? HR.tiles : HR.slate, R(0.25, 0.55), rnd() < 0.6 ? wallT : pick(PAL.house));
         // arbre de jardin à l'arrière
-        if (rnd() < (detail ? 0.6 : 0.3)) {
+        if (rnd() < 0.3) {
           const back = set + d / 2 + R(0.008, 0.02);
           const tx = sdi === 2 ? r.x0 + back : sdi === 3 ? r.x1 - back : x + R(-0.004, 0.004);
           const tz = sdi === 0 ? r.z1 - back : sdi === 1 ? r.z0 + back : z + R(-0.004, 0.004);
@@ -820,6 +829,8 @@ export function createCities(scene: Scene, grid: Grid, country: CountryDef, bloc
   });
 
   const meshes = all.map((b) => b.mesh).filter((m) => (m.thinInstanceCount ?? 0) > 0);
+  // halo nocturne : les bâtiments n'ont pas d'émissif Babylon, inutile de les redessiner dans la passe de halo
+  for (const l of scene.effectLayers ?? []) if (l instanceof GlowLayer) for (const m of all) l.addExcludedMesh(m.mesh);
   const instances = all.reduce((s, b) => s + b.count, 0);
   // outils de diagnostic (captures automatisées) : instances dessinées par gabarit, gabarits
   (window as unknown as Record<string, unknown>).__bld = () => Object.fromEntries(Object.entries(B).map(([k, b]) => [k, b.drawn]));
