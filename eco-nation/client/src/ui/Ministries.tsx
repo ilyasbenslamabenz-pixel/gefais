@@ -8,7 +8,7 @@ import { dec1, eur, int, money, pct, people } from '../format';
 import { Bars, Drawer, Kpi, Meter, Section, Slider, Tabs, Toggle, usePolicy } from './common';
 import { LineChart, Pyramid } from './charts';
 import { REVENUE_LABELS, SPENDING_LABELS } from './indicators';
-import { camApi } from '../game/MapScene';
+import { camApi } from '../game/world';
 
 // ---------- Finances ----------
 export function FinancesPanel() {

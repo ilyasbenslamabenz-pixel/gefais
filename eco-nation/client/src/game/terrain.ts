@@ -1,18 +1,17 @@
-// Grille de hauteurs du pays (1 km) et utilitaires géométriques partagés par la carte 3D.
-import * as THREE from 'three';
+// Grille de hauteurs du pays (maille de 1 km) et utilitaires géométriques, indépendants du moteur 3D.
 import { HALF_D, HALF_W, MAP_D, MAP_W, makeHeightFn } from '../../../shared/sim/country';
 import { fbm } from '../../../shared/noise';
 import type { CountryDef } from '../../../shared/sim/types';
 
-export const VS = 6; // exagération verticale du relief (1 km d'altitude = 6 unités)
-export const RES = 1; // km par maille
+export const VS = 6; // exagération verticale : 1 km d'altitude = 6 unités (1 unité = 1 km au sol)
+export const RES = 1;
 
 export interface Grid {
   nx: number;
   nz: number;
-  h: Float32Array; // hauteurs en km
-  sample: (x: number, z: number) => number; // altitude (km), interpolation bilinéaire
-  y: (x: number, z: number) => number; // altitude en unités de rendu
+  h: Float32Array; // altitudes (km)
+  sample: (x: number, z: number) => number;
+  y: (x: number, z: number) => number; // altitude de rendu (unités), jamais sous le niveau de la mer
 }
 
 export function buildGrid(country: CountryDef): Grid {
@@ -37,63 +36,7 @@ export function buildGrid(country: CountryDef): Grid {
   return { nx, nz, h, sample, y: (x, z) => Math.max(0, sample(x, z)) * VS };
 }
 
-export function terrainGeometry(grid: Grid, step: number) {
-  const nx = Math.floor((grid.nx - 1) / step) + 1;
-  const nz = Math.floor((grid.nz - 1) / step) + 1;
-  const pos = new Float32Array(nx * nz * 3);
-  for (let j = 0; j < nz; j++) {
-    for (let i = 0; i < nx; i++) {
-      const gi = i * step;
-      const gj = j * step;
-      const k = (j * nx + i) * 3;
-      pos[k] = -HALF_W + gi * RES;
-      pos[k + 1] = grid.h[gj * grid.nx + gi] * VS;
-      pos[k + 2] = -HALF_D + gj * RES;
-    }
-  }
-  const idx = new Uint32Array((nx - 1) * (nz - 1) * 6);
-  let p = 0;
-  for (let j = 0; j < nz - 1; j++) {
-    for (let i = 0; i < nx - 1; i++) {
-      const a = j * nx + i;
-      idx[p++] = a; idx[p++] = a + nx; idx[p++] = a + 1;
-      idx[p++] = a + 1; idx[p++] = a + nx; idx[p++] = a + nx + 1;
-    }
-  }
-  const g = new THREE.BufferGeometry();
-  g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  g.setIndex(new THREE.BufferAttribute(idx, 1));
-  g.computeVertexNormals();
-  return g;
-}
-
-/** Ruban suivant une polyligne posée sur le relief (routes, voies ferrées, rivières). */
-export function ribbon(points: [number, number][], width: number, grid: Grid, lift: number, minY = 0) {
-  const n = points.length;
-  const pos = new Float32Array(n * 2 * 3);
-  const idx: number[] = [];
-  for (let i = 0; i < n; i++) {
-    const [x, z] = points[i];
-    const a = points[Math.max(0, i - 1)];
-    const b = points[Math.min(n - 1, i + 1)];
-    let dx = b[0] - a[0];
-    let dz = b[1] - a[1];
-    const l = Math.hypot(dx, dz) || 1;
-    dx /= l; dz /= l;
-    const nxv = -dz * width * 0.5;
-    const nzv = dx * width * 0.5;
-    const y = Math.max(minY, grid.y(x, z)) + lift;
-    pos.set([x + nxv, y, z + nzv, x - nxv, y, z - nzv], i * 6);
-    if (i < n - 1) idx.push(i * 2, i * 2 + 1, i * 2 + 2, i * 2 + 1, i * 2 + 3, i * 2 + 2);
-  }
-  const g = new THREE.BufferGeometry();
-  g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  g.setIndex(idx);
-  g.computeVertexNormals();
-  return g;
-}
-
-/** Densifie une polyligne (pour suivre le relief). */
+/** Densifie une polyligne pour qu'elle épouse le relief. */
 export function densify(points: [number, number][], step = 0.8): [number, number][] {
   const out: [number, number][] = [];
   for (let i = 0; i < points.length - 1; i++) {
@@ -125,12 +68,5 @@ export function distToPolyline(x: number, z: number, pts: [number, number][]) {
   return d;
 }
 
-/** Environnement visuel partagé (cycle jour/nuit, saisons, météo). */
-export const ENV = {
-  night: { value: 0 },
-  winter: { value: 0 }, // 0 été → 1 plein hiver
-  autumn: { value: 0 },
-  snow: { value: 0 },
-  wet: { value: 0 },
-  time: { value: 0 },
-};
+/** Environnement visuel partagé (cycle jour/nuit, saisons, météo), lu par les matériaux. */
+export const ENV = { night: 0, winter: 0, autumn: 0, snow: 0, wet: 0, time: 0 };

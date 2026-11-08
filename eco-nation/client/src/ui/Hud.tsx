@@ -10,8 +10,8 @@ import { LineChart, monthLabel } from './charts';
 import { IND } from './indicators';
 import { FiscalitePanel } from './Fiscalite';
 import { EconomiePanel, FinancesPanel, PopulationPanel, TravailPanel } from './Ministries';
-import { WEATHER_LABEL, weatherFor } from '../game/Life';
-import { camApi } from '../game/MapScene';
+import { WEATHER_LABEL, weatherFor } from '../game/life';
+import { camApi } from '../game/world';
 
 const SEASON = ['❄️ Hiver', '❄️ Hiver', '🌱 Printemps', '🌱 Printemps', '🌱 Printemps', '☀️ Été', '☀️ Été', '☀️ Été', '🍂 Automne', '🍂 Automne', '🍂 Automne', '❄️ Hiver'];
 

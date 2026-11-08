@@ -1,0 +1,344 @@
+// Monde 3D Babylon.js : moteur, caméra stratégique, ciel et cycle jour/nuit, ombres, météo,
+// sélection, étiquettes. Toutes les données affichées proviennent des instantanés du serveur.
+import {
+  ArcRotateCamera, CascadedShadowGenerator, Color3, Color4, DirectionalLight, DynamicTexture, Engine, GlowLayer, HemisphericLight,
+  Matrix, MeshBuilder, ParticleSystem, PointerEventTypes, Scene, StandardMaterial, Vector3, type ArcRotateCameraPointersInput, type Mesh,
+} from '@babylonjs/core';
+import { SkyMaterial } from '@babylonjs/materials/sky/skyMaterial';
+import type { CountryDef } from '../../../shared/sim/types';
+import { useStore, type Quality } from '../store';
+import { ENV, buildGrid, type Grid } from './terrain';
+import { createForests, createTerrain, createWaterAndNetwork } from './landscape';
+import { createCities } from './cities';
+import { createInfrastructure } from './infra';
+import { createAirSea, createTraffic, weatherFor } from './life';
+
+const Q: Record<Quality, { scale: number; step: number; trees: number; cars: number; shadows: number; precip: number; glow: boolean }> = {
+  low: { scale: 1.25, step: 2, trees: 2500, cars: 500, shadows: 0, precip: 1500, glow: false },
+  medium: { scale: 1, step: 1, trees: 6000, cars: 1100, shadows: 1024, precip: 3000, glow: true },
+  high: { scale: 1 / Math.min(2, window.devicePixelRatio || 1), step: 1, trees: 11000, cars: 2000, shadows: 2048, precip: 5000, glow: true },
+};
+
+export const camApi = { focus: (_x: number, _z: number, _dist?: number) => {} };
+
+export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, quality: Quality, labelsRoot: HTMLElement) {
+  const q = Q[quality];
+  const engine = new Engine(canvas, quality !== 'low', { stencil: true, preserveDrawingBuffer: false, powerPreference: 'high-performance' }, false);
+  engine.setHardwareScalingLevel(q.scale);
+  const scene = new Scene(engine);
+  scene.clearColor = new Color4(0.55, 0.75, 0.95, 1);
+  scene.fogMode = Scene.FOGMODE_LINEAR;
+  scene.fogStart = 260;
+  scene.fogEnd = 900;
+  scene.fogColor = new Color3(0.7, 0.82, 0.95);
+  const grid: Grid = buildGrid(country);
+
+  // Caméra stratégique : glisser = déplacer, clic droit = pivoter, molette = zoom
+  const cap = country.cities.find((c) => c.capital) ?? country.cities[0];
+  const camera = new ArcRotateCamera('cam', -Math.PI / 2.4, 0.95, 90, new Vector3(cap.x, grid.y(cap.x, cap.z), cap.z), scene);
+  camera.attachControl(canvas, true);
+  camera.lowerRadiusLimit = 4;
+  camera.upperRadiusLimit = 420;
+  camera.lowerBetaLimit = 0.15;
+  camera.upperBetaLimit = 1.38;
+  camera.minZ = 0.3;
+  camera.maxZ = 4000;
+  camera.wheelDeltaPercentage = 0.02;
+  camera.panningSensibility = 60;
+  camera.mapPanning = true;
+  camera.inertia = 0.85;
+  camera.panningInertia = 0.85;
+  const pointers = camera.inputs.attached.pointers as ArcRotateCameraPointersInput;
+  pointers.buttons = [0, 1, 2];
+  (pointers as unknown as { _panningMouseButton: number })._panningMouseButton = 0;
+  pointers.angularSensibilityX = 700;
+  pointers.angularSensibilityY = 700;
+  camera.keysUp = []; camera.keysDown = []; camera.keysLeft = []; camera.keysRight = [];
+
+  // Lumières
+  const hemi = new HemisphericLight('hemi', new Vector3(0, 1, 0), scene);
+  hemi.intensity = 0.7;
+  hemi.groundColor = new Color3(0.35, 0.32, 0.28);
+  const sun = new DirectionalLight('sun', new Vector3(-0.5, -1, -0.3), scene);
+  sun.position = new Vector3(200, 300, 100);
+  sun.intensity = 2.2;
+  let shadow: CascadedShadowGenerator | null = null;
+  if (q.shadows) {
+    shadow = new CascadedShadowGenerator(q.shadows, sun);
+    shadow.numCascades = 3;
+    shadow.lambda = 0.85;
+    shadow.shadowMaxZ = 260;
+    shadow.stabilizeCascades = true;
+    shadow.filteringQuality = CascadedShadowGenerator.QUALITY_MEDIUM;
+    shadow.bias = 0.004;
+  }
+  const glow = q.glow ? new GlowLayer('glow', scene, { mainTextureSamples: 1, blurKernelSize: 32 }) : null;
+  if (glow) glow.intensity = 0;
+
+  // Ciel procédural (diffusion atmosphérique) + étoiles
+  const skyMat = new SkyMaterial('sky', scene);
+  skyMat.backFaceCulling = false;
+  skyMat.useSunPosition = true;
+  skyMat.turbidity = 6;
+  skyMat.rayleigh = 2;
+  skyMat.luminance = 1;
+  skyMat.fogEnabled = false;
+  const skybox = MeshBuilder.CreateBox('skybox', { size: 3500 }, scene);
+  skybox.material = skyMat;
+  skybox.infiniteDistance = true;
+  skybox.isPickable = false;
+  const starTex = new DynamicTexture('stars', 1024, scene, false);
+  {
+    const c = starTex.getContext() as CanvasRenderingContext2D;
+    c.fillStyle = '#000';
+    c.fillRect(0, 0, 1024, 1024);
+    for (let i = 0; i < 1400; i++) {
+      c.fillStyle = `rgba(255,255,255,${0.3 + Math.random() * 0.7})`;
+      c.fillRect(Math.random() * 1024, Math.random() * 1024, Math.random() < 0.1 ? 2 : 1, Math.random() < 0.1 ? 2 : 1);
+    }
+    starTex.update();
+  }
+  const starMat = new StandardMaterial('starMat', scene);
+  starMat.emissiveTexture = starTex;
+  starMat.opacityTexture = starTex;
+  starMat.disableLighting = true;
+  starMat.backFaceCulling = false;
+  starMat.fogEnabled = false;
+  const stars = MeshBuilder.CreateSphere('stars', { diameter: 3200, segments: 16, sideOrientation: 1 }, scene);
+  stars.material = starMat;
+  stars.infiniteDistance = true;
+  stars.isPickable = false;
+
+  // Paysage, villes, équipements, vie
+  const terrain = createTerrain(scene, grid, country, q.step);
+  createWaterAndNetwork(scene, grid, country);
+  const forests = createForests(scene, grid, country, q.trees);
+  const cities = createCities(scene, grid, country);
+  const infra = createInfrastructure(scene, grid, country);
+  const traffic = createTraffic(scene, grid, country, q.cars);
+  const airsea = createAirSea(scene, grid, country);
+  if (shadow) {
+    shadow.addShadowCaster(cities.box);
+    shadow.addShadowCaster(cities.roof);
+    shadow.addShadowCaster(forests.tree);
+    for (const r of infra.roots) shadow.addShadowCaster(r);
+    for (const m of [terrain, cities.box]) m.receiveShadows = true;
+  }
+
+  // Précipitations autour de la caméra
+  const dropTex = new DynamicTexture('drop', 16, scene, false);
+  { const c = dropTex.getContext() as CanvasRenderingContext2D; const g = c.createRadialGradient(8, 8, 0, 8, 8, 8); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(1, 'rgba(255,255,255,0)'); c.fillStyle = g; c.fillRect(0, 0, 16, 16); dropTex.hasAlpha = true; dropTex.update(); }
+  const precip = new ParticleSystem('precip', q.precip, scene);
+  precip.particleTexture = dropTex;
+  precip.emitter = new Vector3();
+  precip.minEmitBox = new Vector3(-60, 30, -60);
+  precip.maxEmitBox = new Vector3(60, 40, 60);
+  precip.minLifeTime = 1.2; precip.maxLifeTime = 1.6;
+  precip.blendMode = ParticleSystem.BLENDMODE_STANDARD;
+
+  // Sélection et survol
+  const ring = MeshBuilder.CreateTorus('selection', { diameter: 2, thickness: 0.06, tessellation: 64 }, scene);
+  const ringMat = new StandardMaterial('ringMat', scene);
+  ringMat.emissiveColor = Color3.FromHexString('#ffd166');
+  ringMat.disableLighting = true;
+  ring.material = ringMat;
+  ring.isPickable = false;
+  ring.setEnabled(false);
+  const pickers: Mesh[] = country.cities.map((c) => {
+    const m = MeshBuilder.CreateCylinder('picker', { diameter: 2, height: 1.5, tessellation: 20 }, scene);
+    m.position.set(c.x, grid.y(c.x, c.z) + 0.6, c.z);
+    m.scaling.set(c.radius * 1.1, 1, c.radius * 1.1);
+    m.visibility = 0;
+    m.metadata = { kind: 'city', id: c.id };
+    return m;
+  });
+  void pickers;
+  let downX = 0, downY = 0;
+  scene.onPointerObservable.add((pi) => {
+    const ev = pi.event as PointerEvent;
+    if (pi.type === PointerEventTypes.POINTERDOWN) { downX = ev.clientX; downY = ev.clientY; }
+    if (pi.type === PointerEventTypes.POINTERUP && ev.button === 0 && Math.hypot(ev.clientX - downX, ev.clientY - downY) < 6) {
+      const pick = scene.pick(scene.pointerX, scene.pointerY, (m) => !!m.metadata || m === cities.box);
+      const st = useStore.getState();
+      if (pick?.hit && pick.pickedMesh) {
+        const md = (pick.pickedMesh.metadata ?? pick.pickedMesh.parent?.metadata) as { kind: 'city' | 'infra'; id: number } | undefined;
+        if (md) st.set({ selection: { kind: md.kind, id: md.id } });
+        else if (pick.pickedMesh === cities.box && pick.thinInstanceIndex >= 0) {
+          const ci = cities.cityOfInstance(pick.thinInstanceIndex);
+          if (ci >= 0) st.set({ selection: { kind: 'city', id: ci } });
+        }
+      } else st.set({ selection: null });
+    }
+  });
+
+  // Étiquettes DOM
+  labelsRoot.innerHTML = '';
+  const labels = country.cities.map((c) => {
+    const d = document.createElement('div');
+    d.className = `city-label ${c.kind}${c.capital ? ' capital' : ''}`;
+    d.textContent = (c.capital ? '★ ' : '') + c.name;
+    d.onclick = () => useStore.getState().set({ selection: { kind: 'city', id: c.id } });
+    labelsRoot.appendChild(d);
+    return d;
+  });
+
+  // Caméra : déplacements clavier et animation de focus
+  const keys = new Set<string>();
+  const kd = (e: KeyboardEvent) => { if (!(e.target as HTMLElement).closest('input,textarea,select')) keys.add(e.code); };
+  const ku = (e: KeyboardEvent) => keys.delete(e.code);
+  window.addEventListener('keydown', kd);
+  window.addEventListener('keyup', ku);
+  let anim: { from: Vector3; to: Vector3; r0: number; r1: number; t: number } | null = null;
+  camApi.focus = (x, z, dist = 25) => { anim = { from: camera.target.clone(), to: new Vector3(x, grid.y(x, z), z), r0: camera.radius, r1: dist, t: 0 }; };
+
+  // Réactions aux instantanés du serveur
+  let initialPop: number[] | null = null;
+  let initialEmp = 0;
+  let initialEm = 0;
+  let lastMonth = -1;
+  const applySnap = () => {
+    const snap = useStore.getState().snap;
+    if (!snap) return;
+    if (!initialPop) {
+      initialPop = snap.cities.map((c) => c.population);
+      initialEmp = snap.demography.employed;
+      initialEm = snap.accounts.emissions;
+    }
+    cities.update(snap.cities.map((c, i) => c.population / Math.max(1, initialPop![i])));
+    traffic.setActivity(snap.demography.employed / Math.max(1, initialEmp));
+    infra.setEmissionFactor(snap.accounts.emissions / Math.max(1, initialEm));
+    if (snap.month !== lastMonth) {
+      lastMonth = snap.month;
+      const m = snap.month % 12;
+      ENV.winter = (1 + Math.cos((m / 12) * Math.PI * 2)) / 2;
+      ENV.autumn = Math.exp(-((m - 9.5) ** 2) / 2.5);
+      const w = weatherFor(country.seed, snap.month);
+      ENV.snow = w === 'neige' ? 1 : 0;
+      ENV.wet = w === 'pluie' || w === 'orage' ? 1 : 0;
+      forests.recolor();
+      const active = w === 'pluie' || w === 'orage' || w === 'neige';
+      if (active) {
+        const snow = w === 'neige';
+        precip.color1 = snow ? new Color4(1, 1, 1, 0.9) : new Color4(0.75, 0.85, 1, 0.6);
+        precip.color2 = precip.color1;
+        precip.minSize = snow ? 0.25 : 0.08; precip.maxSize = snow ? 0.4 : 0.14;
+        precip.gravity = new Vector3(0, snow ? -6 : -45, 0);
+        precip.emitRate = q.precip * (w === 'orage' ? 1.2 : 0.8);
+        precip.start();
+      } else precip.stop();
+      weather = w;
+    }
+  };
+  let weather = weatherFor(country.seed, 0);
+  const unsub = useStore.subscribe((s, prev) => {
+    if (s.snap !== prev.snap) applySnap();
+    if (s.selection !== prev.selection) updateRing(s.selection);
+  });
+  const updateRing = (sel: ReturnType<typeof useStore.getState>['selection']) => {
+    let x = 0, z = 0, r = 0;
+    if (sel?.kind === 'city') { const c = country.cities[sel.id]; x = c.x; z = c.z; r = c.radius * 1.3; }
+    if (sel?.kind === 'infra') { const i = country.infra.find((k) => k.id === sel.id); if (i) { x = i.x; z = i.z; r = i.type === 'aeroport' ? 3.5 : 1.8; } }
+    ring.setEnabled(r > 0);
+    ring.position.set(x, grid.y(x, z) + 0.4, z);
+    ring.scaling.set(r, 1, r);
+  };
+  applySnap();
+
+  // Boucle de rendu
+  const startTime = performance.now();
+  const tmp = new Vector3();
+  scene.onBeforeRenderObservable.add(() => {
+    const dt = Math.min(0.05, engine.getDeltaTime() / 1000);
+    const dayLength = useStore.getState().settings.dayLength;
+    const t = (((performance.now() - startTime) / 1000) / dayLength + 0.35) % 1;
+    const ang = (t - 0.25) * Math.PI * 2;
+    const elev = Math.sin(ang);
+    const night = Math.max(0, Math.min(1, 0.5 - elev * 2.2));
+    ENV.night = night;
+    ENV.time = t;
+    const cloudy = weather === 'nuageux' ? 0.35 : weather === 'pluie' || weather === 'brouillard' ? 0.55 : weather === 'orage' ? 0.75 : weather === 'neige' ? 0.5 : 0;
+    const sunDir = new Vector3(Math.cos(ang), Math.max(-0.4, elev), 0.35).normalize();
+    skyMat.sunPosition = sunDir.scale(100);
+    skyMat.luminance = 1.05 - cloudy * 0.4;
+    skyMat.turbidity = 5 + cloudy * 12;
+    sun.direction = sunDir.scale(-1);
+    sun.position = camera.target.add(sunDir.scale(300));
+    sun.intensity = Math.max(0, elev) * 2.6 * (1 - cloudy * 0.6);
+    const dusk = 1 - Math.min(1, Math.abs(elev) * 4);
+    sun.diffuse.set(1, 0.93 - dusk * 0.3, 0.85 - dusk * 0.45);
+    hemi.intensity = 0.4 + (1 - night) * 0.4 * (1 - cloudy * 0.3);
+    hemi.diffuse.set(0.85 - night * 0.5, 0.9 - night * 0.45, 1);
+    starMat.alpha = night * (1 - cloudy);
+    skybox.visibility = 1 - night * 0.92;
+    const fogDay = cloudy > 0.4 ? new Color3(0.68, 0.72, 0.77) : new Color3(0.72, 0.83, 0.95);
+    scene.fogColor = Color3.Lerp(fogDay, new Color3(0.03, 0.05, 0.1), night);
+    scene.clearColor = new Color4(scene.fogColor.r, scene.fogColor.g, scene.fogColor.b, 1);
+    scene.fogStart = weather === 'brouillard' ? 15 : 260 - cloudy * 80;
+    scene.fogEnd = weather === 'brouillard' ? 140 : 950 - cloudy * 300;
+    if (glow) glow.intensity = night * 0.8;
+    // déplacement clavier
+    const speed = camera.radius * 0.9 * dt;
+    const fwd = camera.target.subtract(camera.position); fwd.y = 0; fwd.normalize();
+    const right = new Vector3(fwd.z, 0, -fwd.x);
+    tmp.setAll(0);
+    if (keys.has('KeyW') || keys.has('ArrowUp')) tmp.addInPlace(fwd);
+    if (keys.has('KeyS') || keys.has('ArrowDown')) tmp.subtractInPlace(fwd);
+    if (keys.has('KeyD') || keys.has('ArrowRight')) tmp.subtractInPlace(right);
+    if (keys.has('KeyA') || keys.has('ArrowLeft')) tmp.addInPlace(right);
+    if (tmp.lengthSquared() > 0) camera.target.addInPlace(tmp.normalize().scale(speed * 1.5));
+    if (keys.has('KeyQ')) camera.alpha += dt * 1.2;
+    if (keys.has('KeyE')) camera.alpha -= dt * 1.2;
+    if (anim) {
+      anim.t = Math.min(1, anim.t + dt * 1.6);
+      const e = anim.t < 0.5 ? 2 * anim.t * anim.t : 1 - Math.pow(-2 * anim.t + 2, 2) / 2;
+      camera.target = Vector3.Lerp(anim.from, anim.to, e);
+      camera.radius = anim.r0 + (anim.r1 - anim.r0) * e;
+      if (anim.t >= 1) anim = null;
+    }
+    camera.target.x = Math.max(-200, Math.min(200, camera.target.x));
+    camera.target.z = Math.max(-160, Math.min(160, camera.target.z));
+    camera.target.y = grid.y(camera.target.x, camera.target.z);
+    const minY = grid.y(camera.position.x, camera.position.z) + 2;
+    if (camera.position.y < minY) camera.beta = Math.max(camera.lowerBetaLimit!, camera.beta - 0.02);
+    // météo et vie
+    (precip.emitter as Vector3).copyFrom(camera.position);
+    traffic.update(dt);
+    airsea.update(dt);
+    infra.animate(dt);
+    // étiquettes
+    const show = useStore.getState().settings.labels;
+    const rw = engine.getRenderWidth();
+    const rh = engine.getRenderHeight();
+    const cw = canvas.clientWidth;
+    const ch = canvas.clientHeight;
+    const vp = camera.viewport.toGlobal(rw, rh);
+    const tm = scene.getTransformMatrix();
+    country.cities.forEach((c, i) => {
+      const el = labels[i];
+      const world = new Vector3(c.x, grid.y(c.x, c.z) + (c.kind === 'metropole' ? 3 : 1.2), c.z);
+      const p = Vector3.Project(world, Matrix.IdentityReadOnly, tm, vp);
+      const dist = Vector3.Distance(camera.position, world);
+      const maxD = c.kind === 'metropole' ? 650 : c.kind === 'ville' ? 220 : 90;
+      const sx = (p.x / rw) * cw;
+      const sy = (p.y / rh) * ch;
+      const vis = show && p.z > 0 && p.z < 1 && dist < maxD && sx > -50 && sx < cw + 50 && sy > -20 && sy < ch + 20;
+      el.style.display = vis ? 'block' : 'none';
+      if (vis) el.style.transform = `translate(-50%, -100%) translate(${sx}px, ${sy}px)`;
+    });
+  });
+
+  engine.runRenderLoop(() => scene.render());
+  const onResize = () => engine.resize();
+  window.addEventListener('resize', onResize);
+
+  return () => {
+    unsub();
+    window.removeEventListener('resize', onResize);
+    window.removeEventListener('keydown', kd);
+    window.removeEventListener('keyup', ku);
+    labelsRoot.innerHTML = '';
+    engine.stopRenderLoop();
+    scene.dispose();
+    engine.dispose();
+  };
+}

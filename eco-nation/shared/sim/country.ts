@@ -103,7 +103,7 @@ function makeNames(seed: number, n: number): string[] {
 }
 
 // ---------- Génération ----------
-export const DEFAULT_CONFIG: CountryConfig = { name: 'République de Valdorie', seed: 2030, metropoles: 5, villes: 12, communes: 30, population: 9_600_000 };
+export const DEFAULT_CONFIG: CountryConfig = { name: "République d'Ilyas", seed: 2030, metropoles: 5, villes: 12, communes: 30, population: 9_600_000 };
 
 function sectorWeights(kind: CityKind, coastal: boolean, industrial: boolean, rnd: () => number): number[] {
   const w = SECTORS.map((s) => s.employmentShare);
@@ -296,7 +296,7 @@ export function generateCountry(cfg: CountryConfig): CountryDef {
   // Production d'électricité (bilan détaillé en phase 4)
   const industrialTown = villes.find((v) => country.infra.some((i) => i.cityId === v.id && i.type === 'zone_industrielle')) ?? villes[0];
   const site = (c: CityDef | undefined, k: number): [number, number] => (c ? near(c, k) : [0, 0]);
-  { const [x, z] = site(industrialTown, 3); add('centrale_charbon', 'Centrale thermique de ' + (industrialTown?.name ?? 'Valdorie'), null, x, z, { capacity: 1200, capacityUnit: 'MW', employees: 450, maintenance: 6e7, energyMWh: -6.6e6, emissions: 6.3e6 }); }
+  { const [x, z] = site(industrialTown, 3); add('centrale_charbon', 'Centrale thermique de ' + (industrialTown?.name ?? 'Ilyas'), null, x, z, { capacity: 1200, capacityUnit: 'MW', employees: 450, maintenance: 6e7, energyMWh: -6.6e6, emissions: 6.3e6 }); }
   for (let i = 0; i < 2; i++) { const [x, z] = site(metroSorted[(i + 1) % metroSorted.length], 3.2); add('centrale_gaz', `Centrale à gaz n°${i + 1}`, null, x, z, { capacity: 800, capacityUnit: 'MW', employees: 120, maintenance: 3e7, energyMWh: -3.5e6, emissions: 1.3e6 }); }
   { const rp = country.rivers[1].points; const p = rp[Math.floor(rp.length * 0.6)]; add('centrale_nucleaire', 'Centrale nucléaire du Val', null, p[0] + 1.5, p[1] + 1.5, { capacity: 3600, capacityUnit: 'MW', employees: 1800, maintenance: 4e8, energyMWh: -2.6e7, emissions: 0 }); }
   { const l = country.lakes[0]; add('barrage', 'Barrage des Cimes', null, l.x - l.r - 0.5, l.z, { capacity: 600, capacityUnit: 'MW', employees: 60, maintenance: 1.5e7, energyMWh: -2.1e6, emissions: 0, rot: Math.PI / 2 }); }

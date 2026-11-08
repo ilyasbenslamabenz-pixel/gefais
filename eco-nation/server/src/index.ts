@@ -101,7 +101,7 @@ app.post('/api/games', async (req, res) => {
   if (!owner) return res.status(401).json({ error: 'Identifiant joueur manquant' });
   const b = (req.body ?? {}) as Partial<CountryConfig> & { name?: string };
   const cfg: Partial<CountryConfig> = {
-    name: String(b.name ?? 'République de Valdorie').replace(/[<>]/g, '').slice(0, 40) || 'République de Valdorie',
+    name: String(b.name ?? "République d'Ilyas").replace(/[<>]/g, '').slice(0, 40) || "République d'Ilyas",
     seed: Number.isFinite(Number(b.seed)) ? Math.abs(Math.floor(Number(b.seed))) % 1e9 : Math.floor(Math.random() * 1e6),
     metropoles: Number(b.metropoles) || 5,
     villes: Number(b.villes) || 12,
