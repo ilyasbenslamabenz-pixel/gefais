@@ -26,6 +26,8 @@ import { LogementPanel } from './Logement';
 import { SecuritePanel } from './Securite';
 import { RecherchePanel } from './Recherche';
 import { ConstructionPanel } from './Construction';
+import { BesoinsPanel, useNeeds } from './Besoins';
+import { InfraActions } from './InfraActions';
 import { BUILDINGS } from '../../../shared/sim/construction';
 
 const SEASON = ['❄️ Hiver', '❄️ Hiver', '🌱 Printemps', '🌱 Printemps', '🌱 Printemps', '☀️ Été', '☀️ Été', '☀️ Été', '🍂 Automne', '🍂 Automne', '🍂 Automne', '❄️ Hiver'];
@@ -75,6 +77,7 @@ export function TopBar() {
 }
 
 const MINISTRIES: { id: Panel; icon: string; label: string }[] = [
+  { id: 'besoins', icon: '🧭', label: 'Besoins du pays' },
   { id: 'finances', icon: '🏦', label: 'Finances' },
   { id: 'fiscalite', icon: '🧾', label: 'Fiscalité' },
   { id: 'economie', icon: '📈', label: 'Économie' },
@@ -113,10 +116,14 @@ export function Dock() {
   const pendingEvents = useStore((s) => s.snap?.events?.active.length ?? 0);
   const set = useStore((s) => s.set);
   const [open, setOpen] = useState<string | null>(null);
+  const urgentNeeds = useNeeds().filter((n) => n.level === 2).length;
   const toggle = (p: Panel) => { set({ panel: panel === p ? null : p, ...(p === 'notifications' ? { unread: 0 } : {}) }); setOpen(null); };
   const byId = (id: Panel) => MINISTRIES.find((m) => m.id === id)!;
   return (
     <nav className="dock">
+      <button className={`dock-needs ${panel === 'besoins' ? 'on' : ''}`} onClick={() => toggle('besoins')} title="Ce qui manque au pays et quoi construire ou démolir">
+        <span>🧭</span><em>Besoins</em>{urgentNeeds > 0 && <i className="badge">{urgentNeeds}</i>}
+      </button>
       {POLES.map((pole) => {
         const active = pole.items.includes(panel);
         return (
@@ -239,7 +246,7 @@ export function Inspector() {
         <Kpi label="Émissions directes" value={i.emissions >= 1e5 ? `${dec1(i.emissions / 1e6)} Mt CO₂` : `${int(i.emissions)} t CO₂`} sub="par an" />
         <Kpi label="Niveau" value={String(i.level)} />
       </div>
-      <p className="muted small">Amélioration, rénovation, fermeture et nouveaux programmes : ministères Équipements, Énergie, Transports, Santé, Éducation…</p>
+      <InfraActions infra={i} />
       {city && <button className="link" onClick={() => { set({ selection: { kind: 'city', id: city.id } }); camApi.focus(city.x, city.z); }}>← Voir {city.name}</button>}
     </div>
   );
@@ -432,6 +439,7 @@ export function GameOverlays() {
 function PanelContent() {
   const panel = useStore((s) => s.panel);
   switch (panel) {
+    case 'besoins': return <BesoinsPanel />;
     case 'finances': return <FinancesPanel />;
     case 'fiscalite': return <FiscalitePanel />;
     case 'travail': return <TravailPanel />;

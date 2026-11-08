@@ -6,7 +6,7 @@ Gouvernez la **République d'Ilyas**, une cité-État de 10 millions d'habitants
 - **Interface** : React 19, TypeScript et Zustand.
 - **Serveur** : Node.js, Express (API REST) et Socket.IO (temps réel). Le serveur est la source de vérité de la simulation.
 - **Sauvegardes** : PostgreSQL via `DATABASE_URL`, ou SQLite par défaut en développement.
-- **Moteur** : TypeScript pur et déterministe, couvert par 91 tests automatisés.
+- **Moteur** : TypeScript pur et déterministe, couvert par 103 tests automatisés.
 
 ## Lancer le jeu
 
@@ -50,6 +50,8 @@ Un `Dockerfile` est aussi fourni pour tout autre hébergeur.
 | 🤝 Social | Population et satisfaction (par catégorie et par quartier), Santé, Éducation, Logement, Sécurité et justice |
 | 🌍 Territoire | Énergie (mix électrique, prix, pénuries, construction et fermeture de centrales), Environnement et biodiversité, Transports (métro, tram, bus, voiture électrique, congestion), Agriculture, Déchets, Équipements (programmes d'investissement), Recherche (arbre technologique) |
 | 🏛️ État | Politique (partis, parlement de 350 sièges, lois votées, élections tous les 4 ans, censure), International (États voisins, accords, droits de douane), Événements et crises (décisions à prendre), Objectifs (victoires et défaites) |
+
+Le panneau **🧭 Besoins du pays** (en haut du dock) diagnostique ce qui manque ou est en trop (écoles, soins, logement, électricité, énergie verte, sécurité, emploi, transports, air), indique le quartier le plus concerné et propose des actions en un clic : construire, démolir, installer ou fermer une centrale. Il suit aussi l'avancement de tous les chantiers. En cliquant sur un équipement de la carte, vous pouvez l'agrandir, le rénover, le démolir ou fermer une centrale.
 
 Le temps se contrôle avec pause, ×1, ×2, ×5 et ×10, un pas valant un mois. Les réformes entrent en vigueur le mois suivant. Les lois importantes passent par un vote du parlement.
 
