@@ -80,6 +80,11 @@ export function MainMenu() {
                 <option value="low">Basse</option><option value="medium">Moyenne</option><option value="high">Haute</option>
               </select>
             </label>
+            <label>Heure de la ville
+              <select value={settings.timeMode} onChange={(e) => setSettings({ timeMode: e.target.value as 'golden' })}>
+                <option value="golden">Heure dorée</option><option value="cycle">Cycle jour/nuit</option><option value="day">Plein jour</option><option value="night">Nuit</option>
+              </select>
+            </label>
             <label>Durée d'une journée : <b>{settings.dayLength} s</b><input type="range" min={60} max={600} step={30} value={settings.dayLength} onChange={(e) => setSettings({ dayLength: Number(e.target.value) })} /></label>
             <button className="btn ghost" onClick={() => setView('home')}>Retour</button>
           </div>

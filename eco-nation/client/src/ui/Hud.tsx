@@ -346,6 +346,9 @@ export function SettingsPanel() {
         <Tabs value={settings.quality} onChange={(q) => setSettings({ quality: q })} tabs={[['low', 'Basse'], ['medium', 'Moyenne'], ['high', 'Haute']]} />
         <p className="muted small">Basse : sans ombres, relief allégé, moins d'arbres et de véhicules.</p>
       </Section>
+      <Section title="Heure de la ville">
+        <Tabs value={settings.timeMode} onChange={(m) => setSettings({ timeMode: m })} tabs={[['golden', 'Heure dorée'], ['cycle', 'Cycle jour/nuit'], ['day', 'Plein jour'], ['night', 'Nuit']]} />
+      </Section>
       <Section title="Affichage">
         <Toggle label="Noms des quartiers sur la carte" value={settings.labels} onChange={(v) => setSettings({ labels: v })} />
         <label className="slider"><div className="slider-top"><span>Durée d'une journée (cycle jour/nuit)</span><b>{settings.dayLength} s</b></div>

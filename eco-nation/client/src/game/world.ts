@@ -12,6 +12,8 @@ import { createForests, createTerrain, createWaterAndNetwork } from './landscape
 import { createCities } from './cities';
 import { createInfrastructure } from './infra';
 import { createAirSea, createTraffic, weatherFor } from './life';
+import { upgradeWater } from './water';
+import { createPostProcessing, timeOfDay } from './post';
 
 const Q: Record<Quality, { scale: number; step: number; block: number; trees: number; cars: number; shadows: number; precip: number; glow: boolean }> = {
   low: { scale: 1.25, step: 3, block: 0.28, trees: 6000, cars: 1500, shadows: 0, precip: 1500, glow: false },
@@ -112,6 +114,9 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
   // Paysage, villes, équipements, vie
   const terrain = createTerrain(scene, grid, country, q.step);
   createWaterAndNetwork(scene, grid, country);
+  // eau réfléchissante (miroir désactivé en qualité basse) et rendu cinématographique
+  const water = upgradeWater(scene, quality === 'high' ? 1024 : quality === 'medium' ? 512 : 0);
+  const post = createPostProcessing(scene, camera, quality);
   const forests = createForests(scene, grid, country, q.trees);
   const cities = createCities(scene, grid, country, q.block);
   let infra = createInfrastructure(scene, grid, country);
@@ -259,8 +264,8 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
   const tmp = new Vector3();
   scene.onBeforeRenderObservable.add(() => {
     const dt = Math.min(0.05, engine.getDeltaTime() / 1000);
-    const dayLength = useStore.getState().settings.dayLength;
-    const t = (((performance.now() - startTime) / 1000) / dayLength + 0.35) % 1;
+    const { dayLength, timeMode } = useStore.getState().settings;
+    const t = timeOfDay(timeMode ?? 'golden', (performance.now() - startTime) / 1000, dayLength);
     const ang = (t - 0.25) * Math.PI * 2;
     const elev = Math.sin(ang);
     const night = Math.max(0, Math.min(1, 0.5 - elev * 2.2));
@@ -281,11 +286,15 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
     starMat.alpha = night * (1 - cloudy);
     skybox.visibility = 1 - night * 0.92;
     const fogDay = cloudy > 0.4 ? new Color3(0.68, 0.72, 0.77) : new Color3(0.72, 0.83, 0.95);
-    scene.fogColor = Color3.Lerp(fogDay, new Color3(0.03, 0.05, 0.1), night);
+    // brume dorée quand le soleil est bas (heure dorée), bleu nuit ensuite
+    const golden = Math.max(0, 1 - Math.abs(elev - 0.08) * 6) * (1 - cloudy * 0.7);
+    scene.fogColor = Color3.Lerp(Color3.Lerp(fogDay, new Color3(1.0, 0.62, 0.4), golden * 0.75), new Color3(0.03, 0.05, 0.1), night);
     scene.clearColor = new Color4(scene.fogColor.r, scene.fogColor.g, scene.fogColor.b, 1);
     scene.fogStart = weather === 'brouillard' ? 1 : 30 + camera.radius * 0.8 - cloudy * 10;
     scene.fogEnd = weather === 'brouillard' ? 12 + camera.radius * 0.5 : 110 + camera.radius * 1.6 - cloudy * 30;
     if (glow) glow.intensity = night * 0.8;
+    water.update(dt, camera.radius);
+    post.update();
     // déplacement clavier
     const speed = camera.radius * 0.9 * dt;
     const fwd = camera.target.subtract(camera.position); fwd.y = 0; fwd.normalize();
@@ -348,6 +357,8 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
     window.removeEventListener('keyup', ku);
     labelsRoot.innerHTML = '';
     engine.stopRenderLoop();
+    water.dispose();
+    post.dispose();
     scene.dispose();
     engine.dispose();
   };
