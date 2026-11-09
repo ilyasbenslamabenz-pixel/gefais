@@ -99,7 +99,12 @@ function sector(S: GameState, id: SectorId) {
   return S.sectors[SECTOR_INDEX[id]];
 }
 const gdp = (S: GameState) => Math.max(1, S.accounts.gdp);
-const warming = (S: GameState) => S.month / 480; // le risque climatique croît avec le temps (≈ +25 % tous les 10 ans)
+// --- plan climat --- : le risque climatique dépend des émissions cumulées depuis 2030 (climate.ts, indice abstrait) ;
+// il coïncide avec l'ancien terme temporel mois/480 (≈ +25 % tous les 10 ans) si les émissions restent au niveau de 2030.
+const warming = (S: GameState) => S.climate?.riskIndex ?? S.month / 480;
+/** Gravité des aléas climatiques : les dégâts immédiats croissent avec l'indice de réchauffement local (×1 à ×2,5). */
+const severity = (S: GameState) => clamp(1 + 0.5 * warming(S), 1, 2.5);
+const sevTxt = (S: GameState) => (severity(S) > 1.05 ? ` Gravité accrue par le réchauffement local (×${severity(S).toFixed(2).replace('.', ',')}).` : '');
 const season = (S: GameState) => S.month % 12; // 0 = janvier
 const summer = (S: GameState) => season(S) >= 5 && season(S) <= 7;
 const winter = (S: GameState) => season(S) >= 10 || season(S) <= 2;
@@ -229,13 +234,14 @@ export const EVENT_DEFS: EventDef[] = [
     id: 'penurie_eau', title: 'Pénurie d\'eau', icon: '🚱', kind: 'climat', cooldown: 12,
     prob: (S) => (summer(S) ? 0.012 : 0.0015) * (1 + warming(S)) * (1 + modifierSum(S, 'risk:penurie_eau')),
     start: (S, ev) => {
-      addModifier(S, 'prod:agriculture', -0.12, 0.88, ev.uid, 'Pénurie d\'eau');
-      addModifier(S, 'prod:energie', -0.03, 0.85, ev.uid, 'Pénurie d\'eau (refroidissement des centrales)');
-      addModifier(S, 'prod:tourisme', -0.02, 0.85, ev.uid, 'Pénurie d\'eau');
-      S.macro.priceLevel *= 1.003;
+      const k = severity(S); // --- plan climat ---
+      addModifier(S, 'prod:agriculture', -0.12 * k, 0.88, ev.uid, 'Pénurie d\'eau');
+      addModifier(S, 'prod:energie', -0.03 * k, 0.85, ev.uid, 'Pénurie d\'eau (refroidissement des centrales)');
+      addModifier(S, 'prod:tourisme', -0.02 * k, 0.85, ev.uid, 'Pénurie d\'eau');
+      S.macro.priceLevel *= 1 + 0.003 * k;
       bumpParty(S, 'ecologistes', 0.05);
       bumpTrust(S, -1);
-      return 'Sécheresse régionale : les réservoirs de la cité-État sont au plus bas. Ceintures maraîchères −12 %, production d\'énergie −3 %, tourisme −2 %, eau et denrées importées plus chères : niveau des prix +0,3 %.';
+      return `Sécheresse régionale : les réservoirs de la cité-État sont au plus bas. Ceintures maraîchères −${pctf(0.12 * k)}, production d'énergie −${pctf(0.03 * k)}, tourisme −${pctf(0.02 * k)}, eau et denrées importées plus chères : niveau des prix +${pctf(0.003 * k, 1)}.${sevTxt(S)}`;
     },
     options: [
       { id: 'urgence', label: 'Programme d\'urgence pour l\'eau potable', text: 'Contrats d\'approvisionnement et unités de dessalement mobiles financés sur le budget : pertes réduites de 60 %, risque futur −30 %. Coût : 0,15 % du PIB par an pendant 12 mois (environnement).', budget: [{ line: 'environnement', gdpShare: 0.0015, months: 12 }],
@@ -251,9 +257,10 @@ export const EVENT_DEFS: EventDef[] = [
     id: 'inondations', title: 'Inondation littorale', icon: '🌊', kind: 'climat', cooldown: 12,
     prob: (S) => (autumnWinter(S) ? 0.006 : 0.002) * (1 + warming(S)) * (1 + modifierSum(S, 'risk:inondations')),
     start: (S) => {
-      S.services.infrastructures = clamp(S.services.infrastructures - 0.04, 0, 1);
+      const k = severity(S); // --- plan climat ---
+      S.services.infrastructures = clamp(S.services.infrastructures - 0.04 * k, 0, 1);
       bumpTrust(S, -1);
-      return `Grande marée et crue de l'estuaire : quais, tunnels, stations de métro et réseaux des quartiers bas submergés (qualité des infrastructures −4 points). Dégâts estimés : ${md(0.004 * gdp(S))}.`;
+      return `Grande marée et crue de l'estuaire : quais, tunnels, stations de métro et réseaux des quartiers bas submergés (qualité des infrastructures −${(4 * k).toFixed(1).replace('.', ',')} points). Dégâts estimés : ${md(0.004 * k * gdp(S))}.${sevTxt(S)}`;
     },
     options: [
       { id: 'reconstruction', label: 'Reconstruction rapide', text: 'Infrastructures +3 points, confiance +2. Coût : 0,3 % du PIB par an pendant 6 mois.', budget: [{ line: 'infrastructures', gdpShare: 0.003, months: 6 }],
@@ -267,13 +274,14 @@ export const EVENT_DEFS: EventDef[] = [
   },
   {
     id: 'canicule', title: 'Canicule urbaine', icon: '🔥', kind: 'climat', cooldown: 12,
-    prob: (S) => (summer(S) ? 0.015 : 0) * (1 + warming(S)),
+    prob: (S) => (summer(S) ? 0.015 : 0) * (1 + warming(S)) * Math.max(0, 1 + modifierSum(S, 'risk:canicule')), // --- plan climat --- : îlots de fraîcheur
     start: (S, ev) => {
-      S.services.sante = clamp(S.services.sante - 0.015, 0, 1);
-      addModifier(S, 'energy', 0.05, 0.8, ev.uid, 'Canicule');
-      addModifier(S, 'prod:agriculture', -0.04, 0.85, ev.uid, 'Canicule');
-      bumpCats(S, ['retraites'], -3);
-      return 'Îlots de chaleur : 40 °C dans les quartiers denses, hôpitaux saturés (qualité des soins −1,5 point), pics de climatisation (prix de l\'énergie +5 %), retraités −3.';
+      const k = severity(S); // --- plan climat ---
+      S.services.sante = clamp(S.services.sante - 0.015 * k, 0, 1);
+      addModifier(S, 'energy', 0.05 * k, 0.8, ev.uid, 'Canicule');
+      addModifier(S, 'prod:agriculture', -0.04 * k, 0.85, ev.uid, 'Canicule');
+      bumpCats(S, ['retraites'], -3 * k);
+      return `Îlots de chaleur : 40 °C dans les quartiers denses, hôpitaux saturés (qualité des soins −${(1.5 * k).toFixed(1).replace('.', ',')} point), pics de climatisation (prix de l'énergie +${pctf(0.05 * k)}), retraités −${(3 * k).toFixed(1).replace('.', ',')}.${sevTxt(S)}`;
     },
     options: [
       { id: 'plan', label: 'Plan canicule', text: 'Cellules de crise par arrondissement, lieux rafraîchis, renfort des hôpitaux : soins +1 point, retraités +3. Coût : 0,05 % du PIB par an pendant 3 mois.', budget: [{ line: 'sante', gdpShare: 0.0005, months: 3 }],
@@ -287,11 +295,12 @@ export const EVENT_DEFS: EventDef[] = [
   },
   {
     id: 'tempete', title: 'Tempête', icon: '🌪️', kind: 'climat', cooldown: 12,
-    prob: (S) => (winter(S) ? 0.008 : 0.001) * (1 + 0.5 * warming(S)),
+    prob: (S) => (winter(S) ? 0.008 : 0.001) * (1 + 0.5 * warming(S)) * Math.max(0, 1 + modifierSum(S, 'risk:tempete')), // --- plan climat --- : réseaux résilients
     start: (S, ev) => {
-      S.services.infrastructures = clamp(S.services.infrastructures - 0.02, 0, 1);
-      addModifier(S, 'prod:energie', -0.04, 0.7, ev.uid, 'Tempête');
-      return 'Tempête violente sur la côte : lignes électriques, grues portuaires et toitures endommagées (infrastructures −2 points, production d\'énergie −4 %).';
+      const k = severity(S); // --- plan climat ---
+      S.services.infrastructures = clamp(S.services.infrastructures - 0.02 * k, 0, 1);
+      addModifier(S, 'prod:energie', -0.04 * k, 0.7, ev.uid, 'Tempête');
+      return `Tempête violente sur la côte : lignes électriques, grues portuaires et toitures endommagées (infrastructures −${(2 * k).toFixed(1).replace('.', ',')} points, production d'énergie −${pctf(0.04 * k)}).${sevTxt(S)}`;
     },
     options: [
       { id: 'reparation', label: 'Réparations d\'urgence', text: 'Infrastructures +2 points. Coût : 0,15 % du PIB par an pendant 4 mois.', budget: [{ line: 'infrastructures', gdpShare: 0.0015, months: 4 }],

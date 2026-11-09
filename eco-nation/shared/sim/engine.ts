@@ -12,6 +12,7 @@ import { applyDiplomaticAction, initInternational, internationalStep, type Diplo
 import { applyExtraBudget, eventsStep, initEvents, removeExtraBudget, resolveEvent } from './events';
 import { continueAfterDefeat, initVictory, victoryStep } from './victory';
 import { ensureMissions, missionsPre, missionsStep } from './missions'; // --- missions et progression du joueur ---
+import { climateStep, ensureClimate, playClimateCard, setTrajectoryMode } from './climate'; // --- plan climat ---
 // --- module énergie ---
 import { DEFAULT_ENERGY_POLICY } from './energyData';
 import { applyEnergyAction, energyHistory, energyStep, initEnergy, isEnergyAction, sanitizeEnergyPolicy, type EnergyAction } from './energy';
@@ -306,6 +307,7 @@ export function tick(S: GameState): void {
   victoryStep(S); // victoires et défaites
   servicesPostStep(S); // --- modules services publics/recherche/construction ---
   recordHistory(S);
+  climateStep(S); // --- plan climat --- : référence 2030, cumul, risque, jauges de soutien, suivi des cartes, jalons
   missionsStep(S, missionsBefore); // --- missions --- : progression, récompenses, trophées, retours, bilan annuel
   // 5. Indexation automatique
   if (P.finance.indexBudgets) {
@@ -485,6 +487,7 @@ export function initModules(S: GameState) {
   if (!S.victory) initVictory(S);
   // --- missions --- : créées après les autres modules (les missions se fondent sur les besoins réels)
   if (S.energy && S.health) ensureMissions(S);
+  if (S.energy) ensureClimate(S); // --- plan climat ---
 }
 
 /** Actions de gouvernement hors politique fiscale : décisions d'événements, diplomatie, parlement, poursuite après défaite. */
@@ -492,7 +495,10 @@ export type GovAction =
   | { type: 'evenement'; uid: number; option: string }
   | DiplomaticAction
   | PoliticalAction
-  | { type: 'continuer' };
+  | { type: 'continuer' }
+  // --- plan climat --- : carte-action (validée par le moteur : déblocage, soutien, mécanisme réel) et choix de trajectoire
+  | { type: 'climatCard'; card: string }
+  | { type: 'climatTrajectoire'; mode: 'lineaire' | 'exponentielle' };
 
 export function applyGovAction(S: GameState, a: GovAction): { ok: boolean; msg: string } {
   if (!a || typeof a !== 'object') return { ok: false, msg: 'Action invalide' };
@@ -501,6 +507,9 @@ export function applyGovAction(S: GameState, a: GovAction): { ok: boolean; msg: 
     case 'accord': case 'rompreAccord': case 'diplomatie': return applyDiplomaticAction(S, a);
     case 'confiance': case 'dissolution': case 'coalition': case 'retirerLoi': return applyPoliticalAction(S, a);
     case 'continuer': return continueAfterDefeat(S);
+    // --- plan climat --- : les leviers de politique d'une carte passent par la procédure parlementaire (décret ou loi)
+    case 'climatCard': return playClimateCard(S, String(a.card), { schedule: (p) => schedulePolicy(S, p, { parliament: true }) });
+    case 'climatTrajectoire': return setTrajectoryMode(S, String(a.mode));
     default: return { ok: false, msg: 'Action inconnue' };
   }
 }
@@ -584,6 +593,7 @@ export function migrate(S: GameState): GameState {
   if (!S.energy) initEnergy(S);
   if (!S.environment) initEnvironment(S);
   ensureMissions(S); // --- missions --- : anciennes sauvegardes sans missions
+  ensureClimate(S); // --- plan climat --- : anciennes sauvegardes (référence et cumul reconstitués depuis l'historique)
   return S; // point d'entrée des futures migrations de sauvegardes
 }
 

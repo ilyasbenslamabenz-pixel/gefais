@@ -19,6 +19,7 @@ import type { SecurityPolicy, SecurityState } from './security';
 import type { ResearchPolicy, ResearchState } from './research';
 import type { ConstructionState } from './construction';
 import type { MissionsState } from './missions'; // --- missions et progression du joueur ---
+import type { ClimateState } from './climate'; // --- plan climat ---
 
 // ---------- Décisions du joueur ----------
 export interface Bracket { upTo: number | null; rate: number }
@@ -337,6 +338,7 @@ export interface GameState {
   research?: ResearchState;
   construction?: ConstructionState;
   missions?: MissionsState; // --- missions, trophées, retours et bilan annuel (missions.ts) ---
+  climate?: ClimateState; // --- plan climat --- facteur 4, jauges de soutien, cartes-actions (climate.ts)
 }
 
 export type Occ = Occupation;
