@@ -10,6 +10,7 @@ import { urbanDensity } from '../../../shared/sim/country';
 import type { CountryDef } from '../../../shared/sim/types';
 import { ENV, type Grid } from './terrain';
 import { CLOCK, LANES, getNetwork, hasSignal, occAt, sampleAt, signalState, surfaceY, type NetPath } from './roads';
+import { setThinCount } from './thin';
 
 // ---------- modèles ----------
 type RGB = [number, number, number];
@@ -176,12 +177,12 @@ export function createTraffic(scene: Scene, grid: Grid, country: CountryDef, max
   }
   const bufs = cap.map((n) => new Float32Array(Math.max(1, n) * 16));
   const cols = cap.map((n) => new Float32Array(Math.max(1, n) * 4));
-  meshes.forEach((m, k) => { m.thinInstanceSetBuffer('matrix', bufs[k], 16, false); m.thinInstanceSetBuffer('color', cols[k], 4, false); m.thinInstanceCount = 0; });
+  meshes.forEach((m, k) => { m.thinInstanceSetBuffer('matrix', bufs[k], 16, false); m.thinInstanceSetBuffer('color', cols[k], 4, false); setThinCount(m, 0); });
   const LMAX = maxCars + 400;
   const headBuf = new Float32Array(LMAX * 16), tailBuf = new Float32Array(LMAX * 16);
   heads.m.thinInstanceSetBuffer('matrix', headBuf, 16, false);
   tails.m.thinInstanceSetBuffer('matrix', tailBuf, 16, false);
-  heads.m.thinInstanceCount = 0; tails.m.thinInstanceCount = 0;
+  setThinCount(heads.m, 0); setThinCount(tails.m, 0);
 
   // index spatial des voies routières (seaux de 250 m)
   const roadPaths = net.paths.map((p, i) => ({ p, i })).filter(({ p }) => p.kind === 'autoroute' || p.kind === 'nationale');
@@ -489,7 +490,7 @@ export function createTraffic(scene: Scene, grid: Grid, country: CountryDef, max
       }
     }
     meshes.forEach((m, k) => {
-      m.thinInstanceCount = counts[k];
+      setThinCount(m, counts[k]);
       if (counts[k]) { m.thinInstanceBufferUpdated('matrix'); m.thinInstanceBufferUpdated('color'); }
     });
 
@@ -530,7 +531,7 @@ export function createTraffic(scene: Scene, grid: Grid, country: CountryDef, max
         }
       }
     }
-    trainCars[0].thinInstanceCount = km; trainCars[1].thinInstanceCount = kc;
+    setThinCount(trainCars[0], km); setThinCount(trainCars[1], kc);
     for (const m of trainCars) { m.thinInstanceBufferUpdated('matrix'); m.thinInstanceBufferUpdated('color'); }
 
     // bateaux
@@ -549,9 +550,9 @@ export function createTraffic(scene: Scene, grid: Grid, country: CountryDef, max
         nl++;
       }
     }
-    boatMeshes.forEach((m, k) => { m.thinInstanceCount = bc[k]; m.thinInstanceBufferUpdated('matrix'); });
+    boatMeshes.forEach((m, k) => { setThinCount(m, bc[k]); m.thinInstanceBufferUpdated('matrix'); });
 
-    heads.m.thinInstanceCount = nl; tails.m.thinInstanceCount = nl;
+    setThinCount(heads.m, nl); setThinCount(tails.m, nl);
     if (nl) { heads.m.thinInstanceBufferUpdated('matrix'); tails.m.thinInstanceBufferUpdated('matrix'); }
     const n = ENV.night;
     heads.mat.emissiveColor.set(1.0 * n, 0.95 * n, 0.82 * n);

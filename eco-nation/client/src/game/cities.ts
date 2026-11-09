@@ -16,6 +16,7 @@ import { ENV, densify, type Grid } from './terrain';
 import { balconyTemplate, boxTemplate, ringTemplate, cylTemplate, houseTemplate, mansardTemplate, shedTemplate, siloTemplate, treeTemplate, vaultTemplate } from './buildings/geometry';
 import { BLD_VIEW, balconyMaterial, buildingMaterial, treeMaterial, type Layer } from './buildings/materials';
 import { acg, haussmannTexture, houseTexture, residTexture } from './buildings/textures';
+import { setThinCount } from './thin';
 
 export const GROWTH_CAP = 1.5;
 const CELL = 0.2; // trame des rues peinte par le terrain (km)
@@ -76,7 +77,7 @@ class Batch {
     this.mesh.thinInstanceSetBuffer('matrix', this.live, 16, false);
     this.mesh.thinInstanceSetBuffer('bdata', this.lData, 4, false);
     this.mesh.thinInstanceSetBuffer('btint', this.lTint, 4, false);
-    this.mesh.thinInstanceCount = this.count;
+    setThinCount(this.mesh, this.count);
     this.mats = []; this.data = []; this.tint = [];
   }
   /** Compacte les instances visibles autour de (cx, cz) dans les tampons GPU. */
@@ -94,7 +95,7 @@ class Batch {
       n++;
     }
     this.drawn = n;
-    this.mesh.thinInstanceCount = n;
+    setThinCount(this.mesh, n);
     this.mesh.thinInstanceBufferUpdated('matrix');
     this.mesh.thinInstanceBufferUpdated('bdata');
     this.mesh.thinInstanceBufferUpdated('btint');

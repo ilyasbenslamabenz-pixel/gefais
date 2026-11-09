@@ -11,6 +11,7 @@ import { mulberry32 } from '../../../shared/noise';
 import { HALF_D, HALF_W, coastX, parkMask, urbanDensity } from '../../../shared/sim/country';
 import type { CountryDef } from '../../../shared/sim/types';
 import { ENV, RES, VS, densify, type Grid } from './terrain';
+import { setThinCount } from './thin';
 
 // ---------------------------------------------------------------------------------------------
 // Surface du relief telle qu'elle est maillée (triangulation identique à createTerrain)
@@ -1142,7 +1143,7 @@ function createFurniture(scene: Scene, grid: Grid, country: CountryDef, net: Net
   sigPole.thinInstanceSetBuffer('matrix', sigBuf, 16, false);
   sigHead.thinInstanceSetBuffer('matrix', sigBuf, 16, false);
   sigHead.thinInstanceSetBuffer('color', sigCol, 4, false);
-  for (const m of [lampBody, head, tree, sigPole, sigHead]) m.thinInstanceCount = 0;
+  for (const m of [lampBody, head, tree, sigPole, sigHead]) setThinCount(m, 0);
   addShadowCaster(scene, tree);
 
   const write = (buf: Float32Array, k: number, x: number, y: number, z: number, ang: number, s: number) => {
@@ -1281,7 +1282,7 @@ function createFurniture(scene: Scene, grid: Grid, country: CountryDef, net: Net
       return n;
     };
     const nl = fill(lamps, LAMPS, lampBuf);
-    lampBody.thinInstanceCount = nl; head.thinInstanceCount = nl;
+    setThinCount(lampBody, nl); setThinCount(head, nl);
     lampBody.thinInstanceBufferUpdated('matrix'); head.thinInstanceBufferUpdated('matrix');
     const nt = fill(trees, TREES, treeBuf, (k, c) => {
       const hv = hash(c.x * 3.1, c.z * 1.7);
@@ -1291,7 +1292,7 @@ function createFurniture(scene: Scene, grid: Grid, country: CountryDef, net: Net
       const w = Color3.Lerp(col, new Color3(0.42, 0.38, 0.33), ENV.winter * 0.6);
       treeCol.set([w.r, w.g, w.b, 1], k * 4);
     });
-    tree.thinInstanceCount = nt;
+    setThinCount(tree, nt);
     tree.thinInstanceBufferUpdated('matrix'); tree.thinInstanceBufferUpdated('color');
     // feux tricolores aux carrefours des boulevards proches
     sigInfo.length = 0;
@@ -1309,7 +1310,7 @@ function createFurniture(scene: Scene, grid: Grid, country: CountryDef, net: Net
         }
       }
     }
-    sigPole.thinInstanceCount = sigInfo.length; sigHead.thinInstanceCount = sigInfo.length;
+    setThinCount(sigPole, sigInfo.length); setThinCount(sigHead, sigInfo.length);
     sigPole.thinInstanceBufferUpdated('matrix'); sigHead.thinInstanceBufferUpdated('matrix');
     void rnd;
   };

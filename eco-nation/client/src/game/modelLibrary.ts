@@ -34,6 +34,7 @@ import {
   type ManifestEntry,
   type ManifestPart,
 } from './modelLibraryUtils';
+import { setThinCount } from './thin';
 
 export * from './modelLibraryUtils';
 
@@ -361,7 +362,7 @@ export function createThinInstances(
     if (colors) body.thinInstanceSetBuffer('color', colors, 4, !dynamic);
   };
   upload();
-  for (const m of meshes) m.thinInstanceCount = 0;
+  for (const m of meshes) setThinCount(m, 0);
   if (lights) {
     lightsMeshes.add(lights);
     lights.setEnabled(currentNight > 0.02);
@@ -392,7 +393,7 @@ export function createThinInstances(
       } else {
         upload(); // un tampon GPU statique ne se met pas à jour en place
       }
-      for (const m of meshes) m.thinInstanceCount = buf.count;
+      for (const m of meshes) setThinCount(m, buf.count);
     },
     dispose() {
       for (const m of meshes) {
