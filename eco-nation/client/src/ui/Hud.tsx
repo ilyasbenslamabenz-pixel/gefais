@@ -167,7 +167,7 @@ export function Dock() {
           </div>
         );
       })}
-      <button className={panel === 'stats' ? 'on' : ''} onClick={() => toggle('stats')}><span><Icon name="stats" size={22} /></span><em>Statistiques</em></button>
+      <button className={panel === 'stats' ? 'on' : ''} onClick={() => toggle('stats')}><span><Icon name="stats" size={22} /></span><em>Chiffres</em></button>
       <div className="dock-sep" />
       <button className={panel === 'notifications' ? 'on' : ''} onClick={() => toggle('notifications')}><span><Icon name="alertes" size={22} /></span><em>Alertes</em>{unread > 0 && <i className="badge">{unread}</i>}</button>
       <button className={panel === 'help' ? 'on' : ''} onClick={() => toggle('help')}><span><Icon name="aide" size={22} /></span><em>Aide</em></button>
