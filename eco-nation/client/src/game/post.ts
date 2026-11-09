@@ -8,18 +8,39 @@ export type { TimeMode };
 
 /** Position du soleil dans la journée (0 = minuit, 0,5 = midi) selon le mode d'heure choisi. */
 export function timeOfDay(mode: TimeMode, elapsedSec: number, dayLength: number): number {
-  if (mode === 'golden') return 0.705 + Math.sin(elapsedSec * 0.05) * 0.003; // soleil bas mais encore au-dessus de l'horizon (lumière dorée, pas la nuit) // soleil bas, ville qui s'allume
+  if (mode === 'golden') return 0.731 + Math.sin(elapsedSec * 0.05) * 0.002; // soleil à ~7° au-dessus de l'horizon : lumière rasante dorée, ombres longues, la ville commence à s'allumer
   if (mode === 'day') return 0.56;
   if (mode === 'night') return 0.93;
   return ((elapsedSec / dayLength) + 0.35) % 1;
 }
 
+/** Courbes d'étalonnage : hautes lumières dorées, ombres bleutées (contraste chaud/froid de l'heure dorée). */
+function gradeCurves() {
+  const c = new ColorCurves();
+  c.globalSaturation = 14;
+  c.highlightsHue = 38;
+  c.highlightsDensity = 32;
+  c.highlightsSaturation = 38;
+  c.midtonesHue = 30;
+  c.midtonesDensity = 6;
+  c.shadowsHue = 220;
+  c.shadowsDensity = 28;
+  c.shadowsSaturation = 30;
+  c.shadowsExposure = -6;
+  return c;
+}
+
 export function createPostProcessing(scene: Scene, camera: Camera, quality: Quality) {
   if (quality === 'low') {
-    scene.imageProcessingConfiguration.toneMappingEnabled = true;
-    scene.imageProcessingConfiguration.toneMappingType = ImageProcessingConfiguration.TONEMAPPING_ACES;
-    scene.imageProcessingConfiguration.exposure = 1.05;
-    return { update: () => {}, dispose: () => {} };
+    // qualité basse : étalonnage appliqué directement dans les matériaux (aucune passe supplémentaire)
+    const ipc = scene.imageProcessingConfiguration;
+    ipc.toneMappingEnabled = true;
+    ipc.toneMappingType = ImageProcessingConfiguration.TONEMAPPING_ACES;
+    ipc.exposure = 1.08;
+    ipc.contrast = 1.12;
+    ipc.colorCurvesEnabled = true;
+    ipc.colorCurves = gradeCurves();
+    return { update: () => { ipc.exposure = 1.08 + ENV.night * 0.12; }, dispose: () => {} };
   }
   const p = new DefaultRenderingPipeline('cine', true, scene, [camera]);
   p.samples = quality === 'high' ? 4 : 1;
@@ -28,26 +49,19 @@ export function createPostProcessing(scene: Scene, camera: Camera, quality: Qual
   p.bloomKernel = 64;
   p.bloomScale = 0.5;
   p.bloomWeight = 0.35;
-  p.bloomThreshold = 0.82;
+  p.bloomThreshold = 0.8;
   p.imageProcessingEnabled = true;
   const ip = p.imageProcessing;
   ip.toneMappingEnabled = true;
   ip.toneMappingType = ImageProcessingConfiguration.TONEMAPPING_ACES;
-  ip.exposure = 1.1;
-  ip.contrast = 1.12;
+  ip.exposure = 1.08;
+  ip.contrast = 1.2;
   ip.vignetteEnabled = true;
-  ip.vignetteWeight = 1.6;
-  ip.vignetteColor = new Color4(0.12, 0.05, 0.02, 0);
+  ip.vignetteWeight = 1.3;
+  ip.vignetteStretch = 0.3;
+  ip.vignetteColor = new Color4(0.1, 0.04, 0.02, 0);
   ip.colorCurvesEnabled = true;
-  const curves = new ColorCurves();
-  curves.globalSaturation = 18;
-  curves.highlightsHue = 35; // hautes lumières dorées
-  curves.highlightsDensity = 25;
-  curves.highlightsSaturation = 30;
-  curves.shadowsHue = 215; // ombres bleutées
-  curves.shadowsDensity = 20;
-  curves.shadowsSaturation = 25;
-  ip.colorCurves = curves;
+  ip.colorCurves = gradeCurves();
   p.sharpenEnabled = quality === 'high';
   if (p.sharpenEnabled) p.sharpen.edgeAmount = 0.25;
   let ssao: SSAO2RenderingPipeline | null = null;
@@ -60,10 +74,10 @@ export function createPostProcessing(scene: Scene, camera: Camera, quality: Qual
   }
   return {
     update: () => {
-      // le soir, le bloom fait rayonner fenêtres, lampadaires et soleil couchant
-      p.bloomWeight = 0.3 + ENV.night * 0.35;
-      p.bloomThreshold = 0.85 - ENV.night * 0.25;
-      ip.exposure = 1.1 + ENV.night * 0.25;
+      // bloom réservé aux vraies sources (soleil, reflets, fenêtres, lampadaires) : seuil haut, pas de voile laiteux
+      p.bloomWeight = 0.28 + ENV.night * 0.22;
+      p.bloomThreshold = 0.82 - ENV.night * 0.12;
+      ip.exposure = 1.08 + ENV.night * 0.15;
     },
     dispose: () => { p.dispose(); ssao?.dispose(); },
   };

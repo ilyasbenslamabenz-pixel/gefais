@@ -4,6 +4,7 @@
 import { Color3, Constants, HDRTools, RawCubeTexture, Vector3, type BaseTexture, type Scene, type Texture } from '@babylonjs/core';
 import { CustomMaterial } from '@babylonjs/materials/custom/customMaterial';
 import { ENV } from '../terrain';
+import { SKY } from '../sky';
 
 /** Une couche de façade : texture couleur (+ normales), taille d'un motif en km, grille de fenêtres. */
 export interface Layer {
@@ -70,7 +71,7 @@ export function skyState() {
   const t = ENV.time;
   const late = t < 0.25 ? 1 - Math.min(1, Math.abs(t - 0.12) / 0.14) : 0;
   // les fenêtres s'allument dès le coucher du soleil (heure dorée) et s'éteignent au lever
-  const evening = t > 0.5 ? Math.max(0, Math.min(1, 1 - elev / 0.22)) * 0.85 : Math.max(0, Math.min(1, 1 - elev / 0.12)) * 0.5;
+  const evening = t > 0.5 ? Math.max(0, Math.min(1, 1 - elev / 0.3)) * 0.9 : Math.max(0, Math.min(1, 1 - elev / 0.12)) * 0.5;
   const lights = Math.max(ENV.night, evening) * (1 - late * 0.45);
   return { sunDir, sky, sunCol, lights };
 }
@@ -129,6 +130,10 @@ export function buildingMaterial(scene: Scene, name: string, o: MatOptions) {
   mat.AddUniform('uSunDir', 'vec3', new Vector3(0, 1, 0));
   mat.AddUniform('uSunCol', 'vec3', new Vector3(1, 1, 1));
   mat.AddUniform('uView', 'vec3', new Vector3(0, 0, 6));
+  mat.AddUniform('uZen', 'vec3', new Vector3(0.2, 0.4, 0.8));
+  mat.AddUniform('uHorSun', 'vec3', new Vector3(1, 1, 1));
+  mat.AddUniform('uHorAway', 'vec3', new Vector3(0.7, 0.8, 0.9));
+  mat.AddUniform('uHaze', 'vec3', new Vector3(0.7, 0.75, 0.8));
   mat.AddUniform('envTex', 'samplerCube', null); // lié à chaque rendu (voir onBind)
   o.layers.forEach((l, i) => {
     if (!l.solid && !l.proc) mat.AddUniform(`fac${i}`, 'sampler2D', l.tex);
@@ -184,14 +189,17 @@ export function buildingMaterial(scene: Scene, name: string, o: MatOptions) {
       float floorId = floor(uv.y * grid.y);
       float hc = bHash(cell + seed * 131.7);
       float hf = bHash(vec2(floorId, seed * 71.3));
+      // part des fenêtres allumées croissante avec l'heure (uLights), déterministe par bâtiment, étage et fenêtre
+      float share = clamp(uLights * 1.25, 0.0, 1.0);
       if (hasNight > 0.5) {
-        float on = step(0.28, hf) * vB.w * 1.6;
-        emis = nightPhoto * mix(vec3(1.0, 0.82, 0.6), vec3(1.0), hf) * on * (0.45 + 0.55 * win);
-        emis += win * step(hc, 0.10 * vB.w) * litColor(bHash(cell * 1.7 + 3.1)) * 0.5;
+        float on = step(1.0 - share * 0.85, hf) * vB.w * 1.6;
+        emis = nightPhoto * mix(vec3(1.0, 0.78, 0.52), vec3(1.0, 0.95, 0.85), hf) * on * (0.45 + 0.55 * win);
+        emis += win * step(hc, (0.06 + 0.12 * share) * vB.w) * litColor(bHash(cell * 1.7 + 3.1)) * 0.8;
       } else {
-        // rez-de-chaussée : vitrines et halls plus souvent éclairés
-        float on = step(hc, vB.w * mix(0.55, 1.1, hf) * (floorId < 0.5 ? 1.8 : 1.0));
-        emis = win * on * litColor(bHash(cell * 1.7 + 3.1 + seed)) * (0.55 + 0.6 * bHash(cell + 9.1));
+        // rez-de-chaussée : vitrines et halls plus souvent éclairés ; étages entiers allumés ou éteints
+        float floorOn = step(hf, 0.35 + 0.65 * share);
+        float on = step(hc, vB.w * mix(0.6, 1.25, hf) * share * (floorId < 0.5 ? 2.0 : 1.0)) * mix(0.35, 1.0, floorOn);
+        emis = win * on * litColor(bHash(cell * 1.7 + 3.1 + seed)) * (0.7 + 0.7 * bHash(cell + 9.1));
       }
       alb = mix(alb, alb * 0.4, gMask);
       // vitrages : léger gauchissement aléatoire par panneau (reflets moirés réalistes)
@@ -215,24 +223,22 @@ export function buildingMaterial(scene: Scene, name: string, o: MatOptions) {
     if (gMask > 0.01) {
       vec3 nR = normalize(normalW + T * pj.x + Bv * pj.y);
       vec3 Rf = reflect(-viewDirectionW, nR);
-      // ciel reflété : dégradé zénith / horizon orienté par le soleil (horizon embrasé côté soleil au
-      // couchant), modulé par les nuages du ciel HDR ; sous l'horizon, la ville et le sol
+      // nuages du ciel HDR (modulation du reflet)
       float cloud = dot(textureCube(envTex, vec3(Rf.x, abs(Rf.y) * 0.9 + 0.04, Rf.z)).rgb, vec3(0.33));
       vec3 sd = normalize(vec3(uSunDir.x, 0.0, uSunDir.z) + vec3(1e-4));
-      float toward = max(dot(normalize(vec3(Rf.x, 0.0, Rf.z) + vec3(1e-4)), sd), 0.0);
-      float duskK = (1.0 - smoothstep(0.03, 0.45, uSunDir.y)) * step(-0.2, uSunDir.y);
-      vec3 hor = mix(vec3(0.66, 0.74, 0.82), vec3(1.15, 0.58, 0.26), duskK * pow(toward, 1.5));
-      vec3 zen = mix(vec3(0.20, 0.36, 0.62), vec3(0.24, 0.27, 0.46), duskK * 0.7);
-      vec3 skyC = mix(hor, zen, pow(max(Rf.y, 0.0), 0.55)) * (0.7 + 0.55 * cloud);
-      vec3 low = mix(vec3(0.34, 0.37, 0.42), mix(vec3(0.62, 0.67, 0.75), vec3(0.85, 0.55, 0.36), duskK * toward), smoothstep(-0.6, 0.0, Rf.y));
-      float dayK = clamp(dot(uSky, vec3(0.33)), 0.04, 1.3);
-      vec3 env = mix(low, skyC, smoothstep(-0.03, 0.05, Rf.y)) * mix(vec3(dayK), uSky, 0.35);
+      float toward = dot(normalize(vec3(Rf.x, 0.0, Rf.z) + vec3(1e-4)), sd) * 0.5 + 0.5;
+      // ciel reflété = le dôme du ciel (mêmes couleurs) ; sous l'horizon, la ville baignée de brume
+      vec3 hor = mix(uHorAway, uHorSun, pow(toward, 1.6));
+      vec3 skyC = mix(hor, uZen, pow(max(Rf.y, 0.0), 0.42)) * (0.8 + 0.4 * cloud);
+      vec3 low = mix(uHaze * 0.45, uHaze * 0.95, smoothstep(-0.5, 0.0, Rf.y));
+      vec3 env = mix(low, skyC, smoothstep(-0.03, 0.05, Rf.y));
       float fres = 0.08 + 0.92 * pow(1.0 - max(dot(nR, viewDirectionW), 0.0), 4.0);
       float k = clamp(gMask * mix(0.55, 1.0, fres) * ${refl}, 0.0, 1.0);
       color.rgb = mix(color.rgb, env * mix(vec3(1.0), vT.rgb, 0.7 * step(0.6, gMask)), k);
       color.rgb += uSunCol * pow(max(dot(Rf, uSunDir), 0.0), 220.0) * 2.5 * gMask;
     }
-    color.rgb += emis * uLights * 1.25;
+    // intensité : quasi pleine dès l'allumage (captée par le bloom), la part allumée porte la progression
+    color.rgb += emis * smoothstep(0.0, 0.25, uLights) * (1.15 + 0.5 * uLights);
   `);
   mat.onBindObservable.add(() => {
     const e = mat.getEffect();
@@ -245,6 +251,10 @@ export function buildingMaterial(scene: Scene, name: string, o: MatOptions) {
     e.setVector3('uSunDir', s.sunDir);
     e.setColor3('uSunCol', s.sunCol);
     e.setFloat3('uView', BLD_VIEW.x, BLD_VIEW.z, BLD_VIEW.houseR);
+    e.setColor3('uZen', SKY.zen);
+    e.setColor3('uHorSun', SKY.horSun);
+    e.setColor3('uHorAway', SKY.horAway);
+    e.setColor3('uHaze', SKY.haze);
     e.setTexture('envTex', envTexture(scene));
   });
   return mat;

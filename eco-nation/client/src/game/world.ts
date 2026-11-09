@@ -4,7 +4,6 @@ import {
   ArcRotateCamera, CascadedShadowGenerator, Color3, Color4, DirectionalLight, DynamicTexture, Engine, GlowLayer, HemisphericLight,
   Matrix, MeshBuilder, ParticleSystem, PointerEventTypes, Scene, StandardMaterial, Vector3, type ArcRotateCameraPointersInput, type Mesh,
 } from '@babylonjs/core';
-import { SkyMaterial } from '@babylonjs/materials/sky/skyMaterial';
 import type { CountryDef } from '../../../shared/sim/types';
 import { useStore, type Quality } from '../store';
 import { ENV, buildGrid, type Grid } from './terrain';
@@ -15,6 +14,7 @@ import { createTraffic, weatherFor } from './life';
 import { createAirSea } from './airsea'; // --- aéroport et port ---
 import { upgradeWater } from './water';
 import { createPostProcessing, timeOfDay } from './post';
+import { atmosphere, createSky } from './sky';
 
 const Q: Record<Quality, { scale: number; step: number; block: number; trees: number; cars: number; shadows: number; precip: number; glow: boolean }> = {
   low: { scale: 1.25, step: 3, block: 0.28, trees: 6000, cars: 1500, shadows: 0, precip: 1500, glow: false },
@@ -31,9 +31,8 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
   const scene = new Scene(engine);
   (window as unknown as { __ecoScene?: Scene }).__ecoScene = scene; // inspection (tests navigateur)
   scene.clearColor = new Color4(0.55, 0.75, 0.95, 1);
-  scene.fogMode = Scene.FOGMODE_LINEAR;
-  scene.fogStart = 40;
-  scene.fogEnd = 140;
+  scene.fogMode = Scene.FOGMODE_EXP2; // perspective aérienne : la brume s'épaissit avec la distance
+  scene.fogDensity = 0.02;
   scene.fogColor = new Color3(0.7, 0.82, 0.95);
   const grid: Grid = buildGrid(country);
 
@@ -79,18 +78,8 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
   const glow = q.glow ? new GlowLayer('glow', scene, { mainTextureSamples: 1, blurKernelSize: 32 }) : null;
   if (glow) glow.intensity = 0;
 
-  // Ciel procédural (diffusion atmosphérique) + étoiles
-  const skyMat = new SkyMaterial('sky', scene);
-  skyMat.backFaceCulling = false;
-  skyMat.useSunPosition = true;
-  skyMat.turbidity = 6;
-  skyMat.rayleigh = 2;
-  skyMat.luminance = 1;
-  skyMat.fogEnabled = false;
-  const skybox = MeshBuilder.CreateBox('skybox', { size: 2000 }, scene);
-  skybox.material = skyMat;
-  skybox.infiniteDistance = true;
-  skybox.isPickable = false;
+  // Ciel : dôme dégradé maison (heure dorée, nuit, météo) + étoiles
+  const sky = createSky(scene, quality === 'low');
   const starTex = new DynamicTexture('stars', 1024, scene, false);
   {
     const c = starTex.getContext() as CanvasRenderingContext2D;
@@ -223,8 +212,9 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
       const m = snap.month % 12;
       ENV.winter = (1 + Math.cos((m / 12) * Math.PI * 2)) / 2;
       ENV.autumn = Math.exp(-((m - 9.5) ** 2) / 2.5);
-      const w = weatherFor(country.seed, snap.month);
-      ENV.snow = w === 'neige' ? 1 : 0;
+      const w = (window as unknown as { __ecoWeather?: ReturnType<typeof weatherFor> }).__ecoWeather ?? weatherFor(country.seed, snap.month); // météo forcée : inspection (tests navigateur)
+      const goldenSet = (useStore.getState().settings.timeMode ?? 'golden') === 'golden';
+      ENV.snow = w === 'neige' ? (goldenSet ? 0.6 : 1) : 0; // heure dorée : neige plus légère, le zinc des toits reste lisible
       ENV.wet = w === 'pluie' || w === 'orage' ? 1 : 0;
       forests.recolor();
       const active = w === 'pluie' || w === 'orage' || w === 'neige';
@@ -272,31 +262,33 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
     const t = timeOfDay(timeMode ?? 'golden', (performance.now() - startTime) / 1000, dayLength);
     const ang = (t - 0.25) * Math.PI * 2;
     const elev = Math.sin(ang);
-    const night = Math.max(0, Math.min(1, 0.5 - elev * 2.2));
-    ENV.night = night;
     ENV.time = t;
-    const cloudy = weather === 'nuageux' ? 0.35 : weather === 'pluie' || weather === 'brouillard' ? 0.55 : weather === 'orage' ? 0.75 : weather === 'neige' ? 0.5 : 0;
+    // le joueur a choisi l'heure dorée : la météo reste lisible (pluie, neige, voile) sans éteindre la lumière
+    const goldenMode = (timeMode ?? 'golden') === 'golden';
+    const cloudRaw = weather === 'nuageux' ? 0.35 : weather === 'pluie' || weather === 'brouillard' ? 0.55 : weather === 'orage' ? 0.75 : weather === 'neige' ? 0.5 : 0;
+    const cloudy = cloudRaw * (goldenMode ? 0.45 : 1);
+    const atm = atmosphere(elev, cloudy);
+    ENV.night = atm.lamps; // éclairage artificiel (fenêtres, lampadaires) : déjà allumé à l'heure dorée
+    const night = atm.dark; // obscurité réelle (ciel, étoiles, lumière ambiante)
     const sunDir = new Vector3(Math.cos(ang), Math.max(-0.4, elev), 0.35).normalize();
-    skyMat.sunPosition = sunDir.scale(100);
-    skyMat.luminance = 1.05 - cloudy * 0.4;
-    skyMat.turbidity = 5 + cloudy * 12;
+    sky.update(atm, sunDir, cloudy, dt);
     sun.direction = sunDir.scale(-1);
     sun.position = camera.target.add(sunDir.scale(40));
-    sun.intensity = Math.max(0, elev) * 2.6 * (1 - cloudy * 0.6);
-    const dusk = 1 - Math.min(1, Math.abs(elev) * 4);
-    sun.diffuse.set(1, 0.93 - dusk * 0.3, 0.85 - dusk * 0.45);
-    hemi.intensity = 0.4 + (1 - night) * 0.4 * (1 - cloudy * 0.3);
-    hemi.diffuse.set(0.85 - night * 0.5, 0.9 - night * 0.45, 1);
+    sun.intensity = atm.sunI;
+    sun.diffuse.copyFrom(atm.sunCol);
+    sun.specular.copyFrom(atm.sunCol);
+    hemi.intensity = atm.hemiI;
+    hemi.diffuse.copyFrom(atm.hemiSky);
+    hemi.groundColor.copyFrom(atm.hemiGround);
+    hemi.specular.set(0, 0, 0);
     starMat.alpha = night * (1 - cloudy);
-    skybox.visibility = 1 - night * 0.92;
-    const fogDay = cloudy > 0.4 ? new Color3(0.68, 0.72, 0.77) : new Color3(0.72, 0.83, 0.95);
-    // brume dorée quand le soleil est bas (heure dorée), bleu nuit ensuite
-    const golden = Math.max(0, 1 - Math.abs(elev - 0.08) * 6) * (1 - cloudy * 0.7);
-    scene.fogColor = Color3.Lerp(Color3.Lerp(fogDay, new Color3(1.0, 0.62, 0.4), golden * 0.75), new Color3(0.03, 0.05, 0.1), night);
-    scene.clearColor = new Color4(scene.fogColor.r, scene.fogColor.g, scene.fogColor.b, 1);
-    scene.fogStart = weather === 'brouillard' ? 1 : 30 + camera.radius * 0.8 - cloudy * 10;
-    scene.fogEnd = weather === 'brouillard' ? 12 + camera.radius * 0.5 : 110 + camera.radius * 1.6 - cloudy * 30;
-    if (glow) glow.intensity = night * 0.8;
+    // brume : couleur de l'horizon (dorée au couchant), densité adaptée à l'échelle de la vue
+    const fog = weather === 'brouillard' ? Color3.Lerp(atm.haze, new Color3(0.62, 0.62, 0.64).scale(1 - night * 0.8), goldenMode ? 0.35 : 0.7) : atm.haze;
+    scene.fogColor = fog;
+    scene.clearColor = new Color4(fog.r, fog.g, fog.b, 1);
+    const reach = 20 + camera.radius * 2.6; // distance (km) où la brume voile environ la moitié de la scène
+    scene.fogDensity = (0.83 / reach) * (1 + cloudy * 0.6) * (weather === 'brouillard' ? (goldenMode ? 2.2 : 3.5) : 1);
+    if (glow) glow.intensity = Math.max(0, ENV.night - 0.45) * 1.4; // halos des feux : la nuit seulement (pas de voile à l'heure dorée)
     water.update(dt, camera.radius);
     post.update();
     // déplacement clavier
