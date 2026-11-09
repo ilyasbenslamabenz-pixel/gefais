@@ -320,10 +320,14 @@ export function createCities(scene: Scene, grid: Grid, country: CountryDef, bloc
   const toCell = (v: number) => Math.floor(v / CELL);
   const segs: number[] = []; // ax, az, bx, bz, demi-largeur
   const segHash = new Map<number, number[]>();
+  const capC = country.cities.find((c) => c.capital) ?? country.cities[0];
   for (const l of country.links) {
+    // métro souterrain dans le centre (voir roads.ts, METRO_TUNNEL) : pas d'emprise à dégager
+    if (l.kind === 'rail' && l.points.every(([x, z]) => Math.hypot(x - capC.x, z - capC.z) < 4.5)) continue;
     const hw = (l.kind === 'autoroute' ? 0.0275 : l.kind === 'nationale' ? 0.016 : 0.01) + 0.012;
     for (let k = 0; k < l.points.length - 1; k++) {
       const [ax, az] = l.points[k], [bx, bz] = l.points[k + 1];
+      if (l.kind === 'rail' && Math.hypot(ax - capC.x, az - capC.z) < 4.5 && Math.hypot(bx - capC.x, bz - capC.z) < 4.5) continue;
       const id = segs.length / 5;
       segs.push(ax, az, bx, bz, hw);
       for (let i = toCell(Math.min(ax, bx) - hw); i <= toCell(Math.max(ax, bx) + hw); i++) {

@@ -260,7 +260,9 @@ export function generateCountry(cfg: CountryConfig): CountryDef {
   const metros = country.cities.filter((c) => c.kind === 'metropole');
   const villes = country.cities.filter((c) => c.kind === 'ville');
   const communes = country.cities.filter((c) => c.kind === 'commune');
-  for (const c of [...metros, ...villes]) {
+  // grandes avenues radiales : seulement vers les pôles majeurs (les autres quartiers se raccordent à leurs voisins),
+  // pour éviter une « étoile » d'une vingtaine d'avenues convergeant sur la place centrale
+  for (const c of metros) {
     if (c.capital) continue;
     for (const p of pieces(linkPoints(cap, c, 0.4))) country.links.push({ a: cap.id, b: c.id, kind: 'nationale', points: p });
   }

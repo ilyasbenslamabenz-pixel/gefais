@@ -62,9 +62,11 @@ export function upgradeWater(scene: Scene, mirrorSize: number) {
   }
   // les UV de la mer couvrent 192 × 144 km : on répète la carte de vagues environ tous les 60 m
   // lacs et rivières : même miroir, sans carte de vagues (UV absentes ou d'une autre échelle)
+  // sans miroir (qualité basse), une eau très sombre paraît noire : teinte plus claire et légère émission (reflet du ciel)
+  if (!mirror) { mat.emissiveColor = new Color3(0.08, 0.16, 0.22); }
   const calm = mat.clone('waterCalmMat');
   calm.bumpTexture = null;
-  calm.diffuseColor = new Color3(0.04, 0.12, 0.15);
+  calm.diffuseColor = mirror ? new Color3(0.04, 0.12, 0.15) : new Color3(0.1, 0.22, 0.28);
   for (const m of water) {
     m.material = m.name === 'sea' ? mat : calm;
     m.isPickable = false;
@@ -78,7 +80,9 @@ export function upgradeWater(scene: Scene, mirrorSize: number) {
       normals.uScale = normals.vScale = tiles;
       normals.uOffset = t * 0.004;
       normals.vOffset = t * 0.0025;
-      mat.diffuseColor.set(0.03 + ENV.night * -0.02, 0.1 - ENV.night * 0.06, 0.14 - ENV.night * 0.06);
+      const k = mirror ? 1 : 2.2; // sans miroir : eau plus claire
+      mat.diffuseColor.set((0.03 - ENV.night * 0.02) * k, (0.1 - ENV.night * 0.06) * k, (0.14 - ENV.night * 0.06) * k);
+      if (!mirror) { mat.emissiveColor.set(0.08 * (1 - ENV.night * 0.8), 0.16 * (1 - ENV.night * 0.8), 0.22 * (1 - ENV.night * 0.8)); calm.emissiveColor.copyFrom(mat.emissiveColor); }
       if (mirror) mirror.level = 0.65 + ENV.night * 0.25;
     },
     dispose: () => { mirror?.dispose(); normals.dispose(); mat.dispose(); calm.dispose(); },

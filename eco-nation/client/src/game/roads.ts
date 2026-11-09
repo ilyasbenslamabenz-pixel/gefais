@@ -295,7 +295,21 @@ function buildNetwork(grid: Grid, country: CountryDef): Network {
   };
 
   // 1. polylignes densifiées
-  const raw: { kind: PathKind; link: number; pts: [number, number][] }[] = country.links.map((l, k) => ({ kind: l.kind, link: k, pts: densify(l.points, 0.04) }));
+  // Le métro passe en souterrain dans le centre dense : on ne dessine pas les voies ferrées à moins de METRO_TUNNEL km
+  // de la capitale (sinon une dizaine de lignes formeraient une étoile au-dessus des îlots du centre).
+  const capCity = country.cities.find((c) => c.capital) ?? country.cities[0];
+  const METRO_TUNNEL = 4.5;
+  const raw: { kind: PathKind; link: number; pts: [number, number][] }[] = [];
+  country.links.forEach((l, k) => {
+    const pts = densify(l.points, 0.04);
+    if (l.kind !== 'rail') { raw.push({ kind: l.kind, link: k, pts }); return; }
+    let cur: [number, number][] = [];
+    for (const q of pts) {
+      if (Math.hypot(q[0] - capCity.x, q[1] - capCity.z) < METRO_TUNNEL) { if (cur.length > 1) raw.push({ kind: 'rail', link: k, pts: cur }); cur = []; }
+      else cur.push(q);
+    }
+    if (cur.length > 1) raw.push({ kind: 'rail', link: k, pts: cur });
+  });
   // 2. giratoires aux centres des quartiers où convergent plusieurs avenues
   const roundabouts: Network['roundabouts'] = [];
   for (const city of country.cities) {
