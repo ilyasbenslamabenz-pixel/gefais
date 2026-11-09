@@ -29,6 +29,7 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
   const engine = new Engine(canvas, quality !== 'low', { stencil: true, preserveDrawingBuffer: false, powerPreference: 'high-performance' }, false);
   engine.setHardwareScalingLevel(q.scale);
   const scene = new Scene(engine);
+  (window as unknown as { __ecoScene?: Scene }).__ecoScene = scene; // inspection (tests navigateur)
   scene.clearColor = new Color4(0.55, 0.75, 0.95, 1);
   scene.fogMode = Scene.FOGMODE_LINEAR;
   scene.fogStart = 40;

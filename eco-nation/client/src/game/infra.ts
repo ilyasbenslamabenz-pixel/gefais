@@ -242,11 +242,12 @@ export function createInfrastructure(scene: Scene, grid: Grid, country: CountryD
     // modèles posés sur une plateforme locale
     const big = ['centrale_nucleaire', 'centrale_charbon', 'centrale_gaz', 'stade', 'zone_industrielle', 'universite', 'zone_commerciale', 'gare', 'hopital'].includes(i.type);
     const R = i.type === 'centrale_nucleaire' ? 0.5 : i.type === 'zone_industrielle' ? 0.55 : ['hopital', 'gare', 'zone_commerciale'].includes(i.type) ? 0.13 : big ? 0.2 : 0.06;
-    const py = big ? padY(i.x, i.z, R) : y;
+    // plateforme limitée à 15 m au-dessus du sol local : près d'une berge ou d'un relief, padY pouvait créer un « socle » géant
+    const py = big ? Math.min(padY(i.x, i.z, R), y + 0.015) : y;
     k.frame(i.x, py, i.z, i.rot);
     if (big) {
       // plateforme terrassée (talus jusqu'au sol)
-      const drop = py - Math.min(y, grid.y(i.x + R, i.z), grid.y(i.x - R, i.z), grid.y(i.x, i.z + R), grid.y(i.x, i.z - R)) + 0.01;
+      const drop = Math.min(0.03, py - Math.min(y, grid.y(i.x + R, i.z), grid.y(i.x - R, i.z), grid.y(i.x, i.z + R), grid.y(i.x, i.z - R)) + 0.01);
       const green = ['centrale_nucleaire', 'centrale_charbon', 'centrale_gaz', 'stade', 'universite'].includes(i.type);
       k.lathe([[R * 1.25, -drop], [R * 1.02, -0.0002], [0.0001, -0.0002]], 0, 0, 0, green ? '#9a9c6c' : '#a3a099', { tess: 20, mat: green ? M.grass : M.concrete });
     }
@@ -333,7 +334,8 @@ export function createInfrastructure(scene: Scene, grid: Grid, country: CountryD
         k.lathe([[2.35, 0.0004], [2.6, 0.0004]], 0, 0, 0, '#c9c3b6', { tess: 40, sx, sz, mat: M.paving });
         // tribunes : deux anneaux en gradins
         k.lathe([[1.0, 0.002], [1.05, 0.004], [1.45, 0.02], [1.5, 0.022], [1.95, 0.04]], 0, 0, 0, (j) => (j < 2 ? '#e9ecef' : j < 3 ? team : j < 4 ? '#e9ecef' : team), { tess: 40, sx, sz });
-        k.lathe([[2.0, 0.0], [2.0, 0.044], [1.95, 0.044]], 0, 0, 0, '#dfe3e8', { tess: 40, sx, sz, mat: M.metal });
+        // façade extérieure en béton clair ajouré (le métal réfléchissait un ciel sombre et donnait un « tambour » noir)
+        k.lathe([[2.0, 0.0], [2.0, 0.036], [1.95, 0.036]], 0, 0, 0, '#d8d4cc', { tess: 40, sx, sz, mat: M.concrete });
         // toit annulaire (membrane) et rampe lumineuse
         k.lathe([[2.08, 0.043], [1.6, 0.05], [1.45, 0.049]], 0, 0, 0, '#f4f5f6', { tess: 40, sx, sz });
         k.lathe([[1.46, 0.0485], [1.44, 0.0478]], 0, 0, 0, '#fff4d6', { tess: 40, sx, sz, glow: 1 });

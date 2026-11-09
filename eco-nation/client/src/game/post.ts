@@ -8,7 +8,7 @@ export type { TimeMode };
 
 /** Position du soleil dans la journée (0 = minuit, 0,5 = midi) selon le mode d'heure choisi. */
 export function timeOfDay(mode: TimeMode, elapsedSec: number, dayLength: number): number {
-  if (mode === 'golden') return 0.728 + Math.sin(elapsedSec * 0.05) * 0.004; // soleil bas, ville qui s'allume
+  if (mode === 'golden') return 0.705 + Math.sin(elapsedSec * 0.05) * 0.003; // soleil bas mais encore au-dessus de l'horizon (lumière dorée, pas la nuit) // soleil bas, ville qui s'allume
   if (mode === 'day') return 0.56;
   if (mode === 'night') return 0.93;
   return ((elapsedSec / dayLength) + 0.35) % 1;
