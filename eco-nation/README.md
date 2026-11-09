@@ -19,6 +19,7 @@ npm run dev          # développement : http://localhost:5174 (serveur sur 3002)
 npm run build && npm start   # production : tout sur http://localhost:3002
 npm test             # tests du moteur
 npm run calibrate    # rapport d'équilibre sur 50 ans sans intervention
+npm run playtest     # parties simulées par 6 joueurs-robots (voir docs/EQUILIBRAGE.md)
 ```
 
 Variables d'environnement :
