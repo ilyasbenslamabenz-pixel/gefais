@@ -34,7 +34,9 @@ socket.on('game:tick', (m: { snap: Snapshot; last: Record<string, number> | null
   if (m.last) for (const [k, v] of Object.entries(m.last)) (history[k] ??= []).push(v);
   const notices = m.notices?.length ? [...s.notices, ...m.notices].slice(-80) : s.notices;
   s.set({ snap: m.snap, history: { ...history }, notices, unread: s.unread + (m.notices?.length ?? 0) });
-  for (const n of m.notices ?? []) if (n.kind !== 'info' || n.title.startsWith('Réformes')) s.toast(`${n.title} — ${n.text}`, n.kind);
+  // --- missions --- : une mise en service décidée par le joueur a déjà son toast « avant → après » (ui/Missions.tsx)
+  const fbMonths = new Set((m.snap.missions?.feedback ?? []).filter((f) => f.kind === 'chantier').map((f) => f.month));
+  for (const n of m.notices ?? []) if ((n.kind !== 'info' || n.title.startsWith('Réformes')) && !(n.title === 'Mise en service' && fbMonths.has(n.month))) s.toast(`${n.title} — ${n.text}`, n.kind);
 });
 socket.on('game:speed', (speed: number) => st().set({ speed }));
 // --- modules politique/international/événements/victoire ---

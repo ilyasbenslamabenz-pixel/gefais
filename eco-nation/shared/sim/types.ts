@@ -18,6 +18,7 @@ import type { HousingPolicy, HousingState } from './housing';
 import type { SecurityPolicy, SecurityState } from './security';
 import type { ResearchPolicy, ResearchState } from './research';
 import type { ConstructionState } from './construction';
+import type { MissionsState } from './missions'; // --- missions et progression du joueur ---
 
 // ---------- Décisions du joueur ----------
 export interface Bracket { upTo: number | null; rate: number }
@@ -335,6 +336,7 @@ export interface GameState {
   security?: SecurityState;
   research?: ResearchState;
   construction?: ConstructionState;
+  missions?: MissionsState; // --- missions, trophées, retours et bilan annuel (missions.ts) ---
 }
 
 export type Occ = Occupation;

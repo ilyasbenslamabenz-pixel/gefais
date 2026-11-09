@@ -11,6 +11,7 @@ import { applyPoliticalAction, initPolitics, legislativeStep, politicsStep, spli
 import { applyDiplomaticAction, initInternational, internationalStep, type DiplomaticAction } from './international';
 import { applyExtraBudget, eventsStep, initEvents, removeExtraBudget, resolveEvent } from './events';
 import { continueAfterDefeat, initVictory, victoryStep } from './victory';
+import { ensureMissions, missionsPre, missionsStep } from './missions'; // --- missions et progression du joueur ---
 // --- module énergie ---
 import { DEFAULT_ENERGY_POLICY } from './energyData';
 import { applyEnergyAction, energyHistory, energyStep, initEnergy, isEnergyAction, sanitizeEnergyPolicy, type EnergyAction } from './energy';
@@ -257,6 +258,7 @@ function calibrate(S: GameState) {
 // ---------- Pas mensuel ----------
 export function tick(S: GameState): void {
   ensureServicesModules(S); // --- modules services publics/recherche/construction --- (anciennes sauvegardes)
+  const missionsBefore = missionsPre(S); // --- missions --- : valeurs avant le mois (retours « avant → après »)
   if (S.pending && S.pending.month <= S.month + 1) {
     describePolicyChange(S, S.policy, S.pending.policy);
     S.policy = S.pending.policy;
@@ -304,6 +306,7 @@ export function tick(S: GameState): void {
   victoryStep(S); // victoires et défaites
   servicesPostStep(S); // --- modules services publics/recherche/construction ---
   recordHistory(S);
+  missionsStep(S, missionsBefore); // --- missions --- : progression, récompenses, trophées, retours, bilan annuel
   // 5. Indexation automatique
   if (P.finance.indexBudgets) {
     // budgets indexés sur le salaire moyen (services publics intensifs en main-d'œuvre), barème et SMIC sur l'inflation
@@ -480,6 +483,8 @@ export function initModules(S: GameState) {
   if (!S.politics) initPolitics(S);
   if (!S.international) S.international = initInternational(S);
   if (!S.victory) initVictory(S);
+  // --- missions --- : créées après les autres modules (les missions se fondent sur les besoins réels)
+  if (S.energy && S.health) ensureMissions(S);
 }
 
 /** Actions de gouvernement hors politique fiscale : décisions d'événements, diplomatie, parlement, poursuite après défaite. */
@@ -578,6 +583,7 @@ export function migrate(S: GameState): GameState {
   if (S.pending && !S.pending.policy.energy) S.pending.policy.energy = { ...S.policy.energy };
   if (!S.energy) initEnergy(S);
   if (!S.environment) initEnvironment(S);
+  ensureMissions(S); // --- missions --- : anciennes sauvegardes sans missions
   return S; // point d'entrée des futures migrations de sauvegardes
 }
 
