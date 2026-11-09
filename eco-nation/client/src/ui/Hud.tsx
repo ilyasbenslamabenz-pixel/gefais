@@ -30,6 +30,7 @@ import { BesoinsPanel, useNeeds } from './Besoins';
 import { InfraActions } from './InfraActions';
 import { BUILDINGS } from '../../../shared/sim/construction';
 import { MissionsBar, MissionsPanel, YearReviewWindow } from './Missions'; // --- missions et trophées ---
+import { ClimatMini, ClimatPanel } from './Climat'; // --- plan climat ---
 
 const SEASON = ['❄️ Hiver', '❄️ Hiver', '🌱 Printemps', '🌱 Printemps', '🌱 Printemps', '☀️ Été', '☀️ Été', '☀️ Été', '🍂 Automne', '🍂 Automne', '🍂 Automne', '❄️ Hiver'];
 
@@ -73,6 +74,7 @@ export function TopBar() {
         <Item k="satisfaction" label="Satisfaction" value={`${Math.round(snap.satisfaction.overall)}/100`} tone={snap.satisfaction.overall < 40 ? 'bad' : snap.satisfaction.overall > 60 ? 'good' : ''} />
         <Item k="emissions" label="CO₂" value={`${dec1(A.emissions / 1e6)} Mt`} />
       </div>
+      <ClimatMini /> {/* --- plan climat --- : jauges de soutien compactes */}
     </header>
   );
 }
@@ -80,6 +82,7 @@ export function TopBar() {
 const MINISTRIES: { id: Panel; icon: string; label: string }[] = [
   { id: 'besoins', icon: '🧭', label: 'Besoins du pays' },
   { id: 'missions', icon: '🎯', label: 'Missions & trophées' }, // --- missions ---
+  { id: 'climat', icon: 'CO₂', label: 'Plan climat' }, // --- plan climat ---
   { id: 'finances', icon: '🏦', label: 'Finances' },
   { id: 'fiscalite', icon: '🧾', label: 'Fiscalité' },
   { id: 'economie', icon: '📈', label: 'Économie' },
@@ -129,6 +132,10 @@ export function Dock() {
       {/* --- missions --- */}
       <button className={`dock-missions ${panel === 'missions' ? 'on' : ''}`} onClick={() => toggle('missions')} title="Missions en cours, titre, trophées et historique">
         <span>🎯</span><em>Missions</em>
+      </button>
+      {/* --- plan climat --- */}
+      <button className={`dock-climat ${panel === 'climat' ? 'on' : ''}`} onClick={() => toggle('climat')} title="Plan climat facteur 4 : trajectoire, jalons, soutien, mesures">
+        <span className="climat-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M3 5 L9 11 L13 9 L21 19" fill="none" stroke="currentColor" strokeWidth="2" /><path d="M3 21 H21" stroke="currentColor" strokeWidth="1.5" /></svg></span><em>Climat</em>
       </button>
       {POLES.map((pole) => {
         const active = pole.items.includes(panel);
@@ -447,6 +454,7 @@ function PanelContent() {
   switch (panel) {
     case 'besoins': return <BesoinsPanel />;
     case 'missions': return <MissionsPanel />; // --- missions ---
+    case 'climat': return <ClimatPanel />; // --- plan climat ---
     case 'finances': return <FinancesPanel />;
     case 'fiscalite': return <FiscalitePanel />;
     case 'travail': return <TravailPanel />;

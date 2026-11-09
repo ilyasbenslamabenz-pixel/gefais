@@ -9,7 +9,8 @@ export type Panel = null | 'besoins' | 'finances' | 'fiscalite' | 'travail' | 'e
 
   // --- modules services publics/recherche/construction ---
   | 'sante' | 'education' | 'logement' | 'securite' | 'recherche' | 'construction'
-  | 'missions'; // --- missions et trophées (ui/Missions.tsx) ---
+  | 'missions' // --- missions et trophées (ui/Missions.tsx) ---
+  | 'climat'; // --- plan climat --- (ui/Climat.tsx)
 export type Quality = 'low' | 'medium' | 'high';
 export type Selection = null | { kind: 'city'; id: number } | { kind: 'infra'; id: number };
 

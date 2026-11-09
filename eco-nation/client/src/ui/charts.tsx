@@ -3,8 +3,10 @@ import { useMemo, useState } from 'react';
 import { START_YEAR } from '../../../shared/sim/engine';
 
 export interface Series { key: string; label: string; values: number[]; color: string }
+/** Repère ponctuel (mois depuis le début, valeur) : jalons du plan climat. Optionnel. */
+export interface ChartMark { month: number; value: number; label: string; tone?: string }
 
-export function LineChart({ series, fmt, height = 180, years, startYear = START_YEAR }: { series: Series[]; fmt: (v: number) => string; height?: number; years: number | 'all'; startYear?: number }) {
+export function LineChart({ series, fmt, height = 180, years, startYear = START_YEAR, marks }: { series: Series[]; fmt: (v: number) => string; height?: number; years: number | 'all'; startYear?: number; marks?: ChartMark[] }) {
   const [hover, setHover] = useState<number | null>(null);
   const W = 520;
   const H = height;
@@ -47,6 +49,13 @@ export function LineChart({ series, fmt, height = 180, years, startYear = START_
         {yearTicks.map((i) => <text key={i} x={x(i)} y={H - 6} textAnchor="middle" className="axis">{startYear + Math.floor((data.start + i) / 12)}</text>)}
         {data.sl.map((s) => (
           <polyline key={s.key} fill="none" stroke={s.color} strokeWidth={2} points={s.v.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ')} />
+        ))}
+        {marks?.filter((m) => m.month - data.start >= 0 && m.month - data.start < data.n).map((m) => (
+          <g key={m.label} className={`chart-mark ${m.tone ?? ''}`}>
+            <line x1={x(m.month - data.start)} x2={x(m.month - data.start)} y1={pad.t} y2={H - pad.b} className="mark-line" />
+            <rect x={x(m.month - data.start) - 3.5} y={y(m.value) - 3.5} width={7} height={7} className="mark-dot" />
+            <text x={x(m.month - data.start)} y={pad.t + 9} textAnchor="middle" className="axis">{m.label}</text>
+          </g>
         ))}
         {hover !== null && <line x1={x(hover)} x2={x(hover)} y1={pad.t} y2={H - pad.b} className="hover" />}
       </svg>

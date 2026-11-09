@@ -262,3 +262,77 @@ input[type='range'] { width: 100%; accent-color: var(--accent); }
 .year-review h4 { font-size: 12px; color: var(--muted); margin: 10px 0 4px; text-transform: uppercase; letter-spacing: 0.5px; }
 .yr-stats { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin: 8px 0; font-size: 13px; }
 @media (max-width: 900px) { .missions-bar { width: calc(100vw - 96px); } }
+
+/* --- plan climat --- (ui/Climat.tsx) : classes sémantiques « climat-* », coins nets, faciles à restyler */
+:root { --climat-real: #c0392b; --climat-target: #b08d3c; --climat-ok: var(--good); --climat-mid: var(--warn); --climat-ko: var(--bad); --climat-etat: #6c8ebf; --climat-entreprises: #b08d3c; --climat-citoyens: #8fae6b; }
+.dock-climat .climat-dock-icon { display: flex; align-items: center; justify-content: center; height: 24px; }
+.climat-mini { display: flex; align-items: center; gap: 6px; padding: 3px 8px; margin-left: auto; border: 1px solid var(--line); border-radius: 2px; background: rgba(0, 0, 0, 0.25); color: var(--text); white-space: nowrap; }
+.climat-mini-track { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; padding-right: 4px; }
+.climat-mini-track.on { color: var(--climat-ok); }
+.climat-mini-track.off { color: var(--climat-ko); }
+.climat-gauge { display: grid; grid-template-columns: 90px 1fr 32px; align-items: center; gap: 8px; margin: 4px 0; }
+.climat-gauge.compact { grid-template-columns: 10px 44px 20px; gap: 3px; margin: 0; font-size: 11px; }
+.climat-gauge-label { color: var(--muted); font-size: 12px; }
+.climat-gauge.compact .climat-gauge-label { font-size: 10px; }
+.climat-gauge-track { position: relative; height: 8px; background: rgba(255, 255, 255, 0.08); border-radius: 0; overflow: hidden; }
+.climat-gauge.compact .climat-gauge-track { height: 6px; }
+.climat-gauge-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--climat-ok); }
+.climat-gauge.mid .climat-gauge-fill { background: var(--climat-mid); }
+.climat-gauge.low .climat-gauge-fill { background: var(--climat-ko); }
+.climat-gauge-floor { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(255, 255, 255, 0.5); }
+.climat-gauge-value { font-size: 12px; text-align: right; }
+.climat-support { border: 1px solid var(--line); border-radius: 2px; padding: 8px 10px; margin-bottom: 10px; }
+.climat-support p { margin: 6px 0 0; }
+.climat-mode { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 6px; font-size: 12px; }
+.climat-mode .btn.on { border-color: var(--climat-target); }
+.chart .chart-mark .mark-line { stroke: rgba(255, 255, 255, 0.18); stroke-dasharray: 2 3; }
+.chart .chart-mark .mark-dot { fill: var(--climat-target); stroke: none; }
+.chart .chart-mark.climat-atteint .mark-dot { fill: var(--climat-ok); }
+.chart .chart-mark.climat-proche .mark-dot { fill: var(--climat-mid); }
+.chart .chart-mark.climat-manque .mark-dot { fill: var(--climat-ko); }
+.climat-milestones { width: 100%; border-collapse: collapse; font-size: 12px; }
+.climat-milestones th, .climat-milestones td { text-align: left; padding: 4px 6px; border-bottom: 1px solid var(--line); }
+.climat-milestones th { color: var(--muted); font-weight: 600; }
+.climat-status { font-size: 11px; padding: 1px 6px; border: 1px solid var(--line); border-radius: 2px; white-space: nowrap; }
+.climat-status.climat-atteint, .climat-status.climat-played-en_vigueur { color: var(--climat-ok); border-color: var(--climat-ok); }
+.climat-status.climat-proche, .climat-status.climat-played-vote { color: var(--climat-mid); border-color: var(--climat-mid); }
+.climat-status.climat-manque, .climat-status.climat-played-rejetee { color: var(--climat-ko); border-color: var(--climat-ko); }
+.climat-sectors, .climat-hazards { display: flex; flex-direction: column; gap: 4px; }
+.climat-sector-row, .climat-hazard { display: grid; grid-template-columns: 150px 1fr 70px 150px; align-items: center; gap: 8px; font-size: 12px; }
+.climat-sector-track, .climat-hazard-bar { height: 8px; background: rgba(255, 255, 255, 0.06); }
+.climat-sector-track span, .climat-hazard-bar span { display: block; height: 100%; background: var(--climat-real); }
+.climat-sector-row.sink .climat-sector-track span { background: var(--climat-ok); }
+.climat-hazard-bar span { background: var(--climat-mid); }
+.climat-filters { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+.climat-filters button { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--line); color: var(--muted); padding: 5px 10px; border-radius: 2px; font-size: 12px; }
+.climat-filters button.on { color: var(--text); border-color: var(--climat-target); }
+.climat-only { font-size: 12px; color: var(--muted); margin-left: auto; }
+.climat-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 8px; }
+.climat-card { display: flex; flex-direction: column; gap: 6px; border: 1px solid var(--line); border-radius: 2px; padding: 10px; background: rgba(255, 255, 255, 0.03); }
+.climat-card.locked { opacity: 0.6; }
+.climat-card header { display: grid; grid-template-columns: 1fr auto; gap: 2px 6px; }
+.climat-card-sector { grid-column: 1 / -1; font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); }
+.climat-card h4 { font-size: 14px; }
+.climat-card-plays { font-size: 11px; color: var(--muted); align-self: center; }
+.climat-card-desc { margin: 0; font-size: 12px; }
+.climat-card-forecast { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin: 0; }
+.climat-card-forecast div { border-top: 1px solid var(--line); padding-top: 2px; }
+.climat-card-forecast dt { font-size: 10px; color: var(--muted); }
+.climat-card-forecast dd { margin: 0; font-size: 12px; font-weight: 600; }
+.climat-card-cost { display: flex; gap: 4px; flex-wrap: wrap; }
+.climat-cost { font-size: 11px; padding: 1px 6px; border: 1px solid var(--line); border-radius: 2px; }
+.climat-cost-etat { border-color: var(--climat-etat); }
+.climat-cost-entreprises { border-color: var(--climat-entreprises); }
+.climat-cost-citoyens { border-color: var(--climat-citoyens); }
+.climat-card-mech { margin: 0; }
+.climat-card-reason { margin: 0; font-size: 12px; color: var(--climat-mid); }
+.climat-play { border-radius: 2px; }
+.climat-played { display: flex; flex-direction: column; gap: 6px; }
+.climat-played-row { border: 1px solid var(--line); border-radius: 2px; padding: 8px; }
+.climat-played-head { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.climat-played-head .climat-status { margin-left: auto; }
+.climat-played-effect { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
+@media (max-width: 720px) {
+  .climat-sector-row, .climat-hazard { grid-template-columns: 110px 1fr 60px; }
+  .climat-sector-row > :last-child, .climat-hazard > :last-child { display: none; }
+}

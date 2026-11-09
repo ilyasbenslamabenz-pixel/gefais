@@ -243,6 +243,7 @@ io.on('connection', (socket: Socket) => {
     try {
       const r = applyGovAction(current.state, a);
       if (r.ok) broadcast(current);
+      if (r.ok && (a as { type?: string })?.type === 'climatCard') emitInfra(current); // --- plan climat --- : chantiers ouverts par une carte
       ack(cb)(r);
     } catch (e) {
       console.error(e);

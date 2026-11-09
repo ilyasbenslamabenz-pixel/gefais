@@ -101,6 +101,10 @@ export function govAction(a: GovAction): Promise<boolean> {
     resolve(r.ok);
   }));
 }
+// --- plan climat --- : carte-action ou choix de trajectoire, validés par le moteur (canal game:gov)
+export function climatAction(a: Extract<GovAction, { type: 'climatCard' | 'climatTrajectoire' }>): Promise<boolean> {
+  return govAction(a);
+}
 /** Programmes énergétiques et environnementaux (construction, fermeture, reboisement…) : même canal que les opérations financières. */
 export function gameAction(a: GameAction): Promise<boolean> {
   return new Promise((resolve) => socket.emit('game:action', a, (r: { ok: boolean; msg: string }) => {
