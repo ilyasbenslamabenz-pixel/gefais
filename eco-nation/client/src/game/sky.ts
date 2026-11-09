@@ -29,7 +29,7 @@ Effect.ShadersStore.ecoSkyFragmentShader = /* glsl */ `
     float az = dot(dh, sh) * 0.5 + 0.5;
     vec3 hor = mix(uHorAway, uHorSun, pow(az, 1.6));
     float hp = clamp(h, 0.0, 1.0);
-    vec3 col = mix(hor, uZen, pow(hp, 0.42));
+    vec3 col = mix(hor, uZen, pow(hp, 0.32));
     // bande claire juste au-dessus de l'horizon (couche de brume)
     col = mix(col, uHaze * 1.05, exp(-hp * 22.0) * 0.3);
     // sous l'horizon : la brume (raccord avec le brouillard du sol)
@@ -37,9 +37,10 @@ Effect.ShadersStore.ecoSkyFragmentShader = /* glsl */ `
     // cirrus : bandes étirées, éclairées en orange côté soleil, mauves à l'opposé
     vec2 cp = d.xz / max(h + 0.12, 0.05);
     float cn = fbm(cp * vec2(0.9, 3.2) + vec2(uTime * 0.004, 0.0));
-    float cl = smoothstep(0.52 - uCloud * 0.25, 0.8, cn) * smoothstep(-0.01, 0.06, h) * (1.0 - smoothstep(0.25, 0.7, h));
-    vec3 cc = mix(uHorAway * 0.75, uHorSun * 1.25 + uSunCol * 0.25, pow(az, 3.0));
-    col = mix(col, cc, cl * (0.55 + uCloud * 0.3));
+    float cl = smoothstep(0.48 - uCloud * 0.25, 0.78, cn) * smoothstep(-0.01, 0.05, h) * (1.0 - smoothstep(0.3, 0.75, h));
+    // dessous des nuages : mauve sombre loin du soleil, liseré embrasé près du soleil
+    vec3 cc = mix(mix(uHorAway, uZen, 0.45) * 0.8, uHorSun * 1.35 + uSunCol * 0.35, pow(az, 2.5));
+    col = mix(col, cc, cl * (0.7 + uCloud * 0.2));
     // couverture nuageuse : voile gris chaud qui atténue le dégradé
     col = mix(col, uHaze * 0.92, uCloud * 0.55 * smoothstep(-0.02, 0.4, h));
     // soleil : disque, auréole et halo large (captés par le bloom)
@@ -73,9 +74,9 @@ const sstep = (a: number, b: number, x: number) => { const t = Math.max(0, Math.
 export function atmosphere(elev: number, cloud: number): Atmosphere {
   const dark = sstep(0.03, -0.16, elev);
   const golden = (1 - sstep(0.06, 0.45, elev)) * (1 - dark);
-  const lamps = sstep(0.22, -0.08, elev);
+  const lamps = sstep(0.3, -0.06, elev);
   // ciel
-  const zenDay = C(0.16, 0.36, 0.78), zenGold = C(0.17, 0.22, 0.46), zenNight = C(0.008, 0.014, 0.035);
+  const zenDay = C(0.16, 0.36, 0.78), zenGold = C(0.13, 0.17, 0.40), zenNight = C(0.008, 0.014, 0.035);
   const horDay = C(0.62, 0.76, 0.92), horSunDay = C(0.92, 0.92, 0.88);
   const horGoldSun = C(1.75, 0.78, 0.30), horGoldAway = C(0.78, 0.55, 0.50);
   const horNight = C(0.035, 0.045, 0.09);
@@ -94,11 +95,11 @@ export function atmosphere(elev: number, cloud: number): Atmosphere {
   SKY.haze.copyFrom(haze); SKY.horSun.copyFrom(horSun); SKY.zen.copyFrom(zen); SKY.horAway.copyFrom(horAway); SKY.golden = golden; SKY.dark = dark;
   // soleil
   const sunCol = lerp3(C(1, 0.96, 0.9), C(1, 0.66, 0.36), golden).scale(1 - dark);
-  const sunI = sstep(-0.02, 0.05, elev) * (2.4 + golden * 0.8) * (1 - cloud * 0.6);
+  const sunI = sstep(-0.02, 0.05, elev) * (2.4 + golden * 1.2) * (1 - cloud * 0.6);
   // appoint du ciel : bleu lavande côté ombre, sol chaud
-  const hemiSky = lerp3(lerp3(C(0.78, 0.86, 1), C(0.42, 0.52, 0.88), golden), C(0.22, 0.28, 0.5), dark);
-  const hemiGround = lerp3(lerp3(C(0.36, 0.33, 0.28), C(0.32, 0.25, 0.2), golden), C(0.05, 0.05, 0.07), dark);
-  const hemiI = (0.75 + golden * 0.05) * (1 - dark * 0.55) * (1 - cloud * 0.15) + cloud * 0.15;
+  const hemiSky = lerp3(lerp3(C(0.78, 0.86, 1), C(0.66, 0.67, 0.84), golden), C(0.22, 0.28, 0.5), dark);
+  const hemiGround = lerp3(lerp3(C(0.36, 0.33, 0.28), C(0.5, 0.37, 0.27), golden), C(0.05, 0.05, 0.07), dark);
+  const hemiI = (0.75 + golden * 0.2) * (1 - dark * 0.55) * (1 - cloud * 0.15) + cloud * 0.15;
   return { zen, horSun, horAway, haze, sunCol, sunI, hemiSky, hemiGround, hemiI, dark, lamps, golden };
 }
 

@@ -8,7 +8,7 @@ export type { TimeMode };
 
 /** Position du soleil dans la journée (0 = minuit, 0,5 = midi) selon le mode d'heure choisi. */
 export function timeOfDay(mode: TimeMode, elapsedSec: number, dayLength: number): number {
-  if (mode === 'golden') return 0.731 + Math.sin(elapsedSec * 0.05) * 0.002; // soleil à ~7° au-dessus de l'horizon : lumière rasante dorée, ombres longues, la ville commence à s'allumer
+  if (mode === 'golden') return 0.7228 + Math.sin(elapsedSec * 0.05) * 0.002; // soleil à ~10° au-dessus de l'horizon : lumière rasante dorée, ombres longues, la ville commence à s'allumer
   if (mode === 'day') return 0.56;
   if (mode === 'night') return 0.93;
   return ((elapsedSec / dayLength) + 0.35) % 1;
@@ -24,9 +24,9 @@ function gradeCurves() {
   c.midtonesHue = 30;
   c.midtonesDensity = 6;
   c.shadowsHue = 220;
-  c.shadowsDensity = 28;
-  c.shadowsSaturation = 30;
-  c.shadowsExposure = -6;
+  c.shadowsDensity = 18;
+  c.shadowsSaturation = 22;
+  c.shadowsExposure = 0;
   return c;
 }
 

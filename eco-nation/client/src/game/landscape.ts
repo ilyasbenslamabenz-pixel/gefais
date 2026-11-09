@@ -180,7 +180,8 @@ export function createTerrain(scene: Scene, grid: Grid, country: CountryDef, ste
       st = mix(st, 0.5, clamp(fw / per * 2.0 - 0.5, 0.0, 1.0));
       mk = max(mk, zone * st * 0.95);
     }
-    vec3 block = mix(urb * 0.9, vec3(0.5, 0.52, 0.48), 0.4);
+    // sol des îlots (cours minérales, parkings) : asphalte sombre, pour que le bâti se détache vu de loin
+    vec3 block = mix(urb * 0.72, vec3(0.36, 0.37, 0.37), 0.4);
     vec3 streetCol = mix(asph, vec3(0.92, 0.92, 0.88), mk);
     streetCol = mix(streetCol, veg * vec3(0.8, 1.05, 0.75), step(marks.x, -0.5) * 0.9);
     vec3 cityCol = block;

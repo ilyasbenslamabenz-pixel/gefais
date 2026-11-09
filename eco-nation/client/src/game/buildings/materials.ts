@@ -71,7 +71,7 @@ export function skyState() {
   const t = ENV.time;
   const late = t < 0.25 ? 1 - Math.min(1, Math.abs(t - 0.12) / 0.14) : 0;
   // les fenêtres s'allument dès le coucher du soleil (heure dorée) et s'éteignent au lever
-  const evening = t > 0.5 ? Math.max(0, Math.min(1, 1 - elev / 0.3)) * 0.9 : Math.max(0, Math.min(1, 1 - elev / 0.12)) * 0.5;
+  const evening = t > 0.5 ? Math.max(0, Math.min(1, 1 - elev / 0.36)) * 0.95 : Math.max(0, Math.min(1, 1 - elev / 0.12)) * 0.5;
   const lights = Math.max(ENV.night, evening) * (1 - late * 0.45);
   return { sunDir, sky, sunCol, lights };
 }
@@ -86,8 +86,11 @@ export const GLSL_COMMON = /* glsl */ `
   // toit plat : gravier, membrane claire ou toiture végétalisée selon la graine
   vec3 flatRoof(vec2 p, float seed) {
     float g = bNoise(p * 900.0) * 0.5 + bNoise(p * 3100.0) * 0.5;
-    vec3 c = seed < 0.55 ? vec3(0.36, 0.35, 0.33) : seed < 0.8 ? vec3(0.50, 0.50, 0.49) : seed < 0.9 ? vec3(0.26, 0.27, 0.28) : vec3(0.26, 0.34, 0.19);
-    c *= 0.85 + 0.3 * g;
+    // gravier, membrane claire, bac acier sombre, terrasse brique, toiture végétalisée
+    vec3 c = seed < 0.4 ? vec3(0.44, 0.42, 0.39) : seed < 0.68 ? vec3(0.60, 0.59, 0.56) : seed < 0.8 ? vec3(0.29, 0.30, 0.32) : seed < 0.9 ? vec3(0.50, 0.42, 0.35) : vec3(0.27, 0.36, 0.19);
+    // variation par îlot (200 m) : luminosité et nuance chaude / froide, casse la grille uniforme vue de loin
+    float blk = bHash(floor(p / 0.2) + 0.37);
+    c *= (0.85 + 0.3 * g) * (0.88 + 0.24 * blk) * mix(vec3(0.96, 0.99, 1.04), vec3(1.05, 1.0, 0.93), step(0.5, fract(blk * 7.31)));
     vec2 tl = abs(fract(p / 0.004) - 0.5);
     c *= 1.0 - 0.06 * step(0.47, max(tl.x, tl.y));
     return c;
@@ -190,7 +193,7 @@ export function buildingMaterial(scene: Scene, name: string, o: MatOptions) {
       float hc = bHash(cell + seed * 131.7);
       float hf = bHash(vec2(floorId, seed * 71.3));
       // part des fenêtres allumées croissante avec l'heure (uLights), déterministe par bâtiment, étage et fenêtre
-      float share = clamp(uLights * 1.25, 0.0, 1.0);
+      float share = clamp(uLights * 1.5, 0.0, 1.0);
       if (hasNight > 0.5) {
         float on = step(1.0 - share * 0.85, hf) * vB.w * 1.6;
         emis = nightPhoto * mix(vec3(1.0, 0.78, 0.52), vec3(1.0, 0.95, 0.85), hf) * on * (0.45 + 0.55 * win);
