@@ -159,12 +159,14 @@ export function YearReviewWindow() {
   const M = snap?.missions as MissionsState | undefined;
   const R = M?.review ?? null;
   const seen = useRef<{ game: string | null; month: number } | null>(null);
-  // Ouverture automatique en janvier, quand un nouveau bilan arrive (pas à l'ouverture d'une partie déjà avancée).
+  // Ouverture automatique quand un nouveau bilan arrive (janvier), pas à l'ouverture d'une partie déjà avancée.
+  // À vitesse élevée, l'instantané de janvier peut ne pas être rendu : on compare donc au dernier bilan vu.
+  const month = snap?.month ?? null;
   useEffect(() => {
-    if (!snap) return;
-    if (!seen.current || seen.current.game !== gameId) { seen.current = { game: gameId, month: R && R.month !== snap.month ? R.month : -1 }; }
-    if (R && R.month > seen.current.month && R.month === snap.month) { seen.current.month = R.month; setUi({ reviewOpen: R.month }); }
-  }, [R, snap, gameId, setUi]);
+    if (month === null) return;
+    if (!seen.current || seen.current.game !== gameId) seen.current = { game: gameId, month: R && R.month !== month ? R.month : -1 };
+    if (R && R.month > seen.current.month) { seen.current.month = R.month; setUi({ reviewOpen: R.month }); }
+  }, [R, month, gameId, setUi]);
   if (!snap || !R || reviewOpen !== R.month) return null;
   return (
     <div className="year-review" role="dialog" aria-label={`Bilan de l'année ${R.year}`}>

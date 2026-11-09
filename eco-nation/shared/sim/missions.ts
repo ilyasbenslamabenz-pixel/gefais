@@ -130,6 +130,7 @@ export interface MissionsState {
   feedbackSeq: number;
   followups: Followup[];
   ref: { emissions: number; socialWaitingPeak: number };
+  /** repères de janvier ; les indicateurs saisonniers (émissions…) y sont relevés au mois près (janvier contre janvier) */
   yearStart: { month: number; values: Partial<Record<MetricId, number>>; won: number; failed: number; xp: number };
   yearLog: LogEntry[];
   review: YearReview | null;
@@ -186,7 +187,7 @@ export function initMissions(S: GameState): MissionsState {
     trophies: {}, records: { ...pick(values, ['chomage', 'renouvelable', 'satisfaction', 'dette', 'emissions']) }, cooldown: {},
     feedback: [], feedbackSeq: 1, followups: [],
     ref: { emissions: values.emissions ?? S.accounts.emissions, socialWaitingPeak: values.attenteLogement ?? 0 },
-    yearStart: { month: S.month - (S.month % 12), values, won: 0, failed: 0, xp: 0 },
+    yearStart: { month: S.month - (S.month % 12), values: reviewValues(S), won: 0, failed: 0, xp: 0 },
     yearLog: [], review: null,
   };
   S.missions = M;
@@ -503,7 +504,7 @@ export function missionsStep(S: GameState, pre: MissionsPre) {
   announcePromotion(S, M);
 
   // 7. Bilan annuel (janvier) et nouveaux repères de l'année
-  if (S.month > 0 && S.month % 12 === 0) yearReview(S, M, values);
+  if (S.month > 0 && S.month % 12 === 0) yearReview(S, M, reviewValues(S));
   if (M.yearLog.length > 60) M.yearLog.splice(0, M.yearLog.length - 60);
 }
 
@@ -518,6 +519,14 @@ function announcePromotion(S: GameState, M: MissionsState) {
   M.titleIndex = Math.max(M.titleIndex, cur);
 }
 
+/** Valeurs comparées d'un janvier à l'autre : valeur instantanée pour les indicateurs saisonniers. */
+function reviewValues(S: GameState) {
+  const { values, instant } = readValues(S);
+  const r: Partial<Record<MetricId, number>> = { ...values };
+  for (const m of METRIC_IDS) if (METRICS[m].instant && instant[m] !== undefined) r[m] = instant[m];
+  return r;
+}
+
 function yearReview(S: GameState, M: MissionsState, values: Partial<Record<MetricId, number>>) {
   const year = S.startYear + S.month / 12 - 1;
   const Y = M.yearStart;
@@ -527,7 +536,7 @@ function yearReview(S: GameState, M: MissionsState, values: Partial<Record<Metri
     const a = Y.values[m], b = values[m];
     if (a === undefined || b === undefined) continue;
     const d = b - a;
-    const better = Math.abs(d) < 1e-9 ? null : METRICS[m].dir === 'max' ? d > 0 : d < 0;
+    const better = Math.abs(d) < METRICS[m].scale(a) * 0.25 ? null : METRICS[m].dir === 'max' ? d > 0 : d < 0; // stable = neutre
     rows.push({ metric: m, label: METRICS[m].label, start: a, end: b, startTxt: METRICS[m].fmt(a), endTxt: METRICS[m].fmt(b), better });
   }
   const growth = S.history.growth?.at(-1) ?? 0;
