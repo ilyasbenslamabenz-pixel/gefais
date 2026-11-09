@@ -12,6 +12,8 @@ import { HALF_D, HALF_W, coastX, parkMask, urbanDensity } from '../../../shared/
 import type { CountryDef } from '../../../shared/sim/types';
 import { ENV, RES, VS, densify, type Grid } from './terrain';
 import { setThinCount } from './thin';
+import { whenModels } from './cityModels';
+import { createThinInstances, type ModelLibrary, type ThinInstanceBuffer } from './modelLibrary';
 
 // ---------------------------------------------------------------------------------------------
 // Surface du relief telle qu'elle est maillée (triangulation identique à createTerrain)
@@ -1078,7 +1080,21 @@ export function createRoads(scene: Scene, grid: Grid, country: CountryDef) {
 
 // ---------------------------------------------------------------------------------------------
 // Lampadaires, arbres d'alignement, feux tricolores : régénérés autour de la caméra
+// Avec la bibliothèque de modèles (cityModels.ts) : lampadaires routiers à crosse, lampadaires classiques sur
+// les quais et les ponts, platanes d'alignement (avenues, boulevards, quais), arbres de parc (parcs urbains,
+// giratoires), peupliers le long des routes de campagne (avec niveau de détail lointain), feux tricolores
+// (lampe allumée selon l'état du carrefour) et abribus sur les avenues.
 // ---------------------------------------------------------------------------------------------
+/** Espèces d'arbres de la bibliothèque (indice `k` des candidats arbres). */
+const TREE_IDS = ['arbre_platane', 'arbre_parc_rond', 'arbre_parc_large', 'arbre_peuplier'] as const;
+/** Échelle appliquée au modèle par espèce (le facteur aléatoire du candidat s'y ajoute). */
+const TREE_SCALE = [0.72, 1.0, 0.75, 0.85];
+interface LibFurniture {
+  lamps: [ThinInstanceBuffer, ThinInstanceBuffer] | null; // routier, classique
+  trees: [ThinInstanceBuffer, ThinInstanceBuffer][] | null; // par espèce : [proche, lointain]
+  sig: ThinInstanceBuffer | null;
+  abri: ThinInstanceBuffer | null;
+}
 function createFurniture(scene: Scene, grid: Grid, country: CountryDef, net: Network, ql: 0 | 1 | 2, rnd: () => number) {
   const LAMPS = [3500, 9000, 16000][ql];
   const TREES = [5000, 14000, 28000][ql];
@@ -1146,6 +1162,53 @@ function createFurniture(scene: Scene, grid: Grid, country: CountryDef, net: Net
   for (const m of [lampBody, head, tree, sigPole, sigHead]) setThinCount(m, 0);
   addShadowCaster(scene, tree);
 
+  // ---- modèles de la bibliothèque (asynchrone ; chaque groupe garde son repli procédural) ----
+  const L: LibFurniture = { lamps: null, trees: null, sig: null, abri: null };
+  // lampe allumée des feux tricolores (une par feu, déplacée selon l'état : rouge en haut, vert en bas)
+  let sigLamp: Mesh | null = null;
+  const sigLampBuf = new Float32Array(SIGS * 16);
+  const sigYaw = new Float32Array(SIGS);
+  const sigPos = new Float32Array(SIGS * 3);
+  let lastSigKey = '';
+  whenModels((lib: ModelLibrary) => {
+    if (scene.isDisposed) return;
+    const mk = (id: string, cap: number, name: string, source?: 'lod' | 'noLights') => {
+      const t = lib.get(id);
+      if (!t) return null;
+      return createThinInstances(t, cap, { dynamic: true, name, colors: id.startsWith('arbre'), noLights: source === 'noLights', source: source === 'lod' && t.lods[0] ? t.lods[0] : undefined });
+    };
+    const lr = mk('lampadaire', LAMPS, 'mobilier_lampadaires'), lc = mk('lampadaire_classique', Math.ceil(LAMPS / 2), 'mobilier_lampadaires_classiques');
+    if (lr && lc) {
+      L.lamps = [lr, lc];
+      lampBody.dispose(); head.dispose();
+    } else { lr?.dispose(); lc?.dispose(); }
+    const trees = TREE_IDS.map((id, k) => {
+      const near = mk(id, k === 0 ? Math.min(TREES, 5000) : Math.ceil(TREES / 4), 'mobilier_' + id);
+      const far = mk(id, k === 0 ? TREES : Math.ceil(TREES / 2), 'mobilier_' + id + '_loin', 'lod');
+      return near && far ? ([near, far] as [ThinInstanceBuffer, ThinInstanceBuffer]) : null;
+    });
+    if (trees.every((t) => t)) {
+      L.trees = trees as [ThinInstanceBuffer, ThinInstanceBuffer][];
+      for (const pair of L.trees) for (const b of pair) addShadowCaster(scene, b.body);
+      tree.dispose();
+    } else for (const t of trees) t?.forEach((b) => b.dispose());
+    const sig = mk('feu_tricolore', SIGS, 'mobilier_feux_tricolores', 'noLights');
+    if (sig) {
+      // le modèle sert de support ; la lampe allumée est un petit carré émissif (couleur selon l'état)
+      L.sig = sig;
+      sigPole.dispose(); sigHead.dispose();
+      sigLamp = MeshBuilder.CreateBox('mobilier_feux_lampes', { width: 0.00021, height: 0.00021, depth: 0.00004 }, scene);
+      sigLamp.material = sigMat;
+      sigLamp.isPickable = false;
+      sigLamp.alwaysSelectAsActiveMesh = true;
+      sigLamp.thinInstanceSetBuffer('matrix', sigLampBuf, 16, false);
+      sigLamp.thinInstanceSetBuffer('color', sigCol, 4, false);
+      setThinCount(sigLamp, 0);
+    }
+    L.abri = mk('abribus', [150, 400, 800][ql], 'mobilier_abribus');
+    cx = 1e9; // régénération immédiate avec les nouveaux modèles
+  });
+
   const write = (buf: Float32Array, k: number, x: number, y: number, z: number, ang: number, s: number) => {
     const c = Math.cos(ang) * s, sn = Math.sin(ang) * s, o = k * 16;
     buf[o] = c; buf[o + 1] = 0; buf[o + 2] = -sn; buf[o + 3] = 0;
@@ -1160,10 +1223,13 @@ function createFurniture(scene: Scene, grid: Grid, country: CountryDef, net: Net
     return gx < 0.009 || gz < 0.009;
   };
   const nearPlate = (x: number, z: number) => net.plates.some((q) => Math.abs(q.pts[0] - x) < 0.04 && Math.abs(q.pts[2] - z) < 0.04);
-  type Cand = { x: number; y: number; z: number; a: number; s: number; d: number };
-  let cx = 1e9, cz = 1e9, lastR = 0, lastAutumn = -1;
+  // k : variante (lampadaires : 0 routier, 1 classique ; arbres : indice dans TREE_IDS)
+  type Cand = { x: number; y: number; z: number; a: number; s: number; d: number; k?: number };
+  let cx = 1e9, cz = 1e9, lastR = 0, lastAutumn = -1, wasHidden = false, camRadius = 1;
   const regen = (X: number, Z: number, R: number) => {
-    const lamps: Cand[] = [], trees: Cand[] = [];
+    const lamps: Cand[] = [], trees: Cand[] = [], abris: Cand[] = [];
+    const libTrees = !!L.trees;
+    const RPOP = Math.min(R, [0.9, 1.3, 1.8][ql]);
     const dist = (x: number, z: number) => Math.hypot(x - X, z - Z);
     const urban = (x: number, z: number) => urbanDensity(country, x, z);
     // (a) voies du réseau
@@ -1187,13 +1253,37 @@ function createFurniture(scene: Scene, grid: Grid, country: CountryDef, net: Net
           continue;
         }
         const onBridge = net.bridges.some((b) => b.p === pi && s > b.s0 - 0.01 && s < b.s1 + 0.01);
-        if (!onBridge && urban(o.x, o.z) < 0.18) continue;
+        const u = onBridge ? 1 : urban(o.x, o.z);
         const elevated = o.y - surfaceY(grid, o.x, o.z) > 0.004;
-        // lampadaires en quinconce au bord des trottoirs (sur les ponts : des deux côtés)
+        if (!onBridge && u < 0.18) {
+          // routes de campagne : rangées de peupliers par tronçons (modèles de la bibliothèque seulement)
+          if (libTrees && u < 0.12 && d < RPOP && !elevated && hash(pi, Math.floor(s / 0.25)) > 0.45) {
+            for (const f of [0, 0.34, 0.67]) {
+              const o2 = sampleAt(p, s + f * step, tmp);
+              for (const side of [1, -1]) {
+                const tx = o2.x + nx * (p.half + 0.0055) * side, tz = o2.z + nz * (p.half + 0.0055) * side;
+                if (grid.sample(tx, tz) < 0.027) continue;
+                trees.push({ x: tx, y: surfaceY(grid, tx, tz), z: tz, a: hash(tx, tz) * 6.28, s: 0.85 + hash(tz, tx) * 0.3, d: d + 0.2, k: 3 });
+              }
+            }
+          }
+          continue;
+        }
+        // lampadaires en quinconce au bord des trottoirs (sur les ponts : des deux côtés, modèle classique)
         const sides = onBridge ? [1, -1] : [k % 2 ? 1 : -1];
         for (const side of sides) {
           const off = onBridge ? p.half - 0.0006 : 0.0081;
-          lamps.push({ x: o.x + nx * off * side, y: o.y, z: o.z + nz * off * side, a: side > 0 ? ang : ang + Math.PI, s: onBridge ? 0.7 : 1, d });
+          lamps.push({ x: o.x + nx * off * side, y: o.y, z: o.z + nz * off * side, a: side > 0 ? ang : ang + Math.PI, s: onBridge ? 0.7 : 1, d, k: onBridge ? 1 : 0 });
+        }
+        // abribus sur les avenues denses (un tous les ~320 m, côté alterné), face à la chaussée
+        if (L.abri && !onBridge && !elevated && k % 9 === 4 && u > 0.35) {
+          const side = (Math.floor(s / 0.3) % 2) ? 1 : -1;
+          const o3 = sampleAt(p, s + step * 0.25, tmp);
+          if (!nearGrid(o3.x, o3.z) && !nearPlate(o3.x, o3.z)) {
+            const n3x = -o3.tz, n3z = o3.tx;
+            abris.push({ x: o3.x + n3x * 0.0103 * side, y: o3.y, z: o3.z + n3z * 0.0103 * side, a: Math.atan2(-n3x * side, -n3z * side), s: 1, d });
+          }
+          sampleAt(p, s, tmp); // (o pointe sur tmp)
         }
         // arbres du terre-plein central
         if (!elevated && !onBridge) for (const f of [0, 0.5]) {
@@ -1258,7 +1348,7 @@ function createFurniture(scene: Scene, grid: Grid, country: CountryDef, net: Net
             const lx = bx + nx * (QUAY_HALF + 0.003) * side, lz = bz + nz * (QUAY_HALF + 0.003) * side;
             const d = dist(lx, lz);
             if (d > R || urban(lx, lz) < 0.15) continue;
-            if (f === 0 || f === 0.5) lamps.push({ x: lx, y: yq, z: lz, a: side > 0 ? ang : ang + Math.PI, s: 0.75, d: d - 0.3 });
+            if (f === 0 || f === 0.5) lamps.push({ x: lx, y: yq, z: lz, a: side > 0 ? ang : ang + Math.PI, s: 0.75, d: d - 0.3, k: 1 });
             for (const dd of [0.012, 0.024, 0.045]) {
               const tx = bx + nx * (0.2 + dd) * side + (hash(bx, dd) - 0.5) * 0.004, tz = bz + nz * (0.2 + dd) * side + (hash(bz, dd) - 0.5) * 0.004;
               if (dd > 0.03 && hash(tx, tz) < 0.5) continue;
@@ -1273,7 +1363,21 @@ function createFurniture(scene: Scene, grid: Grid, country: CountryDef, net: Net
     for (const rb of net.roundabouts) {
       if (dist(rb.x, rb.z) > R) continue;
       const Ri = rb.r - 0.012;
-      for (let a = 0; a < 6.28; a += 0.0075 / Math.max(0.01, Ri)) trees.push({ x: rb.x + Math.cos(a) * Ri, y: rb.y, z: rb.z + Math.sin(a) * Ri, a, s: 1.1, d: 0 });
+      for (let a = 0; a < 6.28; a += 0.0075 / Math.max(0.01, Ri)) trees.push({ x: rb.x + Math.cos(a) * Ri, y: rb.y, z: rb.z + Math.sin(a) * Ri, a, s: 1.1, d: 0, k: 1 });
+    }
+    // (e) parcs urbains : grands arbres de parc (bibliothèque seulement ; les forêts y mettent déjà des conifères)
+    if (libTrees) {
+      const RP = Math.min(R, [0.8, 1.2, 1.7][ql]), st = 0.02;
+      for (let gx = Math.floor((X - RP) / st) * st; gx <= X + RP; gx += st) {
+        for (let gz = Math.floor((Z - RP) / st) * st; gz <= Z + RP; gz += st) {
+          const h1 = hash(gx, gz), h2 = hash(gz, gx);
+          const x = gx + (h1 - 0.5) * st * 0.9, z = gz + (h2 - 0.5) * st * 0.9;
+          const d = dist(x, z);
+          if (d > RP || parkMask(country.seed, x, z) < 0.6 || urban(x, z) < 0.1) continue;
+          if (nearGrid(x, z) || occAt(net, x, z) & 1 || grid.sample(x, z) < 0.027) continue;
+          trees.push({ x, y: surfaceY(grid, x, z), z, a: h1 * 6.28, s: 0.8 + h2 * 0.45, d: d + 0.05, k: h1 < 0.4 ? 2 : 1 });
+        }
+      }
     }
     const fill = (list: Cand[], cap: number, buf: Float32Array, after?: (k: number, c: Cand) => void) => {
       if (list.length > cap) list.sort((a, b) => a.d - b.d);
@@ -1281,19 +1385,62 @@ function createFurniture(scene: Scene, grid: Grid, country: CountryDef, net: Net
       for (let k = 0; k < n; k++) { const c = list[k]; write(buf, k, c.x, c.y, c.z, c.a, c.s); after?.(k, c); }
       return n;
     };
-    const nl = fill(lamps, LAMPS, lampBuf);
-    setThinCount(lampBody, nl); setThinCount(head, nl);
-    lampBody.thinInstanceBufferUpdated('matrix'); head.thinInstanceBufferUpdated('matrix');
-    const nt = fill(trees, TREES, treeBuf, (k, c) => {
-      const hv = hash(c.x * 3.1, c.z * 1.7);
-      const green = new Color3(0.2 + hv * 0.08, 0.36 + hv * 0.1, 0.14 + hv * 0.04);
-      const aut = new Color3(0.62 + hv * 0.2, 0.36 + hv * 0.12, 0.1);
-      const col = Color3.Lerp(green, aut, ENV.autumn * (hv > 0.3 ? 0.85 : 0.2));
-      const w = Color3.Lerp(col, new Color3(0.42, 0.38, 0.33), ENV.winter * 0.6);
-      treeCol.set([w.r, w.g, w.b, 1], k * 4);
-    });
-    setThinCount(tree, nt);
-    tree.thinInstanceBufferUpdated('matrix'); tree.thinInstanceBufferUpdated('color');
+    if (L.lamps) {
+      if (lamps.length > LAMPS) lamps.sort((a, b) => a.d - b.d);
+      const [lr, lc] = L.lamps;
+      let nr = 0, nc = 0;
+      for (let q = 0; q < Math.min(LAMPS, lamps.length); q++) {
+        const c = lamps[q];
+        // crosse du modèle selon +Z (procédural : +X) ; le lampadaire classique est plus bas (3,9 m)
+        if (c.k === 1) { if (nc < lc.capacity) lc.set(nc++, c.x, c.y, c.z, c.a + Math.PI / 2, 1); }
+        else if (nr < lr.capacity) lr.set(nr++, c.x, c.y, c.z, c.a + Math.PI / 2, c.s > 1.1 ? 1.25 : 1);
+      }
+      lr.count = nr; lc.count = nc; lr.commit(); lc.commit();
+    } else {
+      const nl = fill(lamps, LAMPS, lampBuf);
+      setThinCount(lampBody, nl); setThinCount(head, nl);
+      lampBody.thinInstanceBufferUpdated('matrix'); head.thinInstanceBufferUpdated('matrix');
+    }
+    if (L.trees) {
+      if (trees.length > TREES) trees.sort((a, b) => a.d - b.d);
+      const lod = 0.3 + camRadius * 0.12; // au-delà : niveau de détail lointain
+      const cnt = L.trees.map(() => [0, 0]);
+      for (let q = 0; q < Math.min(TREES, trees.length); q++) {
+        const c = trees[q];
+        const sp = c.k ?? 0, far = c.d > lod ? 1 : 0;
+        const b = L.trees[sp][far];
+        const i = cnt[sp][far];
+        if (i >= b.capacity) continue;
+        cnt[sp][far]++;
+        b.set(i, c.x, c.y, c.z, c.a, c.s * TREE_SCALE[sp]);
+        // teinte saisonnière (multipliée par les couleurs du modèle)
+        const hv = hash(c.x * 3.1, c.z * 1.7);
+        const aut = ENV.autumn * (sp === 3 ? 0.9 : hv > 0.3 ? 0.85 : 0.25);
+        let r = 0.92 + hv * 0.16 + aut * 0.45, g = 0.95 + hv * 0.1 - aut * 0.2, bl = 0.95 - aut * 0.55;
+        const w = ENV.winter * 0.55;
+        r += (0.85 - r) * w; g += (0.78 - g) * w; bl += (0.72 - bl) * w;
+        b.setColor(i, r, g, bl);
+      }
+      L.trees.forEach((pair, sp) => pair.forEach((b, f) => { b.count = cnt[sp][f]; b.commit(); }));
+    } else {
+      const nt = fill(trees, TREES, treeBuf, (k, c) => {
+        const hv = hash(c.x * 3.1, c.z * 1.7);
+        const green = new Color3(0.2 + hv * 0.08, 0.36 + hv * 0.1, 0.14 + hv * 0.04);
+        const aut = new Color3(0.62 + hv * 0.2, 0.36 + hv * 0.12, 0.1);
+        const col = Color3.Lerp(green, aut, ENV.autumn * (hv > 0.3 ? 0.85 : 0.2));
+        const w = Color3.Lerp(col, new Color3(0.42, 0.38, 0.33), ENV.winter * 0.6);
+        treeCol.set([w.r, w.g, w.b, 1], k * 4);
+      });
+      setThinCount(tree, nt);
+      tree.thinInstanceBufferUpdated('matrix'); tree.thinInstanceBufferUpdated('color');
+    }
+    if (L.abri) {
+      const ab = L.abri;
+      if (abris.length > ab.capacity) abris.sort((a, b) => a.d - b.d);
+      ab.count = 0;
+      for (let q = 0; q < Math.min(ab.capacity, abris.length); q++) { const c = abris[q]; ab.set(q, c.x, c.y, c.z, c.a, 1); }
+      ab.commit();
+    }
     // feux tricolores aux carrefours des boulevards proches
     sigInfo.length = 0;
     const RS = Math.min(R, 1.2);
@@ -1304,14 +1451,25 @@ function createFurniture(scene: Scene, grid: Grid, country: CountryDef, net: Net
         if (urbanDensity(country, x0, z0) < 0.3 || occAt(net, x0, z0) & 1 || grid.sample(x0, z0) < 0.027) continue;
         const Cx = (kx % 5 === 0 ? 0.0102 : 0.0046) + 0.0009, Cz = (kz % 5 === 0 ? 0.0102 : 0.0046) + 0.0009;
         for (const [sx, sz, axis] of [[1, 1, 1], [-1, 1, 0], [-1, -1, 1], [1, -1, 0]]) {
-          const x = x0 + sx * Cx, z = z0 + sz * Cz;
-          write(sigBuf, sigInfo.length, x, surfaceY(grid, x, z), z, 0, 1);
+          const x = x0 + sx * Cx, z = z0 + sz * Cz, y = surfaceY(grid, x, z);
+          const n = sigInfo.length;
+          if (L.sig) {
+            // lampes face aux véhicules qui arrivent dans l'axe contrôlé
+            const yaw = axis ? Math.atan2(0, sz) : Math.atan2(sx, 0);
+            L.sig.set(n, x, y, z, yaw, 1);
+            sigYaw[n] = yaw; sigPos[n * 3] = x; sigPos[n * 3 + 1] = y; sigPos[n * 3 + 2] = z;
+          } else write(sigBuf, n, x, y, z, 0, 1);
           sigInfo.push({ kx, kz, axis });
         }
       }
     }
-    setThinCount(sigPole, sigInfo.length); setThinCount(sigHead, sigInfo.length);
-    sigPole.thinInstanceBufferUpdated('matrix'); sigHead.thinInstanceBufferUpdated('matrix');
+    if (L.sig) {
+      L.sig.count = sigInfo.length; L.sig.commit();
+      lastSigKey = '';
+    } else {
+      setThinCount(sigPole, sigInfo.length); setThinCount(sigHead, sigInfo.length);
+      sigPole.thinInstanceBufferUpdated('matrix'); sigHead.thinInstanceBufferUpdated('matrix');
+    }
     void rnd;
   };
 
@@ -1323,23 +1481,45 @@ function createFurniture(scene: Scene, grid: Grid, country: CountryDef, net: Net
       const radius = cam.radius ?? 10;
       const R = Math.min(RADIUS, Math.max(0.8, radius * 0.9));
       const hidden = radius > 14;
-      for (const m of [lampBody, tree, sigPole, sigHead]) m.setEnabled(!hidden);
-      head.setEnabled(!hidden || ENV.night > 0.3);
+      camRadius = radius;
+      for (const m of [lampBody, tree, sigPole, sigHead]) if (!m.isDisposed()) m.setEnabled(!hidden);
+      if (!head.isDisposed()) head.setEnabled(!hidden || ENV.night > 0.3);
+      if (hidden !== wasHidden) {
+        // modèles de la bibliothèque : on vide les tampons (les feux de nuit suivent le niveau d'éclairage global)
+        wasHidden = hidden;
+        if (hidden) {
+          const all = [...(L.lamps ?? []), ...(L.trees ?? []).flat(), ...(L.sig ? [L.sig] : []), ...(L.abri ? [L.abri] : [])];
+          for (const b of all) { b.count = 0; b.commit(); }
+          if (sigLamp) setThinCount(sigLamp, 0);
+        } else cx = 1e9;
+      }
       if (!hidden && (Math.hypot(t.x - cx, t.z - cz) > R * 0.3 || Math.abs(R - lastR) > lastR * 0.35 || Math.abs(ENV.autumn + ENV.winter - lastAutumn) > 0.08)) {
         cx = t.x; cz = t.z; lastR = R; lastAutumn = ENV.autumn + ENV.winter;
         regen(cx, cz, R);
       }
       const n = ENV.night;
       headMat.emissiveColor.set(1.0 * n, 0.78 * n, 0.5 * n);
-      // couleurs des feux
+      // couleurs des feux (et position de la lampe allumée sur le modèle de la bibliothèque)
       if (!hidden && sigInfo.length) {
+        let key = '';
         for (let k = 0; k < sigInfo.length; k++) {
           const s = signalState(sigInfo[k].kx, sigInfo[k].kz, sigInfo[k].axis);
+          key += s;
           if (s === 0) sigCol.set([0.1, 1, 0.35, 1], k * 4);
           else if (s === 1) sigCol.set([1, 0.65, 0.05, 1], k * 4);
           else sigCol.set([1, 0.08, 0.05, 1], k * 4);
+          if (sigLamp) {
+            const yaw = sigYaw[k], dy = s === 2 ? 0.00028 : s === 1 ? 0 : -0.00028;
+            write(sigLampBuf, k, sigPos[k * 3] + Math.sin(yaw) * 0.000222, sigPos[k * 3 + 1] + 0.00275 + dy, sigPos[k * 3 + 2] + Math.cos(yaw) * 0.000222, yaw, 1);
+          }
         }
-        sigHead.thinInstanceBufferUpdated('color');
+        if (sigLamp) {
+          if (key !== lastSigKey) {
+            lastSigKey = key;
+            setThinCount(sigLamp, sigInfo.length);
+            sigLamp.thinInstanceBufferUpdated('matrix'); sigLamp.thinInstanceBufferUpdated('color');
+          }
+        } else sigHead.thinInstanceBufferUpdated('color');
       }
     },
   };
