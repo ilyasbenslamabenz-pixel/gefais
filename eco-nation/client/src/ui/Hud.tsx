@@ -67,9 +67,10 @@ export function TopBar() {
     <header className="topbar">
       <div className="tb-brand" title={`ECO NATION — ${snap.name}`}>
         <Seal size={40} />
-        <div className="tb-brand-text"><span className="kicker">Journal officiel</span><b>{snap.name}</b></div>
+        <div className="tb-brand-text"><span className="kicker">ECO NATION</span><b>{snap.name}</b></div>
       </div>
       <div className="tb-date">
+        <i className="kicker">Journal officiel · n° {snap.month + 1}</i>
         <b>{snap.date}</b>
         <span><Icon name={SEASON[snap.month % 12][0]} size={13} />{SEASON[snap.month % 12][1]} · {stripEmoji(WEATHER_LABEL[weather])}</span>
       </div>
