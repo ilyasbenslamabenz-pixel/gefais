@@ -9,6 +9,7 @@ import { LineChart } from './charts';
 import { fmtKind } from './energyIndicators';
 import { BUILD_IDS, CARRIER_NAMES, CARRIERS, STORAGE, TECHS, TECH_IDS, type BuildId } from '../../../shared/sim/energyData';
 import { ENERGY_INDICATORS } from '../../../shared/sim/energyIndicators';
+import { Icon } from './Icon';
 
 const TECH_COLORS: Record<string, string> = {
   charbon: '#5c5c5c', gaz: '#f4a261', petrole: '#9d4edd', nucleaire: '#ffd166', solaire: '#ffb703', eolien: '#90e0ef', eolienMer: '#4cc9f0',
@@ -25,7 +26,7 @@ const hint = (k: string) => { const d = ENERGY_INDICATORS[k]; return d ? `${d.de
 export function EnergiePanel() {
   const [tab, setTab] = useState<'synthese' | 'parc' | 'politique' | 'emissions' | 'historique'>('synthese');
   return (
-    <Drawer title="Ministère de la Transition énergétique" icon="⚡" wide>
+    <Drawer title="Ministère de la Transition énergétique" icon="energie" wide>
       <Tabs value={tab} onChange={setTab} tabs={[['synthese', 'Synthèse'], ['parc', 'Parc & programmes'], ['politique', 'Politiques'], ['emissions', 'Émissions & objectifs'], ['historique', 'Historique']]} />
       {tab === 'synthese' && <Synthese />}
       {tab === 'parc' && <Parc />}
@@ -53,7 +54,7 @@ function Synthese() {
         <Kpi label="Intensité carbone" value={`${int(E.emissions.intensityElec)} g/kWh`} hint={hint('carbonIntensityElec')} />
         <Kpi label="Dépendance aux importations" value={pct(E.importDependence)} hint="Part de l'énergie (approche primaire) couverte par des combustibles fossiles importés et de l'électricité importée nette." />
       </div>
-      {b.unserved > 0 && <p className="bad">⚠️ Délestages ce mois-ci : {twh(b.unserved * 12)} non distribués. Construisez des moyens pilotables ou du stockage, ou renforcez les interconnexions.</p>}
+      {b.unserved > 0 && <p className="bad">Délestages ce mois-ci : {twh(b.unserved * 12)} non distribués. Construisez des moyens pilotables ou du stockage, ou renforcez les interconnexions.</p>}
       <div className="cols">
         <Section title="Production d'électricité du mois" hint="Rythme annuel. Merit order par blocs horaires (pointe, jour, nuit) : renouvelables et nucléaire d'abord, puis moyens pilotables par coût marginal croissant (prix du carbone inclus) et importations.">
           <Bars fmt={twh} items={TECH_IDS.filter((t) => b.byTech[t] > 0 || E.fleet[t].mw > 0).map((t) => ({ label: `${TECHS[t].icon} ${TECHS[t].name}`, value: b.byTech[t] * 12, color: TECH_COLORS[t] }))} />
@@ -102,7 +103,7 @@ function Parc() {
           <tbody>
             {TECH_IDS.map((t) => (
               <tr key={t}>
-                <td>{TECHS[t].icon} {TECHS[t].name}</td>
+                <td><Icon name={TECHS[t].icon} size={15} />{TECHS[t].name}</td>
                 <td>{int(E.fleet[t].mw)} MW</td>
                 <td>{int(E.fleet[t].publicMw)} MW</td>
                 <td>{twh(E.balance.byTech[t] * 12)}</td>
@@ -110,13 +111,13 @@ function Parc() {
                 <td>{int(TECHS[t].fuel + TECHS[t].varOM + TECHS[t].co2 * snap.policy.eco.industrial)} €/MWh</td>
               </tr>
             ))}
-            <tr><td>{STORAGE.icon} {STORAGE.name}</td><td>{int(E.storage.mw)} MW</td><td>{int(E.storage.publicMw)} MW</td><td>{int(E.storage.mwh)} MWh</td><td>—</td><td>—</td></tr>
+            <tr><td><Icon name={STORAGE.icon} size={15} />{STORAGE.name}</td><td>{int(E.storage.mw)} MW</td><td>{int(E.storage.publicMw)} MW</td><td>{int(E.storage.mwh)} MWh</td><td>—</td><td>—</td></tr>
           </tbody>
         </table>
       </Section>
       <Section title="Décider un programme" hint="Construction : coût d'investissement payé par l'État pendant toute la durée du chantier, puis maintenance annuelle ; la recette des ventes d'électricité revient au budget. Fermeture : démantèlement et indemnisation des exploitants privés.">
         <div className="btn-row">
-          {BUILD_IDS.map((t) => <button key={t} className={`btn ${tech === t ? 'primary' : 'ghost'}`} onClick={() => setTech(t)}>{icon(t)} {name(t)}</button>)}
+          {BUILD_IDS.map((t) => <button key={t} className={`btn ${tech === t ? 'primary' : 'ghost'}`} onClick={() => setTech(t)}><Icon name={icon(t)} size={15} />{name(t)}</button>)}
         </div>
         <Slider label="Puissance" value={mw} min={10} max={5000} step={10} fmt={(v) => `${int(v)} MW`} onChange={setMw} />
         <p className="muted small">
@@ -125,11 +126,11 @@ function Parc() {
           Installé : {int(installed)} MW.
         </p>
         <div className="btn-row">
-          <button className="btn primary" onClick={() => gameAction({ type: 'energyBuild', tech, mw })}>🏗️ Construire {int(mw)} MW</button>
+          <button className="btn primary" onClick={() => gameAction({ type: 'energyBuild', tech, mw })}><Icon name="construire" size={14} />Construire {int(mw)} MW</button>
         </div>
         <Slider label="Échéance de fermeture" value={closeYear} min={0} max={year0 + 30} step={1} fmt={(v) => (v < year0 ? 'immédiate' : `${v}`)} onChange={(v) => setCloseYear(v < year0 ? 0 : v)} />
         <div className="btn-row">
-          <button className="btn" disabled={installed < 1} onClick={() => gameAction({ type: 'energyClose', tech, mw, atMonth })}>🔻 Fermer {int(Math.min(mw, installed))} MW {atMonth !== undefined ? `en ${closeYear}` : 'maintenant'}</button>
+          <button className="btn" disabled={installed < 1} onClick={() => gameAction({ type: 'energyClose', tech, mw, atMonth })}><Icon name="arret" size={14} />Fermer {int(Math.min(mw, installed))} MW {atMonth !== undefined ? `en ${closeYear}` : 'maintenant'}</button>
           <button className="btn ghost" disabled={installed < 1} onClick={() => gameAction({ type: 'energyClose', tech, mw: Math.ceil(installed), atMonth })}>Fermer toute la filière</button>
         </div>
         <p className="muted small">Fermer des centrales pilotables réduit les émissions mais peut provoquer des délestages si renouvelables, stockage et interconnexions ne couvrent pas la pointe d'hiver.</p>
@@ -143,7 +144,7 @@ function Parc() {
                 const prog = p.kind === 'close' && !p.applied ? 0 : Math.min(1, (snap.month - p.start) / Math.max(1, p.done - p.start));
                 return (
                   <tr key={p.id}>
-                    <td>{p.kind === 'close' ? '🔻 ' : '🏗️ '}{p.name}</td>
+                    <td><Icon name={p.kind === 'close' ? 'arret' : 'construire'} size={15} />{p.name}</td>
                     <td>{monthName(p.kind === 'close' && !p.applied ? p.start : p.done, snap.startYear)}</td>
                     <td>{p.public ? money(p.cost) : 'privé'}</td>
                     <td style={{ minWidth: 90 }}><Meter value={prog * 100} tone="var(--accent)" /></td>
@@ -221,7 +222,7 @@ function Emissions() {
         <Section title="Objectifs" hint="Avancement vers les objectifs de neutralité ; un objectif est atteint lorsque sa valeur atteint la cible.">
           {E.goals.map((g) => (
             <div key={g.id} className="budget-line">
-              <div className="row between"><b>{g.achieved ? '✅' : '🎯'} {g.name}<Info text={g.definition} /></b><span>{g.unit === '%' ? pct(g.value) : fmtKind('tco2', g.value)}</span></div>
+              <div className="row between"><b className="row" style={{ margin: 0, gap: 6 }}><Icon name={g.achieved ? 'valide' : 'objectifs'} size={15} />{g.name}<Info text={g.definition} /></b><span>{g.unit === '%' ? pct(g.value) : fmtKind('tco2', g.value)}</span></div>
               <Meter value={g.progress * 100} />
             </div>
           ))}

@@ -29,8 +29,24 @@ import { ConstructionPanel } from './Construction';
 import { BesoinsPanel, useNeeds } from './Besoins';
 import { InfraActions } from './InfraActions';
 import { BUILDINGS } from '../../../shared/sim/construction';
+import { Icon, Seal, stripEmoji, type IconName } from './Icon';
 
-const SEASON = ['❄️ Hiver', '❄️ Hiver', '🌱 Printemps', '🌱 Printemps', '🌱 Printemps', '☀️ Été', '☀️ Été', '☀️ Été', '🍂 Automne', '🍂 Automne', '🍂 Automne', '❄️ Hiver'];
+const SEASON: [IconName, string][] = [['flocon', 'Hiver'], ['flocon', 'Hiver'], ['pousse', 'Printemps'], ['pousse', 'Printemps'], ['pousse', 'Printemps'], ['soleil', 'Été'], ['soleil', 'Été'], ['soleil', 'Été'], ['feuille', 'Automne'], ['feuille', 'Automne'], ['feuille', 'Automne'], ['flocon', 'Hiver']];
+
+/** Variation sur un mois d'un indicateur de l'historique : flèche colorée selon le sens souhaitable. */
+function Delta({ k }: { k: string }) {
+  const h = useStore((s) => s.history[k]);
+  if (!h || h.length < 2) return null;
+  const a = h[h.length - 2], b = h[h.length - 1];
+  const d = b - a;
+  const rel = Math.abs(a) > 1e-9 ? d / Math.abs(a) : 0;
+  const isRatio = IND[k]?.unit?.startsWith('%');
+  const flat = isRatio ? Math.abs(d) < 5e-4 : Math.abs(rel) < 5e-4;
+  const good = IND[k]?.good;
+  const tone = flat || !good ? 'flat' : (good === 'up') === d > 0 ? 'up' : 'down';
+  const txt = isRatio ? `${(Math.abs(d) * 100).toFixed(1).replace('.', ',')} pt` : `${(Math.abs(rel) * 100).toFixed(1).replace('.', ',')} %`;
+  return <span className={`delta ${tone}`} title="Variation sur un mois">{flat ? '=' : d > 0 ? '▲' : '▼'}<span className="delta-v">{flat ? '' : ` ${txt}`}</span></span>;
+}
 
 export function TopBar() {
   const snap = useStore((s) => s.snap);
@@ -44,21 +60,26 @@ export function TopBar() {
   const weather = weatherFor(country.seed, snap.month);
   const Item = ({ k, label, value, tone }: { k: string; label: string; value: string; tone?: string }) => (
     <div className={`tb-item ${tone ?? ''}`} title={IND[k] ? `${IND[k].label} — ${IND[k].def} (${IND[k].unit}, ${IND[k].period})` : label}>
-      <span>{label}</span><b>{value}</b>
+      <span>{label}</span><div className="tb-v"><b>{value}</b><Delta k={k} /></div>
     </div>
   );
   return (
     <header className="topbar">
-      <div className="tb-brand"><b>ECO NATION</b><span>{snap.name}</span></div>
+      <div className="tb-brand" title={`ECO NATION — ${snap.name}`}>
+        <Seal size={40} />
+        <div className="tb-brand-text"><span className="kicker">Journal officiel</span><b>{snap.name}</b></div>
+      </div>
       <div className="tb-date">
         <b>{snap.date}</b>
-        <span>{SEASON[snap.month % 12]} · {WEATHER_LABEL[weather]}</span>
+        <span><Icon name={SEASON[snap.month % 12][0]} size={13} />{SEASON[snap.month % 12][1]} · {stripEmoji(WEATHER_LABEL[weather])}</span>
       </div>
-      <div className="tb-speed">
+      <div className="tb-speed" role="group" aria-label="Écoulement du temps">
         {[0, 1, 2, 5, 10].map((s) => (
-          <button key={s} className={speed === s ? 'on' : ''} onClick={() => setSpeed(s)} title={s === 0 ? 'Pause (Espace)' : `Vitesse ×${s}`}>{s === 0 ? '⏸' : s === 1 ? '▶' : `×${s}`}</button>
+          <button key={s} className={speed === s ? 'on' : ''} onClick={() => setSpeed(s)} title={s === 0 ? 'Pause (Espace)' : `Vitesse ×${s}`} aria-pressed={speed === s} aria-label={s === 0 ? 'Pause' : `Vitesse ×${s}`}>
+            {s === 0 ? <Icon name="pause" size={15} /> : s === 1 ? <Icon name="lecture" size={15} /> : `×${s}`}
+          </button>
         ))}
-        <button onClick={stepOnce} disabled={speed !== 0} title="Avancer d'un mois">⏭</button>
+        <button onClick={stepOnce} disabled={speed !== 0} title="Avancer d'un mois" aria-label="Avancer d'un mois"><Icon name="suivant" size={15} /></button>
       </div>
       <div className="tb-items">
         <Item k="cash" label="Trésorerie" value={money(snap.finance.cash)} tone={snap.finance.cash < 0 ? 'bad' : ''} />
@@ -76,38 +97,38 @@ export function TopBar() {
   );
 }
 
-const MINISTRIES: { id: Panel; icon: string; label: string }[] = [
-  { id: 'besoins', icon: '🧭', label: 'Besoins du pays' },
-  { id: 'finances', icon: '🏦', label: 'Finances' },
-  { id: 'fiscalite', icon: '🧾', label: 'Fiscalité' },
-  { id: 'economie', icon: '📈', label: 'Économie' },
-  { id: 'travail', icon: '👷', label: 'Travail' },
-  { id: 'population', icon: '👥', label: 'Population' },
-  { id: 'politique', icon: '🏛️', label: 'Politique' },
-  { id: 'international', icon: '🌐', label: 'International' },
-  { id: 'evenements', icon: '⚠️', label: 'Événements' },
-  { id: 'objectifs', icon: '🏆', label: 'Objectifs' },
-  { id: 'energie', icon: '⚡', label: 'Énergie' },
-  { id: 'environnement', icon: '🌳', label: 'Environnement' },
-  { id: 'transports', icon: '🚇', label: 'Transports' },
-  { id: 'industrie', icon: '🏭', label: 'Industrie' },
-  { id: 'agriculture', icon: '🌾', label: 'Agriculture' },
-  { id: 'dechets', icon: '♻️', label: 'Déchets' },
+const MINISTRIES: { id: Panel; icon: IconName; label: string }[] = [
+  { id: 'besoins', icon: 'besoins', label: 'Besoins du pays' },
+  { id: 'finances', icon: 'finances', label: 'Finances' },
+  { id: 'fiscalite', icon: 'fiscalite', label: 'Fiscalité' },
+  { id: 'economie', icon: 'economie', label: 'Économie' },
+  { id: 'travail', icon: 'travail', label: 'Travail' },
+  { id: 'population', icon: 'population', label: 'Population' },
+  { id: 'politique', icon: 'politique', label: 'Politique' },
+  { id: 'international', icon: 'international', label: 'International' },
+  { id: 'evenements', icon: 'evenements', label: 'Événements' },
+  { id: 'objectifs', icon: 'trophee', label: 'Objectifs' },
+  { id: 'energie', icon: 'energie', label: 'Énergie' },
+  { id: 'environnement', icon: 'environnement', label: 'Environnement' },
+  { id: 'transports', icon: 'transports', label: 'Transports' },
+  { id: 'industrie', icon: 'industrie', label: 'Industrie' },
+  { id: 'agriculture', icon: 'agriculture', label: 'Agriculture' },
+  { id: 'dechets', icon: 'recyclage', label: 'Déchets' },
   // --- modules services publics/recherche/construction ---
-  { id: 'sante', icon: '🏥', label: 'Santé' },
-  { id: 'education', icon: '🎓', label: 'Éducation' },
-  { id: 'logement', icon: '🏠', label: 'Logement' },
-  { id: 'securite', icon: '🚓', label: 'Sécurité' },
-  { id: 'recherche', icon: '🔬', label: 'Recherche' },
-  { id: 'construction', icon: '🏗️', label: 'Équipements' },
-  { id: 'stats', icon: '📊', label: 'Statistiques' },
+  { id: 'sante', icon: 'sante', label: 'Santé' },
+  { id: 'education', icon: 'education', label: 'Éducation' },
+  { id: 'logement', icon: 'logement', label: 'Logement' },
+  { id: 'securite', icon: 'securite', label: 'Sécurité' },
+  { id: 'recherche', icon: 'recherche', label: 'Recherche' },
+  { id: 'construction', icon: 'equipements', label: 'Équipements' },
+  { id: 'stats', icon: 'stats', label: 'Statistiques' },
 ];
 
-const POLES: { id: string; icon: string; label: string; items: Panel[] }[] = [
-  { id: 'eco', icon: '💶', label: 'Économie', items: ['finances', 'fiscalite', 'economie', 'travail', 'industrie'] },
-  { id: 'social', icon: '🤝', label: 'Social', items: ['population', 'sante', 'education', 'logement', 'securite'] },
-  { id: 'terr', icon: '🌍', label: 'Territoire', items: ['energie', 'environnement', 'transports', 'agriculture', 'dechets', 'construction', 'recherche'] },
-  { id: 'etat', icon: '🏛️', label: 'État', items: ['politique', 'international', 'evenements', 'objectifs'] },
+const POLES: { id: string; icon: IconName; label: string; items: Panel[] }[] = [
+  { id: 'eco', icon: 'monnaie', label: 'Économie', items: ['finances', 'fiscalite', 'economie', 'travail', 'industrie'] },
+  { id: 'social', icon: 'population', label: 'Social', items: ['population', 'sante', 'education', 'logement', 'securite'] },
+  { id: 'terr', icon: 'carte', label: 'Territoire', items: ['energie', 'environnement', 'transports', 'agriculture', 'dechets', 'construction', 'recherche'] },
+  { id: 'etat', icon: 'politique', label: 'État', items: ['politique', 'international', 'evenements', 'objectifs'] },
 ];
 
 export function Dock() {
@@ -120,23 +141,24 @@ export function Dock() {
   const toggle = (p: Panel) => { set({ panel: panel === p ? null : p, ...(p === 'notifications' ? { unread: 0 } : {}) }); setOpen(null); };
   const byId = (id: Panel) => MINISTRIES.find((m) => m.id === id)!;
   return (
-    <nav className="dock">
+    <nav className="dock" aria-label="Ministères">
       <button className={`dock-needs ${panel === 'besoins' ? 'on' : ''}`} onClick={() => toggle('besoins')} title="Ce qui manque au pays et quoi construire ou démolir">
-        <span>🧭</span><em>Besoins</em>{urgentNeeds > 0 && <i className="badge">{urgentNeeds}</i>}
+        <span><Icon name="besoins" size={22} /></span><em>Besoins</em>{urgentNeeds > 0 && <i className="badge">{urgentNeeds}</i>}
       </button>
       {POLES.map((pole) => {
         const active = pole.items.includes(panel);
         return (
           <div key={pole.id} className="pole">
-            <button className={active || open === pole.id ? 'on' : ''} onClick={() => setOpen(open === pole.id ? null : pole.id)}>
-              <span>{pole.icon}</span><em>{pole.label}</em>
+            <button className={active || open === pole.id ? 'on' : ''} onClick={() => setOpen(open === pole.id ? null : pole.id)} aria-expanded={open === pole.id} aria-haspopup="menu">
+              <span><Icon name={pole.icon} size={22} /></span><em>{pole.label}</em>
               {pole.id === 'etat' && pendingEvents > 0 && <i className="badge">{pendingEvents}</i>}
             </button>
             {open === pole.id && (
-              <div className="flyout">
+              <div className="flyout" role="menu">
+                <div className="flyout-head kicker">{pole.id === 'etat' ? 'Affaires de l\'État' : `Pôle ${pole.label}`}</div>
                 {pole.items.map((id) => { const m = byId(id); return (
                   <button key={id} className={panel === id ? 'on' : ''} onClick={() => toggle(id)}>
-                    <span>{m.icon}</span>{m.label}{id === 'evenements' && pendingEvents > 0 && <i className="badge">{pendingEvents}</i>}
+                    <span><Icon name={m.icon} size={18} /></span>{m.label}{id === 'evenements' && pendingEvents > 0 && <i className="badge">{pendingEvents}</i>}
                   </button>
                 ); })}
               </div>
@@ -144,11 +166,11 @@ export function Dock() {
           </div>
         );
       })}
-      <button className={panel === 'stats' ? 'on' : ''} onClick={() => toggle('stats')}><span>📊</span><em>Statistiques</em></button>
+      <button className={panel === 'stats' ? 'on' : ''} onClick={() => toggle('stats')}><span><Icon name="stats" size={22} /></span><em>Statistiques</em></button>
       <div className="dock-sep" />
-      <button className={panel === 'notifications' ? 'on' : ''} onClick={() => toggle('notifications')}><span>🔔</span><em>Alertes</em>{unread > 0 && <i className="badge">{unread}</i>}</button>
-      <button className={panel === 'help' ? 'on' : ''} onClick={() => toggle('help')}><span>❓</span><em>Aide</em></button>
-      <button className={panel === 'settings' ? 'on' : ''} onClick={() => toggle('settings')}><span>⚙️</span><em>Menu</em></button>
+      <button className={panel === 'notifications' ? 'on' : ''} onClick={() => toggle('notifications')}><span><Icon name="alertes" size={22} /></span><em>Alertes</em>{unread > 0 && <i className="badge">{unread}</i>}</button>
+      <button className={panel === 'help' ? 'on' : ''} onClick={() => toggle('help')}><span><Icon name="aide" size={22} /></span><em>Aide</em></button>
+      <button className={panel === 'settings' ? 'on' : ''} onClick={() => toggle('settings')}><span><Icon name="menu" size={22} /></span><em>Menu</em></button>
     </nav>
   );
 }
@@ -166,13 +188,15 @@ export function ReformBar() {
     <div className="reformbar">
       {draft && changes > 0 ? (
         <>
-          <span>📝 <b>{changes}</b> modification{changes > 1 ? 's' : ''} en préparation — entrée en vigueur au 1er {monthLabel(snap.month + 1, snap.startYear)}</span>
+          <span className="kicker">Projet de réforme</span>
+          <span><Icon name="plume" size={16} /><b>{changes}</b> modification{changes > 1 ? 's' : ''} en préparation — entrée en vigueur au 1er {monthLabel(snap.month + 1, snap.startYear)}</span>
           <button className="btn ghost" onClick={() => set({ draft: null })}>Abandonner</button>
-          <button className="btn primary" onClick={() => submitPolicy(draft)}>✅ Adopter les réformes</button>
+          <button className="btn primary" onClick={() => submitPolicy(draft)}><Icon name="valide" size={15} />Adopter les réformes</button>
         </>
       ) : pending ? (
         <>
-          <span>⏳ Réformes adoptées, en vigueur au 1er {monthLabel(pending.month, snap.startYear)}</span>
+          <span className="kicker">Promulgué</span>
+          <span><Icon name="sablier" size={16} />Réformes adoptées, en vigueur au 1er {monthLabel(pending.month, snap.startYear)}</span>
           <button className="btn ghost" onClick={cancelPending}>Annuler</button>
         </>
       ) : <span className="muted">Aucune modification</span>}
@@ -213,8 +237,12 @@ export function Inspector() {
     const top = w.map((v, i) => ({ i, v: v / tot })).sort((a, b) => b.v - a.v).slice(0, 4);
     const infra = country.infra.filter((i) => i.cityId === c.id);
     return (
-      <div className="inspector">
-        <header><h3>{c.capital ? '★ ' : ''}{c.name}</h3><button className="icon-btn" onClick={() => set({ selection: null })}>✕</button></header>
+      <div className="inspector paper">
+        <header>
+          <span className="kicker"><Icon name="carte" size={13} />Fiche de quartier</span>
+          <h3>{c.capital && <Icon name="etoile" size={18} title="Capitale" />}{c.name}</h3>
+          <button className="icon-btn" onClick={() => set({ selection: null })} aria-label="Fermer la fiche"><Icon name="fermer" size={16} /></button>
+        </header>
         <p className="muted">{c.capital ? 'Centre historique et politique · ' : ''}{c.kind === 'metropole' ? 'Grand quartier' : c.kind === 'ville' ? 'Arrondissement' : 'Quartier périphérique'}{c.coastal ? ' · littorale' : ''}</p>
         <div className="kpis compact">
           <Kpi label="Habitants" value={people(s.population)} />
@@ -225,7 +253,7 @@ export function Inspector() {
           <Kpi label="Recettes locales" value={money(s.localRevenue)} sub="€/an" />
         </div>
         <h4>Activités du quartier</h4>
-        {top.map((t) => <div key={t.i} className="spec">{SECTORS[t.i].icon} {SECTORS[t.i].name} <b>{pct(t.v, 0)}</b></div>)}
+        {top.map((t) => <div key={t.i} className="spec"><Icon name={SECTORS[t.i].icon} size={15} />{SECTORS[t.i].name} <b>{pct(t.v, 0)}</b></div>)}
         {infra.length > 0 && <><h4>Équipements</h4>{infra.map((i) => <button key={i.id} className="link block" onClick={() => set({ selection: { kind: 'infra', id: i.id } })}>{INFRA_LABEL[i.type] ?? BUILDINGS[i.type]?.name}{i.status === 'chantier' ? ' (en construction)' : ''} — {i.name}</button>)}</>}
       </div>
     );
@@ -235,8 +263,12 @@ export function Inspector() {
   const city = i.cityId !== null ? country.cities[i.cityId] : null;
   const produces = i.energyMWh < 0;
   return (
-    <div className="inspector">
-      <header><h3>{i.name}</h3><button className="icon-btn" onClick={() => set({ selection: null })}>✕</button></header>
+    <div className="inspector paper">
+      <header>
+        <span className="kicker"><Icon name={BUILDINGS[i.type]?.icon ?? 'equipements'} size={13} />Fiche d'équipement</span>
+        <h3>{i.name}</h3>
+        <button className="icon-btn" onClick={() => set({ selection: null })} aria-label="Fermer la fiche"><Icon name="fermer" size={16} /></button>
+      </header>
       <p className="muted">{INFRA_LABEL[i.type] ?? BUILDINGS[i.type]?.name}{city ? ` · ${city.name}` : ''}{i.status === 'chantier' ? ` · en construction (${Math.round((i.progress ?? 0) * 100)} %), mise en service prévue en ${i.builtYear}` : ` · mise en service ${i.builtYear}`}</p>
       <div className="kpis compact">
         <Kpi label="Capacité" value={`${int(i.capacity)} ${i.capacityUnit}`} />
@@ -247,7 +279,7 @@ export function Inspector() {
         <Kpi label="Niveau" value={String(i.level)} />
       </div>
       <InfraActions infra={i} />
-      {city && <button className="link" onClick={() => { set({ selection: { kind: 'city', id: city.id } }); camApi.focus(city.x, city.z); }}>← Voir {city.name}</button>}
+      {city && <button className="link" onClick={() => { set({ selection: { kind: 'city', id: city.id } }); camApi.focus(city.x, city.z); }}>Voir la fiche de {city.name} →</button>}
     </div>
   );
 }
@@ -257,18 +289,18 @@ export function Notifications() {
   const snap = useStore((s) => s.snap);
   if (!snap) return null;
   return (
-    <Drawer title="Notifications" icon="🔔">
+    <Drawer title="Notifications" icon="alertes">
       {[...notices].reverse().map((n) => (
         <div key={n.id} className={`notice ${n.kind}`}>
-          <div className="notice-head"><b>{n.title}</b><span>{monthLabel(n.month, snap.startYear)}</span></div>
-          <p>{n.text}</p>
+          <div className="notice-head"><b>{stripEmoji(n.title)}</b><span>{monthLabel(n.month, snap.startYear)}</span></div>
+          <p>{stripEmoji(n.text)}</p>
         </div>
       ))}
     </Drawer>
   );
 }
 
-const STAT_COLORS = ['#4cc9f0', '#f7b801', '#ef476f', '#06d6a0', '#b388eb'];
+const STAT_COLORS = ['#cfae78', '#8fa7c9', '#d9705f', '#86b494', '#a98bb5'];
 export function StatsPanel() {
   const history = useStore((s) => s.history);
   const snap = useStore((s) => s.snap);
@@ -292,7 +324,7 @@ export function StatsPanel() {
   const yearIdx = (y: number) => Math.min((history.gdp?.length ?? 1) - 1, y * 12);
   const bYear = yB < 0 ? nYears : yB;
   return (
-    <Drawer title="Centre de contrôle national" icon="📊" wide>
+    <Drawer title="Centre de contrôle national" icon="stats" wide>
       <Section title="Indicateurs (cliquez pour comparer, 5 max)">
         {groups.map(([g, ks]) => (
           <div key={g} className="chip-group"><span>{g}</span>{ks.map((k) => <button key={k} className={`chip ${keys.includes(k) ? 'on' : ''}`} onClick={() => toggle(k)}>{IND[k]?.label ?? k}</button>)}</div>
@@ -337,11 +369,11 @@ export function SettingsPanel() {
   const gameId = useStore((s) => s.gameId);
   const [name, setName] = useState('');
   return (
-    <Drawer title="Menu & paramètres" icon="⚙️">
+    <Drawer title="Menu & paramètres" icon="reglages">
       <Section title="Partie">
         <div className="btn-row">
-          <button className="btn" onClick={saveNow}>💾 Sauvegarder</button>
-          <button className="btn danger" onClick={leaveGame}>🚪 Menu principal</button>
+          <button className="btn primary" onClick={saveNow}><Icon name="sauver" size={15} />Sauvegarder</button>
+          <button className="btn" onClick={leaveGame}><Icon name="sortie" size={15} />Menu principal</button>
         </div>
         <div className="row">
           <input className="input" placeholder={`${snap?.name ?? ''} — ${snap?.date ?? ''}`} value={name} onChange={(e) => setName(e.target.value)} />
@@ -373,8 +405,8 @@ export function SettingsPanel() {
 export function HelpPanel() {
   const set = useStore((s) => s.set);
   return (
-    <Drawer title="Aide & tutoriel" icon="❓">
-      <button className="btn primary" onClick={() => set({ tutorialStep: 0, panel: null })}>▶ Relancer le tutoriel</button>
+    <Drawer title="Aide & tutoriel" icon="aide">
+      <button className="btn primary" onClick={() => set({ tutorialStep: 0, panel: null })}><Icon name="lecture" size={14} />Relancer le tutoriel</button>
       <Section title="Objectif">
         <p>Vous dirigez le gouvernement. Chaque décision (impôts, budget, droit du travail) modifie les revenus de millions d'habitants, l'activité des entreprises, les finances publiques et la satisfaction. Tous les indicateurs sont calculés par le moteur de simulation à partir de ces décisions.</p>
       </Section>
@@ -383,7 +415,7 @@ export function HelpPanel() {
           <li>Ouvrez un ministère dans le dock à gauche.</li>
           <li>Modifiez les curseurs : les valeurs modifiées s'affichent en jaune avec la valeur actuelle.</li>
           <li>Cliquez sur <b>Adopter les réformes</b> : elles entrent en vigueur le 1er du mois suivant.</li>
-          <li>Lancez le temps (▶) et suivez les effets dans les indicateurs et le centre de contrôle.</li>
+          <li>Lancez le temps (bouton lecture) et suivez les effets dans les indicateurs et le centre de contrôle.</li>
         </ol>
       </Section>
       <Section title="Délais et inerties">
@@ -399,9 +431,9 @@ export function HelpPanel() {
 const TUTORIAL = [
   { title: 'Bienvenue au gouvernement', text: 'Vous êtes chef du gouvernement. La barre du haut résume l\'état du pays : trésorerie, population, PIB, croissance, chômage, inflation, solde public, dette, satisfaction, émissions. Survolez chaque indicateur pour voir sa définition.' },
   { title: 'La carte', text: 'Glissez pour vous déplacer, clic droit pour pivoter, molette pour zoomer. Cliquez sur un quartier ou un équipement pour l\'inspecter. Le trafic, les fumées et la densité des quartiers reflètent l\'économie.' },
-  { title: 'Le temps', text: 'Le jeu est en pause. Utilisez les boutons ▶ ×2 ×5 ×10 (ou Espace et 1-4). Chaque pas correspond à un mois.' },
+  { title: 'Le temps', text: 'Le jeu est en pause. Utilisez les boutons lecture, ×2, ×5, ×10 (ou Espace et 1-4). Chaque pas correspond à un mois.' },
   { title: 'Les ministères', text: 'Le dock à gauche ouvre les ministères : Finances (budget, dette), Fiscalité (impôts A à H), Économie, Travail, Population. Modifiez une politique puis cliquez sur « Adopter les réformes ».' },
-  { title: 'Conséquences', text: 'Chaque mesure a des effets directs et indirects, avec des délais. Exemple : baisser l\'impôt sur les sociétés stimule l\'investissement mais réduit les recettes. Suivez tout dans le Centre de contrôle (📊). Bonne gouvernance !' },
+  { title: 'Conséquences', text: 'Chaque mesure a des effets directs et indirects, avec des délais. Exemple : baisser l\'impôt sur les sociétés stimule l\'investissement mais réduit les recettes. Suivez tout dans le Centre de contrôle (Statistiques). Bonne gouvernance !' },
 ];
 
 export function Tutorial() {
@@ -410,8 +442,8 @@ export function Tutorial() {
   if (step < 0 || step >= TUTORIAL.length) return null;
   const t = TUTORIAL[step];
   return (
-    <div className="tutorial">
-      <div className="tut-step">Étape {step + 1}/{TUTORIAL.length}</div>
+    <div className="tutorial paper" role="dialog" aria-label={t.title}>
+      <div className="tut-step kicker">Note de cabinet · {step + 1} / {TUTORIAL.length}</div>
       <h3>{t.title}</h3>
       <p>{t.text}</p>
       <div className="btn-row">
@@ -424,7 +456,8 @@ export function Tutorial() {
 
 export function Toasts() {
   const toasts = useStore((s) => s.toasts);
-  return <div className="toasts">{toasts.map((t) => <div key={t.id} className={`toast ${t.kind}`}>{t.text}</div>)}</div>;
+  const ICON: Record<string, IconName> = { good: 'valide', warn: 'evenements', bad: 'evenements' };
+  return <div className="toasts" role="status" aria-live="polite">{toasts.map((t) => <div key={t.id} className={`toast ${t.kind}`}><Icon name={ICON[t.kind] ?? 'info'} size={16} /><span>{stripEmoji(t.text)}</span></div>)}</div>;
 }
 
 export function Panels() {

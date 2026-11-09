@@ -86,7 +86,7 @@ function QuarterSelect({ value, onChange, filter }: { value: number; onChange: (
 export function TransportsPanel() {
   const [tab, setTab] = useState<'synthese' | 'reseau' | 'programmes' | 'politique'>('synthese');
   return (
-    <Drawer title="Ministère des Transports et de la Mobilité" icon="🚇" wide>
+    <Drawer title="Ministère des Transports et de la Mobilité" icon="transports" wide>
       <Tabs value={tab} onChange={setTab} tabs={[['synthese', 'Synthèse'], ['reseau', 'Réseau & flottes'], ['programmes', 'Programmes'], ['politique', 'Politique']]} />
       {tab === 'synthese' && <TransportSummary />}
       {tab === 'reseau' && <TransportNetwork />}
@@ -168,7 +168,7 @@ function TransportNetwork() {
       <Section title="Lignes et réseaux">
         <div className="table-wrap"><table className="table">
           <thead><tr><th>Élément</th><th>Taille</th><th>État</th></tr></thead>
-          <tbody>{T.sites.filter((s) => s.kind !== 'bus').map((s) => <tr key={s.id}><td>{s.label}</td><td>{s.kind === 'bornes' ? `${int(s.size * 100)} bornes` : `${dec1(s.size)} km`}</td><td>{s.status === 'service' ? 'En service' : '🚧 En construction'}</td></tr>)}</tbody>
+          <tbody>{T.sites.filter((s) => s.kind !== 'bus').map((s) => <tr key={s.id}><td>{s.label}</td><td>{s.kind === 'bornes' ? `${int(s.size * 100)} bornes` : `${dec1(s.size)} km`}</td><td>{s.status === 'service' ? 'En service' : 'En construction'}</td></tr>)}</tbody>
         </table></div>
       </Section>
       <Section title="Exploitation">
@@ -239,7 +239,7 @@ export function IndustriePanel() {
   const I = snap?.industry;
   if (!snap || !I) return null;
   return (
-    <Drawer title="Ministère de l'Industrie" icon="🏭" wide>
+    <Drawer title="Ministère de l'Industrie" icon="industrie" wide>
       <div className="kpis">
         <Kpi label="Production industrielle" value={money(I.production)} sub="valeur ajoutée réelle / an" />
         <Kpi label="Emplois" value={people(I.employees)} />
@@ -289,7 +289,7 @@ export function AgriculturePanel() {
   const ap = policy?.agriculture;
   const ae = effective?.agriculture;
   return (
-    <Drawer title="Ministère de l'Agriculture et de l'Alimentation" icon="🌾" wide>
+    <Drawer title="Ministère de l'Agriculture et de l'Alimentation" icon="agriculture" wide>
       <div className="kpis">
         <Kpi label="Surface agricole" value={`${int(G.landHa)} ha`} sub={`${int(G.farms)} exploitations`} />
         <Kpi label="Autosuffisance" value={pct(G.selfSufficiency, 0)} sub="production / consommation" tone={G.selfSufficiency < 0.08 ? 'warn' : undefined} />
@@ -348,7 +348,7 @@ export function DechetsPanel() {
   const capRows: [keyof typeof W.capacity, WasteRoute][] = [['tri', 'tri'], ['recyclage', 'recyclage'], ['compostage', 'compostage'], ['methanisation', 'methanisation'], ['incineration', 'incineration']];
   const years = W.landfillRemaining / Math.max(1, W.flows.enfouissement);
   return (
-    <Drawer title="Ministère des Déchets et du Recyclage" icon="♻️" wide>
+    <Drawer title="Ministère des Déchets et du Recyclage" icon="recyclage" wide>
       <div className="kpis">
         <Kpi label="Déchets produits" value={kt(W.household + W.industrial)} sub="par an" />
         <Kpi label="Déchets ménagers" value={`${int(W.perCapita)} kg`} sub="par habitant et par an" />

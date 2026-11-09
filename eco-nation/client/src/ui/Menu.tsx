@@ -3,6 +3,10 @@ import { useEffect, useState } from 'react';
 import { useStore } from '../store';
 import { createGameReq, deleteGame, listGames, openGame, type GameMeta } from '../net';
 import { MONTHS_FR } from '../../../shared/sim/engine';
+import { Icon, Seal } from './Icon';
+
+const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI'];
+const VIEW_TITLE = { home: 'Sommaire', new: 'Nouvelle partie personnalisée', load: 'Archives', settings: 'Paramètres', tuto: 'Avant de gouverner' } as const;
 
 function dateOf(m: number) { return `${MONTHS_FR[m % 12]} ${2030 + Math.floor(m / 12)}`; }
 
@@ -31,18 +35,45 @@ export function MainMenu() {
   return (
     <div className="menu">
       <div className="menu-bg" />
-      <div className="menu-card">
-        <h1 className="logo">ECO <span>NATION</span></h1>
-        <p className="tagline">Gouvernez une cité-État de 10 millions d'habitants pendant des décennies. Chaque décision compte.</p>
+      <div className="menu-page">
+        <header className="menu-mast">
+          <span className="kicker">Journal officiel de la République d'Ilyas</span>
+          <span className="kicker">Édition du gouvernement · Cité-État · Fondée en 2030</span>
+        </header>
+        <div className="menu-mast-rule" />
+        <div className="menu-grid">
+          <section className="menu-cover">
+            <div className="seal-wrap">
+              <Seal size={128} />
+              <span className="kicker">Unité · Travail · Avenir<br />Palais d'Ilyas</span>
+            </div>
+            <h1 className="logo">Eco<span>Nation</span></h1>
+            <p className="tagline">Dix millions d'habitants, un budget, une majorité fragile. Gouvernez la cité-État pendant des décennies.</p>
+            <p className="tagline-sub">Fiscalité, dette, emploi, énergie, logement, santé, climat : chaque décret se répercute sur l'économie et la vie des quartiers, avec ses délais et ses effets de bord.</p>
+          </section>
+          <section className="menu-card paper" aria-label={VIEW_TITLE[view]}>
+            <h2>{VIEW_TITLE[view]}</h2>
         {view === 'home' && (
           <div className="menu-buttons">
-            <button className="btn primary big" disabled={!connected || busy} onClick={start}>{busy ? 'Ouverture du pays…' : "▶ Gouverner la République d'Ilyas"}</button>
-            <button className="btn big" disabled={!connected} onClick={() => setView('new')}>Nouvelle partie personnalisée</button>
-            <button className="btn big" disabled={!last} onClick={() => last && openGame(last.id)}>Continuer{last ? ` — ${last.name}, ${dateOf(last.month)}` : ''}</button>
-            <button className="btn big" disabled={!games.length} onClick={() => setView('load')}>Charger une sauvegarde</button>
-            <button className="btn big" onClick={() => setView('settings')}>Paramètres</button>
-            <button className="btn big" onClick={() => setView('tuto')}>Tutoriel</button>
-            {!connected && <p className="muted">Connexion au serveur…</p>}
+            <button className="toc lead" disabled={!connected || busy} onClick={start}>
+              <span className="toc-n">{ROMAN[0]}.</span>
+              <span className="toc-t">{busy ? 'Ouverture du pays…' : "Gouverner la République d'Ilyas"}<span className="toc-s">La cité-État vous attend, entièrement construite et fonctionnelle.</span></span>
+              <span className="toc-a"><Icon name="fleche" size={20} /></span>
+            </button>
+            {[
+              { t: 'Continuer', s: last ? `${last.name}, ${dateOf(last.month)}` : 'Aucune partie en cours', on: () => last && openGame(last.id), off: !last },
+              { t: 'Nouvelle partie personnalisée', s: 'Nom, quartiers, population, graine', on: () => setView('new'), off: !connected },
+              { t: 'Charger une sauvegarde', s: games.length ? `${games.length} dossier${games.length > 1 ? 's' : ''} aux archives` : 'Archives vides', on: () => setView('load'), off: !games.length },
+              { t: 'Paramètres', s: 'Qualité graphique, heure de la ville', on: () => setView('settings'), off: false },
+              { t: 'Tutoriel', s: 'Les règles du gouvernement en cinq points', on: () => setView('tuto'), off: false },
+            ].map((e, k) => (
+              <button key={e.t} className="toc" disabled={e.off} onClick={e.on}>
+                <span className="toc-n">{ROMAN[k + 1]}.</span>
+                <span className="toc-t">{e.t}<span className="toc-s">{e.s}</span></span>
+                <span className="toc-a"><Icon name="fleche" size={18} /></span>
+              </button>
+            ))}
+            {!connected && <p className="menu-status">Connexion au serveur…</p>}
           </div>
         )}
         {view === 'new' && (
@@ -99,8 +130,13 @@ export function MainMenu() {
             <button className="btn ghost" onClick={() => setView('home')}>Retour</button>
           </div>
         )}
+          </section>
+        </div>
+        <footer className="menu-foot">
+          <span>ECO NATION · simulation économique, fiscale, sociale et écologique</span>
+          <span>Textures Poly Haven (CC0)</span>
+        </footer>
       </div>
-      <div className="menu-foot">ECO NATION · simulation économique, fiscale, sociale et écologique · textures Poly Haven (CC0)</div>
     </div>
   );
 }

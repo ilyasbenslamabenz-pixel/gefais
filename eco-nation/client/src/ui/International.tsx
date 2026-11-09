@@ -6,13 +6,14 @@ import { govAction } from '../net';
 import { dec2, money, pct } from '../format';
 import { Drawer, Kpi, Meter, Section, Slider, Tabs, usePolicy } from './common';
 import { LineChart, monthLabel } from './charts';
+import { Icon } from './Icon';
 
 const KINDS: AgreementKind[] = ['commerce', 'energie', 'climat', 'investissement'];
 
 export function InternationalPanel() {
   const [tab, setTab] = useState<'voisins' | 'commerce'>('voisins');
   return (
-    <Drawer title="Affaires étrangères & commerce extérieur" icon="🌐" wide>
+    <Drawer title="Affaires étrangères & commerce extérieur" icon="international" wide>
       <Tabs value={tab} onChange={setTab} tabs={[['voisins', 'États voisins & accords'], ['commerce', 'Commerce & droits de douane']]} />
       {tab === 'voisins' ? <Voisins /> : <Commerce />}
     </Drawer>
@@ -58,7 +59,7 @@ function Voisins() {
               })}
             </tbody>
           </table>
-          <button className="btn" onClick={() => govAction({ type: 'diplomatie', neighbor: n.id })}>✈️ Mission diplomatique (relations +8)</button>
+          <button className="btn" onClick={() => govAction({ type: 'diplomatie', neighbor: n.id })}><Icon name="avion" size={14} />Mission diplomatique (relations +8)</button>
         </Section>
       ))}
       {I.log.length > 0 && (

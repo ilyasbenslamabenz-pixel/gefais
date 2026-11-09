@@ -7,6 +7,7 @@ import { govAction } from '../net';
 import { pct } from '../format';
 import { Bars, Drawer, Kpi, Meter, Section, Tabs } from './common';
 import { LineChart, monthLabel } from './charts';
+import { Icon } from './Icon';
 
 const partyName = (id: PartyId) => PARTIES[PARTY_INDEX[id]].name;
 const partyColor = (id: PartyId) => PARTIES[PARTY_INDEX[id]].color;
@@ -16,7 +17,7 @@ const MODE_LABEL: Record<PoliticsState['mode'], string> = { majorite: 'Gouvernem
 export function PolitiquePanel() {
   const [tab, setTab] = useState<'parlement' | 'partis' | 'lois' | 'groupes' | 'elections'>('parlement');
   return (
-    <Drawer title="Vie politique & parlement" icon="🏛️" wide>
+    <Drawer title="Vie politique & parlement" icon="politique" wide>
       <Tabs value={tab} onChange={setTab} tabs={[['parlement', 'Parlement'], ['partis', 'Partis'], ['lois', 'Lois & votes'], ['groupes', 'Syndicats & associations'], ['elections', 'Élections']]} />
       {tab === 'parlement' && <Parlement />}
       {tab === 'partis' && <Partis />}
@@ -94,7 +95,7 @@ function Parlement() {
       </Section>
       <Section title="Responsabilité du gouvernement">
         <div className="btn-row">
-          <button className="btn" onClick={() => govAction({ type: 'confiance' })}>🗳️ Poser la question de confiance</button>
+          <button className="btn" onClick={() => govAction({ type: 'confiance' })}><Icon name="urne" size={14} />Poser la question de confiance</button>
           <button className="btn danger" onClick={() => { if (confirm('Dissoudre le parlement ? Élections anticipées dans 2 mois.')) void govAction({ type: 'dissolution' }); }}>Dissoudre le parlement</button>
         </div>
         <p className="muted small">Confiance gagnée : discipline renforcée pendant plusieurs mois. Confiance refusée ou motion de censure adoptée : élections anticipées dans 2 mois.</p>
@@ -200,7 +201,7 @@ function Groupes() {
         const g = P.groups.find((x) => x.id === d.id)!;
         return (
           <div key={d.id} className="bar-row" style={{ marginBottom: 8 }}>
-            <span className="bar-label">{d.icon} {d.name}<br /><em className="muted small">{KIND[d.kind]}</em></span>
+            <span className="bar-label" style={{ alignItems: 'flex-start' }}><Icon name={d.icon} size={15} /><span>{d.name}<br /><em className="muted small">{KIND[d.kind]}</em></span></span>
             <div style={{ flex: 1 }}><Meter value={g.support} /></div>
             <span className="bar-val">{Math.round(g.support)}/100 {g.support >= 60 ? 'favorable' : g.support < 35 ? 'hostile' : 'réservé'}</span>
           </div>

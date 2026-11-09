@@ -7,6 +7,7 @@ import { useStore } from '../store';
 import { serviceAction } from '../net';
 import { int, money } from '../format';
 import { Section, Slider, usePolicy } from './common';
+import { Icon } from './Icon';
 
 /** Indice des coûts des services publics (salaire moyen / salaire moyen initial), comme côté serveur. */
 export function usePriceRel() {
@@ -73,7 +74,7 @@ export function ProgrammeBox({ types, title = 'Programme d\'investissement' }: {
   return (
     <Section title={title} hint="Choisissez un équipement et un quartier : l'emplacement est déterminé et vérifié automatiquement (terre ferme, pente, espacement, accès à une voie). Le chantier apparaît sur la carte jusqu'à sa mise en service ; il est payé chaque mois sur la trésorerie.">
       <div className="row">
-        <select value={type} onChange={(e) => setType(e.target.value as InfraType)}>{types.map((t) => <option key={t} value={t}>{BUILDINGS[t].icon} {BUILDINGS[t].name}</option>)}</select>
+        <select value={type} onChange={(e) => setType(e.target.value as InfraType)}>{types.map((t) => <option key={t} value={t}>{BUILDINGS[t].name}</option>)}</select>
         <select value={cityId} onChange={(e) => setCityId(Number(e.target.value))}>{districts.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select>
         <input type="number" min={1} max={10} value={count} onChange={(e) => setCount(Math.max(1, Math.min(10, Number(e.target.value))))} style={{ width: 60 }} />
         <button className="btn primary" disabled={!!locked} onClick={() => serviceAction({ type: 'programme', building: type, cityId, count })}>Lancer</button>
@@ -99,7 +100,7 @@ export function SitesList({ types }: { types?: InfraType[] }) {
       <tbody>
         {sites.map((s) => (
           <tr key={s.id}>
-            <td>{BUILDINGS[s.type]?.icon} {s.name}{s.kind !== 'construction' && <em className="muted"> ({s.kind === 'amelioration' ? 'amélioration' : 'rénovation'})</em>}</td>
+            <td><Icon name={BUILDINGS[s.type]?.icon} size={15} />{s.name}{s.kind !== 'construction' && <em className="muted"> ({s.kind === 'amelioration' ? 'amélioration' : 'rénovation'})</em>}</td>
             <td>{s.cityId !== null ? country?.cities[s.cityId]?.name : '—'}</td>
             <td><div className="meter"><div style={{ width: `${(s.elapsed / s.months) * 100}%`, background: 'var(--accent)' }} /></div><span className="small">{s.elapsed}/{s.months} mois</span></td>
             <td>{money(s.cost)}</td>

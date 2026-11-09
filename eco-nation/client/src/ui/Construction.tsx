@@ -9,6 +9,7 @@ import { fetchFacilities, serviceAction } from '../net';
 import { int, money, people } from '../format';
 import { Drawer, Kpi, Meter, Section, Tabs } from './common';
 import { ProgrammeBox, SitesList, usePriceRel } from './servicesCommon';
+import { Icon } from './Icon';
 
 const CATS: [BuildCategory, string][] = [
   ['sante', 'Santé'], ['education', 'Éducation & recherche'], ['securite', 'Sécurité & justice'], ['logement', 'Logement'],
@@ -18,7 +19,7 @@ const CATS: [BuildCategory, string][] = [
 export function ConstructionPanel() {
   const [tab, setTab] = useState<'programmes' | 'catalogue' | 'parc' | 'quartiers'>('programmes');
   return (
-    <Drawer title="Équipements & Urbanisme" icon="🏗️" wide>
+    <Drawer title="Équipements & Urbanisme" icon="equipements" wide>
       <Tabs value={tab} onChange={setTab} tabs={[['programmes', 'Programmes & chantiers'], ['catalogue', 'Catalogue'], ['parc', 'Parc d\'équipements'], ['quartiers', 'Par quartier']]} />
       {tab === 'programmes' && <Programmes />}
       {tab === 'catalogue' && <Catalogue />}
@@ -68,7 +69,7 @@ function Catalogue() {
                 const locked = d.requires && !snap?.research?.unlocked.includes(d.requires);
                 return (
                   <tr key={t} title={d.description} className={locked ? 'muted' : ''}>
-                    <td>{d.icon} {d.name}{locked && ' 🔒'}</td><td>{money(d.cost * pr)}</td><td>{d.months} mois</td><td>{int(d.capacity)} {d.capacityUnit}</td>
+                    <td><Icon name={d.icon} size={15} />{d.name}{locked && <> <Icon name="verrou" size={13} title="Technologie requise" /></>}</td><td>{money(d.cost * pr)}</td><td>{d.months} mois</td><td>{int(d.capacity)} {d.capacityUnit}</td>
                     <td>{money(d.maintenance * pr)}</td><td>{int(d.employees)}</td><td>{int(d.energyMWh)}</td><td>{int(d.emissions)}</td><td>{d.revenue ? money(d.revenue * pr) : '—'}</td>
                   </tr>
                 );
@@ -110,11 +111,11 @@ function Parc() {
             const building = i.status === 'chantier';
             return (
               <tr key={i.id}>
-                <td>{d.icon} {i.name}</td>
+                <td><Icon name={d.icon} size={15} />{i.name}</td>
                 <td>{i.cityId !== null ? country.cities[i.cityId]?.name : '—'}</td>
                 <td>{people(i.capacity)} {i.capacityUnit}</td>
                 <td>{i.level}</td>
-                <td>{building ? `🚧 ${Math.round((i.progress ?? 0) * 100)} %` : <Meter value={i.condition ?? 1} max={1} />}</td>
+                <td>{building ? `Chantier ${Math.round((i.progress ?? 0) * 100)} %` : <Meter value={i.condition ?? 1} max={1} />}</td>
                 <td>
                   {building ? <span className="small muted">en construction</span> : w ? <span className="small muted">travaux en cours</span> : (
                     <div className="row">

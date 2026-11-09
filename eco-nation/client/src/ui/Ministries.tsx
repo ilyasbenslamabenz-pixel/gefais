@@ -9,12 +9,13 @@ import { Bars, Drawer, Kpi, Meter, Section, Slider, Tabs, Toggle, usePolicy } fr
 import { LineChart, Pyramid } from './charts';
 import { REVENUE_LABELS, SPENDING_LABELS } from './indicators';
 import { camApi } from '../game/world';
+import { Icon } from './Icon';
 
 // ---------- Finances ----------
 export function FinancesPanel() {
   const [tab, setTab] = useState<'budget' | 'dette' | 'synthese'>('synthese');
   return (
-    <Drawer title="Ministère des Finances" icon="🏦" wide>
+    <Drawer title="Ministère des Finances" icon="finances" wide>
       <Tabs value={tab} onChange={setTab} tabs={[['synthese', 'Synthèse'], ['budget', 'Budget & dépenses'], ['dette', 'Dette & trésorerie']]} />
       {tab === 'synthese' && <FinanceSummary />}
       {tab === 'budget' && <Budget />}
@@ -123,10 +124,10 @@ function Debt() {
       <Section title="Opérations financières (effet immédiat)">
         <Slider label="Montant de l'opération" value={amount} min={0.5} max={Math.max(5, Math.round(A.gdp * 0.1 / 1e9))} step={0.5} fmt={(v) => `${dec1(v)} Md€`} onChange={setAmount} />
         <div className="btn-row">
-          <button className="btn" onClick={() => financeAction({ type: 'bonds', amount: amt })}>📜 Émettre des obligations</button>
-          <button className="btn" disabled={amt > F.cash} onClick={() => financeAction({ type: 'repay', amount: amt })}>💶 Rembourser la dette</button>
-          <button className="btn" disabled={amt > F.cash} onClick={() => financeAction({ type: 'toReserve', amount: amt })}>🏛️ Placer en réserve</button>
-          <button className="btn" disabled={amt > F.reserve} onClick={() => financeAction({ type: 'fromReserve', amount: amt })}>↩️ Retirer de la réserve</button>
+          <button className="btn" onClick={() => financeAction({ type: 'bonds', amount: amt })}><Icon name="parchemin" size={14} />Émettre des obligations</button>
+          <button className="btn" disabled={amt > F.cash} onClick={() => financeAction({ type: 'repay', amount: amt })}><Icon name="monnaie" size={14} />Rembourser la dette</button>
+          <button className="btn" disabled={amt > F.cash} onClick={() => financeAction({ type: 'toReserve', amount: amt })}><Icon name="coffre" size={14} />Placer en réserve</button>
+          <button className="btn" disabled={amt > F.reserve} onClick={() => financeAction({ type: 'fromReserve', amount: amt })}><Icon name="retour" size={14} />Retirer de la réserve</button>
         </div>
       </Section>
       <Section title="Historique">
@@ -155,7 +156,7 @@ export function TravailPanel() {
   const E = effective.labour;
   const vacancies = snap.sectors.reduce((s, x) => s + x.vacancies, 0);
   return (
-    <Drawer title="Ministère du Travail" icon="👷" wide>
+    <Drawer title="Ministère du Travail" icon="travail" wide>
       <div className="kpis">
         <Kpi label="Actifs" value={people(D.labourForce)} />
         <Kpi label="Chômeurs" value={people(D.unemployed)} />
@@ -201,7 +202,7 @@ export function EconomiePanel() {
   const pop = snap.demography.cohorts.reduce((s, v) => s + v, 0);
   const last = snap.last;
   return (
-    <Drawer title="Ministère de l'Économie" icon="📈" wide>
+    <Drawer title="Ministère de l'Économie" icon="economie" wide>
       <div className="kpis">
         <Kpi label="PIB" value={money(A.gdp)} sub="€ courants/an" />
         <Kpi label="PIB par habitant" value={eur(A.gdp / pop)} />
@@ -233,7 +234,7 @@ export function EconomiePanel() {
             <tbody>
               {snap.sectors.map((s, i) => (
                 <tr key={i}>
-                  <td>{SECTORS[i].icon} {SECTORS[i].name}</td>
+                  <td><Icon name={SECTORS[i].icon} size={15} />{SECTORS[i].name}</td>
                   <td>{int(s.firms)}</td>
                   <td>{money(s.output)}</td>
                   <td>{people(s.employees)}</td>
@@ -263,7 +264,7 @@ export function PopulationPanel() {
   const S = snap.satisfaction;
   const pop = D.cohorts.reduce((s, v) => s + v, 0);
   return (
-    <Drawer title="Population & société" icon="👥" wide>
+    <Drawer title="Population & société" icon="population" wide>
       <Tabs value={tab} onChange={setTab} tabs={[['satisfaction', 'Satisfaction'], ['demo', 'Démographie'], ['villes', 'Quartiers']]} />
       {tab === 'satisfaction' && (
         <>
@@ -316,7 +317,7 @@ export function PopulationPanel() {
             <tbody>
               {country.cities.map((c, i) => ({ c, s: snap.cities[i] })).sort((a, b) => b.s.population - a.s.population).map(({ c, s }) => (
                 <tr key={c.id} onClick={() => { set({ selection: { kind: 'city', id: c.id } }); camApi.focus(c.x, c.z, c.kind === 'metropole' ? 40 : 20); }}>
-                  <td>{c.capital ? '★ ' : ''}{c.name}</td><td>{c.kind === 'metropole' ? 'Grand quartier' : c.kind === 'ville' ? 'Arrondissement' : 'Quartier périphérique'}</td>
+                  <td>{c.capital && <Icon name="etoile" size={13} title="Capitale" />}{c.name}</td><td>{c.kind === 'metropole' ? 'Grand quartier' : c.kind === 'ville' ? 'Arrondissement' : 'Quartier périphérique'}</td>
                   <td>{people(s.population)}</td><td>{pct(s.unemployment)}</td><td>{eur(s.income)}</td><td>{Math.round(s.satisfaction)}</td>
                 </tr>
               ))}

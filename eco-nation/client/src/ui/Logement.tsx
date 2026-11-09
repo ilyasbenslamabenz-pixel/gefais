@@ -11,7 +11,7 @@ import { BudgetSlider, Lever, ProgrammeBox, SitesList, usePriceRel } from './ser
 export function LogementPanel() {
   const [tab, setTab] = useState<'marche' | 'politique' | 'investir'>('marche');
   return (
-    <Drawer title="Ministère du Logement et de l'Urbanisme" icon="🏠" wide>
+    <Drawer title="Ministère du Logement et de l'Urbanisme" icon="logement" wide>
       <Tabs value={tab} onChange={setTab} tabs={[['marche', 'Marché du logement'], ['politique', 'Leviers'], ['investir', 'Plans & quartiers']]} />
       {tab === 'marche' && <Marche />}
       {tab === 'politique' && <Politique />}
@@ -30,7 +30,7 @@ function Marche() {
   const crisis = L.tension > 1.03;
   return (
     <>
-      {crisis && <p className="bad"><b>⚠️ Crise du logement :</b> l'offre ne suit pas la demande ({pct(L.tension - 1)} de ménages en excès). Les prix et les loyers montent, la natalité et l'attractivité reculent.</p>}
+      {crisis && <p className="bad"><b>Crise du logement :</b> l'offre ne suit pas la demande ({pct(L.tension - 1)} de ménages en excès). Les prix et les loyers montent, la natalité et l'attractivité reculent.</p>}
       <div className="kpis">
         <Kpi label="Situation du logement" value={`${Math.round(L.quality * 100)}/100`} tone={L.quality < 0.6 ? 'bad' : L.quality > 0.78 ? 'good' : 'warn'} />
         <Kpi label="Tension" value={dec1(L.tension * 100)} sub="ménages / logements disponibles (100 = équilibre)" tone={crisis ? 'bad' : undefined} />

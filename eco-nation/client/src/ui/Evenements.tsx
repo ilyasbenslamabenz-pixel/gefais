@@ -5,6 +5,7 @@ import { govAction } from '../net';
 import { money, pct } from '../format';
 import { Drawer, Section } from './common';
 import { monthLabel } from './charts';
+import { Icon } from './Icon';
 
 const SPENDING: Record<string, string> = {
   sante: 'Santé', education: 'Éducation', securite: 'Sécurité', defense: 'Défense', transports: 'Transports publics', infrastructures: 'Infrastructures',
@@ -17,14 +18,15 @@ function EventChoices({ ev, compact }: { ev: GameEvent; compact?: boolean }) {
   return (
     <>
       <p>{ev.text}</p>
-      <p className="small"><b>⏳ {left > 0 ? `Décision attendue dans ${left} mois` : 'Échéance ce mois-ci'}</b> — sans décision, l'option par défaut s'appliquera (« {ev.options.find((o) => o.id === ev.defaultOption)?.label} »). Le temps continue de s'écouler.</p>
-      <div style={{ display: 'grid', gap: 8, gridTemplateColumns: compact ? '1fr' : `repeat(${ev.options.length}, 1fr)` }}>
-        {ev.options.map((o) => (
-          <button key={o.id} className={`btn ${o.id === ev.defaultOption ? 'ghost' : 'primary'}`} style={{ textAlign: 'left', whiteSpace: 'normal', height: 'auto', padding: 10 }}
+      <p className="small row" style={{ gap: 6 }}><Icon name="sablier" size={14} /><b>{left > 0 ? `Décision attendue dans ${left} mois` : 'Échéance ce mois-ci'}</b> — sans décision, l'option par défaut s'appliquera (« {ev.options.find((o) => o.id === ev.defaultOption)?.label} »). Le temps continue de s'écouler.</p>
+      <div className="options" style={{ gridTemplateColumns: compact ? '1fr' : `repeat(${ev.options.length}, 1fr)` }}>
+        {ev.options.map((o, k) => (
+          <button key={o.id} className={`option ${o.id === ev.defaultOption ? 'default' : ''}`}
             onClick={() => govAction({ type: 'evenement', uid: ev.uid, option: o.id })}>
-            <b>{o.label}</b>{o.id === ev.defaultOption && <em> (par défaut)</em>}
-            <div className="small" style={{ marginTop: 4 }}>{o.text}</div>
-            <div className="small" style={{ marginTop: 4 }}>Coût total : <b>{o.cost > 0 ? money(o.cost) : 'aucun'}</b></div>
+            <span className="kicker muted">Option {String.fromCharCode(65 + k)}{o.id === ev.defaultOption ? ' · par défaut' : ''}</span>
+            <b>{o.label}</b>
+            <span className="small">{o.text}</span>
+            <span className="small opt-cost">Coût total : <b>{o.cost > 0 ? money(o.cost) : 'aucun'}</b></span>
           </button>
         ))}
       </div>
@@ -41,14 +43,15 @@ export function EventOverlay() {
   if (!snap || !ev) return null;
   const pending = snap.events!.active.length;
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50, pointerEvents: 'auto' }}>
-      <div role="dialog" aria-modal="true" aria-labelledby="ev-title" style={{ width: 'min(860px, calc(100vw - 32px))', maxHeight: 'calc(100vh - 32px)', overflowY: 'auto', background: 'var(--panel, #1b2333)', color: 'var(--text, #eef2f8)', borderRadius: 12, padding: 20, border: `2px solid ${ev.kind === 'opportunite' ? 'var(--good, #06d6a0)' : 'var(--bad, #ef476f)'}`, boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
-          <h2 id="ev-title" style={{ margin: 0 }}>{ev.icon} {ev.title}</h2>
-          <span className="muted small">{monthLabel(ev.month, snap.startYear)}{pending > 1 ? ` · ${pending} événements en attente` : ''}</span>
+    <div className="dialog-backdrop">
+      <div role="dialog" aria-modal="true" aria-labelledby="ev-title" className="dispatch paper">
+        <div className="dispatch-head">
+          <span className="kicker">Dépêche du cabinet · {monthLabel(ev.month, snap.startYear)}{pending > 1 ? ` · ${pending} événements en attente` : ''}</span>
+          <h2 id="ev-title"><Icon name={ev.icon} size={28} />{ev.title}</h2>
+          <span className={`stamp ${ev.kind === 'opportunite' ? 'ok' : 'urgent'}`}>{ev.kind === 'opportunite' ? 'Opportunité' : 'Décision requise'}</span>
         </div>
         <EventChoices ev={ev} />
-        <div className="btn-row" style={{ marginTop: 12, justifyContent: 'flex-end' }}>
+        <div className="btn-row" style={{ marginTop: 14, justifyContent: 'flex-end' }}>
           <button className="btn ghost" onClick={() => set({ minimizedEvents: [...minimized, ev.uid] })}>Décider plus tard</button>
           <button className="btn" onClick={() => set({ panel: 'evenements', minimizedEvents: [...minimized, ev.uid] })}>Voir tous les événements</button>
         </div>
@@ -62,12 +65,12 @@ export function EvenementsPanel() {
   const E = snap?.events;
   if (!snap || !E) return null;
   return (
-    <Drawer title="Événements & crises" icon="⚠️" wide>
+    <Drawer title="Événements & crises" icon="evenements" wide>
       <Section title={`En attente de décision (${E.active.length})`}>
         {E.active.length === 0 && <p className="muted small">Aucun événement en cours. Les crises surviennent selon l'état du pays : dépendance énergétique, risque de grève, qualité des services, inflation, climat…</p>}
         {E.active.map((ev) => (
           <div key={ev.uid} className={`notice ${ev.kind === 'opportunite' ? 'good' : 'bad'}`}>
-            <div className="notice-head"><b>{ev.icon} {ev.title}</b><span>{monthLabel(ev.month, snap.startYear)}</span></div>
+            <div className="notice-head"><b><Icon name={ev.icon} size={15} />{ev.title}</b><span>{monthLabel(ev.month, snap.startYear)}</span></div>
             <EventChoices ev={ev} compact />
           </div>
         ))}
@@ -90,7 +93,7 @@ export function EvenementsPanel() {
         {E.history.length === 0 && <p className="muted small">Aucun événement pour l'instant.</p>}
         {[...E.history].reverse().map((ev) => (
           <div key={ev.uid} className="notice info">
-            <div className="notice-head"><b>{ev.icon} {ev.title}</b><span>{monthLabel(ev.month, snap.startYear)}</span></div>
+            <div className="notice-head"><b><Icon name={ev.icon} size={15} />{ev.title}</b><span>{monthLabel(ev.month, snap.startYear)}</span></div>
             <p className="small">{ev.text}</p>
             <p className="small">Décision : <b>{ev.options.find((o) => o.id === ev.choice)?.label}</b>{ev.auto ? ' (option par défaut, faute de décision)' : ''} — {ev.outcome}</p>
           </div>

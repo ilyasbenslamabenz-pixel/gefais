@@ -12,7 +12,7 @@ const TYPES = ['commissariat', 'caserne_pompiers', 'tribunal', 'prison'] as cons
 export function SecuritePanel() {
   const [tab, setTab] = useState<'etat' | 'politique' | 'investir'>('etat');
   return (
-    <Drawer title="Sécurité & Justice" icon="🚓" wide>
+    <Drawer title="Sécurité & Justice" icon="securite" wide>
       <Tabs value={tab} onChange={setTab} tabs={[['etat', 'Situation'], ['politique', 'Budget & leviers'], ['investir', 'Recruter & construire']]} />
       {tab === 'etat' && <Etat />}
       {tab === 'politique' && <Politique />}

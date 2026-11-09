@@ -7,6 +7,7 @@ import { serviceAction } from '../net';
 import { money, pct } from '../format';
 import { Drawer, Kpi, Section } from './common';
 import { BudgetSlider, Lever, usePriceRel } from './servicesCommon';
+import { Icon } from './Icon';
 
 const DOMAIN_COLOR: Record<string, string> = { energie: '#ffd166', industrie: '#9aa5b1', agriculture: '#90be6d', transport: '#4cc9f0', sante: '#ef476f', education: '#b388eb', urbanisme: '#06d6a0', securite: '#f8961e' };
 
@@ -45,7 +46,7 @@ export function RecherchePanel() {
   const emis = Object.entries(E.emissions).filter(([, v]) => v !== 1);
   const sectorName = (id: string) => SECTORS.find((s) => s.id === id)?.name ?? id;
   return (
-    <Drawer title="Recherche & Innovation" icon="🔬" wide>
+    <Drawer title="Recherche & Innovation" icon="recherche" wide>
       <div className="kpis">
         <Kpi label="Effort technologique" value={`${money(rate * 12 * pr)}/an`} sub="budget appliqué × efficacité" />
         <Kpi label="Efficacité de la recherche" value={pct(R.efficiency, 0)} hint="Capital humain, enseignants-chercheurs, centres de recherche et savoir fondamental accumulé." />
@@ -67,13 +68,13 @@ export function RecherchePanel() {
                 const border = st === 'fait' ? 'var(--good)' : st === 'actif' ? 'var(--accent)' : st === 'verrou' ? 'rgba(255,255,255,0.15)' : DOMAIN_COLOR[t.domain];
                 return (
                   <div key={t.id} title={t.description} style={{ border: `2px solid ${border}`, borderRadius: 8, padding: 8, opacity: st === 'verrou' ? 0.55 : 1, background: st === 'fait' ? 'rgba(6,214,160,0.08)' : 'transparent' }}>
-                    <div><b>{t.icon} {t.name}</b></div>
+                    <div className="row" style={{ margin: 0, gap: 6 }}><Icon name={t.icon} size={16} /><b>{t.name}</b></div>
                     <div className="small muted">{money(t.cost * pr)} · {t.months} mois min.</div>
                     {t.requires.length > 0 && <div className="small">Requiert : {t.requires.map((r) => TECH_INDEX[r].name).join(', ')}</div>}
                     <div className="small">{t.description}</div>
                     {p > 0 && st !== 'fait' && <div className="meter"><div style={{ width: `${p * 100}%`, background: 'var(--accent)' }} /></div>}
                     <div className="row" style={{ marginTop: 4 }}>
-                      {st === 'fait' && <span className="good small">✅ Maîtrisée</span>}
+                      {st === 'fait' && <span className="good small row" style={{ margin: 0, gap: 4 }}><Icon name="valide" size={14} />Maîtrisée</span>}
                       {st === 'actif' && <><span className="small">En cours · ≈ {months(t)} mois</span><button className="btn ghost" onClick={() => serviceAction({ type: 'annulerRecherche' })}>Suspendre</button></>}
                       {st === 'dispo' && <button className="btn primary" onClick={() => serviceAction({ type: 'rechercher', tech: t.id })}>Lancer</button>}
                       {(st === 'dispo' || st === 'verrou') && <button className="btn ghost" onClick={() => enqueue(t)}>+ File</button>}
