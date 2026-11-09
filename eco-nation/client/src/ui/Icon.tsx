@@ -162,8 +162,8 @@ export function Seal({ size = 64, ring = true, className }: { size?: number; rin
         <circle cx="60" cy="60" r="57" fill="none" stroke="currentColor" strokeWidth="1.5" />
         <circle cx="60" cy="60" r="53" fill="none" stroke="currentColor" strokeWidth="0.75" />
         <circle cx="60" cy="60" r="37" fill="none" stroke="currentColor" strokeWidth="0.75" />
-        <text fontSize="8.2" letterSpacing="2.4" fill="currentColor" fontFamily="'IBM Plex Sans', sans-serif" fontWeight="600">
-          <textPath href="#seal-arc" startOffset="0">RÉPUBLIQUE D'ILYAS · UNITÉ · TRAVAIL · AVENIR ·</textPath>
+        <text fontSize="7.4" letterSpacing="1" fill="currentColor" fontFamily="'IBM Plex Sans', sans-serif" fontWeight="600">
+          <textPath href="#seal-arc" startOffset="0" textLength="276" lengthAdjust="spacing">RÉPUBLIQUE D'ILYAS · UNITÉ · TRAVAIL · AVENIR · </textPath>
         </text>
       </>}
       <g transform={ring ? 'translate(60 60) scale(0.62) translate(-60 -60)' : undefined} fill="none" stroke="currentColor" strokeWidth={ring ? 2.6 : 2} strokeLinejoin="miter">

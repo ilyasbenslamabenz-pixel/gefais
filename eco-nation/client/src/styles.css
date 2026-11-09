@@ -213,7 +213,9 @@ input[type='range']:focus-visible::-webkit-slider-thumb { outline: 2px solid var
 .toc.lead:hover:not(:disabled) { background: #22325a; }
 .menu-form { display: flex; flex-direction: column; gap: 14px; padding-top: 8px; }
 .menu-form label { display: flex; flex-direction: column; gap: 6px; color: #5e5a50; font-size: 13px; }
-.menu-form label b { color: #18213a; font-variant-numeric: tabular-nums; }
+.menu-form label b { color: #18213a; font-variant-numeric: tabular-nums; justify-self: end; }
+.menu-form > label { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 4px 12px; }
+.menu-form > label > input, .menu-form > label > select { grid-column: 1 / -1; }
 .save-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); }
 .tuto-text p { margin: 0; line-height: 1.55; }
 .tuto-text p b:first-child { font-family: var(--serif); color: #7a5c2c; }
