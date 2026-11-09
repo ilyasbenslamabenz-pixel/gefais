@@ -2,6 +2,7 @@
 // par une carte de normales procédurale, reflet du soleil, transparence de Fresnel.
 import { Color3, DynamicTexture, FresnelParameters, MirrorTexture, Plane, StandardMaterial, Texture, type AbstractMesh, type Scene } from '@babylonjs/core';
 import { ENV } from './terrain';
+import { SKY } from './sky';
 
 /** Carte de normales de vagues (bruit périodique), générée une fois. */
 function waveNormals(scene: Scene) {
@@ -66,7 +67,7 @@ export function upgradeWater(scene: Scene, mirrorSize: number) {
   if (!mirror) { mat.emissiveColor = new Color3(0.08, 0.16, 0.22); }
   const calm = mat.clone('waterCalmMat');
   calm.bumpTexture = null;
-  calm.diffuseColor = mirror ? new Color3(0.04, 0.12, 0.15) : new Color3(0.1, 0.22, 0.28);
+  calm.diffuseColor = mirror ? new Color3(0.04, 0.12, 0.15) : new Color3(0.06, 0.13, 0.17);
   for (const m of water) {
     m.material = m.name === 'sea' ? mat : calm;
     m.isPickable = false;
@@ -82,7 +83,12 @@ export function upgradeWater(scene: Scene, mirrorSize: number) {
       normals.vOffset = t * 0.0025;
       const k = mirror ? 1 : 2.2; // sans miroir : eau plus claire
       mat.diffuseColor.set((0.03 - ENV.night * 0.02) * k, (0.1 - ENV.night * 0.06) * k, (0.14 - ENV.night * 0.06) * k);
-      if (!mirror) { mat.emissiveColor.set(0.08 * (1 - ENV.night * 0.8), 0.16 * (1 - ENV.night * 0.8), 0.22 * (1 - ENV.night * 0.8)); calm.emissiveColor.copyFrom(mat.emissiveColor); }
+      if (!mirror) {
+        // sans miroir : l'eau prend la teinte du ciel (zénith reflété au pied, horizon embrasé au loin)
+        const e = Color3.Lerp(SKY.zen, SKY.haze, 0.55).scale(0.3);
+        mat.emissiveColor.set(e.r * 0.85 + 0.01, e.g * 0.9 + 0.03, e.b + 0.05);
+        calm.emissiveColor.copyFrom(mat.emissiveColor);
+      }
       if (mirror) mirror.level = 0.65 + ENV.night * 0.25;
     },
     dispose: () => { mirror?.dispose(); normals.dispose(); mat.dispose(); calm.dispose(); },

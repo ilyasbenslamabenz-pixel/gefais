@@ -143,14 +143,16 @@ export function createCities(scene: Scene, grid: Grid, country: CountryDef, bloc
       float rl = floor(vB.y + 0.5);
       if (part < 1.5) {
         alb = flatRoof(vPositionW.xz, fract(seed * 7.13));
-        if (rl > 0.5) alb = rl < 1.5 ? vec3(0.32, 0.35, 0.40) * (0.9 + 0.2 * bNoise(vPositionW.xz * 2500.0)) : vec3(0.45, 0.30, 0.24);
+        if (rl > 0.5) alb = rl < 1.5 ? vec3(0.42, 0.45, 0.50) * (0.9 + 0.2 * bNoise(vPositionW.xz * 2500.0)) : vec3(0.52, 0.32, 0.24);
       } else if (abs(nN.y) < 0.2) {
         // souches de cheminée et murs mitoyens
         alb = rl < 1.5 ? vec3(0.74, 0.68, 0.60) * vT.rgb : rl < 2.5 ? vec3(0.62, 0.40, 0.31) : vec3(0.85, 0.82, 0.76);
       } else if (rl < 1.5) {
         // brisis en zinc gris-bleu et lucarnes
         float z = dot(texture2D(zincTex, fm / 0.005).rgb, vec3(0.33));
-        alb = vec3(0.30, 0.34, 0.40) * (0.8 + 0.4 * z) * (0.9 + 0.2 * seed);
+        // zinc gris-bleu, patine variable par îlot (plus clair ou plus sombre, plus ou moins bleuté)
+        float zb = bHash(floor(vPositionW.xz / 0.2) + 0.71);
+        alb = mix(vec3(0.40, 0.42, 0.46), vec3(0.50, 0.51, 0.53), zb) * (0.8 + 0.4 * z) * (0.9 + 0.2 * seed);
         float rv = (vP.y - 1.0) / 0.244;
         float bu = fract(fm.x / 0.0032 + 0.5);
         float luc = step(0.18, rv) * step(rv, 0.72) * step(abs(bu - 0.5), 0.15);
