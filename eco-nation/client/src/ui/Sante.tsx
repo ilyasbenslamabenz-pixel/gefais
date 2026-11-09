@@ -10,7 +10,7 @@ import { BudgetSlider, idx, Lever, ProgrammeBox, RecruitBox, SitesList, usePrice
 export function SantePanel() {
   const [tab, setTab] = useState<'etat' | 'politique' | 'investir'>('etat');
   return (
-    <Drawer title="Ministère de la Santé" icon="🏥" wide>
+    <Drawer title="Ministère de la Santé" icon="sante" wide>
       <Tabs value={tab} onChange={setTab} tabs={[['etat', 'État du système'], ['politique', 'Budget & leviers'], ['investir', 'Recruter & construire']]} />
       {tab === 'etat' && <Etat />}
       {tab === 'politique' && <Politique />}

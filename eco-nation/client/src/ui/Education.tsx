@@ -10,7 +10,7 @@ import { BudgetSlider, idx, Lever, ProgrammeBox, RecruitBox, SitesList } from '.
 export function EducationPanel() {
   const [tab, setTab] = useState<'etat' | 'politique' | 'investir'>('etat');
   return (
-    <Drawer title="Ministère de l'Éducation" icon="🎓" wide>
+    <Drawer title="Ministère de l'Éducation" icon="education" wide>
       <Tabs value={tab} onChange={setTab} tabs={[['etat', 'État du système'], ['politique', 'Budget & leviers'], ['investir', 'Recruter & construire']]} />
       {tab === 'etat' && <Etat />}
       {tab === 'politique' && <Politique />}

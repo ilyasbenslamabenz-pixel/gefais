@@ -14,7 +14,7 @@ const p1 = (v: number) => pct(v, 1);
 export function FiscalitePanel() {
   const [tab, setTab] = useState<Tab>('tableau');
   return (
-    <Drawer title="Fiscalité" icon="🧾" wide>
+    <Drawer title="Fiscalité" icon="fiscalite" wide>
       <Tabs<Tab> value={tab} onChange={setTab} tabs={[
         ['tableau', 'H. Tableau fiscal'], ['revenu', 'A. Revenu'], ['societes', 'B. Sociétés'], ['tva', 'C. TVA'], ['patrimoine', 'D. Patrimoine'],
         ['immobilier', 'E. Immobilier'], ['ecologie', 'F. Écologie'], ['cotisations', 'G. Cotisations'],

@@ -5,6 +5,7 @@ import { govAction, leaveGame } from '../net';
 import { dec1, pct } from '../format';
 import { Drawer, Meter, Section } from './common';
 import { monthLabel } from './charts';
+import { Icon } from './Icon';
 
 function fmtC(c: Criterion, v: number) {
   if (!Number.isFinite(v)) return '—';
@@ -19,10 +20,10 @@ export function ObjectifsPanel() {
   const V = snap?.victory;
   if (!snap || !V) return null;
   return (
-    <Drawer title="Objectifs & victoire" icon="🏆" wide>
+    <Drawer title="Objectifs & victoire" icon="trophee" wide>
       {V.status === 'defaite' && V.defeat && (
         <div className="notice bad">
-          <div className="notice-head"><b>⛔ Fin de mandat</b><span>{monthLabel(V.defeat.month, snap.startYear)}</span></div>
+          <div className="notice-head"><b><Icon name="interdit" size={15} />Fin de mandat</b><span>{monthLabel(V.defeat.month, snap.startYear)}</span></div>
           <p>{V.defeat.text}</p>
           <div className="btn-row">
             <button className="btn" onClick={() => govAction({ type: 'continuer' })}>Continuer en mode libre</button>
@@ -32,7 +33,7 @@ export function ObjectifsPanel() {
       )}
       {V.sandbox && <p className="muted small">Mode libre : la partie continue sans nouvelle défaite possible.</p>}
       {V.conditions.map((c) => (
-        <Section key={c.id} title={`${c.achieved !== null ? '🏆 ' : ''}${c.name}`} hint={c.description}>
+        <Section key={c.id} title={`${c.name}${c.achieved !== null ? ' · obtenue' : ''}`} hint={c.description}>
           <div className="row between small">
             <span>{c.achieved !== null ? `Obtenue en ${monthLabel(c.achieved, snap.startYear)}` : c.id === 'totale' ? 'Obtenez les quatre autres victoires' : `Critères tenus depuis ${c.held} / ${c.required} mois`}</span>
             <b>{pct(c.progress, 0)}</b>
@@ -42,7 +43,7 @@ export function ObjectifsPanel() {
             <tbody>
               {c.criteria.map((k) => (
                 <tr key={k.id} className={k.available ? '' : 'muted'}>
-                  <td>{k.ok && k.available ? '✅' : k.available ? '⬜' : '·'} {k.label}</td>
+                  <td>{k.available ? <Icon name={k.ok ? 'valide' : 'case'} size={14} /> : <span style={{ display: 'inline-block', width: 20 }}>·</span>}{k.label}</td>
                   <td>{k.available ? fmtC(k, k.value) : 'non mesuré'}</td>
                   <td className="muted small">objectif {k.dir === 'max' ? '≥' : '≤'} {fmtC(k, k.target)}</td>
                 </tr>

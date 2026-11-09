@@ -9,6 +9,7 @@ import { LineChart } from './charts';
 import { fmtKind } from './energyIndicators';
 import { ENV_PROJECTS, LAND_CLASSES, LAND_NAMES, type EnvProjectKind } from '../../../shared/sim/environment';
 import { ENERGY_INDICATORS } from '../../../shared/sim/energyIndicators';
+import { Icon } from './Icon';
 
 const LAND_COLORS: Record<string, string> = { foret: '#2d6a4f', jeuneForet: '#74c69d', agricole: '#e9c46a', naturel: '#b7e4c7', zonesHumides: '#48cae4', artificialise: '#8d99ae', espacesVerts: '#52b788', eau: '#0077b6' };
 const MONTHS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
@@ -19,7 +20,7 @@ const hint = (k: string) => { const d = ENERGY_INDICATORS[k]; return d ? `${d.de
 export function EnvironnementPanel() {
   const [tab, setTab] = useState<'etat' | 'programmes' | 'historique'>('etat');
   return (
-    <Drawer title="Ministère de l'Environnement et de la Biodiversité" icon="🌳" wide>
+    <Drawer title="Ministère de l'Environnement et de la Biodiversité" icon="environnement" wide>
       <Tabs value={tab} onChange={setTab} tabs={[['etat', 'État de l\'environnement'], ['programmes', 'Programmes & politiques'], ['historique', 'Historique']]} />
       {tab === 'etat' && <Etat />}
       {tab === 'programmes' && <Programmes />}
@@ -58,7 +59,7 @@ function Etat() {
         <Section title="Objectifs climatiques">
           {E.goals.map((g) => (
             <div key={g.id} className="budget-line">
-              <div className="row between"><b>{g.achieved ? '✅' : '🎯'} {g.name}<Info text={g.definition} /></b><span>{g.unit === '%' ? pct(g.value) : fmtKind('tco2', g.value)}</span></div>
+              <div className="row between"><b className="row" style={{ margin: 0, gap: 6 }}><Icon name={g.achieved ? 'valide' : 'objectifs'} size={15} />{g.name}<Info text={g.definition} /></b><span>{g.unit === '%' ? pct(g.value) : fmtKind('tco2', g.value)}</span></div>
               <Meter value={g.progress * 100} />
             </div>
           ))}
@@ -83,12 +84,12 @@ function Programmes() {
     <>
       <Section title="Lancer un programme" hint="Le lieu est choisi automatiquement : parcs dans les quartiers, boisements en périphérie, zones humides sur le littoral. Le coût est réparti sur la durée du programme.">
         <div className="btn-row">
-          {(Object.keys(ENV_PROJECTS) as EnvProjectKind[]).map((k) => <button key={k} className={`btn ${kind === k ? 'primary' : 'ghost'}`} onClick={() => setKind(k)}>{ENV_PROJECTS[k].icon} {ENV_PROJECTS[k].name}</button>)}
+          {(Object.keys(ENV_PROJECTS) as EnvProjectKind[]).map((k) => <button key={k} className={`btn ${kind === k ? 'primary' : 'ghost'}`} onClick={() => setKind(k)}><Icon name={ENV_PROJECTS[k].icon} size={15} />{ENV_PROJECTS[k].name}</button>)}
         </div>
         <p className="muted small">{def.description}</p>
         <Slider label="Surface" value={hectares} min={10} max={kind === 'parc' ? 2000 : 20000} step={10} fmt={(v) => `${int(v)} ha`} onChange={setHectares} />
         <p className="muted small">Coût : {money(cost)} sur {def.months} mois{def.managementPerKm2 ? ` puis ${money(def.managementPerKm2 * km2 * snap.macro.priceLevel)}/an de gestion` : ''}.</p>
-        <div className="btn-row"><button className="btn primary" onClick={() => gameAction({ type: 'envProject', kind, km2 })}>{def.icon} Lancer : {int(hectares)} ha</button></div>
+        <div className="btn-row"><button className="btn primary" onClick={() => gameAction({ type: 'envProject', kind, km2 })}><Icon name="construire" size={14} />Lancer : {int(hectares)} ha</button></div>
       </Section>
       <Section title="Programmes en cours">
         {env.projects.length === 0 ? <p className="muted">Aucun programme en cours.</p> : (
@@ -96,7 +97,7 @@ function Programmes() {
             <thead><tr><th>Programme</th><th>Achèvement</th><th>Coût</th><th>Avancement</th><th /></tr></thead>
             <tbody>{env.projects.map((p) => (
               <tr key={p.id}>
-                <td>{ENV_PROJECTS[p.kind].icon} {p.name}</td><td>{monthName(p.done, snap.startYear)}</td><td>{money(p.cost)}</td>
+                <td><Icon name={ENV_PROJECTS[p.kind].icon} size={15} />{p.name}</td><td>{monthName(p.done, snap.startYear)}</td><td>{money(p.cost)}</td>
                 <td style={{ minWidth: 90 }}><Meter value={Math.min(100, ((snap.month - p.start) / Math.max(1, p.done - p.start)) * 100)} tone="var(--accent)" /></td>
                 <td><button className="btn ghost" onClick={() => gameAction({ type: 'envCancel', id: p.id })}>Abandonner</button></td>
               </tr>

@@ -2,6 +2,18 @@
 import { useMemo, useState } from 'react';
 import { START_YEAR } from '../../../shared/sim/engine';
 
+/** Les couleurs de séries codées en dur dans les panneaux (anciennes teintes néon) sont converties vers la palette
+ *  « Palais d'Ilyas » : bleus d'acier, sauge, ocre, rouge brique, prune, pierre. */
+const PALETTE: Record<string, string> = {
+  '#4cc9f0': '#8fa7c9', '#06d6a0': '#86b494', '#ef476f': '#d9705f', '#ffd166': '#d8b25a', '#f7b801': '#cfae78', '#b388eb': '#a98bb5',
+  '#f4a261': '#c98a5e', '#9d4edd': '#8e6e9e', '#ffb703': '#e0bf6a', '#90e0ef': '#b7c7d9', '#219ebc': '#5f86a8', '#e76f51': '#b8664c',
+  '#52b788': '#6f9a74', '#a8dadc': '#a7b9b4', '#5c5c5c': '#6e6a64', '#2d6a4f': '#4f7a5c', '#74c69d': '#93b597', '#e9c46a': '#d2b77c',
+  '#b7e4c7': '#b9c9b0', '#48cae4': '#7d9fbd', '#8d99ae': '#8f8a82', '#0077b6': '#4d6f93', '#f78fb3': '#c99a8a', '#4361ee': '#6d83b5',
+  // partis politiques
+  '#2a9d4b': '#5f9a6b', '#e04f6a': '#c45a52', '#f2b134': '#d4a64c', '#3fa7d6': '#79a3c8', '#3b4d9b': '#56669e',
+};
+export function tint(c: string): string { return PALETTE[c.toLowerCase()] ?? c; }
+
 export interface Series { key: string; label: string; values: number[]; color: string }
 /** Repère ponctuel (mois depuis le début, valeur) : jalons du plan climat. Optionnel. */
 export interface ChartMark { month: number; value: number; label: string; tone?: string }
@@ -48,7 +60,7 @@ export function LineChart({ series, fmt, height = 180, years, startYear = START_
         {zero !== null && <line x1={pad.l} x2={W - pad.r} y1={zero} y2={zero} className="zero" />}
         {yearTicks.map((i) => <text key={i} x={x(i)} y={H - 6} textAnchor="middle" className="axis">{startYear + Math.floor((data.start + i) / 12)}</text>)}
         {data.sl.map((s) => (
-          <polyline key={s.key} fill="none" stroke={s.color} strokeWidth={2} points={s.v.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ')} />
+          <polyline key={s.key} fill="none" stroke={tint(s.color)} strokeWidth={1.75} strokeLinejoin="round" points={s.v.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ')} />
         ))}
         {marks?.filter((m) => m.month - data.start >= 0 && m.month - data.start < data.n).map((m) => (
           <g key={m.label} className={`chart-mark ${m.tone ?? ''}`}>
@@ -61,7 +73,7 @@ export function LineChart({ series, fmt, height = 180, years, startYear = START_
       </svg>
       <div className="legend">
         {data.sl.map((s) => (
-          <span key={s.key}><i style={{ background: s.color }} />{s.label}{hover !== null && s.v[hover] !== undefined && <b> {fmt(s.v[hover])}</b>}</span>
+          <span key={s.key}><i style={{ background: tint(s.color) }} />{s.label}{hover !== null && s.v[hover] !== undefined && <b> {fmt(s.v[hover])}</b>}</span>
         ))}
         {hover !== null && <span className="muted">— {monthLabel(data.start + hover, startYear)}</span>}
       </div>
