@@ -9,7 +9,7 @@ import { Drawer, Kpi, Section } from './common';
 import { BudgetSlider, Lever, usePriceRel } from './servicesCommon';
 import { Icon } from './Icon';
 
-const DOMAIN_COLOR: Record<string, string> = { energie: '#ffd166', industrie: '#9aa5b1', agriculture: '#90be6d', transport: '#4cc9f0', sante: '#ef476f', education: '#b388eb', urbanisme: '#06d6a0', securite: '#f8961e' };
+const DOMAIN_COLOR: Record<string, string> = { energie: '#cfae78', industrie: '#8f8a82', agriculture: '#86b494', transport: '#8fa7c9', sante: '#d9705f', education: '#a98bb5', urbanisme: '#93b597', securite: '#c98a5e' };
 
 function depth(t: TechDef, memo: Record<string, number> = {}): number {
   if (memo[t.id] !== undefined) return memo[t.id];
@@ -67,7 +67,7 @@ export function RecherchePanel() {
                 const p = (R.progress[t.id] ?? 0) / t.cost;
                 const border = st === 'fait' ? 'var(--good)' : st === 'actif' ? 'var(--accent)' : st === 'verrou' ? 'rgba(255,255,255,0.15)' : DOMAIN_COLOR[t.domain];
                 return (
-                  <div key={t.id} title={t.description} style={{ border: `2px solid ${border}`, borderRadius: 8, padding: 8, opacity: st === 'verrou' ? 0.55 : 1, background: st === 'fait' ? 'rgba(6,214,160,0.08)' : 'transparent' }}>
+                  <div key={t.id} title={t.description} style={{ border: '1px solid var(--line)', borderTop: `3px solid ${border}`, borderRadius: 3, padding: '9px 10px', opacity: st === 'verrou' ? 0.55 : 1, background: st === 'fait' ? 'rgba(141,191,154,0.08)' : st === 'actif' ? 'rgba(176,141,87,0.1)' : 'var(--ink-2)' }}>
                     <div className="row" style={{ margin: 0, gap: 6 }}><Icon name={t.icon} size={16} /><b>{t.name}</b></div>
                     <div className="small muted">{money(t.cost * pr)} · {t.months} mois min.</div>
                     {t.requires.length > 0 && <div className="small">Requiert : {t.requires.map((r) => TECH_INDEX[r].name).join(', ')}</div>}

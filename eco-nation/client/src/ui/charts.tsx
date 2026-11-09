@@ -9,6 +9,8 @@ const PALETTE: Record<string, string> = {
   '#f4a261': '#c98a5e', '#9d4edd': '#8e6e9e', '#ffb703': '#e0bf6a', '#90e0ef': '#b7c7d9', '#219ebc': '#5f86a8', '#e76f51': '#b8664c',
   '#52b788': '#6f9a74', '#a8dadc': '#a7b9b4', '#5c5c5c': '#6e6a64', '#2d6a4f': '#4f7a5c', '#74c69d': '#93b597', '#e9c46a': '#d2b77c',
   '#b7e4c7': '#b9c9b0', '#48cae4': '#7d9fbd', '#8d99ae': '#8f8a82', '#0077b6': '#4d6f93', '#f78fb3': '#c99a8a', '#4361ee': '#6d83b5',
+  // partis politiques
+  '#2a9d4b': '#5f9a6b', '#e04f6a': '#c45a52', '#f2b134': '#d4a64c', '#3fa7d6': '#79a3c8', '#3b4d9b': '#56669e',
 };
 export function tint(c: string): string { return PALETTE[c.toLowerCase()] ?? c; }
 

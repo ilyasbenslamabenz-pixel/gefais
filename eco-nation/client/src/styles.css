@@ -486,6 +486,31 @@ input[type='range']:focus-visible::-webkit-slider-thumb { outline: 2px solid var
 .infra-actions { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--rule); }
 .infra-actions .btn { font-size: 12.5px; }
 
+/* --- Hiérarchie des fiches, grilles d'indicateurs, listes ---------------------------------------------- */
+/* filets verticaux entre colonnes seulement : chaque cellule trace son filet à gauche, un cache masque la 1re colonne */
+.kpis { position: relative; margin-left: -12px; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); }
+.kpis.compact { grid-template-columns: repeat(2, 1fr); }
+.kpis::before { content: ''; position: absolute; left: -1px; top: -1px; bottom: 0; width: 13px; background: var(--surface); z-index: 1; pointer-events: none; }
+.kpi { border-right: 0; box-shadow: -1px 0 0 var(--line); padding-left: 12px; }
+.kpi-value { overflow-wrap: break-word; hyphens: auto; }
+.drawer.wide .bar-row { grid-template-columns: 250px 1fr 96px; }
+.cols .bar-row, .drawer.wide .cols .bar-row { grid-template-columns: 170px 1fr 84px; }
+.inspector .kpi, .inspector .kpi:nth-child(2n) { padding: 8px 10px 8px 12px; }
+.stamp.ok { border: 0; outline: 0; padding: 0; letter-spacing: 0.14em; font-size: 10px; color: var(--good); }
+.stamp.ok::before { content: '✓ '; letter-spacing: 0; }
+.need p { color: var(--muted); }
+.need.need-0 { background: var(--ink-2); color: var(--text); box-shadow: none; border: 1px solid var(--line); border-top: 3px solid var(--sage); }
+.need.need-0 .need-icon { color: var(--good); }
+.need.need-0 .need-head > b { font-weight: 500; }
+.eq-row { display: grid; grid-template-columns: auto 1fr auto; align-items: baseline; gap: 8px; width: 100%; padding: 6px 2px; background: none; border: 0; border-bottom: 1px dotted var(--line-strong); text-align: left; font-size: 12.5px; color: var(--text); transition: background var(--t); }
+.eq-row .ico { color: var(--accent); align-self: center; }
+.eq-row em { font-style: normal; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-align: right; }
+.eq-row:hover { background: rgba(22, 33, 58, 0.06); }
+.eq-row:hover span { text-decoration: underline; text-decoration-color: var(--gold); text-underline-offset: 3px; }
+.inspector .infra-actions { display: grid; grid-template-columns: 1fr; gap: 6px; }
+.inspector .infra-actions .btn { justify-content: flex-start; }
+.muted-cost { font-weight: 400; opacity: 0.85; }
+
 /* --- Adaptations -------------------------------------------------------------------------------------- */
 @media (max-width: 1500px) {
   .tb-item .delta-v { display: none; }

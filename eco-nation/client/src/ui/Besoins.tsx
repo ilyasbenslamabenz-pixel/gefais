@@ -38,7 +38,7 @@ function NeedCard({ n }: { n: Need }) {
   const set = useStore((s) => s.set);
   const country = useStore((s) => s.country);
   return (
-    <article className={`need need-${n.level} paper`}>
+    <article className={`need need-${n.level}${n.level > 0 ? ' paper' : ''}`}>
       <div className="need-head">
         <span className="need-icon"><Icon name={n.icon} size={20} /></span>
         <b>{n.title}</b>

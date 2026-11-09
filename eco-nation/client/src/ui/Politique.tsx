@@ -6,11 +6,11 @@ import { useStore } from '../store';
 import { govAction } from '../net';
 import { pct } from '../format';
 import { Bars, Drawer, Kpi, Meter, Section, Tabs } from './common';
-import { LineChart, monthLabel } from './charts';
+import { LineChart, monthLabel, tint } from './charts';
 import { Icon } from './Icon';
 
 const partyName = (id: PartyId) => PARTIES[PARTY_INDEX[id]].name;
-const partyColor = (id: PartyId) => PARTIES[PARTY_INDEX[id]].color;
+const partyColor = (id: PartyId) => tint(PARTIES[PARTY_INDEX[id]].color);
 const coalitionSeats = (P: PoliticsState, ids = P.coalition) => P.parties.filter((p) => ids.includes(p.id)).reduce((s, p) => s + p.seats, 0);
 const MODE_LABEL: Record<PoliticsState['mode'], string> = { majorite: 'Gouvernement majoritaire', minorite: 'Gouvernement minoritaire', cohabitation: 'Cohabitation' };
 
@@ -46,7 +46,7 @@ export function Hemicycle({ P, height = 190 }: { P: PoliticsState; height?: numb
   return (
     <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height, display: 'block' }} role="img" aria-label="Hémicycle">
       {seats.map((s, i) => (
-        <circle key={i} cx={cx + Math.cos(s.a) * s.r * R} cy={cy - Math.sin(s.a) * s.r * R} r={4.2} fill={colors[i]?.c ?? '#666'} stroke={colors[i]?.coal ? '#fff' : 'none'} strokeWidth={0.8} />
+        <circle key={i} cx={cx + Math.cos(s.a) * s.r * R} cy={cy - Math.sin(s.a) * s.r * R} r={4.2} fill={colors[i]?.c ?? '#666'} stroke={colors[i]?.coal ? '#f2ecdf' : 'none'} strokeWidth={0.8} />
       ))}
       <text x={cx} y={cy - 18} textAnchor="middle" fontSize={22} fontWeight={700} fill="currentColor">{coalitionSeats(P)}</text>
       <text x={cx} y={cy - 2} textAnchor="middle" fontSize={10} fill="currentColor" opacity={0.7}>sièges du camp gouvernemental / {total}</text>

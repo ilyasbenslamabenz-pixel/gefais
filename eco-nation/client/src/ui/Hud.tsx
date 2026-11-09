@@ -224,6 +224,14 @@ const INFRA_LABEL: Record<string, string> = {
   centrale_biomasse: 'Centrale biomasse', parc_eolien_mer: 'Parc éolien en mer', stockage_batteries: 'Stockage par batteries',
 };
 
+const INFRA_ICON: Record<string, IconName> = {
+  aeroport: 'avion', port: 'ancre', gare: 'transports', stade: 'trophee', zone_industrielle: 'industrie', zone_commerciale: 'commerce', usine: 'industrie',
+  ferme: 'agriculture', barrage: 'goutte', centrale_charbon: 'centrale', centrale_gaz: 'flamme', centrale_nucleaire: 'nucleaire', parc_eolien: 'eolien',
+  parc_solaire: 'solaire', parc_eolien_mer: 'eolien', centrale_smr: 'nucleaire', centrale_fioul: 'baril', centrale_geothermique: 'volcan', centrale_biomasse: 'pousse',
+  stockage_batteries: 'batterie', hopital: 'hopital', ecole: 'ecole', universite: 'education',
+};
+const infraIcon = (t: string): IconName | string => INFRA_ICON[t] ?? BUILDINGS[t as keyof typeof BUILDINGS]?.icon ?? 'equipements';
+
 export function Inspector() {
   const sel = useStore((s) => s.selection);
   const snap = useStore((s) => s.snap);
@@ -255,7 +263,7 @@ export function Inspector() {
         </div>
         <h4>Activités du quartier</h4>
         {top.map((t) => <div key={t.i} className="spec"><Icon name={SECTORS[t.i].icon} size={15} />{SECTORS[t.i].name} <b>{pct(t.v, 0)}</b></div>)}
-        {infra.length > 0 && <><h4>Équipements</h4>{infra.map((i) => <button key={i.id} className="link block" onClick={() => set({ selection: { kind: 'infra', id: i.id } })}>{INFRA_LABEL[i.type] ?? BUILDINGS[i.type]?.name}{i.status === 'chantier' ? ' (en construction)' : ''} — {i.name}</button>)}</>}
+        {infra.length > 0 && <><h4>Équipements</h4>{infra.map((i) => <button key={i.id} className="eq-row" onClick={() => set({ selection: { kind: 'infra', id: i.id } })}><Icon name={infraIcon(i.type)} size={15} /><span>{i.name}</span><em>{INFRA_LABEL[i.type] ?? BUILDINGS[i.type]?.name}{i.status === 'chantier' ? ' · chantier' : ''}</em></button>)}</>}
       </div>
     );
   }
@@ -266,7 +274,7 @@ export function Inspector() {
   return (
     <div className="inspector paper">
       <header>
-        <span className="kicker"><Icon name={BUILDINGS[i.type]?.icon ?? 'equipements'} size={13} />Fiche d'équipement</span>
+        <span className="kicker"><Icon name={infraIcon(i.type)} size={13} />Fiche d'équipement</span>
         <h3>{i.name}</h3>
         <button className="icon-btn" onClick={() => set({ selection: null })} aria-label="Fermer la fiche"><Icon name="fermer" size={16} /></button>
       </header>
