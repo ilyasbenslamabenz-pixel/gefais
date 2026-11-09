@@ -11,6 +11,12 @@ import { Kit, M, SHIP_DIM, addInst, addLight, applyInst, newInst, unitBox, type 
 import type { Grid } from './terrain';
 
 export const SEA_Y = 0.03;
+/** Portique placé (monde, km) : yaw = cap de la flèche (STS) ou de la portée (RTG), modèle avant selon +Z. */
+export interface CranePose { x: number; y: number; z: number; yaw: number; ph: number }
+export interface PortCranes { mesh: Mesh | null; sts: CranePose[]; rtg: CranePose[] }
+/** Portiques des ports construits (par identifiant d'équipement) ; la version change à chaque reconstruction. */
+export const PORT_CRANES = new Map<number, PortCranes>();
+export const PORT_CRANES_VERSION = { v: 0 };
 export interface Berth { x: number; z: number; yaw: number; kind: ShipKind; approach: [number, number][]; depart: [number, number][]; reverseOut: number }
 export interface PortLayout { inf: Infra; big: boolean; X0: number; Z: number; yP: number; berths: Berth[]; seaRoute: [number, number][]; seed: number }
 
@@ -74,6 +80,10 @@ export function buildPort(scene: Scene, grid: Grid, inf: Infra, P: PortLayout, l
   const rnd = mulberry32(inf.id * 131 + 5);
   const east = (z: number) => coastX(P.seed, Z + z) + 1.3 - X0;
   const lightAt = (x: number, y: number, z: number, c = '#ffc77a', s = 2.2) => addLight(lights, X0 + x, y, Z + z, c, s);
+  // portiques (STS et RTG) : maillage séparé, remplaçable par les modèles de la bibliothèque (PORT_CRANES)
+  const kc = new Kit();
+  kc.frame(X0, 0, Z, 0);
+  const cranes: PortCranes = { mesh: null, sts: [], rtg: [] };
   const top = yP;
 
   // terre-pleins : bandes de 100 m suivant la côte
@@ -108,33 +118,34 @@ export function buildPort(scene: Scene, grid: Grid, inf: Infra, P: PortLayout, l
     const P3 = (a: number, h: number, b: number) => new Vector3(qx + ax * a + bx * b, top + h, qz + az * a + bz * b);
     const red = '#c8553d', white = '#efefef';
     const ry = Math.atan2(-az, ax);
+    cranes.sts.push({ x: X0 + qx + ax * -0.021, y: top, z: Z + qz + az * -0.021, yaw: Math.atan2(ax, az), ph: Math.abs(Math.sin(qx * 91.7 + qz * 47.3)) * 6.28 });
     // jambes et poutres de seuil
-    for (const a of [-0.006, -0.036]) for (const b of [-0.009, 0.009]) k.beam(P3(a, 0, b), P3(a, 0.046, b), 0.0022, 0.0022, red);
-    for (const a of [-0.006, -0.036]) k.beam(P3(a, 0.002, -0.011), P3(a, 0.002, 0.011), 0.002, 0.003, red);
-    for (const b of [-0.009, 0.009]) { k.beam(P3(-0.006, 0.044, b), P3(-0.036, 0.044, b), 0.002, 0.003, red); k.beam(P3(-0.006, 0.016, b), P3(-0.036, 0.016, b), 0.0015, 0.0015, red); }
-    k.beam(P3(-0.006, 0.046, -0.01), P3(-0.006, 0.046, 0.01), 0.003, 0.003, red);
-    k.beam(P3(-0.036, 0.046, -0.01), P3(-0.036, 0.046, 0.01), 0.003, 0.003, red);
+    for (const a of [-0.006, -0.036]) for (const b of [-0.009, 0.009]) kc.beam(P3(a, 0, b), P3(a, 0.046, b), 0.0022, 0.0022, red);
+    for (const a of [-0.006, -0.036]) kc.beam(P3(a, 0.002, -0.011), P3(a, 0.002, 0.011), 0.002, 0.003, red);
+    for (const b of [-0.009, 0.009]) { kc.beam(P3(-0.006, 0.044, b), P3(-0.036, 0.044, b), 0.002, 0.003, red); kc.beam(P3(-0.006, 0.016, b), P3(-0.036, 0.016, b), 0.0015, 0.0015, red); }
+    kc.beam(P3(-0.006, 0.046, -0.01), P3(-0.006, 0.046, 0.01), 0.003, 0.003, red);
+    kc.beam(P3(-0.036, 0.046, -0.01), P3(-0.036, 0.046, 0.01), 0.003, 0.003, red);
     // flèche (relevée si pas de navire) et contre-flèche
     const tip = boomUp ? P3(0.012, 0.11, 0) : P3(0.066, 0.05, 0);
     for (const b of [-0.003, 0.003]) {
-      k.beam(P3(-0.004, 0.05, b), boomUp ? P3(0.012, 0.11, b) : P3(0.066, 0.05, b), 0.0016, 0.0035, white);
-      k.beam(P3(-0.006, 0.05, b), P3(-0.062, 0.05, b), 0.0016, 0.0035, white);
+      kc.beam(P3(-0.004, 0.05, b), boomUp ? P3(0.012, 0.11, b) : P3(0.066, 0.05, b), 0.0016, 0.0035, white);
+      kc.beam(P3(-0.006, 0.05, b), P3(-0.062, 0.05, b), 0.0016, 0.0035, white);
     }
     // chevalet en A et haubans
-    for (const b of [-0.009, 0.009]) { k.beam(P3(-0.006, 0.046, b), P3(-0.02, 0.088, 0), 0.0018, 0.0018, red); k.beam(P3(-0.036, 0.046, b), P3(-0.02, 0.088, 0), 0.0018, 0.0018, red); }
-    k.beam(P3(-0.02, 0.088, 0), tip, 0.0008, 0.0008, '#5b5b5b');
-    k.beam(P3(-0.02, 0.088, 0), P3(-0.062, 0.051, 0), 0.0008, 0.0008, '#5b5b5b');
+    for (const b of [-0.009, 0.009]) { kc.beam(P3(-0.006, 0.046, b), P3(-0.02, 0.088, 0), 0.0018, 0.0018, red); kc.beam(P3(-0.036, 0.046, b), P3(-0.02, 0.088, 0), 0.0018, 0.0018, red); }
+    kc.beam(P3(-0.02, 0.088, 0), tip, 0.0008, 0.0008, '#5b5b5b');
+    kc.beam(P3(-0.02, 0.088, 0), P3(-0.062, 0.051, 0), 0.0008, 0.0008, '#5b5b5b');
     // salle des machines et cabine
-    k.box(qx + ax * -0.05, top + 0.052, qz + az * -0.05, 0.022, 0.008, 0.01, white, { ry });
-    k.box(qx + ax * 0.01, top + 0.044, qz + az * 0.01 + bz * 0.0045 + 0, 0.004, 0.004, 0.004, '#203040', { ry, glow: 1 });
+    kc.box(qx + ax * -0.05, top + 0.052, qz + az * -0.05, 0.022, 0.008, 0.01, white, { ry });
+    kc.box(qx + ax * 0.01, top + 0.044, qz + az * 0.01 + bz * 0.0045 + 0, 0.004, 0.004, 0.004, '#203040', { ry, glow: 1 });
     if (!boomUp) {
-      k.box(qx + ax * 0.03, top + 0.047, qz + az * 0.03, 0.006, 0.003, 0.008, '#3d3d3d', { ry });
-      k.box(qx + ax * 0.03, top + 0.026, qz + az * 0.03, 0.0024, 0.0012, 0.0122, '#e9c46a', { ry });
+      kc.box(qx + ax * 0.03, top + 0.047, qz + az * 0.03, 0.006, 0.003, 0.008, '#3d3d3d', { ry });
+      kc.box(qx + ax * 0.03, top + 0.026, qz + az * 0.03, 0.0024, 0.0012, 0.0122, '#e9c46a', { ry });
     }
     // feux : projecteurs sous la flèche
     for (const a of [-0.03, 0.0, 0.03, 0.055]) { if (boomUp && a > 0) continue; const p = P3(a, 0.047, 0); lightAt(p.x, p.y, p.z, '#ffd9a0', 2.4); }
     const pt = P3(-0.02, 0.089, 0);
-    k.box(pt.x, pt.y, pt.z, 0.0012, 0.001, 0.0012, '#ff2020', { glow: 3 });
+    kc.box(pt.x, pt.y, pt.z, 0.0012, 0.001, 0.0012, '#ff2020', { glow: 3 });
   };
   const berthZ = P.berths.filter((b) => b.kind === 'conteneurs' || (b.kind === 'feeder' && !big)).map((b) => b.z);
   const nSts = big ? 11 : 3;
@@ -164,9 +175,10 @@ export function buildPort(scene: Scene, grid: Grid, inf: Infra, P: PortLayout, l
       // portique de parc (RTG) sur pneus
       const zr = z + rnd() * blockLen;
       const xa = x - 0.004, xb = x + rows * rowW + 0.006;
-      for (const xx of [xa, xb]) { k.box(xx, top, zr - 0.004, 0.0012, 0.019, 0.0012, '#f2c14e'); k.box(xx, top, zr + 0.004, 0.0012, 0.019, 0.0012, '#f2c14e'); k.box(xx, top, zr, 0.0018, 0.0015, 0.011, '#2b2b2b'); }
-      for (const dz of [-0.004, 0.004]) k.box((xa + xb) / 2, top + 0.019, zr + dz, xb - xa + 0.002, 0.0018, 0.0016, '#f2c14e');
-      k.box(xa + 0.003, top + 0.0205, zr, 0.004, 0.002, 0.009, '#ececec');
+      for (const xx of [xa, xb]) { kc.box(xx, top, zr - 0.004, 0.0012, 0.019, 0.0012, '#f2c14e'); kc.box(xx, top, zr + 0.004, 0.0012, 0.019, 0.0012, '#f2c14e'); kc.box(xx, top, zr, 0.0018, 0.0015, 0.011, '#2b2b2b'); }
+      for (const dz of [-0.004, 0.004]) kc.box((xa + xb) / 2, top + 0.019, zr + dz, xb - xa + 0.002, 0.0018, 0.0016, '#f2c14e');
+      kc.box(xa + 0.003, top + 0.0205, zr, 0.004, 0.002, 0.009, '#ececec');
+      cranes.rtg.push({ x: X0 + (xa + xb) / 2, y: top, z: Z + zr, yaw: 0, ph: Math.abs(Math.sin(xa * 91.7 + zr * 47.3)) * 6.28 });
     }
   }
   if (big) {
@@ -329,6 +341,12 @@ export function buildPort(scene: Scene, grid: Grid, inf: Infra, P: PortLayout, l
     return applyInst(kk.build('port-accropodes', scene), acc);
   })();
   if (am) extra.push(am);
+  const cm2 = kc.build('port-portiques', scene);
+  cm2.receiveShadows = true;
+  cm2.freezeWorldMatrix();
+  extra.push(cm2);
+  cranes.mesh = cm2;
+  if (!inf.status || inf.status === 'active') { PORT_CRANES.set(inf.id, cranes); PORT_CRANES_VERSION.v++; }
   void grid;
   return { mesh, extra };
 }

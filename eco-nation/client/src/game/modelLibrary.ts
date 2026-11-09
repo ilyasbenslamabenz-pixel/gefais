@@ -343,6 +343,9 @@ export function createThinInstances(
   const name = opts.name ?? `${src.name}_instances`;
   const show = (m: Mesh, nm: string): Mesh => {
     const c = m.clone(nm, null, true, false);
+    // Les tampons d'instances fines sont attachés à la géométrie : deux tampons créés depuis le même gabarit
+    // (ex. deux classes d'avions dessinées avec le même modèle) se les disputeraient. Géométrie propre au clone.
+    c.makeGeometryUnique();
     c.isPickable = false;
     c.isVisible = true;
     c.setEnabled(true);

@@ -4,6 +4,9 @@
 // Les véhicules ne sont simulés et dessinés qu'autour de la caméra (fenêtre glissante) : la densité
 // visible est réaliste pour un coût constant. Densité selon l'heure (pointes du matin et du soir) et
 // l'activité économique.
+// Dès que la bibliothèque de modèles Blender est chargée (cityModels.ts), chaque type de véhicule, les rames
+// et les bateaux sont dessinés avec leur modèle (instances fines dynamiques, phares et feux arrière intégrés) ;
+// les modèles procéduraux ci-dessous restent le repli (chargement en cours, GLB manquant).
 import { Color3, Mesh, StandardMaterial, VertexData, type ArcRotateCamera, type Scene } from '@babylonjs/core';
 import { mulberry32 } from '../../../shared/noise';
 import { urbanDensity } from '../../../shared/sim/country';
@@ -11,6 +14,8 @@ import type { CountryDef } from '../../../shared/sim/types';
 import { ENV, type Grid } from './terrain';
 import { CLOCK, LANES, getNetwork, hasSignal, occAt, sampleAt, signalState, surfaceY, type NetPath } from './roads';
 import { setThinCount } from './thin';
+import { whenModels } from './cityModels';
+import { createThinInstances, type ThinInstanceBuffer } from './modelLibrary';
 
 // ---------- modèles ----------
 type RGB = [number, number, number];
@@ -73,34 +78,33 @@ const car = (L: number, W: number, H: number, body: number, cb: [number, number]
   }
   extra?.(g);
 };
+const van = (g: VGeo) => {
+  g.wheels(1.92, [1.75, -1.8], 0.34);
+  g.box(-1, 1, 0.3, 2.45, -2.65, 1.75, PAINT);
+  g.box(-1, 1, 0.3, 1.15, 1.75, 2.65, PAINT);
+  g.cabin(0.98, 0.96, 1.15, 2.3, 1.75, 2.62, 1.75, 1.95, GLASS);
+  g.box(-1.01, 1.01, 1.3, 2.05, 1.2, 1.75, GLASS);
+  g.box(-1.01, 1.01, 0.3, 0.5, 2.55, 2.68, DARK);
+  for (const s of [-1, 1]) { g.box(s * 0.7 - 0.18, s * 0.7 + 0.18, 0.85, 1.0, 2.64, 2.68, HEAD); g.box(s * 0.85 - 0.1, s * 0.85 + 0.1, 0.6, 1.1, -2.69, -2.64, TAIL); }
+};
+const lorry = (g: VGeo, L: number) => {
+  const h = L / 2;
+  g.wheels(2.4, [h - 1.4, -h + 2.8, -h + 1.5], 0.5);
+  g.box(-1.1, 1.1, 0.55, 1.0, -h, h, DARK);
+  g.box(-1.25, 1.25, 0.55, 3.0, h - 2.3, h, PAINT);
+  g.box(-1.26, 1.26, 1.9, 2.8, h - 0.6, h + 0.02, GLASS);
+  g.box(-1.25, 1.25, 1.0, 3.75, -h, h - 2.5, [0.94, 0.94, 0.94]);
+  for (const s of [-1, 1]) { g.box(s * 0.95 - 0.2, s * 0.95 + 0.2, 0.75, 0.95, h - 0.01, h + 0.03, HEAD); g.box(s * 1.05 - 0.12, s * 1.05 + 0.12, 0.8, 1.2, -h - 0.03, -h + 0.01, TAIL); }
+};
 const TYPES: VType[] = [
-  { name: 'berline', L: 4.7, W: 1.82, light: 0.68, share: 0.3, build: car(4.7, 1.82, 1.45, 0.82, [-0.36, 0.17], [-0.26, 0.02]) },
+  { name: 'berline', L: 4.7, W: 1.82, light: 0.68, share: 0.29, build: car(4.7, 1.82, 1.45, 0.82, [-0.36, 0.17], [-0.26, 0.02]) },
   { name: 'citadine', L: 3.9, W: 1.72, light: 0.65, share: 0.27, build: car(3.9, 1.72, 1.5, 0.8, [-0.47, 0.17], [-0.43, -0.04]) },
-  { name: 'suv', L: 4.6, W: 1.9, light: 0.85, share: 0.18, build: car(4.6, 1.9, 1.72, 1.0, [-0.46, 0.16], [-0.44, -0.02], (g) => { for (const s of [-1, 1]) g.box(s * 0.62 - 0.03, s * 0.62 + 0.03, 1.72, 1.78, -1.7, 0.6, DARK); }) },
-  { name: 'taxi', L: 4.7, W: 1.82, light: 0.68, share: 0.06, build: car(4.7, 1.82, 1.45, 0.82, [-0.36, 0.17], [-0.26, 0.02], (g) => g.box(-0.3, 0.3, 1.45, 1.62, -0.6, -0.4, [1, 1, 1])) },
+  { name: 'suv', L: 4.6, W: 1.9, light: 0.85, share: 0.17, build: car(4.6, 1.9, 1.72, 1.0, [-0.46, 0.16], [-0.44, -0.02], (g) => { for (const s of [-1, 1]) g.box(s * 0.62 - 0.03, s * 0.62 + 0.03, 1.72, 1.78, -1.7, 0.6, DARK); }) },
+  { name: 'taxi', L: 4.7, W: 1.82, light: 0.68, share: 0.05, build: car(4.7, 1.82, 1.45, 0.82, [-0.36, 0.17], [-0.26, 0.02], (g) => g.box(-0.3, 0.3, 1.45, 1.62, -0.6, -0.4, [1, 1, 1])) },
+  { name: 'utilitaire', L: 5.3, W: 2.0, light: 0.9, share: 0.09, build: (g) => van(g) },
+  { name: 'camion', L: 10, W: 2.5, light: 1.0, share: 0.045, build: (g) => lorry(g, 10) },
   {
-    name: 'utilitaire', L: 5.3, W: 2.0, light: 0.9, share: 0.1, build: (g) => {
-      g.wheels(1.92, [1.75, -1.8], 0.34);
-      g.box(-1, 1, 0.3, 2.45, -2.65, 1.75, PAINT);
-      g.box(-1, 1, 0.3, 1.15, 1.75, 2.65, PAINT);
-      g.cabin(0.98, 0.96, 1.15, 2.3, 1.75, 2.62, 1.75, 1.95, GLASS);
-      g.box(-1.01, 1.01, 1.3, 2.05, 1.2, 1.75, GLASS);
-      g.box(-1.01, 1.01, 0.3, 0.5, 2.55, 2.68, DARK);
-      for (const s of [-1, 1]) { g.box(s * 0.7 - 0.18, s * 0.7 + 0.18, 0.85, 1.0, 2.64, 2.68, HEAD); g.box(s * 0.85 - 0.1, s * 0.85 + 0.1, 0.6, 1.1, -2.69, -2.64, TAIL); }
-    },
-  },
-  {
-    name: 'camion', L: 10, W: 2.5, light: 1.0, share: 0.055, build: (g) => {
-      g.wheels(2.4, [3.6, -2.2, -3.5], 0.5);
-      g.box(-1.1, 1.1, 0.55, 1.0, -5, 5, DARK);
-      g.box(-1.25, 1.25, 0.55, 3.0, 2.7, 5, PAINT);
-      g.box(-1.26, 1.26, 1.9, 2.8, 4.4, 5.02, GLASS);
-      g.box(-1.25, 1.25, 1.0, 3.75, -5, 2.5, [0.94, 0.94, 0.94]);
-      for (const s of [-1, 1]) { g.box(s * 0.95 - 0.2, s * 0.95 + 0.2, 0.75, 0.95, 4.99, 5.03, HEAD); g.box(s * 1.05 - 0.12, s * 1.05 + 0.12, 0.8, 1.2, -5.03, -4.99, TAIL); }
-    },
-  },
-  {
-    name: 'bus', L: 12, W: 2.55, light: 0.95, share: 0.035, build: (g) => {
+    name: 'bus', L: 12, W: 2.55, light: 0.95, share: 0.03, build: (g) => {
       g.wheels(2.45, [3.9, -2.8], 0.5);
       g.box(-1.27, 1.27, 0.35, 3.0, -6, 6, PAINT);
       g.box(-1.285, 1.285, 1.25, 2.55, -5.6, 5.4, GLASS);
@@ -110,11 +114,28 @@ const TYPES: VType[] = [
       for (const s of [-1, 1]) { g.box(s * 1.0 - 0.18, s * 1.0 + 0.18, 0.7, 0.88, 6.0, 6.04, HEAD); g.box(s * 1.1 - 0.1, s * 1.1 + 0.1, 0.8, 1.3, -6.04, -6.0, TAIL); }
     },
   },
+  { name: 'semi', L: 16.6, W: 2.55, light: 1.0, share: 0.025, build: (g) => lorry(g, 16.6) },
+  { name: 'police', L: 4.7, W: 1.82, light: 0.68, share: 0.012, build: car(4.7, 1.82, 1.45, 0.82, [-0.36, 0.17], [-0.26, 0.02], (g) => g.box(-0.5, 0.5, 1.45, 1.58, -0.5, -0.3, [0.15, 0.3, 1])) },
+  { name: 'ambulance', L: 5.3, W: 2.0, light: 0.9, share: 0.008, build: (g) => van(g) },
 ];
-const TAXI = 3, TRUCK = 5, BUS = 6;
+const TAXI = 3, TRUCK = 5, BUS = 6, SEMI = 7, POLICE = 8, AMBU = 9;
+const heavy = (t: number) => t === TRUCK || t === SEMI;
+/** Modèle de la bibliothèque pour chaque type (même ordre que TYPES). */
+const LIB_ID = ['berline', 'citadine', 'suv', 'taxi', 'utilitaire', 'camion_porteur', 'bus_articule', 'semi_remorque', 'police', 'ambulance'];
+
+/** Destination des matrices d'un type : modèle procédural (Mesh) ou instances de la bibliothèque. */
+interface Sink { buf: Float32Array; col: Float32Array | null; mesh: Mesh | null; thin: ThinInstanceBuffer | null }
+function flushSink(s: Sink, n: number) {
+  if (s.thin) {
+    if (n || s.thin.count) { s.thin.count = n; s.thin.commit(); }
+  } else if (s.mesh) {
+    setThinCount(s.mesh, n);
+    if (n) { s.mesh.thinInstanceBufferUpdated('matrix'); if (s.col) s.mesh.thinInstanceBufferUpdated('color'); }
+  }
+}
 // teintes de carrosserie réalistes (beaucoup de blanc, gris, noir)
 const COLORS: [RGB, number][] = [
-  [[0.92, 0.92, 0.91], 0.23], [[0.7, 0.71, 0.73], 0.16], [[0.42, 0.43, 0.45], 0.16], [[0.05, 0.05, 0.06], 0.18],
+  [[0.92, 0.92, 0.91], 0.23], [[0.7, 0.71, 0.73], 0.16], [[0.42, 0.43, 0.45], 0.16], [[0.09, 0.09, 0.1], 0.18],
   [[0.1, 0.16, 0.33], 0.07], [[0.58, 0.07, 0.06], 0.06], [[0.72, 0.66, 0.54], 0.03], [[0.14, 0.3, 0.2], 0.03],
   [[0.32, 0.21, 0.14], 0.02], [[0.45, 0.62, 0.78], 0.04], [[0.85, 0.5, 0.1], 0.02],
 ];
@@ -171,13 +192,14 @@ export function createTraffic(scene: Scene, grid: Grid, country: CountryDef, max
   for (let i = 0; i < maxCars; i++) {
     let r = rnd(), type = 0;
     for (let k = 0; k < TYPES.length; k++) { if (r < TYPES[k].share) { type = k; break; } r -= TYPES[k].share; }
-    const col: RGB = type === TAXI ? [0.95, 0.78, 0.15] : type === BUS ? (rnd() < 0.7 ? [0.12, 0.48, 0.42] : [0.92, 0.92, 0.9]) : type === TRUCK ? (rnd() < 0.5 ? [0.92, 0.92, 0.92] : pickColor(rnd)) : pickColor(rnd);
+    const col: RGB = type === TAXI ? [0.95, 0.78, 0.15] : type === BUS ? (rnd() < 0.7 ? [0.12, 0.48, 0.42] : [0.92, 0.92, 0.9]) : heavy(type) ? (rnd() < 0.5 ? [0.92, 0.92, 0.92] : pickColor(rnd)) : type === POLICE || type === AMBU ? [0.95, 0.95, 0.97] : pickColor(rnd);
     cap[type]++;
     cars.push({ type, col, mode: 0, p: 0, s: 0, dir: 1, lane: 0, lat: 0, kx: 0, kz: 0, d: 0, t: 0, next: -1, glane: 0, v: 0, v0: 0, stuck: 0, x: 0, y: 0, z: 0, hx: 0, hz: 1 });
   }
   const bufs = cap.map((n) => new Float32Array(Math.max(1, n) * 16));
   const cols = cap.map((n) => new Float32Array(Math.max(1, n) * 4));
   meshes.forEach((m, k) => { m.thinInstanceSetBuffer('matrix', bufs[k], 16, false); m.thinInstanceSetBuffer('color', cols[k], 4, false); setThinCount(m, 0); });
+  const sinks: Sink[] = meshes.map((m, k) => ({ buf: bufs[k], col: cols[k], mesh: m, thin: null }));
   const LMAX = maxCars + 400;
   const headBuf = new Float32Array(LMAX * 16), tailBuf = new Float32Array(LMAX * 16);
   heads.m.thinInstanceSetBuffer('matrix', headBuf, 16, false);
@@ -250,10 +272,10 @@ export function createTraffic(scene: Scene, grid: Grid, country: CountryDef, max
     if (v.type === BUS && p.kind === 'autoroute') return false;
     v.mode = 1; v.p = pi; v.s = p.cum[k] + rnd() * 0.03; v.dir = rnd() < 0.5 ? 1 : -1;
     const lanes = p.kind === 'autoroute' ? 3 : 2;
-    v.lane = v.type === TRUCK || v.type === BUS ? 0 : Math.floor(rnd() * lanes);
+    v.lane = heavy(v.type) || v.type === BUS ? 0 : Math.floor(rnd() * lanes);
     v.lat = (p.kind === 'autoroute' ? LANES.autoroute : LANES.nationale)[v.lane];
     const base = p.kind === 'autoroute' ? 0.068 : 0.04;
-    v.v0 = base * (1.05 - v.lane * -0.06 - (v.type === TRUCK ? 0.2 : 0)) * (0.9 + rnd() * 0.2);
+    v.v0 = base * (1.05 - v.lane * -0.06 - (heavy(v.type) ? 0.2 : 0)) * (0.9 + rnd() * 0.2);
     v.v = v.v0 * 0.8;
     return true;
   };
@@ -286,6 +308,8 @@ export function createTraffic(scene: Scene, grid: Grid, country: CountryDef, max
   })();
   trainCars.forEach((m) => (m.material = vMat));
   const CARL = 0.0185, GAPL = 0.0007;
+  // longueurs des voitures de tête et intermédiaires (km) : remplacées par celles des modèles de la bibliothèque
+  const carLen = { end: CARL, mid: CARL };
   const LINE_COLORS: RGB[] = [[0.95, 0.95, 0.97], [0.85, 0.9, 0.98], [0.98, 0.93, 0.85], [0.9, 0.97, 0.92], [0.97, 0.88, 0.9]];
   const trains = rails.flatMap((p, k) => {
     const n = Math.max(1, Math.round(p.len / 2.6));
@@ -297,6 +321,7 @@ export function createTraffic(scene: Scene, grid: Grid, country: CountryDef, max
   const tColM = new Float32Array(Math.max(1, nTrainCars) * 4), tColC = new Float32Array(Math.max(1, trains.length * 2) * 4);
   trainCars[0].thinInstanceSetBuffer('matrix', tBufM, 16, false); trainCars[0].thinInstanceSetBuffer('color', tColM, 4, false);
   trainCars[1].thinInstanceSetBuffer('matrix', tBufC, 16, false); trainCars[1].thinInstanceSetBuffer('color', tColC, 4, false);
+  const trainSinks: Sink[] = [{ buf: tBufM, col: tColM, mesh: trainCars[0], thin: null }, { buf: tBufC, col: tColC, mesh: trainCars[1], thin: null }];
 
   // bateaux : péniches et bateaux-mouches sur les rivières
   const boatPaths = net.rivers.map((r) => {
@@ -324,6 +349,42 @@ export function createTraffic(scene: Scene, grid: Grid, country: CountryDef, max
   const boats = boatPaths.flatMap((p) => Array.from({ length: Math.max(2, Math.round(p.len / 7)) }, (_, j) => ({ p, sig: rnd() * 2 * p.len, v: 0.012 + rnd() * 0.006, type: j % 2 })));
   const bBufs = [0, 1].map((k) => new Float32Array(Math.max(1, boats.filter((b) => b.type === k).length) * 16));
   boatMeshes.forEach((m, k) => m.thinInstanceSetBuffer('matrix', bBufs[k], 16, false));
+  const boatSinks: Sink[] = boatMeshes.map((m, k) => ({ buf: bBufs[k], col: null, mesh: m, thin: null }));
+  const boatCap = [0, 1].map((k) => boats.filter((b) => b.type === k).length);
+  let libTrains = false, libBoats = false;
+
+  // ---- bascule vers les modèles de la bibliothèque (asynchrone ; repli procédural par type) ----
+  whenModels((lib) => {
+    if (scene.isDisposed) return;
+    TYPES.forEach((t, k) => {
+      const tpl = lib.get(LIB_ID[k]);
+      if (!tpl) return;
+      const paint = !!tpl.info.peignable;
+      const thin = createThinInstances(tpl, Math.max(1, cap[k]), { colors: paint, dynamic: true, name: 'vehicules_' + t.name });
+      sinks[k] = { buf: thin.matrices, col: thin.colors, mesh: null, thin };
+      meshes[k].dispose();
+    });
+    const head = lib.get('rame_tete'), mid = lib.get('rame_intermediaire');
+    if (head && mid) {
+      const nEnd = trains.length * 2;
+      const tm = createThinInstances(mid, Math.max(1, nTrainCars - nEnd), { dynamic: true, name: 'rames_intermediaires' });
+      const tc = createThinInstances(head, Math.max(1, nEnd), { dynamic: true, name: 'rames_tete' });
+      trainSinks[0] = { buf: tm.matrices, col: null, mesh: null, thin: tm };
+      trainSinks[1] = { buf: tc.matrices, col: null, mesh: null, thin: tc };
+      carLen.end = head.sizeKm.z; carLen.mid = mid.sizeKm.z;
+      for (const m of trainCars) m.dispose();
+      libTrains = true;
+    }
+    const barge = lib.get('peniche'), tour = lib.get('bateau_mouche');
+    if (barge && tour) {
+      [barge, tour].forEach((tpl, k) => {
+        const thin = createThinInstances(tpl, Math.max(1, boatCap[k]), { dynamic: true, name: k ? 'bateaux_mouches' : 'peniches' });
+        boatSinks[k] = { buf: thin.matrices, col: null, mesh: null, thin };
+        boatMeshes[k].dispose();
+      });
+      libBoats = true;
+    }
+  });
 
   // écriture rapide d'une matrice (lacet + translation, échelle x optionnelle)
   const write = (buf: Float32Array, k: number, x: number, y: number, z: number, hx: number, hz: number, sx = 1) => {
@@ -455,7 +516,7 @@ export function createTraffic(scene: Scene, grid: Grid, country: CountryDef, max
           // changement de voie pour dépasser
           if (target < v.v0 * 0.7 && v.stuck < 7 && rnd() < dt * 2) {
             const nlane = v.lane + 1 < lanes.length ? v.lane + 1 : v.lane - 1;
-            if (nlane >= 0 && v.type !== TRUCK && v.type !== BUS) v.lane = nlane;
+            if (nlane >= 0 && !heavy(v.type) && v.type !== BUS) v.lane = nlane;
           } else if (v.lane > 0 && rnd() < dt * 0.05) v.lane--;
           v.lat += (lanes[v.lane] - v.lat) * Math.min(1, dt * 1.5);
           sampleAt(p, v.s, tmp);
@@ -479,45 +540,47 @@ export function createTraffic(scene: Scene, grid: Grid, country: CountryDef, max
         v.y = surfaceY(grid, v.x, v.z) + 0.0003;
       }
       // écriture de l'instance
-      const T = v.type, k = counts[T]++;
-      write(bufs[T], k, v.x, v.y, v.z, v.hx, v.hz);
-      cols[T][k * 4] = v.col[0]; cols[T][k * 4 + 1] = v.col[1]; cols[T][k * 4 + 2] = v.col[2]; cols[T][k * 4 + 3] = 1;
-      if (night && nl < LMAX) {
+      const T = v.type, k = counts[T]++, sk = sinks[T];
+      write(sk.buf, k, v.x, v.y, v.z, v.hx, v.hz);
+      const cl = sk.col;
+      if (cl) { cl[k * 4] = v.col[0]; cl[k * 4 + 1] = v.col[1]; cl[k * 4 + 2] = v.col[2]; cl[k * 4 + 3] = 1; }
+      if (night && nl < LMAX && !sk.thin) {
         const ty = TYPES[T], hl = ty.L * 0.0005 + 0.00003, w = ty.W * 0.001 - 0.0006, y = v.y + ty.light * 0.001;
         write(headBuf, nl, v.x + v.hx * hl, y, v.z + v.hz * hl, v.hx, v.hz, w);
         write(tailBuf, nl, v.x - v.hx * hl, y, v.z - v.hz * hl, v.hx, v.hz, w);
         nl++;
       }
     }
-    meshes.forEach((m, k) => {
-      setThinCount(m, counts[k]);
-      if (counts[k]) { m.thinInstanceBufferUpdated('matrix'); m.thinInstanceBufferUpdated('color'); }
-    });
+    sinks.forEach((sk, k) => flushSink(sk, counts[k]));
 
     // trains
     let km = 0, kc = 0;
+    const [tsM, tsC] = trainSinks;
     for (const t of trains) {
       t.sig = (t.sig + t.v * dt) % (2 * t.p.len);
+      let back = 0; // distance de l'avant de la rame à l'arrière de la voiture précédente
       for (let c = 0; c < t.cars; c++) {
-        let sg = t.sig - c * (CARL + GAPL);
+        const end = c === 0 || c === t.cars - 1;
+        const len = end ? carLen.end : carLen.mid;
+        let sg = t.sig - back - len / 2;
+        back += len + GAPL;
         sg = ((sg % (2 * t.p.len)) + 2 * t.p.len) % (2 * t.p.len);
         const fwd = sg < t.p.len;
         const s = fwd ? sg : 2 * t.p.len - sg;
         const dir = fwd ? 1 : -1;
-        sampleAt(t.p, s + (dir * CARL) / 2, tmp);
+        sampleAt(t.p, s + (dir * len) / 2, tmp);
         const ax = tmp.x, az = tmp.z, ay = tmp.y;
-        sampleAt(t.p, s - (dir * CARL) / 2, tmp);
+        sampleAt(t.p, s - (dir * len) / 2, tmp);
         let hx = ax - tmp.x, hz = az - tmp.z;
         const l = Math.hypot(hx, hz) || 1; hx /= l; hz /= l;
         const off = 0.002;
         const x = (ax + tmp.x) / 2 + hz * off, z = (az + tmp.z) / 2 - hx * off, y = (ay + tmp.y) / 2;
-        const end = c === 0 || c === t.cars - 1;
         if (end) {
           const fh = c === 0 ? 1 : -1;
-          write(tBufC, kc, x, y, z, hx * fh, hz * fh);
-          tColC.set([t.col[0], t.col[1], t.col[2], 1], kc * 4);
+          write(tsC.buf, kc, x, y, z, hx * fh, hz * fh);
+          tsC.col?.set([t.col[0], t.col[1], t.col[2], 1], kc * 4);
           kc++;
-          if (night && nl < LMAX && radius < 9) {
+          if (night && nl < LMAX && radius < 9 && !libTrains) {
             const hl = CARL / 2 + 0.0016;
             if (c === 0) write(headBuf, nl, x + hx * hl, y + 0.001, z + hz * hl, hx, hz, 0.0019);
             else write(headBuf, nl, x - hx * 0.01, y - 1, z, hx, hz, 0.0019);
@@ -525,14 +588,13 @@ export function createTraffic(scene: Scene, grid: Grid, country: CountryDef, max
             nl++;
           }
         } else {
-          write(tBufM, km, x, y, z, hx, hz);
-          tColM.set([t.col[0], t.col[1], t.col[2], 1], km * 4);
+          write(tsM.buf, km, x, y, z, hx, hz);
+          tsM.col?.set([t.col[0], t.col[1], t.col[2], 1], km * 4);
           km++;
         }
       }
     }
-    setThinCount(trainCars[0], km); setThinCount(trainCars[1], kc);
-    for (const m of trainCars) { m.thinInstanceBufferUpdated('matrix'); m.thinInstanceBufferUpdated('color'); }
+    flushSink(tsM, km); flushSink(tsC, kc);
 
     // bateaux
     const bc = [0, 0];
@@ -543,14 +605,14 @@ export function createTraffic(scene: Scene, grid: Grid, country: CountryDef, max
       sampleAt(b.p, s, tmp);
       const hx = tmp.tx * (fwd ? 1 : -1), hz = tmp.tz * (fwd ? 1 : -1);
       const off = 0.07;
-      write(bBufs[b.type], bc[b.type]++, tmp.x + hz * off, tmp.y, tmp.z - hx * off, hx, hz);
-      if (night && nl < LMAX) {
+      write(boatSinks[b.type].buf, bc[b.type]++, tmp.x + hz * off, tmp.y, tmp.z - hx * off, hx, hz);
+      if (night && nl < LMAX && !libBoats) {
         write(headBuf, nl, tmp.x + hz * off + hx * 0.019, tmp.y + 0.0025, tmp.z - hx * off + hz * 0.019, hx, hz, 0.004);
         write(tailBuf, nl, tmp.x + hz * off - hx * 0.019, tmp.y + 0.0025, tmp.z - hx * off - hz * 0.019, hx, hz, 0.004);
         nl++;
       }
     }
-    boatMeshes.forEach((m, k) => { setThinCount(m, bc[k]); m.thinInstanceBufferUpdated('matrix'); });
+    boatSinks.forEach((sk, k) => flushSink(sk, bc[k]));
 
     setThinCount(heads.m, nl); setThinCount(tails.m, nl);
     if (nl) { heads.m.thinInstanceBufferUpdated('matrix'); tails.m.thinInstanceBufferUpdated('matrix'); }
