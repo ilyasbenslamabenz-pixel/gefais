@@ -49,6 +49,8 @@ export const GAUGE_SMOOTH = 0.2; // lissage mensuel des jauges dérivées
 /** XP d'une carte jouée et d'un bilan favorable (réduits : enchaîner les cartes ne doit pas suffire à monter en grade). */
 export const CARD_XP = 4;
 export const CARD_REPORT_XP = 8;
+/** Lassitude : chaque nouvelle utilisation d'une carte multiplie son coût en soutien. */
+export const CARD_FATIGUE = 1.3;
 export const ACTORS = ['etat', 'entreprises', 'citoyens'] as const;
 export type Actor = (typeof ACTORS)[number];
 export const ACTOR_NAMES: Record<Actor, string> = { etat: 'État', entreprises: 'Entreprises', citoyens: 'Citoyens' };
@@ -337,10 +339,10 @@ const progEst = (S: GameState, prog: IndustryProgram, n: number): Forecast => {
 export const CARDS: CardDef[] = [
   // ----- Énergie -----
   { id: 'solaire', sector: 'energie', title: 'Plan solaire sur les toits', desc: '800 MW de photovoltaïque sur les toitures et parkings publics.', mechanism: 'Projet énergie public (energyBuild solaire 800 MW).',
-    support: { etat: 4, entreprises: 0, citoyens: 1 }, delay: 12, repeat: 5, metric: 'em_electricite',
+    support: { etat: 4, entreprises: 0, citoyens: 1 }, delay: 12, repeat: 8, metric: 'em_electricite',
     estimate: (S) => buildEst(S, 'solaire', 800, TECHS.solaire.cf, disp(S)), play: energyBuild('solaire', 800) },
   { id: 'eolien_mer', sector: 'energie', title: 'Parc éolien en mer', desc: '1 000 MW au large de la baie, raccordés au réseau de la cité.', mechanism: 'Projet énergie public (energyBuild éolien en mer 1 000 MW).',
-    support: { etat: 6, entreprises: 0, citoyens: 3 }, delay: 48, repeat: 3, metric: 'em_electricite',
+    support: { etat: 6, entreprises: 0, citoyens: 3 }, delay: 48, repeat: 5, metric: 'em_electricite',
     estimate: (S) => buildEst(S, 'eolienMer', 1000, TECHS.eolienMer.cf, disp(S)), play: energyBuild('eolienMer', 1000) },
   { id: 'sortie_charbon', sector: 'energie', title: 'Sortie du charbon', desc: 'Fermeture immédiate de toutes les centrales à charbon, indemnisation des exploitants.', mechanism: 'Fermeture programmée (energyClose charbon, toute la puissance installée).',
     support: { etat: 5, entreprises: 8, citoyens: 3 }, delay: 1, metric: 'em_electricite',
@@ -366,7 +368,7 @@ export const CARDS: CardDef[] = [
 
   // ----- Bâtiment et logement -----
   { id: 'renovation', sector: 'batiment', title: 'Plan de rénovation thermique', desc: 'Rénovation complète de 60 000 logements en 3 ans.', mechanism: 'Plan logement du ministère (planLogement rénovation, 60 000 logements sur 36 mois).',
-    support: { etat: 6, entreprises: 0, citoyens: 1 }, delay: 12, repeat: 5, metric: 'em_batiments',
+    support: { etat: 6, entreprises: 0, citoyens: 1 }, delay: 12, repeat: 8, metric: 'em_batiments',
     estimate: (S) => { const cost = 60000 * HOUSING_CONST.renovationCost * S.macro.priceLevel; return F({ cost, co2: src(S, 'batiments') * (60000 / Math.max(1, S.housing?.stock ?? 4.7e6)) * 0.5, jobs: jobsOf(cost, 36), sat: 0.3 }); },
     play: (S) => applyServicesAction(S, { type: 'planLogement', kind: 'renovation', units: 60000, months: 36 }) },
   { id: 'pac', sector: 'batiment', title: 'Prime pompe à chaleur', desc: '+4 000 € par logement qui remplace une chaudière fossile.', mechanism: 'Levier de politique énergétique (heatPumpSubsidy +4 000 €).',
@@ -396,7 +398,7 @@ export const CARDS: CardDef[] = [
 
   // ----- Transports -----
   { id: 'tram', sector: 'transports', title: 'Nouvelle ligne de tramway', desc: '15 km de tramway dans le quartier le moins bien desservi.', mechanism: 'Programme transports (transport:build tram 15 km).',
-    support: { etat: 4, entreprises: 0, citoyens: 3 }, delay: 39, repeat: 4, metric: 'em_transport',
+    support: { etat: 4, entreprises: 0, citoyens: 3 }, delay: 39, repeat: 6, metric: 'em_transport',
     estimate: (S) => { const cost = TRANSPORT_PROJECTS.tram.costPerUnit * 15 * S.macro.priceLevel; return F({ cost, co2: src(S, 'transport') * 0.01, jobs: jobsOf(cost, 39), budget: TRANSPORT_PROJECTS.tram.maintPerUnit * 15, sat: 0.3 }); },
     play: sector({ type: 'transport:build', kind: 'tram', size: 15 }) },
   { id: 'metro', sector: 'transports', title: 'Prolongement du métro', desc: '8 km de métro automatique.', mechanism: 'Programme transports (transport:build métro 8 km).',
@@ -442,7 +444,7 @@ export const CARDS: CardDef[] = [
 
   // ----- Industrie -----
   { id: 'electrification', sector: 'industrie', title: 'Électrification des procédés', desc: 'Quatre tranches de fours et chaudières électriques.', mechanism: 'Programme industriel (industry:program électrification, 4 tranches).',
-    support: { etat: 6, entreprises: 2, citoyens: 0 }, delay: 24, repeat: 4, metric: 'em_industrie',
+    support: { etat: 6, entreprises: 2, citoyens: 0 }, delay: 24, repeat: 6, metric: 'em_industrie',
     estimate: (S) => progEst(S, 'electrification', 4), play: sector({ type: 'industry:program', program: 'electrification', tranches: 4 }) },
   { id: 'chaleur', sector: 'industrie', title: 'Récupération de chaleur fatale', desc: 'Quatre tranches d\'échangeurs et de réseaux de chaleur.', mechanism: 'Programme industriel (industry:program chaleur, 4 tranches).',
     support: { etat: 3, entreprises: 0, citoyens: 0 }, delay: 12, repeat: 4, metric: 'em_industrie',
@@ -544,7 +546,7 @@ export const CARD_INDEX: Record<string, CardDef> = Object.fromEntries(CARDS.map(
 export function cardSupportCost(S: GameState, id: string): Support {
   const c = CARD_INDEX[id];
   const n = S.climate?.plays[id] ?? 0;
-  const k = Math.pow(1.3, n);
+  const k = Math.pow(CARD_FATIGUE, n);
   return { etat: Math.round(c.support.etat * k), entreprises: Math.round(c.support.entreprises * k), citoyens: Math.round(c.support.citoyens * k) };
 }
 
@@ -646,7 +648,7 @@ export function climateStep(S: GameState) {
   const d = deriveSupport(S);
   for (const a of ACTORS) C.derived[a] += GAUGE_SMOOTH * (d[a] - C.derived[a]);
   const won = S.missions?.won ?? C.lastWon;
-  if (won > C.lastWon) { C.capital.citoyens += 3 * (won - C.lastWon); C.capital.etat += 1 * (won - C.lastWon); }
+  if (won > C.lastWon) { C.capital.citoyens += 3 * (won - C.lastWon); C.capital.etat += 2 * (won - C.lastWon); }
   C.lastWon = won;
   for (const a of ACTORS) C.capital[a] *= CAPITAL_DECAY;
   refreshSupport(C);
@@ -707,12 +709,12 @@ function evaluateMilestone(S: GameState, C: ClimateState, m: Milestone, actual: 
   if (m.gap <= 0) {
     m.status = 'atteint';
     const xp = 150 + 50 * idx;
-    addCapital(C, { etat: 12, entreprises: 8, citoyens: 12 });
+    addCapital(C, { etat: 20, entreprises: 10, citoyens: 15 });
     S.satisfaction.trust = clamp(S.satisfaction.trust + 2, 0, 100);
     coalitionMood(S, 0.12);
     addRecord(S, 0.06 + 0.02 * idx); // bilan : compense l'usure du pouvoir
     bumpGroup(S, 'climat', 0.25);
-    m.text = `${head} Objectif atteint : soutien État +12, Entreprises +8, Citoyens +12, confiance +2, popularité en hausse, +${xp} XP.`;
+    m.text = `${head} Objectif atteint : soutien État +20, Entreprises +10, Citoyens +15, confiance +2, popularité en hausse, +${xp} XP.`;
     notice(S, 'good', `Plan climat : jalon ${m.year} atteint`, m.text);
     feedback(S, `Jalon ${m.year} du plan climat atteint (+${xp} XP)`, xp);
   } else if (m.gap <= 5) {
