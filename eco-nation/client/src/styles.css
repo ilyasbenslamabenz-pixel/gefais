@@ -672,3 +672,6 @@ input[type='range']:focus-visible::-webkit-slider-thumb { outline: 2px solid var
   .climat-sector-row > :last-child, .climat-hazard > :last-child { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+/* La barre du haut garde la priorité aux indicateurs : les jauges climat compactes n'apparaissent que sur grand écran
+   (elles restent dans le panneau Plan climat). */
+@media (max-width: 1799px) { .climat-mini { display: none !important; } }
