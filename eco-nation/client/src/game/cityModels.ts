@@ -44,7 +44,14 @@ export function startCityModels(scene: Scene) {
       let last = -1;
       const obs = scene.onBeforeRenderObservable.add(() => {
         const v = lightsLevel();
-        if (Math.abs(v - last) > 0.01) { last = v; l.setNightLevel(v); }
+        if (Math.abs(v - last) > 0.01) {
+          last = v;
+          l.setNightLevel(v);
+          // au crépuscule, les faces émissives (dessinées par-dessus le corps) gardent une teinte de jour
+          // au lieu de virer au noir tant que l'émission est faible
+          const base = Math.max(0, 0.75 - v);
+          l.lightsMaterial.diffuseColor.set(base, base, base);
+        }
       });
       scene.onDisposeObservable.addOnce(() => { scene.onBeforeRenderObservable.remove(obs); if (lib === l) lib = null; });
       const cbs = pending;

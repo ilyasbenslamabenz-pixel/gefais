@@ -3,6 +3,9 @@
 // navires à quai, manœuvres d'entrée et de sortie du port, navires au mouillage et au large.
 // Tout est en instances fines (un appel de rendu par type d'avion ou de navire).
 // Se reconstruit seul quand country.infra change (nouvel aéroport, port en service, fermeture…).
+// Avec la bibliothèque de modèles (cityModels.ts) : moyen-courriers et gros porteurs, porte-conteneurs,
+// pétroliers et remorqueurs Blender (les autres types restent procéduraux), portiques STS et RTG du port
+// avec chariot animé (à la place des portiques procéduraux).
 import { Matrix, type Mesh, type Scene } from '@babylonjs/core';
 import { mulberry32 } from '../../../shared/noise';
 import { coastX } from '../../../shared/sim/country';
@@ -10,8 +13,16 @@ import type { CountryDef, Infra } from '../../../shared/sim/types';
 import { useStore } from '../store';
 import { airportLayout, type AirportLayout, type Stand } from './airport';
 import { Kit, LIVERIES, PLANES, SHIP_DIM, buildFin, buildPlane, buildShip, col3, poseMatrix, type ShipKind } from './infraModels';
-import { SEA_Y, portLayout, type Berth } from './port';
+import { PORT_CRANES, PORT_CRANES_VERSION, SEA_Y, portLayout, type Berth } from './port';
 import type { Grid } from './terrain';
+import { whenModels } from './cityModels';
+import { createThinInstances, partMatrix, type ModelLibrary, type ModelPart, type ThinInstanceBuffer } from './modelLibrary';
+
+/** Remplacements par la bibliothèque : [modèle, échelle] par classe d'avion (PLANES) ; null = procédural. */
+const LIB_PLANES: ([string, number] | null)[] = [['avion_moyen_courrier', 1], ['avion_gros_porteur', 1.05], ['avion_gros_porteur', 1.14], ['avion_moyen_courrier', 0.73]];
+const LIB_SHIPS: Partial<Record<ShipKind, string>> = { conteneurs: 'porte_conteneurs', petrolier: 'petrolier', remorqueur: 'remorqueur' };
+/** Les modèles de la bibliothèque regardent vers +Z ; les poses d'avions et de navires vers +X local. */
+const TO_X = Matrix.RotationY(Math.PI / 2);
 
 const DT = 0.25; // pas d'échantillonnage des trajectoires (s)
 interface Track { T: number; off: number; s: Float32Array } // échantillons [x, y, z, yaw, pitch, visible] × n
@@ -238,13 +249,39 @@ export function createAirSea(scene: Scene, grid: Grid, country: CountryDef) {
     for (const f of fb) f.mesh.thinInstanceBufferUpdated('color');
     const sb = shipMeshes.map((m, i) => mk(m, scounts[i], false));
     planeBufs = pb; finBufs = fb; shipBufs = sb;
+    // modèles de la bibliothèque : instances dynamiques à la place des maillages procéduraux remplacés
+    for (const b of [...libPlanes, ...libShips]) b?.buf.dispose();
+    libPlanes = planeMeshes.map(() => null);
+    libShips = shipMeshes.map(() => null);
+    if (lib) {
+      const L = lib;
+      PLANES.forEach((_, i) => {
+        const spec = LIB_PLANES[i], tpl = spec && L.get(spec[0]);
+        if (!spec || !tpl || !counts[i]) return;
+        libPlanes[i] = { buf: createThinInstances(tpl, counts[i], { dynamic: true, name: 'lib_avions_' + i }), pre: Matrix.Scaling(spec[1], spec[1], spec[1]).multiply(TO_X) };
+        for (const m of [planeMeshes[i], finMeshes[i]]) { m.thinInstanceCount = 0; m.setEnabled(false); }
+      });
+      shipKinds.forEach((s, i) => {
+        const id = LIB_SHIPS[s.kind], tpl = id && L.get(id);
+        if (!tpl || !scounts[i]) return;
+        libShips[i] = { buf: createThinInstances(tpl, scounts[i], { dynamic: true, name: 'lib_navires_' + i }), pre: TO_X };
+        shipMeshes[i].thinInstanceCount = 0; shipMeshes[i].setEnabled(false);
+      });
+    }
   };
+  let lib: ModelLibrary | null = null;
+  type LibSlot = { buf: ThinInstanceBuffer; pre: Matrix } | null;
+  let libPlanes: LibSlot[] = [];
+  let libShips: LibSlot[] = [];
+  let curCountry = country;
   let planeBufs: { mesh: Mesh; buf: Float32Array }[] = [];
   let finBufs: { mesh: Mesh; buf: Float32Array }[] = [];
   let shipBufs: { mesh: Mesh; buf: Float32Array }[] = [];
   build(country);
-  const unsub = useStore.subscribe((s, prev) => { if (s.country && prev.country && s.country.infra !== prev.country.infra) build(s.country); });
+  const unsub = useStore.subscribe((s, prev) => { if (s.country && prev.country && s.country.infra !== prev.country.infra) { curCountry = s.country; build(s.country); } });
   scene.onDisposeObservable.addOnce(unsub);
+  const cranes = createLibCranes();
+  whenModels((l) => { if (scene.isDisposed) return; lib = l; build(curCountry); cranes.setLibrary(l); });
 
   const m = new Matrix();
   const zero = Matrix.Scaling(0, 0, 0);
@@ -265,20 +302,86 @@ export function createAirSea(scene: Scene, grid: Grid, country: CountryDef) {
       t += dt;
       for (const p of planes) {
         const mm = pose(p, t);
+        const L = libPlanes[p.mesh];
+        if (L) { L.pre.multiplyToArray(mm, L.buf.matrices, p.slot * 16); continue; }
         mm.copyToArray(planeBufs[p.mesh].buf, p.slot * 16);
         mm.copyToArray(finBufs[p.mesh].buf, p.slot * 16);
       }
-      for (const s of ships) pose(s, t).copyToArray(shipBufs[s.mesh].buf, s.slot * 16);
+      const shipOut = (mesh: number, slot: number, mm: Matrix) => {
+        const L = libShips[mesh];
+        if (L) L.pre.multiplyToArray(mm, L.buf.matrices, slot * 16);
+        else mm.copyToArray(shipBufs[mesh].buf, slot * 16);
+      };
+      for (const s of ships) shipOut(s.mesh, s.slot, pose(s, t));
       for (const l of lanes) {
         const z = ((((l.z + l.dir * l.v * t) + 60) % 120) + 120) % 120 - 60;
         const x = coastX(country.seed, z) - l.off;
         const x2 = coastX(country.seed, z + l.dir * 0.5) - l.off;
-        poseMatrix(m, x, SEA_Y, z, Math.atan2(-(l.dir * 0.5), x2 - x), 0).copyToArray(shipBufs[l.mesh].buf, l.slot * 16);
+        shipOut(l.mesh, l.slot, poseMatrix(m, x, SEA_Y, z, Math.atan2(-(l.dir * 0.5), x2 - x), 0));
       }
       for (const b of [...planeBufs, ...finBufs, ...shipBufs]) if (b.mesh.thinInstanceCount > 0) b.mesh.thinInstanceBufferUpdated('matrix');
+      for (const L of [...libPlanes, ...libShips]) if (L) { L.buf.count = L.buf.capacity; L.buf.commit(); }
+      cranes.update(t);
     },
     dispose: () => { unsub(); for (const mm of [...planeMeshes, ...finMeshes, ...shipMeshes]) mm.dispose(); },
   };
 }
 
 export const SHIP_KINDS = Object.keys(SHIP_DIM);
+
+/**
+ * Portiques du port en modèles de la bibliothèque : structure en instances statiques, chariot (et spreader)
+ * en instances dynamiques animées (va-et-vient le long de la flèche des STS, transversal sur les RTG).
+ * Suit les reconstructions du port (PORT_CRANES_VERSION) ; masque alors les portiques procéduraux.
+ */
+function createLibCranes() {
+  let lib: ModelLibrary | null = null;
+  let version = -1;
+  type Group = { body: ThinInstanceBuffer; trolley: ThinInstanceBuffer; poses: { w: Matrix; ph: number }[]; axis: 'x' | 'z'; course: [number, number]; pivot: number; part: ModelPart; speed: number };
+  let groups: Group[] = [];
+  const local = new Matrix();
+  const rebuild = () => {
+    for (const g of groups) { g.body.dispose(); g.trolley.dispose(); }
+    groups = [];
+    if (!lib) return;
+    const all = [...PORT_CRANES.values()].filter((c) => c.mesh && !c.mesh.isDisposed());
+    for (const [id, key, speed] of [['portique_sts', 'sts', 0.11], ['portique_rtg', 'rtg', 0.07]] as const) {
+      const tpl = lib.get(id), part = tpl?.parts.chariot;
+      const poses = all.flatMap((c) => c[key]);
+      if (!tpl || !part || !poses.length) continue;
+      const body = createThinInstances(tpl, poses.length, { name: 'lib_' + id });
+      const trolley = createThinInstances(tpl, poses.length, { name: 'lib_' + id + '_chariot', source: part.mesh, dynamic: true });
+      const w = poses.map((p, i) => {
+        body.set(i, p.x, p.y, p.z, p.yaw, 1);
+        return { w: Matrix.RotationY(p.yaw).multiply(Matrix.Translation(p.x, p.y, p.z)), ph: p.ph };
+      });
+      body.commit();
+      const info = part.info;
+      const axis = info?.axe === 'x' ? 'x' : 'z';
+      const pv = info?.pivot_m ?? [0, 0, 0];
+      groups.push({ body, trolley, poses: w, axis, course: info?.course_m ?? [0, 0], pivot: axis === 'x' ? pv[0] : pv[2], part, speed });
+    }
+    // portiques procéduraux masqués dès que les modèles sont en place
+    if (groups.length) for (const c of all) c.mesh!.setEnabled(false);
+  };
+  return {
+    setLibrary(l: ModelLibrary) { lib = l; version = -1; },
+    update(t: number) {
+      if (!lib) return;
+      if (version !== PORT_CRANES_VERSION.v) { version = PORT_CRANES_VERSION.v; rebuild(); }
+      for (const g of groups) {
+        const [a, b] = g.course;
+        g.poses.forEach((p, i) => {
+          // cycle de manutention : aller-retour lent avec pauses aux extrémités
+          const s = Math.sin(t * g.speed + p.ph);
+          const u = 0.5 + 0.5 * Math.sign(s) * Math.min(1, Math.abs(s) * 1.6);
+          const d = (a + (b - a) * u - g.pivot) * 0.001;
+          if (g.axis === 'x') Matrix.TranslationToRef(d, 0, 0, local); else Matrix.TranslationToRef(0, 0, d, local);
+          partMatrix(g.part, local, p.w).copyToArray(g.trolley.matrices, i * 16);
+        });
+        g.trolley.count = g.poses.length;
+        g.trolley.commit();
+      }
+    },
+  };
+}
