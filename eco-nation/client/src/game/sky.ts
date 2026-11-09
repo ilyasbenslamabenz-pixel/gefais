@@ -76,10 +76,10 @@ export function atmosphere(elev: number, cloud: number): Atmosphere {
   const golden = (1 - sstep(0.06, 0.45, elev)) * (1 - dark);
   const lamps = sstep(0.3, -0.06, elev);
   // ciel
-  const zenDay = C(0.16, 0.36, 0.78), zenGold = C(0.13, 0.17, 0.40), zenNight = C(0.008, 0.014, 0.035);
+  const zenDay = C(0.16, 0.36, 0.78), zenGold = C(0.13, 0.17, 0.40), zenNight = C(0.04, 0.06, 0.13);
   const horDay = C(0.62, 0.76, 0.92), horSunDay = C(0.92, 0.92, 0.88);
   const horGoldSun = C(1.75, 0.78, 0.30), horGoldAway = C(0.78, 0.55, 0.50);
-  const horNight = C(0.035, 0.045, 0.09);
+  const horNight = C(0.12, 0.13, 0.22);
   let zen = lerp3(zenDay, zenGold, golden);
   let horSun = lerp3(horSunDay, horGoldSun, golden);
   let horAway = lerp3(horDay, horGoldAway, golden);
@@ -95,11 +95,11 @@ export function atmosphere(elev: number, cloud: number): Atmosphere {
   SKY.haze.copyFrom(haze); SKY.horSun.copyFrom(horSun); SKY.zen.copyFrom(zen); SKY.horAway.copyFrom(horAway); SKY.golden = golden; SKY.dark = dark;
   // soleil
   const sunCol = lerp3(C(1, 0.96, 0.9), C(1, 0.66, 0.36), golden).scale(1 - dark);
-  const sunI = sstep(-0.02, 0.05, elev) * (2.4 + golden * 1.2) * (1 - cloud * 0.6);
+  const sunI = sstep(-0.02, 0.05, elev) * (1.65 + golden * 2.0) * (1 - cloud * 0.6);
   // appoint du ciel : bleu lavande côté ombre, sol chaud
   const hemiSky = lerp3(lerp3(C(0.78, 0.86, 1), C(0.66, 0.67, 0.84), golden), C(0.22, 0.28, 0.5), dark);
   const hemiGround = lerp3(lerp3(C(0.36, 0.33, 0.28), C(0.5, 0.37, 0.27), golden), C(0.05, 0.05, 0.07), dark);
-  const hemiI = (0.75 + golden * 0.2) * (1 - dark * 0.55) * (1 - cloud * 0.15) + cloud * 0.15;
+  const hemiI = (0.62 + golden * 0.33) * (1 - dark * 0.55) * (1 - cloud * 0.15) + cloud * 0.15;
   return { zen, horSun, horAway, haze, sunCol, sunI, hemiSky, hemiGround, hemiI, dark, lamps, golden };
 }
 

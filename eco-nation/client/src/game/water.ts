@@ -67,7 +67,7 @@ export function upgradeWater(scene: Scene, mirrorSize: number) {
   if (!mirror) { mat.emissiveColor = new Color3(0.08, 0.16, 0.22); }
   const calm = mat.clone('waterCalmMat');
   calm.bumpTexture = null;
-  calm.diffuseColor = mirror ? new Color3(0.04, 0.12, 0.15) : new Color3(0.1, 0.22, 0.28);
+  calm.diffuseColor = mirror ? new Color3(0.04, 0.12, 0.15) : new Color3(0.06, 0.13, 0.17);
   for (const m of water) {
     m.material = m.name === 'sea' ? mat : calm;
     m.isPickable = false;
@@ -85,7 +85,7 @@ export function upgradeWater(scene: Scene, mirrorSize: number) {
       mat.diffuseColor.set((0.03 - ENV.night * 0.02) * k, (0.1 - ENV.night * 0.06) * k, (0.14 - ENV.night * 0.06) * k);
       if (!mirror) {
         // sans miroir : l'eau prend la teinte du ciel (zénith reflété au pied, horizon embrasé au loin)
-        const e = Color3.Lerp(SKY.zen, SKY.haze, 0.55).scale(0.42);
+        const e = Color3.Lerp(SKY.zen, SKY.haze, 0.55).scale(0.3);
         mat.emissiveColor.set(e.r * 0.85 + 0.01, e.g * 0.9 + 0.03, e.b + 0.05);
         calm.emissiveColor.copyFrom(mat.emissiveColor);
       }

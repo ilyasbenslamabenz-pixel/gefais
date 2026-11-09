@@ -233,7 +233,8 @@ export function buildingMaterial(scene: Scene, name: string, o: MatOptions) {
       // ciel reflété = le dôme du ciel (mêmes couleurs) ; sous l'horizon, la ville baignée de brume
       vec3 hor = mix(uHorAway, uHorSun, pow(toward, 1.6));
       vec3 skyC = mix(hor, uZen, pow(max(Rf.y, 0.0), 0.42)) * (0.8 + 0.4 * cloud);
-      vec3 low = mix(uHaze * 0.45, uHaze * 0.95, smoothstep(-0.5, 0.0, Rf.y));
+      // vers le bas : la ville dans l'ombre (acier bleuté), puis la brume dorée près de l'horizon
+      vec3 low = mix(uZen * 0.7 + uHaze * 0.2, uHaze * 0.85, smoothstep(-0.3, 0.0, Rf.y));
       vec3 env = mix(low, skyC, smoothstep(-0.03, 0.05, Rf.y));
       float fres = 0.08 + 0.92 * pow(1.0 - max(dot(nR, viewDirectionW), 0.0), 4.0);
       float k = clamp(gMask * mix(0.55, 1.0, fres) * ${refl}, 0.0, 1.0);
