@@ -15,6 +15,7 @@ import { createTraffic, weatherFor } from './life';
 import { createAirSea } from './airsea'; // --- aéroport et port ---
 import { upgradeWater } from './water';
 import { createPostProcessing, timeOfDay } from './post';
+import { startCityModels } from './cityModels'; // --- vie urbaine : modèles Blender ---
 
 const Q: Record<Quality, { scale: number; step: number; block: number; trees: number; cars: number; shadows: number; precip: number; glow: boolean }> = {
   low: { scale: 1.25, step: 3, block: 0.28, trees: 6000, cars: 1500, shadows: 0, precip: 1500, glow: false },
@@ -36,6 +37,8 @@ export function createWorld(canvas: HTMLCanvasElement, country: CountryDef, qual
   scene.fogEnd = 140;
   scene.fogColor = new Color3(0.7, 0.82, 0.95);
   const grid: Grid = buildGrid(country);
+  // --- vie urbaine --- : bibliothèque de modèles chargée en arrière-plan (avant la création des systèmes qui s'y abonnent)
+  startCityModels(scene);
 
   // Caméra stratégique : glisser = déplacer, clic droit = pivoter, molette = zoom
   const cap = country.cities.find((c) => c.capital) ?? country.cities[0];
