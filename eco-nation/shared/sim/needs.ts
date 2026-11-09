@@ -7,6 +7,8 @@ import { BUILDINGS, buildCost } from './construction';
 import { buildQuote, closeQuote } from './energy';
 import type { BuildId } from './energyData';
 import { unemploymentRate } from './workforce';
+import { HEALTH_ROLES } from './health';
+import { SECURITY_ROLES } from './security';
 
 export type NeedLevel = 0 | 1 | 2; // 0 = satisfaisant, 1 = à surveiller, 2 = urgent
 
@@ -15,6 +17,8 @@ export type NeedAction =
   | { kind: 'demolish'; label: string; infraId: number; cost: number }
   | { kind: 'energyBuild'; label: string; tech: BuildId; mw: number; cost: number }
   | { kind: 'energyClose'; label: string; tech: BuildId; mw: number; cost: number }
+  /** recrutement exceptionnel (effet en quelques mois) ; `cost` est un coût ANNUEL ajouté au budget du ministère */
+  | { kind: 'recruit'; label: string; service: 'sante' | 'securite'; role: 'medecins' | 'infirmiers' | 'policiers'; count: number; cost: number }
   | { kind: 'panel'; label: string; panel: string };
 
 export interface Need {
@@ -66,6 +70,16 @@ function demolishCandidate(S: GameState, types: readonly string[], cityId: numbe
 
 const level = (bad: boolean, urgent: boolean): NeedLevel => (urgent ? 2 : bad ? 1 : 0);
 
+/** Recrutement proposé : `share` des effectifs en poste (au plus 15 %, plafond du moteur), arrondi à la centaine. */
+function recruitAction(S: GameState, service: 'sante' | 'securite', role: 'medecins' | 'infirmiers' | 'policiers', staff: number, share: number): NeedAction | null {
+  const count = Math.round((staff * Math.min(0.15, Math.max(0.02, share))) / 100) * 100;
+  if (count < 100) return null;
+  const spec = role === 'policiers' ? SECURITY_ROLES.policiers : HEALTH_ROLES[role];
+  const cost = count * spec.cost * (S.macro.priceLevel || 1) * 1.15;
+  const what = role === 'medecins' ? 'médecins' : role === 'infirmiers' ? 'infirmiers' : 'policiers';
+  return { kind: 'recruit', service, role, count, cost, label: `Recruter ${fr(count)} ${what} (en poste dans ${spec.delay} mois, ${money(cost)}/an)` };
+}
+
 export function assessNeeds(S: GameState): Need[] {
   const out: Need[] = [];
 
@@ -111,7 +125,12 @@ export function assessNeeds(S: GameState): Need[] {
     const w = worst(rows);
     const actions: NeedAction[] = [];
     const bad = ratio < 0.97 || H.waitDays > 45;
-    if (bad) actions.push(program(S, ratio < 0.9 ? 'hopital' : 'clinique', w.id, (1 - ratio) * H.installedBeds));
+    if (bad) {
+      // le personnel est le levier rapide (lits ouverts et délais) ; les murs viennent ensuite
+      const doc = recruitAction(S, 'sante', 'medecins', H.doctors.staff, 0.04 + 2 * Math.max(0, 1 - ratio));
+      if (doc) actions.push(doc);
+      actions.push(program(S, ratio < 0.9 ? 'hopital' : 'clinique', w.id, (1 - ratio) * H.installedBeds));
+    }
     actions.push({ kind: 'panel', label: 'Ministère de la Santé', panel: 'sante' });
     out.push({ id: 'sante', icon: '🏥', title: 'Santé', level: level(bad, ratio < 0.88 || H.waitDays > 70), score: Math.min(1, ratio), value: `${fr(H.waitDays)} j d'attente`,
       detail: bad ? `Capacité de soins à ${pc(ratio)} des besoins (population vieillissante). Quartier le moins doté en lits : ${w.name}.` : `Capacité de soins à ${pc(ratio)} des besoins, délais maîtrisés.`, actions });
@@ -157,8 +176,9 @@ export function assessNeeds(S: GameState): Need[] {
     const gas = E.fleet.gaz?.mw ?? 0;
     const green: NeedAction[] = [];
     const mw = 500;
-    green.push({ kind: 'energyBuild', tech: 'eolienMer', mw, cost: buildQuote(S, 'eolienMer', mw).cost, label: `Construire ${mw} MW d'éolien en mer` });
-    green.push({ kind: 'energyBuild', tech: 'solaire', mw: 300, cost: buildQuote(S, 'solaire', 300).cost, label: `Construire 300 MW de solaire (toitures, ombrières)` });
+    // l'éolien en mer produit le plus (chantier de 4 ans) ; le solaire est plus rapide (1 an) mais produit moins
+    green.push({ kind: 'energyBuild', tech: 'eolienMer', mw, cost: buildQuote(S, 'eolienMer', mw).cost, label: `Construire ${mw} MW d'éolien en mer (chantier de 4 ans)` });
+    green.push({ kind: 'energyBuild', tech: 'solaire', mw: 600, cost: buildQuote(S, 'solaire', 600).cost, label: `Construire 600 MW de solaire (toitures, ombrières, en service sous 1 an)` });
     const dirty: [BuildId, number][] = [['charbon', coal], ['petrole', oil], ['gaz', gas]];
     const [tech, cap] = dirty.find(([, v]) => v >= 1) ?? ['charbon', 0];
     if (cap >= 1 && m > 0.15) {
@@ -178,7 +198,11 @@ export function assessNeeds(S: GameState): Need[] {
     const rows = perCity(S, ['commissariat']);
     const w = worst(rows);
     const bad = feel < 55 || Sec.policeResponse > 15;
-    if (bad) actions.push(program(S, 'commissariat', w.id, 500));
+    if (bad) {
+      const pol = recruitAction(S, 'securite', 'policiers', Sec.police.staff, 0.06 + 0.004 * Math.max(0, 60 - feel));
+      if (pol) actions.push(pol);
+      actions.push(program(S, 'commissariat', w.id, 500));
+    }
     if (Sec.prisonOccupancy > 1.1) actions.push(program(S, 'prison', w.id, Sec.prisoners - Sec.openPlaces));
     actions.push({ kind: 'panel', label: 'Sécurité et justice', panel: 'securite' });
     out.push({ id: 'securite', icon: '🚓', title: 'Sécurité', level: level(bad || Sec.prisonOccupancy > 1.1, feel < 40), score: feel / 100, value: `sentiment ${fr(feel)}/100`,

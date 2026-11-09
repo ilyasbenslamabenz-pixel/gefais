@@ -27,11 +27,12 @@ const govPop = (S: GameState) => {
 };
 
 // ---------- Mémoire des robots (déterministe, propre à chaque partie) ----------
-interface BotMemory { needCooldown: Record<string, number>; lastCard: number; actions: number; cards: number; spentBuild: number }
+export interface BotMemory { needCooldown: Record<string, number>; lastCard: number; actions: number; cards: number; spentBuild: number; missionDone: Record<number, true>; levers: number }
+export const newMemory = (): BotMemory => ({ needCooldown: {}, lastCard: -99, actions: 0, cards: 0, spentBuild: 0, missionDone: {}, levers: 0 });
 
 /** Action payante proposée par le diagnostic (programme, centrale), ou null. */
 function costedAction(actions: NeedAction[]): Exclude<NeedAction, { kind: 'panel' } | { kind: 'demolish' }> | null {
-  for (const a of actions) if (a.kind === 'program' || a.kind === 'energyBuild' || a.kind === 'energyClose') return a;
+  for (const a of actions) if (a.kind === 'program' || a.kind === 'energyBuild' || a.kind === 'energyClose' || a.kind === 'recruit') return a;
   return null;
 }
 function execute(S: GameState, a: NeedAction): boolean {
@@ -39,7 +40,50 @@ function execute(S: GameState, a: NeedAction): boolean {
   if (a.kind === 'energyBuild') return applyAction(S, { type: 'energyBuild', tech: a.tech, mw: a.mw }).ok;
   if (a.kind === 'energyClose') return applyAction(S, { type: 'energyClose', tech: a.tech, mw: a.mw }).ok;
   if (a.kind === 'demolish') return applyServiceAction(S, { type: 'demolir', infraId: a.infraId }).ok;
+  if (a.kind === 'recruit') return applyServiceAction(S, { type: 'recruter', service: a.service, role: a.role, count: a.count }).ok;
   return false;
+}
+
+/** Levier de politique (copie de la politique programmée, procédure parlementaire). */
+function lever(S: GameState, f: (p: Policy) => void) {
+  const p: Policy = clone(S.pending?.policy ?? S.policy);
+  f(p);
+  schedulePolicy(S, p, { parliament: true });
+  return true;
+}
+const card = (S: GameState, id: string) => applyGovAction(S, { type: 'climatCard', card: id }).ok;
+
+/**
+ * Joueur qui lit ses missions : à l'apparition d'une mission, il actionne UNE fois le levier rapide le plus évident pour
+ * l'indicateur visé (recrutement, petit ajustement fiscal ou budgétaire, centrale, carte climat). Pas d'optimisation :
+ * c'est ce que ferait un joueur raisonnable qui suit les conseils des panneaux.
+ */
+function playMissions(S: GameState, mem: BotMemory, o: { maxDeficit: number }) {
+  const M = S.missions!;
+  for (const m of M.active) {
+    if (mem.missionDone[m.id]) continue;
+    mem.missionDone[m.id] = true;
+    const spendOk = deficit(S) < o.maxDeficit;
+    let ok = false;
+    switch (m.metric) {
+      case 'chomage': ok = spendOk && lever(S, (p) => { p.labour.hiringAid += 1200; }); break;
+      case 'satisfaction': case 'confiance': ok = spendOk && lever(S, (p) => { p.incomeTax.activityCredit += 400; p.budget.sante *= 1.05; }); break;
+      case 'pauvrete': ok = spendOk && lever(S, (p) => { p.incomeTax.activityCredit += 300; p.labour.familyAllowance += 20; }); break;
+      case 'capaciteSoins': case 'attenteSoins':
+        ok = spendOk && applyServiceAction(S, { type: 'recruter', service: 'sante', role: 'medecins', count: Math.round(S.health!.doctors.staff * 0.06) }).ok;
+        if (ok && m.metric === 'capaciteSoins') applyServiceAction(S, { type: 'recruter', service: 'sante', role: 'infirmiers', count: Math.round(S.health!.nurses.staff * 0.05) });
+        break;
+      case 'securite': ok = spendOk && applyServiceAction(S, { type: 'recruter', service: 'securite', role: 'policiers', count: Math.round(S.security!.police.staff * 0.08) }).ok; break;
+      case 'dette': case 'deficit': ok = lever(S, (p) => { p.vat.normal = Math.min(0.25, p.vat.normal + 0.01); for (const b of BUDGET_LINES) p.budget[b] *= 0.985; }); break;
+      case 'renouvelable': ok = spendOk && applyAction(S, { type: 'energyBuild', tech: 'solaire', mw: 600 }).ok; break;
+      case 'margeElec': ok = applyAction(S, { type: 'energyBuild', tech: 'batteries', mw: 400 }).ok; break;
+      case 'emissions': case 'air': ok = card(S, 'sortie_charbon') || card(S, 'bus_elec') || card(S, 'velo'); break;
+      case 'congestion': ok = card(S, 'frequence') || card(S, 'velo'); break;
+      case 'attenteLogement': case 'tensionLogement': ok = spendOk && applyServiceAction(S, { type: 'planLogement', kind: 'social', units: 8000, months: 24 }).ok; break;
+      default: ok = false; // écoles, universités : traitées par le diagnostic des besoins (constructions)
+    }
+    if (ok) mem.levers++;
+  }
 }
 
 /**
@@ -92,6 +136,8 @@ function nudgeVat(S: GameState, d: number) {
   schedulePolicy(S, p, { parliament: true });
 }
 
+const CLIMATE_RESEARCH = ['pompes_chaleur', 'materiaux_bas_carbone', 'batiments_passifs', 'capture_carbone', 'agriculture_precision', 'solaire_ng', 'eolien_hp', 'hydrogene_vert', 'reseaux_intelligents', 'nucleaire_avance'];
+
 export function botStep(S: GameState, strat: Strategy, mem: BotMemory) {
   const jan = S.month % 12 === 0;
   switch (strat) {
@@ -113,6 +159,9 @@ export function botStep(S: GameState, strat: Strategy, mem: BotMemory) {
       playClimate(S, mem, { perMonth: 2, gap: 1 });
       return;
     case 'equilibre':
+      // recherche orientée climat dès le départ (débloque les cartes « bâtiments passifs », captage, hydrogène…)
+      if (S.month === 0) applyServiceAction(S, { type: 'fileRecherche', techs: CLIMATE_RESEARCH });
+      playMissions(S, mem, { maxDeficit: 0.035 });
       playNeeds(S, mem, { maxDeficit: 0.03, maxDebt: 0.95, maxCost: 0.003, cooldown: 12, perMonth: 1 });
       playClimate(S, mem, { perMonth: 1, gap: 2, maxDeficit: 0.04 });
       // pilotage budgétaire annuel : si le déficit dérape, +1 point de TVA ; s'il y a de la marge, −0,5 point
@@ -147,6 +196,7 @@ export interface RunResult {
   trophies: number;
   cards: number;
   actions: number;
+  levers: number;
   minSatisfaction: number;
   maxDebt: number;
   at: Record<number, Snapshot>; // instantanés à 5, 10, 20, 30… ans
@@ -177,7 +227,7 @@ export function resetCache() { baseGame = new Map(); }
 /** Joue une partie complète. `continueAfterDefeat` : la partie se poursuit en mode libre pour mesurer la suite. */
 export function runStrategy(strategy: Strategy, years = 30, seed = 2030, opts: { snapshotsAt?: number[] } = {}): RunResult {
   const S = newGame(seed);
-  const mem: BotMemory = { needCooldown: {}, lastCard: -99, actions: 0, cards: 0, spentBuild: 0 };
+  const mem = newMemory();
   const at: Record<number, Snapshot> = {};
   const snapsAt = new Set((opts.snapshotsAt ?? [5, 10, 20, 30, 50]).map((y) => y * 12));
   const defeats: { reason: string; month: number }[] = [];
@@ -232,7 +282,7 @@ export function runStrategy(strategy: Strategy, years = 30, seed = 2030, opts: {
     electionsWon: P.electionsWon,
     defeat: defeats[0] ?? null, defeats,
     crises, hazards, firstTrophy, firstTrophyId, trophies: Object.keys(M.trophies).length,
-    cards: mem.cards, actions: mem.actions, minSatisfaction: minSat, maxDebt,
+    cards: mem.cards, actions: mem.actions, levers: mem.levers, minSatisfaction: minSat, maxDebt,
     at, final: snap(S),
   };
 }
@@ -270,7 +320,7 @@ export function summarize(results: RunResult[]) {
       '1er trophée (mois)': rs.map((r) => r.firstTrophy ?? '—').join(' '),
       'XP 10/30 ans': `${Math.round(avg((r) => y10(r)?.xp ?? 0))}/${Math.round(avg((r) => y30(r).xp))}`,
       'titre 10/30': `${y10(rs[0])?.title ?? '—'} / ${y30(rs[0]).title}`,
-      'cartes/actions': `${f1(avg((r) => r.cards))}/${f1(avg((r) => r.actions))}`,
+      'cartes/actions/leviers': `${f1(avg((r) => r.cards))}/${f1(avg((r) => r.actions))}/${f1(avg((r) => r.levers))}`,
     });
   }
   return rows;

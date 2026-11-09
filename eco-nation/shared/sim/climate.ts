@@ -22,7 +22,7 @@
 // Module pur et déterministe (aucun tirage aléatoire ici : les aléas passent par le générateur graine+mois d'events.ts).
 import { clamp } from './economy';
 import { addExtraBudget, addModifier, EVENT_DEFS } from './events';
-import { bumpGroup, bumpParty, groupSupport, type Bill } from './politics';
+import { addRecord, bumpGroup, bumpParty, groupSupport, type Bill } from './politics';
 import { applyEnergyAction, buildQuote, closeQuote } from './energy';
 import { TECHS, type BuildId } from './energyData';
 import { applyEnvAction, envQuote, type EnvProjectKind } from './environment';
@@ -46,6 +46,9 @@ export const MILESTONE_CUTS: Record<number, number> = { 2035: 0.2, 2040: 0.3, 20
 export const SUPPORT_FLOOR = 20; // une carte ne peut pas faire tomber une jauge sous ce seuil
 export const CAPITAL_DECAY = 0.94; // retour mensuel du capital vers 0 (demi-vie ≈ 11 mois)
 export const GAUGE_SMOOTH = 0.2; // lissage mensuel des jauges dérivées
+/** XP d'une carte jouée et d'un bilan favorable (réduits : enchaîner les cartes ne doit pas suffire à monter en grade). */
+export const CARD_XP = 4;
+export const CARD_REPORT_XP = 8;
 export const ACTORS = ['etat', 'entreprises', 'citoyens'] as const;
 export type Actor = (typeof ACTORS)[number];
 export const ACTOR_NAMES: Record<Actor, string> = { etat: 'État', entreprises: 'Entreprises', citoyens: 'Citoyens' };
@@ -347,7 +350,7 @@ export const CARDS: CardDef[] = [
     support: { etat: 3, entreprises: 0, citoyens: 0 }, delay: 12, repeat: 3, metric: 'em_electricite',
     estimate: (S) => { const q = buildQuote(S, 'batteries', 600); return F({ cost: q.cost, co2: 600 * 4 * 365 * 0.5 * disp(S) * 0.5, jobs: q.jobsBuild + q.jobsOp, budget: q.om }); }, play: energyBuild('batteries', 600) },
   { id: 'complement_ren', sector: 'energie', title: 'Complément de rémunération renouvelable', desc: '+30 €/MWh garantis aux nouvelles capacités renouvelables des opérateurs privés.', mechanism: 'Levier de politique énergétique (renewableSupport +30 €/MWh), décret ou loi climat.',
-    support: { etat: 7, entreprises: 0, citoyens: 1 }, delay: 24, metric: 'em_electricite',
+    support: { etat: 7, entreprises: 0, citoyens: 1 }, delay: 24, repeat: 2, metric: 'em_electricite',
     estimate: (S) => F({ co2: 2.5e6 * disp(S), budget: 30 * 2.5e6, jobs: 600 }),
     play: policyLever('Complément de rémunération', (p) => { if (p.energy.renewableSupport >= 150) return false; p.energy.renewableSupport = Math.min(150, p.energy.renewableSupport + 30); }) },
   { id: 'reseaux', sector: 'energie', title: 'Réseaux électriques renforcés', desc: '+600 M€/an pour les réseaux et les interconnexions.', mechanism: 'Levier de politique énergétique (gridBudget +600 M€/an).',
@@ -367,15 +370,15 @@ export const CARDS: CardDef[] = [
     estimate: (S) => { const cost = 60000 * HOUSING_CONST.renovationCost * S.macro.priceLevel; return F({ cost, co2: src(S, 'batiments') * (60000 / Math.max(1, S.housing?.stock ?? 4.7e6)) * 0.5, jobs: jobsOf(cost, 36), sat: 0.3 }); },
     play: (S) => applyServicesAction(S, { type: 'planLogement', kind: 'renovation', units: 60000, months: 36 }) },
   { id: 'pac', sector: 'batiment', title: 'Prime pompe à chaleur', desc: '+4 000 € par logement qui remplace une chaudière fossile.', mechanism: 'Levier de politique énergétique (heatPumpSubsidy +4 000 €).',
-    support: { etat: 6, entreprises: 0, citoyens: 0 }, delay: 24, metric: 'em_batiments',
+    support: { etat: 6, entreprises: 0, citoyens: 0 }, delay: 24, repeat: 2, metric: 'em_batiments',
     estimate: (S) => F({ co2: src(S, 'batiments') * 0.04, budget: 4000 * 30000, jobs: 500, sat: 0.2 }),
     play: policyLever('Prime pompe à chaleur', (p) => { if (p.energy.heatPumpSubsidy >= 20000) return false; p.energy.heatPumpSubsidy = Math.min(20000, p.energy.heatPumpSubsidy + 4000); }) },
   { id: 'fonds_renov', sector: 'batiment', title: 'Fonds national de rénovation', desc: '+1,5 Md€/an pour la rénovation énergétique des bâtiments.', mechanism: 'Levier de politique énergétique (renovationBudget +1,5 Md€/an).',
-    support: { etat: 9, entreprises: 0, citoyens: 0 }, delay: 12, metric: 'em_batiments',
+    support: { etat: 9, entreprises: 0, citoyens: 0 }, delay: 12, repeat: 2, metric: 'em_batiments',
     estimate: (S) => F({ co2: src(S, 'batiments') * 0.03, budget: 1.5e9, jobs: jobsOf(1.5e9, 12), sat: 0.2 }),
     play: policyLever('Fonds de rénovation', (p) => { p.energy.renovationBudget = Math.min(3e10, p.energy.renovationBudget + 1.5e9); }) },
   { id: 'aide_isolation', sector: 'batiment', title: 'Aide à l\'isolation', desc: '+30 points de prise en charge des rénovations privées.', mechanism: 'Levier de politique du logement (insulationSubsidy +0,3).',
-    support: { etat: 6, entreprises: 0, citoyens: 0 }, delay: 12, metric: 'em_batiments',
+    support: { etat: 6, entreprises: 0, citoyens: 0 }, delay: 12, repeat: 2, metric: 'em_batiments',
     estimate: (S) => F({ co2: src(S, 'batiments') * 0.03, budget: 5e8, jobs: 2500, sat: 0.3 }),
     play: policyLever('Aide à l\'isolation', (p) => { if (p.housing.insulationSubsidy >= 0.8) return false; p.housing.insulationSubsidy = Math.min(0.8, p.housing.insulationSubsidy + 0.3); }) },
   { id: 'norme_re', sector: 'batiment', title: 'Norme de construction bas carbone', desc: '+40 points de logements neufs aux normes écologiques.', mechanism: 'Levier de politique du logement (greenStandard +0,4).',
@@ -413,7 +416,7 @@ export const CARDS: CardDef[] = [
     estimate: (S) => { const cost = TRANSPORT_PROJECTS.bornes.costPerUnit * 50 * S.macro.priceLevel; return F({ cost, co2: src(S, 'transport') * 0.004, jobs: jobsOf(cost, 4) * 0.3 }); },
     play: sector({ type: 'transport:build', kind: 'bornes', size: 50 }) },
   { id: 'bonus_ve', sector: 'transports', title: 'Bonus voiture électrique', desc: '+4 000 € à l\'achat d\'un véhicule électrique.', mechanism: 'Levier de politique des transports (evBonus +4 000 €).',
-    support: { etat: 6, entreprises: 0, citoyens: 0 }, delay: 24, metric: 'em_transport',
+    support: { etat: 6, entreprises: 0, citoyens: 0 }, delay: 24, repeat: 2, metric: 'em_transport',
     estimate: (S) => F({ co2: src(S, 'transport') * 0.04, budget: 4000 * (S.transport?.carSales ?? 2e5) * (S.transport?.evSalesShare ?? 0.3), sat: 0.2 }),
     play: policyLever('Bonus électrique', (p) => { const t = p.transport!; if (t.evBonus >= 15000) return false; t.evBonus = Math.min(15000, t.evBonus + 4000); }) },
   { id: 'malus', sector: 'transports', title: 'Malus thermique', desc: '+3 000 € à l\'achat d\'une voiture thermique neuve.', mechanism: 'Levier de politique des transports (thermalMalus +3 000 €).',
@@ -458,7 +461,7 @@ export const CARDS: CardDef[] = [
     estimate: (S) => { const base = src(S, 'industrie') + src(S, 'transport') + src(S, 'batiments') + src(S, 'autresEnergie'); return F({ co2: base * 0.0015 * 30, budget: -30 * base * 0.8, sat: -0.6, jobs: -300 }); },
     play: policyLever('Taxe carbone', (p) => { if (p.eco.carbon >= 500) return false; p.eco.carbon = Math.min(500, p.eco.carbon + 30); p.eco.industrial = Math.min(500, p.eco.industrial + 30); }) },
   { id: 'aide_verte', sector: 'industrie', title: 'Subvention à l\'industrie propre', desc: '+20 points de prise en charge des investissements industriels propres.', mechanism: 'Levier de politique industrielle (greenSubsidy +0,2).',
-    support: { etat: 7, entreprises: 0, citoyens: 0 }, delay: 18, metric: 'em_industrie',
+    support: { etat: 7, entreprises: 0, citoyens: 0 }, delay: 18, repeat: 2, metric: 'em_industrie',
     estimate: (S) => F({ co2: src(S, 'industrie') * 0.04, budget: 4e8, jobs: 800 }),
     play: policyLever('Subvention industrie propre', (p) => { const i = p.industry!; if (i.greenSubsidy >= 0.5) return false; i.greenSubsidy = Math.min(0.5, i.greenSubsidy + 0.2); }) },
 
@@ -591,7 +594,7 @@ export function playClimateCard(S: GameState, id: string, ctx: CardContext): { o
   if (C.played.length > 60) C.played.splice(0, C.played.length - 60);
   const costTxt = ACTORS.filter((a) => st.cost[a] > 0).map((a) => `${ACTOR_NAMES[a]} −${st.cost[a]}`).join(', ');
   notice(S, 'info', `Plan climat : ${c.title}`, `${r.msg}. Effet attendu : −${nf(st.forecast.co2 / 1000)} kt CO₂/an d'ici ${c.delay} mois environ.${costTxt ? ` Soutien dépensé : ${costTxt}.` : ''}`);
-  feedback(S, `Plan climat — ${c.title} : −${nf(st.forecast.co2 / 1000)} kt CO₂/an attendues, bilan dans ${c.delay + 3} mois`, 10);
+  feedback(S, `Plan climat — ${c.title} : −${nf(st.forecast.co2 / 1000)} kt CO₂/an attendues, bilan dans ${c.delay + 3} mois`, CARD_XP);
   return { ok: true, msg: `${c.title} : ${r.msg}`, uid };
 }
 
@@ -670,7 +673,7 @@ export function climateStep(S: GameState) {
         const delta = p.observed - p.before;
         const txt = `${p.title} : émissions du secteur (moyenne 12 mois) ${mt(p.before)} → ${mt(p.observed)} (${delta <= 0 ? '−' : '+'}${nf(Math.abs(delta) / 1000)} kt/an, toutes causes confondues ; prévision de la mesure : −${nf(p.forecastCo2 / 1000)} kt/an).`;
         notice(S, delta <= 0 ? 'good' : 'info', 'Plan climat : bilan d\'une mesure', txt);
-        feedback(S, `Bilan — ${txt}`, delta < 0 ? 20 : 0);
+        feedback(S, `Bilan — ${txt}`, delta < 0 ? CARD_REPORT_XP : 0);
       }
     }
   }
@@ -707,6 +710,7 @@ function evaluateMilestone(S: GameState, C: ClimateState, m: Milestone, actual: 
     addCapital(C, { etat: 12, entreprises: 8, citoyens: 12 });
     S.satisfaction.trust = clamp(S.satisfaction.trust + 2, 0, 100);
     coalitionMood(S, 0.12);
+    addRecord(S, 0.06 + 0.02 * idx); // bilan : compense l'usure du pouvoir
     bumpGroup(S, 'climat', 0.25);
     m.text = `${head} Objectif atteint : soutien État +12, Entreprises +8, Citoyens +12, confiance +2, popularité en hausse, +${xp} XP.`;
     notice(S, 'good', `Plan climat : jalon ${m.year} atteint`, m.text);
@@ -723,6 +727,7 @@ function evaluateMilestone(S: GameState, C: ClimateState, m: Milestone, actual: 
     addCapital(C, { etat: -4 * k, citoyens: -6 * k });
     S.satisfaction.trust = clamp(S.satisfaction.trust - 1.5 * k, 0, 100);
     coalitionMood(S, -0.05 * k);
+    addRecord(S, -0.02 * k);
     bumpGroup(S, 'climat', -0.25);
     m.text = `${head} Objectif manqué de ${nf(m.gap, 1)} points : soutien Citoyens −${nf(6 * k)}, État −${nf(4 * k)}, confiance −${nf(1.5 * k, 1)}, associations climat mécontentes.`;
     notice(S, 'bad', `Plan climat : jalon ${m.year} manqué`, m.text);

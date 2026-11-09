@@ -14,6 +14,8 @@
 // Module pur et déterministe, appelé par `tick` (engine.ts) : `missionsPre` au début du mois, `missionsStep` à la fin.
 import { clamp } from './economy';
 import { assessNeeds, type Need } from './needs';
+import { addRecord } from './politics';
+import { addRevenue } from './sectors';
 import type { GameState, InfraType, Notice } from './types';
 
 // ---------- Indicateurs suivis ----------
@@ -68,7 +70,7 @@ export const METRICS: Record<MetricId, MetricDef> = {
   margeElec: { label: 'Marge électrique', phrase: 'la marge de sécurité électrique', icon: '⚡', dir: 'max', get: (S) => S.energy?.balance?.margin, fmt: pct(0), scale: () => 0.05, panel: 'energie' },
   securite: { label: 'Sentiment de sécurité', phrase: 'le sentiment de sécurité', icon: '🚓', dir: 'max', get: (S) => S.security?.feeling, fmt: (v) => `${nf(v, 1)}/100`, scale: () => 1.5, panel: 'securite' },
   congestion: { label: 'Congestion', phrase: 'la congestion routière', icon: '🚇', dir: 'min', get: (S) => S.transport?.congestion, fmt: (v) => `indice ${nf(v, 2)}`, scale: () => 0.02, panel: 'transports' },
-  air: { label: 'Qualité de l\'air', phrase: 'la qualité de l\'air', icon: '🍃', dir: 'max', get: (S) => S.environment?.airQuality, fmt: (v) => `${nf(v * 100)}/100`, scale: () => 0.02, panel: 'environnement' },
+  air: { label: 'Qualité de l\'air', phrase: 'la qualité de l\'air', icon: '🍃', dir: 'max', get: (S) => S.environment?.airQuality, fmt: (v) => `${nf(Math.round(v * 1000) / 10, 1).replace(/,0$/, '')}/100`, scale: () => 0.02, panel: 'environnement' },
 };
 export const METRIC_IDS = Object.keys(METRICS) as MetricId[];
 
@@ -138,14 +140,16 @@ export interface MissionsState {
 
 // ---------- Titres et trophées ----------
 export const TITLES: { xp: number; name: string }[] = [
+  // seuils calibrés par les parties simulées (docs/EQUILIBRAGE.md) : un joueur actif est Ministre vers 10 ans et Chef
+  // d'État vers 30 ans ; « visionnaire » récompense une partie exceptionnelle
   { xp: 0, name: 'Maire adjoint' },
-  { xp: 250, name: 'Maire' },
-  { xp: 600, name: 'Préfet' },
-  { xp: 1100, name: 'Ministre délégué' },
-  { xp: 1800, name: 'Ministre' },
-  { xp: 2800, name: 'Premier ministre' },
-  { xp: 4200, name: 'Chef d\'État' },
-  { xp: 6000, name: 'Chef d\'État visionnaire' },
+  { xp: 300, name: 'Maire' },
+  { xp: 900, name: 'Préfet' },
+  { xp: 1700, name: 'Ministre délégué' },
+  { xp: 2800, name: 'Ministre' },
+  { xp: 4400, name: 'Premier ministre' },
+  { xp: 6800, name: 'Chef d\'État' },
+  { xp: 12000, name: 'Chef d\'État visionnaire' },
 ];
 export function titleOf(xp: number) {
   let k = 0;
@@ -208,6 +212,16 @@ export function ensureMissions(S: GameState): MissionsState {
 // ---------- Génération déterministe ----------
 interface Candidate { metric: MetricId; source: Mission['source']; needId?: string; target: number; months: number; difficulty: 1 | 2 | 3 }
 
+/**
+ * Première année : la conjoncture de départ fait déjà baisser spontanément le chômage, le déficit et la dette ; une mission
+ * sur ces indicateurs serait gagnée sans rien faire. Elles ne sont proposées qu'après ce délai, comme les missions d'émissions
+ * (leur moyenne glissante sur 12 mois n'est complète qu'après un an : avant, elle suit la saison).
+ */
+export const MACRO_WARMUP = 12;
+
+/** Arrondi au demi-point (cibles sur 100 : satisfaction, sécurité) : l'arrondi ne doit pas doubler l'effort demandé. */
+const half = (v: number) => Math.round(v * 2) / 2;
+
 /** Mission ciblée tirée d'un besoin de niveau 1–2 (null si le besoin n'a pas d'indicateur mesurable). */
 function fromNeed(S: GameState, n: Need): Candidate | null {
   const d = (n.level === 2 ? 3 : 2) as 2 | 3;
@@ -220,26 +234,26 @@ function fromNeed(S: GameState, n: Need): Candidate | null {
   switch (n.id) {
     case 'ecoles': {
       const occ = val(S, 'ecoles') ?? 1;
-      if (occ > 0.98) return c('ecoles', Math.min(0.95, Math.floor((occ - 0.05) * 100) / 100), months + 3);
+      if (occ > 0.98) return c('ecoles', Math.min(0.96, Math.floor((occ - 0.03) * 100) / 100), 24); // chantier d'école : 18 à 30 mois
       return null; // sous-occupation : pas de mission (démolir n'est pas un objectif en soi)
     }
-    case 'universites': return c('universites', Math.min(0.98, Math.floor((S.education!.occupancyUni - 0.06) * 100) / 100), months + 3);
+    case 'universites': return c('universites', Math.min(0.99, Math.floor((S.education!.occupancyUni - 0.03) * 100) / 100), 24);
     case 'sante': {
       const w = S.health!.waitDays;
-      if (w > 40) return c('attenteSoins', Math.max(30, Math.round(w * 0.85)), months + 3);
-      return c('capaciteSoins', Math.min(1, Math.ceil((S.health!.ratio + 0.03) * 100) / 100), months + 3);
+      if (w > 40) return c('attenteSoins', Math.max(30, Math.round(w * 0.9)), months + 3);
+      return c('capaciteSoins', Math.min(1, Math.ceil((S.health!.ratio + 0.02) * 100) / 100), months + 3);
     }
     case 'logement': {
       const wait = S.housing!.socialWaiting;
-      if (wait > 500) return c('attenteLogement', Math.round(wait * 0.75 / 100) * 100, months + 6);
-      return c('tensionLogement', Math.max(1, Math.floor((S.housing!.tension - 0.03) * 100) / 100), months + 6);
+      if (wait > 500) return c('attenteLogement', Math.round(wait * 0.85 / 100) * 100, months + 6);
+      return c('tensionLogement', Math.max(1, Math.floor((S.housing!.tension - 0.02) * 100) / 100), months + 6);
     }
     case 'electricite': return c('margeElec', 0.08, months + 3);
     case 'verte': return c('renouvelable', Math.min(0.98, Math.ceil((S.energy!.elecRenShare + 0.03) * 100) / 100), 24);
-    case 'securite': return c('securite', Math.min(70, Math.ceil(S.security!.feeling + 4)), months + 3);
-    case 'emploi': return c('chomage', Math.max(0.03, Math.floor((unemployment(S) - 0.008) * 1000) / 1000), months + 6);
-    case 'transports': return c('congestion', Math.max(1, Math.floor((S.transport!.congestion - 0.05) * 100) / 100), months + 6);
-    case 'air': return c('air', Math.min(0.9, Math.ceil((S.environment!.airQuality + 0.04) * 100) / 100), months + 6);
+    case 'securite': return c('securite', Math.min(70, half(S.security!.feeling + 1)), months + 3);
+    case 'emploi': if (S.month < MACRO_WARMUP) return null; return c('chomage', Math.max(0.03, Math.round((unemployment(S) - 0.002) * 1000) / 1000), months + 6);
+    case 'transports': return c('congestion', Math.max(1, Math.floor((S.transport!.congestion - 0.03) * 100) / 100), months + 6);
+    case 'air': return c('air', Math.min(0.9, Math.round((S.environment!.airQuality + 0.008) * 200) / 200), months + 6);
     default: return null;
   }
 }
@@ -253,27 +267,27 @@ function improvements(S: GameState): Candidate[] {
     out.push({ metric, source: 'amelioration', target, months, difficulty });
   };
   const u = unemployment(S);
-  add('chomage', Math.floor((u - 0.008) * 1000) / 1000, 18, 2, u > 0.035);
+  add('chomage', Math.round((u - 0.002) * 1000) / 1000, 18, 2, u > 0.035 && S.month >= MACRO_WARMUP);
   const ren = S.energy?.elecRenShare;
   if (ren !== undefined) add('renouvelable', Math.min(0.98, Math.ceil((ren + 0.03) * 100) / 100), 24, 2, ren < 0.95);
   const sat = S.satisfaction.overall;
-  add('satisfaction', Math.min(90, Math.ceil(sat + 2.5)), 12, 1, sat < 88);
+  add('satisfaction', Math.min(90, half(sat + 0.5)), 18, 1, sat < 88);
   const debt = val(S, 'dette') ?? 0;
-  add('dette', Math.floor((debt - 0.04) * 100) / 100, 24, 2, debt > 0.3);
+  add('dette', Math.round((debt - 0.02) * 200) / 200, 24, 2, debt > 0.3 && S.month >= MACRO_WARMUP);
   const def = val(S, 'deficit') ?? 0;
-  add('deficit', def > 0.03 ? 0.03 : Math.floor((def - 0.008) * 1000) / 1000, 18, 1, def > 0.005);
+  add('deficit', def > 0.035 ? Math.max(0.03, Math.floor((def - 0.01) * 1000) / 1000) : Math.floor((def - 0.005) * 1000) / 1000, 18, 1, def > 0.005 && S.month >= MACRO_WARMUP);
   const em = val(S, 'emissions') ?? 0;
-  add('emissions', em * 0.95, 24, 2, em > 0);
+  add('emissions', em * 0.95, 24, 2, em > 0 && S.month >= MACRO_WARMUP);
   const wait = S.housing?.socialWaiting ?? 0;
   add('attenteLogement', Math.round(wait * 0.8 / 100) * 100, 18, 1, wait > 1000);
   const hw = S.health?.waitDays;
-  if (hw !== undefined) add('attenteSoins', Math.max(20, Math.floor(hw - 3)), 15, 1, hw > 25);
+  if (hw !== undefined) add('attenteSoins', Math.max(20, Math.round(hw - 2)), 15, 1, hw > 25);
   const feel = S.security?.feeling;
-  if (feel !== undefined) add('securite', Math.min(85, Math.ceil(feel + 3)), 15, 1, feel < 82);
+  if (feel !== undefined) add('securite', Math.min(85, half(feel + 1)), 15, 1, feel < 82);
   const pov = S.accounts.poverty;
-  add('pauvrete', Math.floor((pov - 0.008) * 1000) / 1000, 24, 2, pov > 0.05);
+  add('pauvrete', Math.round((pov - 0.002) * 1000) / 1000, 24, 2, pov > 0.05);
   const air = S.environment?.airQuality;
-  if (air !== undefined) add('air', Math.min(0.92, Math.ceil((air + 0.03) * 100) / 100), 18, 1, air < 0.9);
+  if (air !== undefined) add('air', Math.min(0.92, Math.round((air + 0.006) * 200) / 200), 24, 1, air < 0.9);
   return out;
 }
 
@@ -324,6 +338,8 @@ export function refill(S: GameState, M: MissionsState, needs?: Need[]) {
 }
 
 // ---------- Effets ----------
+/** Bilan politique (politics.ts, usure du pouvoir) gagné par point de difficulté d'une mission réussie ; un échec en retire 35 %. */
+export const RECORD_PER_DIFFICULTY = 0.012;
 function coalitionMood(S: GameState, d: number) {
   const P = S.politics;
   if (!P) return;
@@ -354,7 +370,9 @@ function finish(S: GameState, M: MissionsState, m: Mission, ok: boolean) {
     M.xp += m.reward.xp;
     S.satisfaction.trust = clamp(S.satisfaction.trust + m.reward.trust, 0, 100);
     coalitionMood(S, m.reward.mood);
-    S.finance.cash += m.reward.cash;
+    addRecord(S, RECORD_PER_DIFFICULTY * m.difficulty); // bilan : compense l'usure du pouvoir
+    // dotation exceptionnelle comptabilisée en recette « divers » du mois (identité trésorerie = solde + emprunts préservée)
+    addRevenue(S, 'divers', m.reward.cash * 12);
     const txt = `${m.title.replace(/ d'ici .*$/, '')} : objectif atteint (${METRICS[m.metric].fmt(m.value)}). Récompense : ${rewardLabel(m.reward)} (dotation exceptionnelle : crédits de la réserve de précaution débloqués).`;
     notice(S, 'good', `🎯 Mission réussie`, txt);
     feedback(M, S.month, '🎯', `Mission réussie : ${METRICS[m.metric].label} ${METRICS[m.metric].fmt(m.start)} → ${METRICS[m.metric].fmt(m.value)} (+${m.reward.xp} XP)`, 'mission');
@@ -362,6 +380,7 @@ function finish(S: GameState, M: MissionsState, m: Mission, ok: boolean) {
     M.failed++; M.streak = 0;
     S.satisfaction.trust = clamp(S.satisfaction.trust - m.penalty.trust, 0, 100);
     coalitionMood(S, -m.penalty.mood);
+    addRecord(S, -RECORD_PER_DIFFICULTY * 0.35 * m.difficulty);
     notice(S, 'bad', 'Mission échouée', `${m.title} : échéance dépassée (${METRICS[m.metric].fmt(m.value)} pour une cible de ${METRICS[m.metric].fmt(m.target)}). Confiance −${nf(m.penalty.trust, 1)}, popularité en baisse.`);
   }
   M.yearLog.push({ month: S.month, label: `mission « ${METRICS[m.metric].label} » ${ok ? 'réussie' : 'échouée'}`, metrics: ['confiance'] });

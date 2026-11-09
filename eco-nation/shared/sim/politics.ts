@@ -94,6 +94,10 @@ export interface PoliticsState {
   seatsTotal: number;
   leader: PartyId; // parti du joueur
   coalition: PartyId[]; // partis du camp gouvernemental du joueur
+  /** camp avec lequel le joueur se présente aux élections (les partenaires ajoutés en cours de législature n'en font pas partie) */
+  core?: PartyId[];
+  /** bilan : résultats engrangés (missions réussies, jalons climat) qui compensent l'usure du pouvoir (voir governmentWear) */
+  record?: number;
   majority: PartyId[]; // coalition majoritaire au parlement (différente du camp du joueur en cohabitation)
   mode: 'majorite' | 'minorite' | 'cohabitation';
   discipline: number; // 0..1, discipline de vote de la coalition
@@ -117,6 +121,24 @@ export interface PoliticsState {
 export const SEATS_TOTAL = 350;
 export const ELECTION_INTERVAL = 48; // mois
 export const ELECTORAL_THRESHOLD = 0.05;
+/**
+ * Usure du pouvoir : chaque année de mandat retire `WEAR_PER_YEAR` au logarithme du poids électoral du camp du chef du
+ * gouvernement, diminué du bilan (`record` : missions réussies, jalons climat atteints ; les échecs le réduisent), le tout
+ * borné à [0, WEAR_MAX]. Sans résultats, une majorité s'érode et perd les élections au bout de deux ou trois mandats ;
+ * un bilan solide la compense en grande partie.
+ */
+export const WEAR_PER_YEAR = 0.04;
+export const WEAR_MAX = 0.5;
+/** Une coalition battue ne peut s'élargir à un partenaire que si elle garde au moins cette part des sièges. */
+export const ENLARGE_MIN_SHARE = 0.44;
+export function governmentWear(S: Pick<GameState, 'month' | 'politics'>) {
+  return clamp((WEAR_PER_YEAR * Math.max(0, S.month)) / 12 - (S.politics?.record ?? 0), 0, WEAR_MAX);
+}
+/** Ajoute (ou retire) au bilan du gouvernement. */
+export function addRecord(S: GameState, d: number) {
+  const P = S.politics;
+  if (P) P.record = clamp((P.record ?? 0) + d, -0.5, 2);
+}
 
 // ---------- Outils ----------
 const sig = (x: number) => 1 / (1 + Math.exp(-x));
@@ -215,7 +237,10 @@ export function computePopularity(S: GameState): Record<PartyId, number> {
     liberaux: fr('fiscalite') / 30,
     conservateurs: fr('securite') / 30 + fr('stabilite') / 40 + fr('pouvoirAchat') / 60,
   };
-  PARTY_IDS.forEach((p, k) => { raw[k] *= Math.exp(issue[p] + 0.6 * P.parties[k].mood); });
+  // l'usure frappe le camp du chef du gouvernement (les partenaires de législature n'en portent pas la responsabilité)
+  const wear = governmentWear(S);
+  const camp = new Set(P.core ?? P.coalition);
+  PARTY_IDS.forEach((p, k) => { raw[k] *= Math.exp(issue[p] + 0.6 * P.parties[k].mood - (camp.has(p) ? wear : 0)); });
   const tot = raw.reduce((s, v) => s + v, 0) || 1;
   return Object.fromEntries(PARTY_IDS.map((p, k) => [p, raw[k] / tot])) as Record<PartyId, number>;
 }
@@ -234,6 +259,7 @@ export function initPolitics(S: GameState): PoliticsState {
   const seats = allocateSeats(shares);
   P.parties.forEach((p) => { p.popularity = shares[p.id]; p.seats = seats[p.id]; });
   P.coalition = formCoalition(seats, P.leader);
+  P.core = [...P.coalition];
   P.majority = [...P.coalition];
   P.mode = seatsOf(P, P.coalition) > SEATS_TOTAL / 2 ? 'majorite' : 'minorite';
   P.discipline = disciplineOf(S, P);
@@ -718,6 +744,11 @@ export function holdElection(S: GameState, anticipated = S.month - S.politics!.l
   const seats = allocateSeats(shares, P.seatsTotal);
   P.parties.forEach((p) => { p.seats = seats[p.id]; p.popularity = shares[p.id]; });
   const half = P.seatsTotal / 2;
+  // les accords de coalition valent pour une législature : on se présente avec son camp d'origine, les partenaires
+  // ajoutés en cours de route (ou lors de l'élection précédente) doivent être reconquis
+  P.core = (P.core ?? P.coalition).filter((p) => PARTY_IDS.includes(p));
+  if (!P.core.includes(P.leader)) P.core.unshift(P.leader);
+  P.coalition = [...P.core];
   let coalSeats = seatsOf(P, P.coalition);
   let outcome: ElectionResult['outcome'];
   let text: string;
@@ -729,11 +760,12 @@ export function holdElection(S: GameState, anticipated = S.month - S.politics!.l
     P.electionsWon++;
     text = `La coalition gouvernementale conserve la majorité avec ${coalSeats} sièges sur ${P.seatsTotal}.`;
   } else {
-    // règle 1 : élargissement à un parti compatible (distance idéologique ≤ 1,25 au parti du joueur, moins de sièges que la coalition)
+    // règle 1 : élargissement à un parti compatible (distance idéologique ≤ 1,25 au parti du joueur, moins de sièges que la
+    // coalition, et coalition sortante encore proche de la majorité : au moins ENLARGE_MIN_SHARE des sièges)
     const cand = PARTY_IDS.filter((p) => !P.coalition.includes(p) && seats[p] > 0)
       .map((p) => ({ p, d: dist(partyDef(P.leader).pos, partyDef(p).pos) }))
       // un parti plus fort que toute la coalition sortante gouvernerait lui-même : il ne la rejoint pas
-      .filter((o) => o.d <= 1.25 && seats[o.p] < coalSeats && coalSeats + seats[o.p] > half)
+      .filter((o) => o.d <= 1.25 && seats[o.p] < coalSeats && coalSeats + seats[o.p] > half && coalSeats >= ENLARGE_MIN_SHARE * P.seatsTotal)
       .sort((a, b) => a.d - b.d);
     if (cand.length) {
       P.coalition.push(cand[0].p);
@@ -857,6 +889,7 @@ export function applyPoliticalAction(S: GameState, a: PoliticalAction): { ok: bo
     } else {
       if (!P.coalition.includes(a.party)) return { ok: false, msg: 'Ce parti n\'est pas dans la coalition' };
       P.coalition = P.coalition.filter((p) => p !== a.party);
+      if (P.core) P.core = P.core.filter((p) => p !== a.party);
       pushNote(S, 'warn', 'Rupture de coalition', `${partyDef(a.party).name} quitte la coalition gouvernementale.`);
     }
     if (P.mode !== 'cohabitation') {

@@ -1,6 +1,6 @@
 // Besoins du pays : tableau de bord central du gouvernement. Chaque carte montre un besoin (écoles, soins,
 // logement, électricité, énergie verte, sécurité, emploi, transports, air), sa gravité, le quartier concerné et des
-// actions en un clic (programme de construction, démolition, centrale à construire ou fermer). En dessous :
+// actions en un clic (recrutement, programme de construction, démolition, centrale à construire ou fermer). En dessous :
 // l'avancement de tous les chantiers et programmes en cours.
 import { useMemo } from 'react';
 import type { GameState } from '../../../shared/sim/types';
@@ -29,6 +29,7 @@ export function useNeeds(): Need[] {
 function run(a: NeedAction, set: (p: { panel: Panel }) => void) {
   if (a.kind === 'program') return serviceAction({ type: 'programme', building: a.building, cityId: a.cityId, count: a.count });
   if (a.kind === 'demolish') { if (confirm(`${a.label} ?`)) return serviceAction({ type: 'demolir', infraId: a.infraId }); return; }
+  if (a.kind === 'recruit') return serviceAction({ type: 'recruter', service: a.service, role: a.role, count: a.count });
   if (a.kind === 'energyBuild') return gameAction({ type: 'energyBuild', tech: a.tech, mw: a.mw });
   if (a.kind === 'energyClose') { if (confirm(`${a.label} ?`)) return gameAction({ type: 'energyClose', tech: a.tech, mw: a.mw }); return; }
   set({ panel: a.panel as Panel });
