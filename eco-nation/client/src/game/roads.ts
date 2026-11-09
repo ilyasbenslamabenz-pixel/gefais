@@ -1257,7 +1257,7 @@ function createFurniture(scene: Scene, grid: Grid, country: CountryDef, net: Net
         const elevated = o.y - surfaceY(grid, o.x, o.z) > 0.004;
         if (!onBridge && u < 0.18) {
           // routes de campagne : rangées de peupliers par tronçons (modèles de la bibliothèque seulement)
-          if (libTrees && u < 0.12 && d < RPOP && !elevated && hash(pi, Math.floor(s / 0.25)) > 0.45) {
+          if (libTrees && d < RPOP && o.y - surfaceY(grid, o.x, o.z) < 0.012 && hash(pi, Math.floor(s / 0.25)) > 0.45) {
             for (const f of [0, 0.34, 0.67]) {
               const o2 = sampleAt(p, s + f * step, tmp);
               for (const side of [1, -1]) {
@@ -1347,13 +1347,22 @@ function createFurniture(scene: Scene, grid: Grid, country: CountryDef, net: Net
           for (const side of [1, -1]) {
             const lx = bx + nx * (QUAY_HALF + 0.003) * side, lz = bz + nz * (QUAY_HALF + 0.003) * side;
             const d = dist(lx, lz);
-            if (d > R || urban(lx, lz) < 0.15) continue;
+            if (d > R) continue;
+            if (urban(lx, lz) < 0.15) {
+              // berges de campagne : rideaux de peupliers (bibliothèque seulement)
+              if (libTrees && d < RPOP && hash(i, side) > 0.3) {
+                const tx = bx + nx * 0.212 * side, tz = bz + nz * 0.212 * side;
+                if (grid.sample(tx, tz) >= 0.027) trees.push({ x: tx, y: surfaceY(grid, tx, tz), z: tz, a: hash(tx, tz) * 6.28, s: 0.85 + hash(tz, tx) * 0.3, d: d + 0.2, k: 3 });
+              }
+              continue;
+            }
             if (f === 0 || f === 0.5) lamps.push({ x: lx, y: yq, z: lz, a: side > 0 ? ang : ang + Math.PI, s: 0.75, d: d - 0.3, k: 1 });
             for (const dd of [0.012, 0.024, 0.045]) {
               const tx = bx + nx * (0.2 + dd) * side + (hash(bx, dd) - 0.5) * 0.004, tz = bz + nz * (0.2 + dd) * side + (hash(bz, dd) - 0.5) * 0.004;
               if (dd > 0.03 && hash(tx, tz) < 0.5) continue;
               if (occAt(net, tx, tz) & 1 && dd > 0.03) continue;
-              trees.push({ x: tx, y: Math.max(yq, surfaceY(grid, tx, tz) + 0.0012), z: tz, a: hash(tx, tz) * 6.28, s: 1.0 + hash(tz, tx) * 0.45, d: d - 0.3 });
+              // platanes en bord de quai, arbres de parc sur la terrasse arrière
+              trees.push({ x: tx, y: Math.max(yq, surfaceY(grid, tx, tz) + 0.0012), z: tz, a: hash(tx, tz) * 6.28, s: 1.0 + hash(tz, tx) * 0.45, d: d - 0.3, k: dd > 0.03 ? 1 : 0 });
             }
           }
         }
@@ -1373,7 +1382,8 @@ function createFurniture(scene: Scene, grid: Grid, country: CountryDef, net: Net
           const h1 = hash(gx, gz), h2 = hash(gz, gx);
           const x = gx + (h1 - 0.5) * st * 0.9, z = gz + (h2 - 0.5) * st * 0.9;
           const d = dist(x, z);
-          if (d > RP || parkMask(country.seed, x, z) < 0.6 || urban(x, z) < 0.1) continue;
+          // même seuil que cities.ts (pas de bâtiment au-delà de 0,5)
+          if (d > RP || parkMask(country.seed, x, z) < 0.5 || urban(x, z) < 0.1) continue;
           if (nearGrid(x, z) || occAt(net, x, z) & 1 || grid.sample(x, z) < 0.027) continue;
           trees.push({ x, y: surfaceY(grid, x, z), z, a: h1 * 6.28, s: 0.8 + h2 * 0.45, d: d + 0.05, k: h1 < 0.4 ? 2 : 1 });
         }
