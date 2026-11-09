@@ -29,6 +29,7 @@ import { ConstructionPanel } from './Construction';
 import { BesoinsPanel, useNeeds } from './Besoins';
 import { InfraActions } from './InfraActions';
 import { BUILDINGS } from '../../../shared/sim/construction';
+import { MissionsBar, MissionsPanel, YearReviewWindow } from './Missions'; // --- missions et trophées ---
 
 const SEASON = ['❄️ Hiver', '❄️ Hiver', '🌱 Printemps', '🌱 Printemps', '🌱 Printemps', '☀️ Été', '☀️ Été', '☀️ Été', '🍂 Automne', '🍂 Automne', '🍂 Automne', '❄️ Hiver'];
 
@@ -78,6 +79,7 @@ export function TopBar() {
 
 const MINISTRIES: { id: Panel; icon: string; label: string }[] = [
   { id: 'besoins', icon: '🧭', label: 'Besoins du pays' },
+  { id: 'missions', icon: '🎯', label: 'Missions & trophées' }, // --- missions ---
   { id: 'finances', icon: '🏦', label: 'Finances' },
   { id: 'fiscalite', icon: '🧾', label: 'Fiscalité' },
   { id: 'economie', icon: '📈', label: 'Économie' },
@@ -123,6 +125,10 @@ export function Dock() {
     <nav className="dock">
       <button className={`dock-needs ${panel === 'besoins' ? 'on' : ''}`} onClick={() => toggle('besoins')} title="Ce qui manque au pays et quoi construire ou démolir">
         <span>🧭</span><em>Besoins</em>{urgentNeeds > 0 && <i className="badge">{urgentNeeds}</i>}
+      </button>
+      {/* --- missions --- */}
+      <button className={`dock-missions ${panel === 'missions' ? 'on' : ''}`} onClick={() => toggle('missions')} title="Missions en cours, titre, trophées et historique">
+        <span>🎯</span><em>Missions</em>
       </button>
       {POLES.map((pole) => {
         const active = pole.items.includes(panel);
@@ -431,15 +437,16 @@ export function Panels() {
   return <><PanelContent /><GameOverlays /></>;
 }
 
-/** Superpositions : fenêtre de décision des événements en attente. */
+/** Superpositions : fenêtre de décision des événements en attente ; bandeau des missions et bilan annuel. */
 export function GameOverlays() {
-  return <EventOverlay />;
+  return <><EventOverlay /><MissionsBar /><YearReviewWindow /></>;
 }
 
 function PanelContent() {
   const panel = useStore((s) => s.panel);
   switch (panel) {
     case 'besoins': return <BesoinsPanel />;
+    case 'missions': return <MissionsPanel />; // --- missions ---
     case 'finances': return <FinancesPanel />;
     case 'fiscalite': return <FiscalitePanel />;
     case 'travail': return <TravailPanel />;

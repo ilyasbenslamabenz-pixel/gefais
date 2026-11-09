@@ -8,7 +8,8 @@ export type Panel = null | 'besoins' | 'finances' | 'fiscalite' | 'travail' | 'e
   | 'transports' | 'industrie' | 'agriculture' | 'dechets'
 
   // --- modules services publics/recherche/construction ---
-  | 'sante' | 'education' | 'logement' | 'securite' | 'recherche' | 'construction';
+  | 'sante' | 'education' | 'logement' | 'securite' | 'recherche' | 'construction'
+  | 'missions'; // --- missions et trophées (ui/Missions.tsx) ---
 export type Quality = 'low' | 'medium' | 'high';
 export type Selection = null | { kind: 'city'; id: number } | { kind: 'infra'; id: number };
 
