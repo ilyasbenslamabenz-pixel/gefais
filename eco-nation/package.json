@@ -12,7 +12,8 @@
     "start": "NODE_ENV=production tsx server/src/index.ts",
     "test": "vitest run",
     "calibrate": "tsx tests/calibrate.ts",
-    "typecheck": "tsc -p client/tsconfig.json --noEmit && tsc -p server/tsconfig.json --noEmit"
+    "typecheck": "tsc -p client/tsconfig.json --noEmit && tsc -p server/tsconfig.json --noEmit",
+    "playtest": "tsx tests/playtest.ts"
   },
   "engines": {
     "node": ">=22.13"
