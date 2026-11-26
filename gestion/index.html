@@ -1327,10 +1327,27 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
     <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:28px 24px;backdrop-filter:blur(20px);box-shadow:0 24px 64px rgba(0,0,0,0.4);">
 
       <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;">Espace de gestion</div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:24px;">Accès réservé aux membres du bureau</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:24px;">Connectez-vous avec votre compte personnel</div>
 
       <div style="text-align:left;margin-bottom:8px;">
-        <label style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:1.5px;text-transform:uppercase;">Mot de passe</label>
+        <label for="login-email" style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:1.5px;text-transform:uppercase;">Adresse e-mail</label>
+      </div>
+      <div style="margin-bottom:16px;">
+        <input
+          type="email"
+          id="login-email"
+          autocomplete="username"
+          autocorrect="off"
+          autocapitalize="none"
+          spellcheck="false"
+          inputmode="email"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('login-input').focus();}"
+          style="width:100%;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);color:#fff;padding:15px 18px;border-radius:14px;font-size:16px;font-family:-apple-system,BlinkMacSystemFont,'Plus Jakarta Sans',sans-serif;outline:none;box-sizing:border-box;-webkit-appearance:none;transition:border-color 0.2s,background 0.2s;"
+          onfocus="this.style.borderColor='rgba(255,59,48,0.6)';this.style.background='rgba(255,59,48,0.06)'"
+          onblur="this.style.borderColor='rgba(255,255,255,0.15)';this.style.background='rgba(255,255,255,0.08)'">
+      </div>
+      <div style="text-align:left;margin-bottom:8px;">
+        <label for="login-input" style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:1.5px;text-transform:uppercase;">Mot de passe</label>
       </div>
 
       <div style="position:relative;margin-bottom:16px;">
@@ -1357,9 +1374,9 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
         Accéder →
       </button>
 
-      <div id="login-error" style="display:none;margin-top:14px;background:rgba(255,59,48,0.1);border:1px solid rgba(255,59,48,0.25);border-radius:10px;padding:10px 14px;color:#ff6b6b;font-size:13px;font-weight:600;">
-        ⚠️ Mot de passe incorrect
-      </div>
+      <button type="button" onclick="motDePasseOublie()" style="margin-top:14px;background:none;border:none;color:rgba(255,255,255,0.55);font-size:13px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;font-family:inherit;">Mot de passe oublié ?</button>
+
+      <div id="login-error" role="alert" style="display:none;margin-top:14px;background:rgba(255,59,48,0.1);border:1px solid rgba(255,59,48,0.25);border-radius:10px;padding:10px 14px;color:#ff6b6b;font-size:13px;font-weight:600;text-align:left;line-height:1.45;"></div>
     </div>
 
     <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2);">GE-FAIS · v3.1 · 2025–2026</div>
@@ -1405,7 +1422,7 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
           <circle cx="11.64" cy="6.04" r="2.84" class="logo-dot"/>
         </svg>
         </div>
-        <div><h1>GE-FAIS</h1><span>Espace de gestion</span></div>
+        <div><h1>GE-FAIS</h1><span id="user-label">Espace de gestion</span></div>
       </div>
     </div>
     <div class="nav">
@@ -2272,35 +2289,88 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 </div>
 
 <script>
-const MOT_DE_PASSE="gefais2025";
-function checkLogin(){
+// ── CONNEXION ────────────────────────────────────────────────────
+// Un compte Firebase par membre du comité. Le mot de passe est vérifié par
+// Google, pas dans cette page ; les règles Firestore n'ouvrent les données
+// qu'aux adresses du comité.
+let _authUser=null;
+function _authErrMsg(e){
+  const c=(e&&e.code)||'';
+  if(c==='auth/invalid-email')return'Adresse e-mail invalide.';
+  if(c==='auth/too-many-requests')return'Trop de tentatives. Réessayez dans quelques minutes.';
+  if(c==='auth/network-request-failed')return'Pas de connexion internet. Vérifiez votre réseau puis réessayez.';
+  if(c==='auth/user-disabled')return'Ce compte a été désactivé.';
+  return'Adresse e-mail ou mot de passe incorrect.';
+}
+function _loginMsg(text,kind){
+  const el=document.getElementById('login-error');if(!el)return;
+  el.textContent=text||'';el.style.display=text?'block':'none';
+  const info=kind==='info';
+  el.style.background=info?'rgba(255,255,255,0.08)':'rgba(255,59,48,0.1)';
+  el.style.borderColor=info?'rgba(255,255,255,0.18)':'rgba(255,59,48,0.25)';
+  el.style.color=info?'rgba(255,255,255,0.85)':'#ff6b6b';
+}
+function _nomUtilisateur(){
+  if(!_authUser)return'';
+  const mail=(_authUser.email||'').toLowerCase();
+  const m=(Array.isArray(membres)?membres:[]).find(x=>(x.email||'').trim().toLowerCase()===mail);
+  return m?`${m.prenom||''} ${m.nom||''}`.trim():_authUser.email;
+}
+function _majUtilisateurAffiche(){
+  const el=document.getElementById('user-label');
+  if(el&&_authUser){el.textContent=_nomUtilisateur();el.title=_authUser.email||'';}
+}
+function _enterApp(user){
+  _authUser=user;
+  const ls=document.getElementById('login-screen'),app=document.getElementById('app');
+  if(ls)ls.style.display='none';
+  if(app){app.style.display='flex';app.style.opacity='1';}
+  _majUtilisateurAffiche();
+  initApp();
+}
+async function checkLogin(){
+  const email=(document.getElementById('login-email')?.value||'').trim();
   const input=document.getElementById('login-input');
-  const err=document.getElementById('login-error');
-  if(!input)return;
-  const val=input.value.trim();
-  if(val===MOT_DE_PASSE){
-    sessionStorage.setItem('gef_auth','ok');
-    const loginScreen=document.getElementById('login-screen');
-    const appEl=document.getElementById('app');
-    const btn=document.getElementById('login-btn')||document.querySelector('.login-btn');
-    if(btn){btn.style.background='var(--green)';btn.textContent='✓';}
-    setTimeout(()=>{
-      if(loginScreen)loginScreen.style.display='none';
-      if(appEl){appEl.style.display='flex';appEl.style.opacity='1';}
-      initApp();
-    },400);
-  } else {
-    if(err)err.style.display='flex';
-    input.value='';
-    input.style.borderColor='rgba(255,59,48,0.8)';
-    input.style.animation='loginShake 0.4s ease';
-    setTimeout(()=>{input.style.animation='';input.style.borderColor='';},500);
+  const pwd=input?input.value:'';
+  const btn=document.getElementById('login-btn');
+  if(!email||!pwd){_loginMsg('Saisissez votre adresse e-mail et votre mot de passe.');return;}
+  _loginMsg('');
+  if(btn){btn.disabled=true;btn.textContent='Connexion…';}
+  try{
+    await _firebasePret();
+    await firebase.auth().signInWithEmailAndPassword(email,pwd);
+    // La suite est gérée par onAuthStateChanged.
+  }catch(e){
+    console.warn('Connexion refusée :',e&&e.code);
+    _loginMsg(e&&e.code?_authErrMsg(e):'Impossible de joindre le serveur. Vérifiez votre connexion internet.');
+    if(input){
+      input.value='';
+      input.style.borderColor='rgba(255,59,48,0.8)';
+      input.style.animation='loginShake 0.4s ease';
+      setTimeout(()=>{input.style.animation='';input.style.borderColor='';},500);
+    }
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Accéder →';}
   }
 }
-function logout(){sessionStorage.removeItem('gef_auth');location.reload();}
-if(sessionStorage.getItem('gef_auth')==='ok'){
-  document.getElementById('login-screen').style.display='none';
-  document.getElementById('app').style.display='flex';
+async function motDePasseOublie(){
+  const email=(document.getElementById('login-email')?.value||'').trim();
+  if(!email){_loginMsg('Saisissez d\'abord votre adresse e-mail ci-dessus, puis touchez « Mot de passe oublié ».','info');document.getElementById('login-email')?.focus();return;}
+  try{
+    await _firebasePret();
+    await firebase.auth().sendPasswordResetEmail(email);
+  }catch(e){
+    const c=e&&e.code;
+    if(c==='auth/invalid-email'||c==='auth/network-request-failed'||c==='auth/too-many-requests'||!c){_loginMsg(c?_authErrMsg(e):'Impossible de joindre le serveur.');return;}
+  }
+  // Même message que le compte existe ou non : on ne révèle pas qui a un compte.
+  _loginMsg('Si cette adresse correspond à un compte du comité, un e-mail vient de lui être envoyé pour choisir un nouveau mot de passe (pensez aux indésirables).','info');
+}
+async function logout(){
+  try{if(typeof firebase!=='undefined'&&firebase.auth)await firebase.auth().signOut();}catch(e){}
+  // Les données des membres ne restent pas sur l'appareil après la déconnexion.
+  try{Object.keys(localStorage).filter(k=>k.startsWith('gef_')&&k!=='gef_dark_mode').forEach(k=>localStorage.removeItem(k));}catch(e){}
+  location.reload();
 }
 
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('mobile-open');document.getElementById('sidebar-overlay').classList.toggle('open');}
@@ -2372,27 +2442,8 @@ function navTo(name,title){
 }
 
 // ── DONNÉES ──────────────────────────────────────────────────────
-const DEFAULT_MEMBRES=[
-  {id:1,nom:"Pasche",prenom:"Louka",role:"Président",type:"Actif",email:"",tel:"+41 79 111 11 11",presence_attendue:0.8,notes:""},
-  {id:2,nom:"Janezic",prenom:"Sana",role:"Vice + Trésorière",type:"Actif",email:"",tel:"",presence_attendue:0.8,notes:""},
-  {id:3,nom:"Benslama",prenom:"Ilyas",role:"Secrétaire",type:"Actif",email:"",tel:"",presence_attendue:0.8,notes:""},
-  {id:4,nom:"Alonso",prenom:"Michel",role:"",type:"Actif Suisse",email:"",tel:"",presence_attendue:0.4,notes:""},
-  {id:5,nom:"Alves",prenom:"José",role:"",type:"Actif Suisse",email:"",tel:"",presence_attendue:0.4,notes:""},
-  {id:6,nom:"Antich",prenom:"Victoria",role:"",type:"Actif Suisse",email:"",tel:"",presence_attendue:0.4,notes:""},
-  {id:7,nom:"Antich",prenom:"Sara",role:"",type:"Actif Suisse",email:"",tel:"",presence_attendue:0.4,notes:""},
-  {id:8,nom:"Besnard",prenom:"Lou",role:"",type:"Passif",email:"",tel:"",presence_attendue:0,notes:""},
-  {id:9,nom:"Bonguardo",prenom:"Eva",role:"",type:"Actif Suisse",email:"",tel:"",presence_attendue:0.4,notes:""},
-  {id:10,nom:"Coovi",prenom:"Cédric",role:"",type:"Actif Suisse",email:"",tel:"",presence_attendue:0.4,notes:""},
-  {id:11,nom:"Descloux",prenom:"Aurélie",role:"",type:"Actif",email:"",tel:"",presence_attendue:0.8,notes:""},
-  {id:12,nom:"Diop",prenom:"Adama",role:"",type:"Actif Suisse",email:"",tel:"",presence_attendue:0.4,notes:""},
-  {id:13,nom:"Diop",prenom:"Awa",role:"Marketing",type:"Passif",email:"",tel:"",presence_attendue:0,notes:""},
-  {id:14,nom:"Fernandez",prenom:"Belen",role:"",type:"Passif",email:"",tel:"",presence_attendue:0,notes:""},
-  {id:15,nom:"Correia Ferreira",prenom:"Diogo",role:"",type:"Passif",email:"",tel:"",presence_attendue:0,notes:""},
-  {id:16,nom:"Alexandrino",prenom:"Dylan",role:"",type:"",email:"",tel:"",presence_attendue:0,notes:""},
-  {id:17,nom:"Babey",prenom:"Bastien",role:"",type:"",email:"",tel:"",presence_attendue:0,notes:""},
-  {id:18,nom:"Canto",prenom:"Laeticia",role:"",type:"",email:"",tel:"",presence_attendue:0,notes:""},
-  {id:19,nom:"Gennaoui",prenom:"Dulcia",role:"",type:"",email:"",tel:"",presence_attendue:0,notes:""},
-];
+// Aucune donnée personnelle dans le code public : les membres sont chargés depuis la base.
+const DEFAULT_MEMBRES=[];
 const DEFAULT_EVENTS=[
   {id:1,date:"2025-12-04",type:"Réunion",nom:"Réunion 1 — Assemblée générale",commentaires:""},
   {id:2,date:"2026-02-15",type:"Maraude",nom:"Maraude 1",commentaires:""},
@@ -2401,13 +2452,8 @@ const DEFAULT_EVENTS=[
   {id:5,date:"2026-03-15",type:"Maraude",nom:"Maraude 3",commentaires:""},
   {id:6,date:"2026-03-29",type:"Maraude",nom:"Maraude 4",commentaires:""},
 ];
-const DEFAULT_PRESENCES={"1_1":true,"1_2":true,"1_3":true,"1_4":true,"1_5":true,"1_6":true,"2_1":true,"2_2":true,"2_3":true,"2_4":true,"2_6":true,"3_1":true,"3_2":true,"3_3":true,"3_4":true,"3_5":true,"3_6":true,"4_1":true,"4_6":true,"5_1":true,"5_4":true,"5_6":true,"6_1":true,"6_2":true,"6_3":true,"6_4":true,"7_1":true,"7_3":true,"7_4":true,"8_1":true,"8_4":true,"9_1":true,"9_3":true,"9_4":true,"10_2":true,"10_4":true,"10_5":true,"10_6":true,"11_2":true,"11_3":true,"11_4":true,"11_5":true,"11_6":true,"12_1":true,"12_2":true,"12_3":true,"12_4":true,"12_6":true,"13_1":true,"13_4":true,"14_4":true,"15_4":true,"16_1":true,"16_6":true,"17_1":true,"18_1":true,"19_1":true};
-const DEFAULT_COMPTA=[
-  {id:1,date:"2025-12-04",type:"recette",categorie:"Cotisation",description:"Cotisations membres actifs",montant:240},
-  {id:2,date:"2025-12-04",type:"recette",categorie:"Don",description:"Don anonyme",montant:50},
-  {id:3,date:"2026-02-15",type:"depense",categorie:"Matériel",description:"Matériel maraude",montant:85.50},
-  {id:4,date:"2026-03-01",type:"depense",categorie:"Matériel",description:"Nourriture maraude 2",montant:62},
-];
+const DEFAULT_PRESENCES={};
+const DEFAULT_COMPTA=[];
 const DEFAULT_MESSAGES=[];
 
 function buildDefaultCotisations(m){return m.map(x=>({membreId:x.id,annee:2026,montant:50,statut:'impaye',datePaiement:'',notes:''}));}
@@ -2429,34 +2475,27 @@ const firebaseConfig={apiKey:"AIzaSyD7DeDaEEPIpbeR9fCfDBXVPzYeyFm04Ns",authDomai
 let db=null;
 let _firebaseReady=false;
 
-function _loadFirebase(cb){
-  if(typeof firebase!=='undefined'&&firebase.apps){
-    // Déjà chargé
-    if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    db=firebase.firestore();
-    _firebaseReady=true;
-    cb&&cb();
-    return;
-  }
-  // Charger dynamiquement — iOS Safari compatible
-  function loadScript(src,next){
-    const s=document.createElement('script');
-    s.src=src;s.async=true;
-    s.onload=()=>next&&next();
-    s.onerror=()=>{console.warn('Erreur chargement:',src);};
+let _fbPromise=null;
+function _firebasePret(){
+  if(_fbPromise)return _fbPromise;
+  const base='https://www.gstatic.com/firebasejs/10.12.2/';
+  const load=src=>new Promise((res,rej)=>{
+    const s=document.createElement('script');s.src=base+src;s.async=true;
+    s.onload=res;s.onerror=()=>rej(new Error('Chargement impossible : '+src));
     document.head.appendChild(s);
-  }
-  loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js',()=>{
-    loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js',()=>{
-      try{
-        if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        db=firebase.firestore();
-        _firebaseReady=true;
-        console.log('Firebase connecté ✅');
-        cb&&cb();
-      }catch(e){console.warn('Firebase init:',e);}
-    });
   });
+  const deja=typeof firebase!=='undefined'&&firebase.apps;
+  _fbPromise=(deja?Promise.resolve():load('firebase-app-compat.js').then(()=>Promise.all([load('firebase-auth-compat.js'),load('firebase-firestore-compat.js')])))
+    .then(()=>{
+      if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+      db=firebase.firestore();
+      _firebaseReady=true;
+    })
+    .catch(e=>{_fbPromise=null;throw e;});
+  return _fbPromise;
+}
+function _loadFirebase(cb){
+  _firebasePret().then(()=>cb&&cb()).catch(e=>console.warn('Firebase init:',e));
 }
 
 function _showSaveStatus(state,text){
@@ -2505,7 +2544,7 @@ function save(key,value){
     showToast('La sauvegarde en ligne a échoué : les données sont seulement sur cet appareil','⚠️','warn');
   };
   try{
-    db.collection('gef_data').doc(key).set({value:value}).then(()=>{
+    db.collection('gef_data').doc(key).set({value:value,majPar:_authUser?_authUser.email:null,majLe:new Date().toISOString()}).then(()=>{
       _showSaveStatus('saved','Sauvegardé');
       const p=document.querySelector('.page.active')?.id?.replace('page-','');
       const map={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport,dons:renderDons,demandes:renderDemandes};
@@ -2659,6 +2698,7 @@ async function initApp(){
       cotisations&&lsSet('gef_cotisations',cotisations);
       if(isNew){keys.forEach((k,i)=>{if(defaults[i])db.collection('gef_data').doc(k).set({value:defaults[i]}).catch(()=>{});});}
       setupListeners();
+      _majUtilisateurAffiche();
       _loadDemandesBadge();
       renderDashboard(); renderMembres();
       _populateCotisAnneeSel(); _checkCotisationsAnnee();
@@ -5621,14 +5661,13 @@ document.addEventListener('keydown', e => {
   if((e.ctrlKey||e.metaKey) && e.key === 'k'){e.preventDefault();openGlobalSearch();}
   if(e.key==='Escape'){document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));closeFAB();}
 });
-function _tryInitApp(attempt){
-  // Charger Firebase d'abord, puis lancer l'app
-  if(sessionStorage.getItem('gef_auth')==='ok'){
-    _loadFirebase(()=>{
-      // Firebase prêt — initApp gérera le reste
+function _tryInitApp(){
+  _firebasePret().then(()=>{
+    firebase.auth().onAuthStateChanged(user=>{
+      if(user){if(!_authUser)_enterApp(user);}
+      else if(_authUser){location.reload();} // session terminée
     });
-    initApp();
-  }
+  }).catch(()=>_loginMsg('Impossible de joindre le serveur. Vérifiez votre connexion internet puis rechargez la page.'));
 }
 // Lancer immédiatement et aussi attendre DOMContentLoaded
 if(document.readyState==='loading'){
