@@ -4,365 +4,937 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
-<meta name="description" content="GE-FAIS, association genevoise : maraudes, rencontres, sorties et formations. Rejoignez-nous.">
+<meta name="description" content="GE-FAIS, association genevoise à but non lucratif : des bénévoles qui vont en maraude à la rencontre des personnes qui vivent dans la rue. Adhésion 50 CHF par an.">
 <meta name="theme-color" content="#141414">
 <meta property="og:title" content="GE-FAIS — Association genevoise">
-<meta property="og:description" content="Maraudes, rencontres, sorties : GE-FAIS réunit celles et ceux qui veulent s'engager concrètement à Genève.">
-<meta property="og:image" content="images/geneve-jet-deau.webp">
+<meta property="og:description" content="Des bénévoles qui vont, en maraude, à la rencontre des personnes qui vivent dans la rue à Genève.">
+<meta property="og:image" content="https://www.gefais.ch/images/geneve-jet-deau.webp">
 <title>GE-FAIS — Association genevoise</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%230e0e18'/%3E%3Ccircle cx='20' cy='3' r='3.5' fill='%23fff' opacity='.9'/%3E%3Ccircle cx='28' cy='5' r='3' fill='%23fff' opacity='.85'/%3E%3Ccircle cx='34' cy='11' r='2.5' fill='%23fff' opacity='.8'/%3E%3Ccircle cx='37' cy='19' r='2' fill='%23fff' opacity='.7'/%3E%3Ccircle cx='34' cy='27' r='2' fill='%23fff' opacity='.7'/%3E%3Ccircle cx='28' cy='33' r='2.5' fill='%23fff' opacity='.8'/%3E%3Ccircle cx='20' cy='37' r='3' fill='%23fff' opacity='.85'/%3E%3Ccircle cx='12' cy='33' r='2.5' fill='%23fff' opacity='.8'/%3E%3Ccircle cx='6' cy='27' r='2' fill='%23fff' opacity='.7'/%3E%3Ccircle cx='6' cy='19' r='3.5' fill='%23ff3b30'/%3E%3Ccircle cx='9' cy='11' r='3' fill='%23ffd60a'/%3E%3Ccircle cx='14' cy='5' r='2.5' fill='%23fff' opacity='.9'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%23fff'/%3E%3Ccircle cx='24.25' cy='6.74' r='3.78' fill='%23131313'/%3E%3Ccircle cx='33.16' cy='9.05' r='3.40' fill='%23131313'/%3E%3Ccircle cx='40.00' cy='15.18' r='2.92' fill='%23131313'/%3E%3Ccircle cx='42.77' cy='23.92' r='2.86' fill='%23131313'/%3E%3Ccircle cx='40.51' cy='32.99' r='2.75' fill='%23131313'/%3E%3Ccircle cx='33.66' cy='39.37' r='2.48' fill='%23131313'/%3E%3Ccircle cx='24.50' cy='42.35' r='2.38' fill='%23131313'/%3E%3Ccircle cx='15.68' cy='40.17' r='2.48' fill='%23131313'/%3E%3Ccircle cx='9.05' cy='33.91' r='3.62' fill='%23131313'/%3E%3Ccircle cx='6.53' cy='24.84' r='4.54' fill='%23fdc915'/%3E%3Ccircle cx='8.63' cy='15.89' r='4.48' fill='%23ee1e27'/%3E%3Ccircle cx='15.22' cy='9.34' r='3.83' fill='%23131313'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <style>
-  *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{margin:0;background:#fff;color:#141414;font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;}
-  h1,h2,h3,.ar{font-family:'Archivo',-apple-system,BlinkMacSystemFont,sans-serif;}
+  :root{
+    --red:#d42a20;
+    --red-hover:#b8221a;
+    --red-text:#b8221a;   /* rouge pour du texte sur fond clair */
+    --red-light:#e63329;
+    --gold:#c49a00;
+    --gold-text:#8a6c00;  /* or lisible sur fond clair */
+    --ink:#141414;
+    --ink-2:#3a3a37;
+    --muted:#62625e;
+    --paper:#f3f1ec;
+    --white:#fff;
+    --line:rgba(20,20,20,.14);
+    --line-light:rgba(255,255,255,.16);
+    --head:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --body:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --ease:cubic-bezier(.2,.7,.2,1);
+    --gutter:clamp(20px,4.2vw,56px);
+    --focus:var(--ink);
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  html{scroll-behavior:smooth;scroll-padding-top:84px;-webkit-text-size-adjust:100%;}
+  body{margin:0;background:var(--white);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  body.menu-open{overflow:hidden;}
+  h1,h2,h3,h4{font-family:var(--head);margin:0;font-weight:800;text-wrap:balance;}
+  p{text-wrap:pretty;}
+  p{margin:0;}
   a{color:inherit;text-decoration:none;}
-  img{display:block;}
-  .wrap{width:100%;max-width:1200px;margin:0 auto;padding:0 40px;}
+  img{display:block;max-width:100%;}
+  :focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:2px;}
+  .on-dark{--focus:#fff;}
+  .wrap{width:100%;max-width:1280px;margin:0 auto;padding:0 var(--gutter);}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+  .skip{position:absolute;left:12px;top:-60px;z-index:100;background:var(--ink);color:#fff;padding:10px 16px;border-radius:4px;font-weight:600;transition:top .2s;}
+  .skip:focus{top:12px;}
 
-  /* En-tête photo */
-  .hero{position:relative;height:700px;overflow:hidden;background:#1d1626;}
-  .hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 45%;animation:kenburns 24s ease-out infinite alternate;transform-origin:50% 60%;}
-  .hero-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,10,16,.5) 0%,rgba(12,10,16,0) 22%),linear-gradient(90deg,rgba(12,10,16,.7) 0%,rgba(12,10,16,.3) 48%,rgba(12,10,16,0) 72%),linear-gradient(0deg,rgba(12,10,16,.55) 0%,rgba(12,10,16,0) 40%);}
-  .nav{position:absolute;top:0;left:0;right:0;z-index:2;color:#fff;}
-  .nav-inner{display:flex;align-items:center;justify-content:space-between;padding-top:26px;padding-bottom:26px;}
-  .brand{display:flex;align-items:center;gap:10px;}
-  .brand span{font-size:19px;font-weight:800;letter-spacing:-.3px;}
-  .nav-right{display:flex;align-items:center;gap:34px;font-size:15px;font-weight:500;}
-  .nav-links{display:flex;gap:30px;}
-  .nav-link{opacity:.85;transition:opacity .15s;}
-  .nav-link:hover{opacity:1;}
-  .hero-content{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:72px;color:#fff;}
-  .hero-kicker{font-size:15px;font-weight:500;margin:0 0 18px;opacity:.9;}
-  .hero-h1{font-size:88px;line-height:.98;font-weight:800;letter-spacing:-3px;margin:0 0 26px;}
-  .hero-lead{font-size:18px;line-height:1.55;max-width:470px;margin:0 0 32px;opacity:.92;}
-  .hero-actions{display:flex;align-items:center;gap:28px;flex-wrap:wrap;}
-  .hero-caption{position:absolute;right:40px;bottom:28px;z-index:1;margin:0;font-size:12px;color:rgba(255,255,255,.75);}
+  /* ---------- Boutons et liens ---------- */
+  .btn{display:inline-flex;align-items:center;gap:10px;padding:15px 24px;border-radius:4px;font-family:var(--body);font-size:15px;font-weight:600;line-height:1.2;border:0;cursor:pointer;transition:background-color .2s,color .2s,transform .2s var(--ease);}
+  .btn .arr{display:inline-block;transition:transform .25s var(--ease);}
+  .btn:hover .arr{transform:translateX(4px);}
+  .btn-red{background:var(--red);color:#fff;}
+  .btn-red:hover{background:var(--red-hover);}
+  .btn-white{background:#fff;color:var(--ink);}
+  .btn-white:hover{background:var(--paper);}
+  .btn-ink{background:var(--ink);color:#fff;}
+  .btn-ink:hover{background:#2b2b29;}
+  .btn-sm{padding:10px 16px;font-size:14px;}
+  .link{font-weight:600;background:linear-gradient(currentColor,currentColor) 0 100%/100% 1px no-repeat;padding-bottom:3px;transition:background-size .3s var(--ease);}
+  .link:hover{background-size:0 1px;background-position:100% 100%;}
+  .link-arrow::after{content:" →";display:inline-block;margin-left:2px;transition:transform .25s var(--ease);}
+  .link-arrow:hover::after{transform:translateX(4px);}
 
-  @keyframes kenburns{from{transform:scale(1.02)}to{transform:scale(1.12)}}
-  @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
-  .rise-1{animation:rise .9s cubic-bezier(.2,.7,.2,1) .1s both;}
-  .rise-2{animation:rise .9s cubic-bezier(.2,.7,.2,1) .25s both;}
-  .rise-3{animation:rise .9s cubic-bezier(.2,.7,.2,1) .4s both;}
+  /* ---------- En-tête fixe ---------- */
+  .site-header{position:fixed;top:0;left:0;right:0;z-index:50;color:#fff;--focus:#fff;transition:background-color .35s ease,color .35s ease,box-shadow .35s ease;}
+  .site-header .bar{display:flex;align-items:center;justify-content:space-between;gap:24px;height:88px;transition:height .35s var(--ease);}
+  .site-header.is-scrolled{background:rgba(255,255,255,.96);color:var(--ink);box-shadow:0 1px 0 var(--line);--focus:var(--ink);}
+  @supports (backdrop-filter:blur(8px)){.site-header.is-scrolled{background:rgba(255,255,255,.96);backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);}}
+  .site-header.is-scrolled .bar{height:66px;}
+  .brand{display:flex;align-items:center;gap:11px;font-family:var(--head);font-size:19px;font-weight:800;letter-spacing:-.02em;}
+  .brand svg{width:28px;height:28px;flex-shrink:0;transition:transform .8s var(--ease);}
+  .wordmark{display:block;height:17px;aspect-ratio:771/150;background:currentColor;-webkit-mask:url(images/gefais-mot.svg) center/contain no-repeat;mask:url(images/gefais-mot.svg) center/contain no-repeat;}
+  .nav{display:flex;align-items:center;gap:32px;font-size:15px;font-weight:500;}
+  .nav-links{display:flex;gap:26px;list-style:none;margin:0;padding:0;}
+  .nav-links a{position:relative;padding:6px 0;opacity:.88;transition:opacity .2s;}
+  .nav-links a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1.5px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .3s var(--ease);}
+  .nav-links a:hover,.nav-links a.is-current{opacity:1;}
+  .nav-links a:hover::after,.nav-links a.is-current::after{transform:scaleX(1);transform-origin:left;}
+  .site-header:not(.is-scrolled) .nav .btn-red{background:#fff;color:var(--ink);}
+  .site-header:not(.is-scrolled) .nav .btn-red:hover{background:var(--paper);}
+  .menu-btn{display:none;align-items:center;gap:10px;background:none;border:0;color:inherit;font:600 15px/1 var(--body);padding:10px 0 10px 8px;cursor:pointer;}
+  .menu-icon{position:relative;width:22px;height:12px;}
+  .menu-icon span{position:absolute;left:0;right:0;height:2px;background:currentColor;border-radius:2px;transition:transform .3s var(--ease),top .3s var(--ease);}
+  .menu-icon span:first-child{top:0;}
+  .menu-icon span:last-child{top:10px;}
+  .menu-btn[aria-expanded="true"] .menu-icon span:first-child{top:5px;transform:rotate(45deg);}
+  .menu-btn[aria-expanded="true"] .menu-icon span:last-child{top:5px;transform:rotate(-45deg);}
+  body.menu-open .site-header{background:var(--ink);color:#fff;box-shadow:none;--focus:#fff;}
 
-  /* Boutons et liens */
-  .btn{display:inline-block;padding:16px 28px;border-radius:6px;font-size:15px;font-weight:600;transition:background .15s;}
-  .btn-red{background:#d42a20;color:#fff;}
-  .btn-red:hover{background:#b8221a;}
-  .btn-white{background:#fff;color:#141414;}
-  .btn-white:hover{background:#f1efe9;}
-  .btn-small{padding:11px 20px;font-size:14px;}
-  .ulink{border-bottom:1px solid currentColor;padding-bottom:2px;font-weight:600;transition:opacity .15s;}
-  .ulink:hover{opacity:.7;}
+  .menu-panel{position:fixed;inset:0;z-index:45;background:var(--ink);color:#fff;--focus:#fff;padding:96px var(--gutter) 32px;display:flex;flex-direction:column;overflow-y:auto;visibility:hidden;opacity:0;transform:translateY(-8px);transition:opacity .3s ease,transform .35s var(--ease),visibility 0s linear .35s;}
+  .menu-panel.is-open{visibility:visible;opacity:1;transform:none;transition:opacity .3s ease,transform .35s var(--ease),visibility 0s;}
+  .menu-panel ol{list-style:none;margin:0;padding:0;border-top:1px solid var(--line-light);}
+  .menu-panel li{border-bottom:1px solid var(--line-light);}
+  .menu-panel ol a{display:flex;align-items:baseline;gap:16px;padding:12px 0;font-family:var(--head);font-size:clamp(23px,6.4vw,36px);font-weight:700;letter-spacing:-.03em;line-height:1.1;}
+  .menu-panel ol a small{font-family:var(--body);font-size:13px;font-weight:500;color:#9d9d98;letter-spacing:0;min-width:22px;}
+  .menu-foot{margin-top:auto;padding-top:32px;display:flex;flex-direction:column;gap:18px;align-items:flex-start;}
+  .menu-foot p{color:#b9b9b4;font-size:15px;}
 
-  /* Sections */
-  .section{padding:120px 0;}
-  .two-col{display:grid;grid-template-columns:5fr 6fr;gap:72px;align-items:start;}
-  .big-h2{font-size:46px;line-height:1.08;font-weight:800;letter-spacing:-1.5px;margin:0;}
-  .body-text{font-size:18px;line-height:1.7;color:#3d3d3a;}
-  .body-text p{margin:0 0 20px;}
-  .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:36px;}
-  .section-head p{font-size:16px;color:#6a6a66;margin:0;}
+  /* ---------- Hero ---------- */
+  .hero{position:relative;min-height:max(640px,100svh);display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;background:#1d1626;color:#fff;}
+  .hero-media{position:absolute;inset:0;}
+  .hero-media img{width:100%;height:100%;object-fit:cover;object-position:58% 45%;animation:zoom 28s ease-out infinite alternate;transform-origin:56% 62%;}
+  .hero-shade{position:absolute;inset:0;background:
+    linear-gradient(180deg,rgba(12,10,16,.55) 0%,rgba(12,10,16,0) 20%),
+    linear-gradient(90deg,rgba(12,10,16,.72) 0%,rgba(12,10,16,.34) 45%,rgba(12,10,16,0) 70%),
+    linear-gradient(0deg,rgba(12,10,16,.7) 0%,rgba(12,10,16,0) 45%);}
+  .hero-inner{position:relative;padding-top:140px;padding-bottom:40px;}
+  .hero-kicker{display:flex;align-items:center;gap:12px;font-size:15px;font-weight:500;margin-bottom:22px;color:rgba(255,255,255,.92);}
+  .hero-kicker::before{content:"";width:28px;height:1px;background:currentColor;}
+  .hero h1{font-size:clamp(36px,11.4vw,140px);line-height:.92;letter-spacing:-.045em;margin-bottom:30px;}
+  .hero h1 em{font-style:normal;color:#fff;position:relative;white-space:nowrap;}
+  .hero-lead{font-size:clamp(17px,1.5vw,20px);line-height:1.55;max-width:500px;margin-bottom:34px;color:rgba(255,255,255,.94);}
+  .hero-actions{display:flex;align-items:center;gap:26px;flex-wrap:wrap;}
+  .hero-foot{position:relative;border-top:1px solid rgba(255,255,255,.22);}
+  .hero-foot .wrap{display:flex;justify-content:space-between;align-items:center;gap:20px;padding-top:16px;padding-bottom:18px;font-size:13px;color:rgba(255,255,255,.8);}
+  .hero-foot .scroll{display:flex;align-items:center;gap:10px;}
+  .hero-foot .scroll i{display:block;width:1px;height:22px;background:rgba(255,255,255,.35);position:relative;overflow:hidden;}
+  .hero-foot .scroll i::after{content:"";position:absolute;left:0;top:-100%;width:1px;height:100%;background:#fff;animation:drip 2.4s var(--ease) infinite;}
+  @keyframes zoom{from{transform:scale(1.03)}to{transform:scale(1.13)}}
+  @keyframes drip{0%{top:-100%}60%,100%{top:100%}}
+  @keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+  .rise{animation:rise 1s var(--ease) both;}
+  .rise.d1{animation-delay:.08s}.rise.d2{animation-delay:.2s}.rise.d3{animation-delay:.34s}.rise.d4{animation-delay:.48s}
 
-  /* Nos actions */
-  .panels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;}
-  .panel{border-radius:6px;padding:34px;min-height:380px;display:flex;flex-direction:column;transition:transform .25s ease;}
-  .panel:hover{transform:translateY(-4px);}
-  .panel-num{font-size:14px;font-weight:600;opacity:.75;}
-  .panel h3{font-size:32px;font-weight:800;letter-spacing:-.8px;margin:auto 0 14px;}
-  .panel p{font-size:16px;line-height:1.6;margin:0 0 26px;}
-  .panel-more{font-size:15px;font-weight:600;}
-  .panel-arrow{display:inline-block;transition:transform .25s ease;}
-  .panel:hover .panel-arrow{transform:translateX(6px);}
-  .panel-red{background:#d42a20;color:#fff;}
-  .panel-ink{background:#141414;color:#fff;}
-  .panel-gold{background:#c49a00;color:#141414;}
+  /* ---------- Structure des sections ---------- */
+  .section{padding:clamp(80px,10vw,144px) 0;}
+  .marker{display:flex;align-items:baseline;gap:14px;font-size:14px;font-weight:600;color:var(--ink-2);padding-top:14px;border-top:1px solid var(--line);margin-bottom:clamp(28px,4vw,48px);}
+  .marker b{font-family:var(--head);font-weight:700;color:var(--red-text);font-variant-numeric:tabular-nums;}
+  .on-dark .marker{color:#d5d5cf;border-top-color:var(--line-light);}
+  .on-dark .marker b{color:var(--gold);}
+  .h2{font-size:clamp(34px,4.7vw,64px);line-height:1.02;letter-spacing:-.035em;}
+  .h3{font-size:clamp(21px,1.9vw,26px);line-height:1.15;letter-spacing:-.02em;font-weight:700;}
+  .lead{font-size:clamp(21px,2.2vw,30px);line-height:1.38;letter-spacing:-.012em;color:var(--ink);}
+  .text{color:var(--ink-2);}
+  .text p+p{margin-top:18px;}
+  .muted{color:var(--muted);}
+  .grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:clamp(16px,2.4vw,32px);}
 
-  /* Agenda */
-  .agenda{background:#f3f1ec;padding:110px 0;}
-  .rows{border-top:1px solid rgba(20,20,20,.15);}
-  .row{display:grid;grid-template-columns:170px minmax(0,1fr) 220px 24px;align-items:center;gap:24px;padding:28px 18px;border-bottom:1px solid rgba(20,20,20,.15);transition:background .2s ease;}
-  .row:hover{background:#fff;}
-  .row-date{font-size:15px;color:#6a6a66;}
-  .row-title{display:block;font-size:24px;font-weight:700;letter-spacing:-.4px;}
-  .row-type{font-size:14px;font-weight:600;}
-  .row-place{font-size:15px;color:#3d3d3a;}
-  .row-arrow{font-size:20px;transition:transform .2s ease;}
-  .row:hover .row-arrow{transform:translateX(6px);}
+  /* ---------- 01 L'association ---------- */
+  .intro .lead{grid-column:1 / span 10;font-size:clamp(23px,2.75vw,40px);line-height:1.28;letter-spacing:-.02em;}
+  .intro .lead strong{font-weight:600;}
+  .intro-body{grid-column:1 / span 6;margin-top:56px;}
+  .intro-body .link{margin-top:28px;display:inline-block;color:var(--red-text);}
+  .facts{grid-column:8 / span 5;grid-row:2;margin:56px 0 0;align-self:start;}
+  .facts h3{font-size:15px;font-weight:700;letter-spacing:0;margin-bottom:6px;font-family:var(--body);}
+  .facts dl{margin:0;border-top:1.5px solid var(--ink);}
+  .facts div{display:grid;grid-template-columns:130px minmax(0,1fr);gap:16px;padding:14px 0;border-bottom:1px solid var(--line);font-size:15.5px;line-height:1.45;}
+  .facts dt{color:var(--muted);}
+  .facts dd{margin:0;font-weight:500;}
 
-  /* Adhésion */
-  .status-list{border-top:1px solid rgba(20,20,20,.15);}
-  .status{padding:24px 0;border-bottom:1px solid rgba(20,20,20,.15);}
-  .status-top{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:6px;}
-  .status-name{font-size:22px;font-weight:700;display:flex;align-items:center;gap:12px;}
-  .dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0;}
-  .status-price{font-size:15px;font-weight:600;white-space:nowrap;}
-  .status p{font-size:15px;color:#6a6a66;margin:0 0 0 22px;}
+  /* ---------- 02 Maraudes ---------- */
+  .maraude{background:var(--ink);color:#fff;}
+  .maraude .h2{max-width:11ch;}
+  .m-head{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:24px clamp(32px,6vw,96px);align-items:end;}
+  .m-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,6vw,96px);margin-top:clamp(40px,5vw,64px);align-items:start;}
+  .m-photo{position:sticky;top:100px;margin:0;}
+  .m-photo .frame{overflow:hidden;border-radius:3px;aspect-ratio:4/5;background:#2a2230;}
+  .m-photo img{width:100%;height:100%;object-fit:cover;object-position:6% 80%;transform:scale(1.55);transform-origin:6% 80%;}
+  .m-photo figcaption{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:#a9a9a3;margin-top:12px;}
+  .m-intro{font-size:clamp(19px,1.7vw,23px);line-height:1.5;color:#e9e9e4;max-width:34em;}
+  .steps{list-style:none;margin:0;padding:0;}
+  .steps li{display:grid;grid-template-columns:72px minmax(0,1fr);gap:8px 20px;padding:28px 0;border-top:1px solid var(--line-light);}
+  .steps li:first-child{border-top:0;padding-top:0;}
+  .steps li:last-child{border-bottom:1px solid var(--line-light);}
+  .steps .n{font-family:var(--head);font-size:40px;line-height:1;font-weight:700;color:var(--red-light);letter-spacing:-.04em;font-variant-numeric:tabular-nums;}
+  .steps h3{font-size:22px;letter-spacing:-.02em;font-weight:700;margin-bottom:8px;}
+  .steps p{color:#c9c9c3;max-width:36em;}
+  .m-note{margin-top:36px;display:flex;gap:16px;align-items:flex-start;font-size:15.5px;color:#d5d5cf;}
+  .m-note .pin{flex-shrink:0;width:10px;height:10px;border-radius:50%;background:var(--gold);margin-top:8px;box-shadow:0 0 0 5px rgba(196,154,0,.18);}
+  .carry{margin-top:clamp(72px,9vw,128px);padding-top:clamp(36px,4vw,56px);border-top:1px solid var(--line-light);display:grid;grid-template-columns:minmax(0,3fr) minmax(0,9fr);gap:24px;align-items:start;}
+  .carry p.lbl{font-size:15px;color:#a9a9a3;padding-top:12px;}
+  .carry-words{font-family:var(--head);font-size:clamp(32px,5.4vw,76px);line-height:1.04;letter-spacing:-.04em;font-weight:800;}
+  .carry-words span{display:inline-block;}
+  .carry-words .g{color:var(--gold);}
+  .carry-words .sep{color:#55554f;font-weight:500;}
 
-  /* Bandeau */
-  .band{background:#d42a20;color:#fff;padding:72px 0;}
-  .band-row{display:flex;align-items:center;justify-content:space-between;gap:28px;}
+  /* ---------- 03 Vie associative ---------- */
+  .life-head{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,5fr);gap:32px 64px;align-items:end;margin-bottom:clamp(36px,5vw,64px);}
+  .index{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--ink);}
+  .index li{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr) 120px;gap:24px;align-items:baseline;padding:26px 0;border-bottom:1px solid var(--line);transition:background-color .25s,box-shadow .25s;}
+  .index li:hover{background:var(--paper);box-shadow:-18px 0 0 var(--paper),18px 0 0 var(--paper);}
+  .index h3{font-size:clamp(22px,2.2vw,30px);letter-spacing:-.025em;font-weight:700;line-height:1.1;}
+  .index p{color:var(--ink-2);}
+  .index .tag{justify-self:end;}
+  .tag{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;white-space:nowrap;color:var(--ink-2);}
+  .tag::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c,#8b8b86);}
+  .tag[data-hollow]::before{box-shadow:inset 0 0 0 1.5px var(--ink);}
 
-  /* Pied de page */
-  footer{background:#141414;color:#fff;padding:72px 0 32px;}
-  .footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:40px;margin-bottom:56px;}
-  .footer-title{font-size:14px;font-weight:600;margin-bottom:14px;}
-  .footer-col{display:flex;flex-direction:column;gap:9px;font-size:15px;color:#b9b9b4;}
-  .flink{color:#b9b9b4;transition:color .15s;}
-  .flink:hover{color:#fff;}
-  .foot-bottom{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-top:24px;border-top:1px solid rgba(255,255,255,.12);font-size:13px;color:#8b8b86;}
+  /* ---------- 04 Agenda ---------- */
+  .agenda{background:var(--paper);}
+  .agenda-grid{display:grid;grid-template-columns:minmax(0,8fr) minmax(0,4fr);gap:clamp(36px,6vw,88px);align-items:start;}
+  .agenda-top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px 32px;flex-wrap:wrap;margin-bottom:36px;}
+  .agenda-top p{max-width:30em;color:var(--muted);font-size:15.5px;}
+  .rows{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--ink);}
+  .rows li{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:24px;align-items:center;padding:22px 0;border-bottom:1px solid var(--line);}
+  .cal{width:84px;height:84px;border:1px solid rgba(20,20,20,.22);border-radius:3px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;line-height:1.1;transition:transform .3s var(--ease),border-color .3s;}
+  .rows li:hover .cal{transform:rotate(-3deg);border-color:var(--ink);}
+  .cal b{font-family:var(--head);font-size:26px;font-weight:700;letter-spacing:-.02em;color:#a4a49e;}
+  .cal small{font-size:11.5px;color:var(--muted);margin-top:4px;}
+  .rows h3{font-size:clamp(20px,2vw,26px);letter-spacing:-.02em;font-weight:700;margin-bottom:4px;}
+  .rows .meta{font-size:15px;color:var(--muted);}
+  .past h3{font-size:15px;font-family:var(--body);font-weight:700;margin-bottom:18px;}
+  .past ol{list-style:none;margin:0;padding:0 0 0 22px;border-left:1px solid rgba(20,20,20,.22);}
+  .past li{position:relative;padding:0 0 28px;}
+  .past li::before{content:"";position:absolute;left:-27px;top:7px;width:9px;height:9px;border-radius:50%;background:var(--c,var(--ink));box-shadow:0 0 0 4px var(--paper);}
+  .past time{display:block;font-size:13.5px;font-weight:600;color:var(--muted);margin-bottom:4px;}
+  .past p{font-size:16px;line-height:1.5;}
+  .past .foot{font-size:14.5px;color:var(--muted);padding-top:4px;}
 
-  @media (max-width:900px){
-    .wrap{padding:0 22px;}
-    .nav-links{display:none;}
-    .hero{height:600px;}
-    .hero-h1{font-size:48px;letter-spacing:-1.5px;}
-    .hero-caption{display:none;}
-    .two-col{grid-template-columns:1fr;gap:28px;}
-    .panels{grid-template-columns:1fr;}
-    .panel{min-height:0;}
-    .panel h3{margin-top:40px;}
-    .row{grid-template-columns:1fr;gap:6px;padding:22px 18px;}
-    .row-arrow{display:none;}
-    .section{padding:72px 0;}
-    .agenda{padding:72px 0;}
-    .band-row{flex-direction:column;align-items:flex-start;}
-    .footer-grid{grid-template-columns:1fr 1fr;}
-    .big-h2{font-size:34px;letter-spacing:-1px;}
+  /* ---------- 05 S'engager ---------- */
+  .engage-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px 48px;flex-wrap:wrap;margin-bottom:clamp(32px,4vw,48px);}
+  .engage-head p{max-width:27em;color:var(--ink-2);}
+  .ways{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);grid-template-rows:auto auto;gap:14px;}
+  .way{position:relative;border-radius:4px;padding:clamp(26px,3vw,40px);display:flex;flex-direction:column;overflow:hidden;transition:transform .35s var(--ease);}
+  .way:hover{transform:translateY(-4px);}
+  .way .k{font-size:14px;font-weight:600;opacity:.85;}
+  .way h3{font-size:clamp(28px,3vw,40px);letter-spacing:-.035em;line-height:1.02;margin:auto 0 14px;padding-top:40px;}
+  .way p{max-width:30em;}
+  .way .acts{display:flex;gap:22px;align-items:center;flex-wrap:wrap;margin-top:28px;}
+  .way-member{grid-row:1 / span 2;background:var(--red);color:#fff;min-height:520px;--focus:#fff;}
+  .way-member h3{font-size:clamp(40px,5.2vw,76px);letter-spacing:-.045em;}
+  .way-member .price{font-family:var(--head);font-weight:700;font-size:20px;display:flex;align-items:baseline;gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.3);max-width:30em;}
+  .way-member .price span{font-size:14px;font-weight:500;font-family:var(--body);opacity:.9;}
+  .way-member .ring{position:absolute;right:clamp(24px,3vw,44px);top:clamp(24px,3vw,44px);width:clamp(120px,14vw,190px);height:auto;pointer-events:none;transition:transform 1.2s var(--ease);}
+  .way-member:hover .ring{transform:rotate(30deg);}
+  .way-field{background:var(--gold);color:var(--ink);min-height:250px;}
+  .way-gift{background:var(--ink);color:#fff;min-height:250px;--focus:#fff;}
+  .way-gift p{color:#d5d5cf;}
+
+  /* ---------- 06 Adhésion ---------- */
+  .adh{background:var(--paper);}
+  .adh-top{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,6vw,96px);align-items:start;}
+  .adh-top .text{margin-top:24px;max-width:28em;}
+  .status{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--ink);}
+  .status li{display:grid;grid-template-columns:minmax(0,1fr) 200px;gap:10px 32px;padding:24px 0;border-bottom:1px solid var(--line);align-items:center;}
+  .status h3{font-size:22px;font-weight:700;letter-spacing:-.02em;display:flex;align-items:center;gap:12px;}
+  .status h3::before{content:"";width:11px;height:11px;border-radius:50%;background:var(--c);flex-shrink:0;}
+  .status p{font-size:15.5px;color:var(--muted);margin:4px 0 0 23px;}
+  .meter{font-size:13px;color:var(--muted);}
+  .meter .bar{display:block;height:6px;background:rgba(20,20,20,.1);border-radius:3px;overflow:hidden;margin-top:8px;}
+  .meter .bar i{display:block;height:100%;width:var(--v);background:var(--c);border-radius:3px;transform-origin:left;transition:transform 1.1s var(--ease) .2s;}
+  .meter b{font-family:var(--head);font-size:20px;color:var(--ink);font-weight:700;letter-spacing:-.02em;margin-right:6px;}
+  .js .reveal:not(.is-in) .meter .bar i{transform:scaleX(0);}
+  .howto{margin-top:clamp(64px,8vw,112px);}
+  .howto-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:40px;}
+  .howto-head h3{font-size:clamp(26px,2.8vw,38px);line-height:1.1;letter-spacing:-.03em;font-weight:800;}
+  .flow{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:24px;position:relative;}
+  .flow::before{content:"";position:absolute;left:22px;right:22px;top:22px;height:1px;background:rgba(20,20,20,.3);transform-origin:left;transition:transform 1.4s var(--ease) .1s;}
+  .js .flow:not(.is-in)::before{transform:scaleX(0);}
+  .flow li{position:relative;padding-right:8px;}
+  .flow .dot{position:relative;width:45px;height:45px;border-radius:50%;background:var(--paper);border:1.5px solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:var(--head);font-weight:700;font-size:16px;margin-bottom:22px;transition:background-color .25s,color .25s;}
+  .flow li:hover .dot{background:var(--ink);color:#fff;}
+  .flow li:first-child .dot{background:var(--red);border-color:var(--red);color:#fff;}
+  .flow li:last-child .dot{background:var(--gold);border-color:var(--gold);color:var(--ink);}
+  .flow h4{font-size:18px;font-weight:700;letter-spacing:-.015em;line-height:1.2;margin-bottom:8px;}
+  .flow p{font-size:15px;line-height:1.55;color:var(--ink-2);}
+  .js .flow li{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s var(--ease);}
+  .js .flow.is-in li{opacity:1;transform:none;}
+  .js .flow.is-in li:nth-child(2){transition-delay:.12s}.js .flow.is-in li:nth-child(3){transition-delay:.24s}.js .flow.is-in li:nth-child(4){transition-delay:.36s}.js .flow.is-in li:nth-child(5){transition-delay:.48s}
+
+  /* ---------- 07 Don ---------- */
+  .gift{background:var(--gold);color:var(--ink);}
+  .gift-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,6vw,96px);align-items:center;}
+  .gift .marker{border-top-color:rgba(20,20,20,.3);}
+  .gift .marker b{color:var(--ink);}
+  .gift .text{color:var(--ink);margin-top:24px;max-width:28em;}
+  .slip{background:#fff;border-radius:3px;display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);box-shadow:0 1px 0 rgba(20,20,20,.08),0 24px 48px -28px rgba(20,20,20,.45);transform:rotate(-1.2deg);transition:transform .5s var(--ease);}
+  .slip:hover{transform:rotate(0deg);}
+  .slip > div{padding:26px 26px 30px;}
+  .slip .stub{border-right:1.5px dashed rgba(20,20,20,.35);position:relative;}
+  .slip .stub svg{position:absolute;right:-10px;top:18px;background:#fff;padding:2px 0;}
+  .slip h4{font-family:var(--body);font-size:14px;font-weight:700;margin-bottom:18px;}
+  .slip dl{margin:0;display:grid;gap:14px;}
+  .slip dt{font-size:12px;font-weight:600;color:var(--muted);}
+  .slip dd{margin:2px 0 0;font-size:15.5px;line-height:1.4;font-weight:500;}
+  .slip .ph{font-family:var(--head);font-weight:600;color:var(--ink);background:var(--paper);padding:1px 6px;border-radius:2px;}
+  .slip .amount{display:flex;gap:28px;}
+  .gift-note{margin-top:24px;font-size:14.5px;display:flex;gap:10px;align-items:flex-start;}
+  .gift-note::before{content:"";flex-shrink:0;width:8px;height:8px;border-radius:50%;background:var(--ink);margin-top:8px;}
+
+  /* ---------- 08 FAQ ---------- */
+  .faq-grid{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:clamp(32px,6vw,96px);align-items:start;}
+  .faq-side{position:sticky;top:110px;}
+  .faq-side p{margin-top:22px;color:var(--ink-2);}
+  .faq-side .link{display:inline-block;margin-top:20px;color:var(--red-text);}
+  .qa{border-top:1.5px solid var(--ink);}
+  .qa details{border-bottom:1px solid var(--line);}
+  .qa summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) 28px;gap:24px;align-items:center;padding:24px 0;font-family:var(--head);font-size:clamp(18px,1.7vw,22px);font-weight:600;letter-spacing:-.015em;line-height:1.3;transition:color .2s;}
+  .qa summary::-webkit-details-marker{display:none;}
+  .qa summary:hover{color:var(--red-text);}
+  .qa .pm{position:relative;width:28px;height:28px;border-radius:50%;border:1px solid rgba(20,20,20,.25);transition:background-color .25s,border-color .25s,transform .35s var(--ease);}
+  .qa .pm::before,.qa .pm::after{content:"";position:absolute;left:50%;top:50%;width:11px;height:1.5px;background:currentColor;transform:translate(-50%,-50%);transition:transform .35s var(--ease);}
+  .qa .pm::after{transform:translate(-50%,-50%) rotate(90deg);}
+  .qa details[open] .pm{background:var(--ink);border-color:var(--ink);color:#fff;}
+  .qa details[open] .pm::after{transform:translate(-50%,-50%) rotate(0deg);}
+  .qa .ans{padding:0 52px 28px 0;color:var(--ink-2);max-width:42em;}
+  .qa .ans p+p{margin-top:12px;}
+  .qa .ans a{color:var(--red-text);}
+  .qa details[open] .ans{animation:fade .45s var(--ease);}
+  @keyframes fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+
+  /* ---------- 09 Contact ---------- */
+  .contact{position:relative;color:#fff;background:#1d1626;overflow:hidden;}
+  .contact-media{position:absolute;inset:0;}
+  .contact-media img{width:100%;height:100%;object-fit:cover;object-position:72% 62%;transform:scale(1.3);transform-origin:72% 62%;}
+  .contact-media::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(12,10,16,.86) 0%,rgba(12,10,16,.66) 50%,rgba(12,10,16,.25) 100%),linear-gradient(0deg,rgba(12,10,16,.5),rgba(12,10,16,0) 50%);}
+  .contact .wrap{position:relative;}
+  .contact-grid{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,5fr);gap:48px clamp(32px,6vw,96px);align-items:end;}
+  .contact .h2{max-width:10ch;}
+  .contact .intro-txt{margin-top:22px;color:rgba(255,255,255,.9);max-width:28em;font-size:18px;}
+  .coords{margin:0;border-top:1px solid rgba(255,255,255,.35);}
+  .coords div{display:grid;grid-template-columns:110px minmax(0,1fr);gap:16px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.2);}
+  .coords dt{color:rgba(255,255,255,.75);font-size:15px;}
+  .coords dd{margin:0;font-weight:600;}
+  .contact-cta{margin-top:34px;display:flex;gap:24px;align-items:center;flex-wrap:wrap;}
+  .contact .caption{margin-top:clamp(56px,7vw,96px);font-size:12.5px;color:rgba(255,255,255,.7);text-align:right;}
+
+  /* ---------- Pied de page ---------- */
+  footer{background:var(--ink);color:#fff;padding:clamp(64px,8vw,104px) 0 28px;overflow:hidden;}
+  .foot-top{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,3fr) minmax(0,3fr);gap:40px;align-items:start;padding-bottom:clamp(48px,6vw,80px);}
+  .foot-slogan{display:flex;align-items:center;gap:clamp(18px,2.5vw,32px);}
+  .foot-slogan svg{width:clamp(64px,7vw,96px);height:auto;flex-shrink:0;}
+  .foot-slogan p{font-family:var(--head);font-weight:800;font-size:clamp(28px,3.4vw,46px);line-height:1.02;letter-spacing:-.035em;}
+  .foot-col h3{font-family:var(--body);font-size:14px;font-weight:600;color:#8f8f8a;margin-bottom:14px;}
+  .foot-col ul{list-style:none;margin:0;padding:0;display:grid;gap:8px;}
+  .foot-col a{color:#d5d5cf;transition:color .2s;}
+  .foot-col a:hover{color:#fff;}
+  .foot-col p{color:#b9b9b4;font-size:15px;line-height:1.55;}
+  .foot-bottom{display:flex;justify-content:space-between;align-items:center;gap:12px 24px;flex-wrap:wrap;padding-top:22px;border-top:1px solid var(--line-light);font-size:13px;color:#8f8f8a;}
+  .foot-bottom a{color:#8f8f8a;transition:color .2s;}
+  .foot-bottom a:hover{color:#fff;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ---------- Apparition au défilement ---------- */
+  .js .reveal{opacity:0;transform:translateY(28px);transition:opacity .9s ease,transform .9s var(--ease);transition-delay:var(--d,0s);}
+  .js .reveal.is-in{opacity:1;transform:none;}
+  .js .reveal-img .frame{clip-path:inset(12% 0 0 0);transition:clip-path 1.3s var(--ease);}
+  .js .reveal-img .frame img{transition:transform 1.6s var(--ease);}
+  .js .reveal-img.is-in .frame{clip-path:inset(0 0 0 0);}
+  .js .reveal-img.is-in .frame img{transform:scale(1.4);}
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:1080px){
+    .nav-links{gap:20px;}
+    .nav{gap:22px;}
+    .index li{grid-template-columns:minmax(0,1fr) auto;}
+    .index li p{grid-column:1 / -1;grid-row:2;}
+    .flow{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:40px;}
+    .flow::before{display:none;}
   }
-  @media (max-width:560px){
-    .footer-grid{grid-template-columns:1fr;}
-    .foot-bottom{flex-direction:column;align-items:flex-start;gap:10px;}
+  @media (max-width:920px){
+    .nav-links,.nav .btn{display:none;}
+    .menu-btn{display:inline-flex;}
+    .site-header .bar{height:72px;}
+    .site-header.is-scrolled .bar{height:60px;}
+    .intro .lead,.intro-body,.facts{grid-column:1 / -1;grid-row:auto;}
+    .facts{margin-top:48px;}
+    .m-head,.m-grid,.agenda-grid,.adh-top,.gift-grid,.faq-grid,.contact-grid,.life-head{grid-template-columns:minmax(0,1fr);}
+    .m-photo{position:relative;top:0;}
+    .m-photo .frame{aspect-ratio:16/11;}
+    .faq-side{position:static;}
+    .carry{grid-template-columns:minmax(0,1fr);}
+    .carry p.lbl{padding-top:0;}
+    .ways{grid-template-columns:minmax(0,1fr);}
+    .way-member{grid-row:auto;min-height:440px;}
+    .foot-top{grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
+    .foot-slogan{grid-column:1 / -1;}
   }
+  @media (max-width:640px){
+    body{font-size:16.5px;}
+    .hero-foot .place{display:none;}
+    .hero-shade{background:linear-gradient(180deg,rgba(12,10,16,.5) 0%,rgba(12,10,16,0) 18%),linear-gradient(0deg,rgba(12,10,16,.85) 0%,rgba(12,10,16,.66) 50%,rgba(12,10,16,.2) 80%);}
+    .hero h1{font-size:clamp(36px,12vw,64px);}
+    .hero-inner{padding-bottom:32px;}
+    .facts div,.coords div{grid-template-columns:minmax(0,1fr);gap:2px;}
+    .steps li{grid-template-columns:minmax(0,1fr);gap:10px;padding:24px 0;}
+    .steps .n{font-size:30px;}
+    .index li{grid-template-columns:minmax(0,1fr);gap:8px;padding:22px 0;}
+    .index li:hover{background:none;box-shadow:none;}
+    .index li p{grid-column:auto;grid-row:auto;}
+    .index .tag{justify-self:start;}
+    .rows li{grid-template-columns:64px minmax(0,1fr);gap:16px;}
+    .rows .tag{grid-column:2;}
+    .cal{width:64px;height:64px;}
+    .cal b{font-size:20px;}
+    .cal small{font-size:10.5px;}
+    .status li{grid-template-columns:minmax(0,1fr);}
+    .status .meter{margin-left:23px;}
+    .flow{grid-template-columns:minmax(0,1fr);row-gap:0;}
+    .flow li{display:grid;grid-template-columns:45px minmax(0,1fr);gap:0 18px;padding-bottom:28px;}
+    .flow li:not(:last-child)::before{content:"";position:absolute;left:22px;top:45px;bottom:0;width:1px;background:rgba(20,20,20,.3);}
+    .flow .dot{margin-bottom:0;grid-row:1 / span 2;}
+    .flow h4{padding-top:10px;}
+    .slip{grid-template-columns:minmax(0,1fr);transform:none;}
+    .slip .stub{border-right:0;border-bottom:1.5px dashed rgba(20,20,20,.35);}
+    .slip .stub svg{right:18px;top:auto;bottom:-10px;transform:rotate(90deg);}
+    .qa .ans{padding-right:0;}
+    .way-member .ring{width:96px;}
+    .foot-top{grid-template-columns:minmax(0,1fr);}
+    .contact .caption{text-align:left;}
+  }
+
   @media (prefers-reduced-motion:reduce){
     html{scroll-behavior:auto;}
-    .hero-img,.rise-1,.rise-2,.rise-3{animation:none;}
-    .panel,.row,.panel-arrow,.row-arrow{transition:none;}
+    *,*::before,*::after{animation:none!important;transition:none!important;}
+    .js .reveal,.js .flow li{opacity:1!important;transform:none!important;}
+    .js .reveal-img .frame{clip-path:none!important;}
+    .js .reveal:not(.is-in) .meter .bar i,.js .flow:not(.is-in)::before{transform:none!important;}
   }
 </style>
 </head>
 <body>
+<a href="#contenu" class="skip">Aller au contenu</a>
 
-<!-- EN-TÊTE PHOTO -->
-<header class="hero">
-  <img class="hero-img" src="images/geneve-jet-deau.webp" alt="Le Jet d'eau de Genève au coucher du soleil">
-  <div class="hero-shade"></div>
-
-  <nav class="nav">
-    <div class="wrap nav-inner">
-      <a href="#" class="brand">
-        <svg width="26" height="26" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-          <circle cx="20" cy="3" r="3.5" fill="#fff"/>
-          <circle cx="28" cy="5" r="3" fill="#fff" opacity=".85"/>
-          <circle cx="34" cy="11" r="2.5" fill="#fff" opacity=".75"/>
-          <circle cx="37" cy="19" r="2" fill="#fff" opacity=".65"/>
-          <circle cx="34" cy="27" r="2" fill="#fff" opacity=".65"/>
-          <circle cx="28" cy="33" r="2.5" fill="#fff" opacity=".75"/>
-          <circle cx="20" cy="37" r="3" fill="#fff" opacity=".85"/>
-          <circle cx="12" cy="33" r="2.5" fill="#fff" opacity=".75"/>
-          <circle cx="6" cy="27" r="2" fill="#fff" opacity=".65"/>
-          <circle cx="6" cy="19" r="3.5" fill="#ff3b30"/>
-          <circle cx="9" cy="11" r="3" fill="#ffd60a"/>
-          <circle cx="14" cy="5" r="2.5" fill="#fff"/>
-        </svg>
-        <span class="ar">GE-FAIS</span>
-      </a>
-      <div class="nav-right">
-        <div class="nav-links">
-          <a href="#association" class="nav-link">L'association</a>
-          <a href="#actions" class="nav-link">Nos actions</a>
-          <a href="#agenda" class="nav-link">Agenda</a>
-          <a href="#adhesion" class="nav-link">Adhésion</a>
-        </div>
-        <a href="adhesion.html" class="btn btn-white btn-small">Adhérer</a>
-      </div>
-    </div>
-  </nav>
-
-  <div class="wrap hero-content">
-    <p class="hero-kicker rise-1">Association genevoise</p>
-    <h1 class="hero-h1 rise-2">Ensemble,<br>faisons qu'un.</h1>
-    <div class="rise-3">
-      <p class="hero-lead">Maraudes, rencontres, sorties : GE-FAIS réunit celles et ceux qui veulent s'engager concrètement à Genève.</p>
-      <div class="hero-actions">
-        <a href="adhesion.html" class="btn btn-red">Devenir membre</a>
-        <a href="#agenda" class="ulink">Voir l'agenda</a>
-      </div>
-    </div>
+<!-- EN-TÊTE -->
+<header class="site-header" id="top">
+  <div class="wrap bar">
+    <a href="#top" class="brand" aria-label="GE-FAIS, retour en haut de page">
+      <svg viewBox="0 0 40 40" fill="currentColor" aria-hidden="true">
+        <circle cx="20.24" cy="3.56" r="2.8"/>
+        <circle cx="28.72" cy="5.76" r="2.52"/>
+        <circle cx="35.24" cy="11.6" r="2.16"/>
+        <circle cx="37.88" cy="19.92" r="2.12"/>
+        <circle cx="35.72" cy="28.56" r="2.04"/>
+        <circle cx="29.2" cy="34.64" r="1.84"/>
+        <circle cx="20.48" cy="37.48" r="1.76"/>
+        <circle cx="12.08" cy="35.4" r="1.84"/>
+        <circle cx="5.76" cy="29.44" r="2.68"/>
+        <circle cx="3.36" cy="20.8" r="3.36" fill="#fdc915"/>
+        <circle cx="5.36" cy="12.28" r="3.32" fill="#ee1e27"/>
+        <circle cx="11.64" cy="6.04" r="2.84"/>
+      </svg>
+      <span class="wordmark" role="img" aria-label="GE-FAIS"></span>
+    </a>
+    <nav class="nav" aria-label="Navigation principale">
+      <ul class="nav-links">
+        <li><a href="#association">L'association</a></li>
+        <li><a href="#maraudes">Maraudes</a></li>
+        <li><a href="#agenda">Agenda</a></li>
+        <li><a href="#adhesion">Adhésion</a></li>
+        <li><a href="#faq">Questions</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <a href="adhesion.html" class="btn btn-red btn-sm">Adhérer</a>
+    </nav>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu">
+      <span class="menu-label">Menu</span>
+      <span class="menu-icon" aria-hidden="true"><span></span><span></span></span>
+    </button>
   </div>
-
-  <p class="hero-caption">Le Jet d'eau, Genève</p>
 </header>
 
-<main>
+<div class="menu-panel" id="menu" aria-label="Menu">
+  <ol>
+    <li><a href="#association"><small>01</small>L'association</a></li>
+    <li><a href="#maraudes"><small>02</small>Maraudes</a></li>
+    <li><a href="#vie"><small>03</small>Vie associative</a></li>
+    <li><a href="#agenda"><small>04</small>Agenda</a></li>
+    <li><a href="#engager"><small>05</small>S'engager</a></li>
+    <li><a href="#adhesion"><small>06</small>Adhésion</a></li>
+    <li><a href="#don"><small>07</small>Faire un don</a></li>
+    <li><a href="#faq"><small>08</small>Questions</a></li>
+    <li><a href="#contact"><small>09</small>Contact</a></li>
+  </ol>
+  <div class="menu-foot">
+    <a href="adhesion.html" class="btn btn-red">Devenir membre <span class="arr" aria-hidden="true">→</span></a>
+    <p>« Ensemble, faisons qu'un »</p>
+  </div>
+</div>
 
-<!-- L'ASSOCIATION -->
-<section id="association" class="section">
-  <div class="wrap two-col">
-    <h2 class="big-h2">Une association faite par ses membres.</h2>
-    <div class="body-text">
-      <p>GE-FAIS rassemble des personnes qui ont envie d'agir pour Genève et pour celles et ceux qui y vivent. Régulièrement, des membres partent en maraude à la rencontre des personnes qui vivent dans la rue. Entre deux actions, on se retrouve : réunions, sorties, formations.</p>
-      <p style="margin-bottom:28px;">Pas besoin d'expérience pour nous rejoindre. Chacun·e s'engage à son rythme, comme membre actif ou en soutenant simplement l'association.</p>
-      <a href="#actions" class="ulink" style="font-size:16px;color:#d42a20;">Découvrir nos actions</a>
+<!-- HERO -->
+<section class="hero on-dark" aria-labelledby="hero-title">
+  <div class="hero-media">
+    <img src="images/geneve-jet-deau.webp" srcset="images/geneve-jet-deau.webp 1600w, images/geneve-jet-deau-3200.webp 3200w" sizes="100vw" alt="Le Jet d'eau de Genève au coucher du soleil, ciel rose et orangé au-dessus du lac" width="1600" height="900" fetchpriority="high">
+  </div>
+  <div class="hero-shade"></div>
+  <div class="wrap hero-inner">
+    <p class="hero-kicker rise d1">Association genevoise à but non lucratif</p>
+    <h1 id="hero-title" class="rise d2">Ensemble,<br><em>faisons qu'un.</em></h1>
+    <p class="hero-lead rise d3">Des bénévoles qui vont, en maraude, à la rencontre des personnes qui vivent dans la rue à Genève. Avec un repas, une boisson chaude, et du temps pour écouter.</p>
+    <div class="hero-actions rise d4">
+      <a href="adhesion.html" class="btn btn-red">Devenir membre <span class="arr" aria-hidden="true">→</span></a>
+      <a href="#maraudes" class="link">Comment se passe une maraude</a>
+    </div>
+  </div>
+  <div class="hero-foot">
+    <div class="wrap">
+      <span class="scroll"><i aria-hidden="true"></i>Défiler pour découvrir</span>
+      <span class="place">Le Jet d'eau, Genève</span>
     </div>
   </div>
 </section>
 
-<!-- NOS ACTIONS -->
-<section id="actions" class="section" style="padding-top:0;">
+<main id="contenu">
+
+<!-- 01 L'ASSOCIATION -->
+<section id="association" class="section intro" aria-labelledby="t-asso">
   <div class="wrap">
-    <div class="section-head">
-      <h2 class="big-h2">Nos actions</h2>
-      <p>Trois façons de s'engager avec nous.</p>
-    </div>
-    <div class="panels">
-      <a href="#agenda" class="panel panel-red">
-        <span class="panel-num ar">01</span>
-        <h3>Maraudes</h3>
-        <p>Des tournées dans Genève pour aller à la rencontre des personnes sans abri : un repas, un café, du temps et de l'écoute.</p>
-        <span class="panel-more">En savoir plus <span class="panel-arrow">→</span></span>
-      </a>
-      <a href="#agenda" class="panel panel-ink">
-        <span class="panel-num ar">02</span>
-        <h3>Rencontres &amp; sorties</h3>
-        <p>Réunions de membres, sorties et moments conviviaux pour se connaître et faire vivre l'association ensemble.</p>
-        <span class="panel-more">En savoir plus <span class="panel-arrow">→</span></span>
-      </a>
-      <a href="#agenda" class="panel panel-gold">
-        <span class="panel-num ar">03</span>
-        <h3>Formations</h3>
-        <p>Des temps pour se préparer avant d'aller sur le terrain et pour échanger sur nos pratiques entre membres.</p>
-        <span class="panel-more">En savoir plus <span class="panel-arrow">→</span></span>
-      </a>
+    <p class="marker reveal"><b>01</b><span id="t-asso">L'association</span></p>
+    <div class="grid">
+      <p class="lead reveal">GE-FAIS est une association genevoise portée par des bénévoles. Son action principale, ce sont <strong>les maraudes</strong> : sortir dans la ville pour aller vers les personnes qui vivent dehors, plutôt que d'attendre qu'elles viennent à nous.</p>
+      <div class="intro-body text reveal" style="--d:.1s">
+        <p>Autour de ces tournées, l'association vit comme toutes les associations : on se réunit entre membres, on se forme, on organise des sorties, et l'assemblée générale réunit tout le monde pour faire le point. La dernière s'est tenue en décembre 2025.</p>
+        <p>Personne n'est payé, personne n'a besoin d'être un·e professionnel·le du social pour nous rejoindre. Il suffit d'avoir envie d'être là, à son rythme.</p>
+        <a href="#engager" class="link link-arrow">Les façons de s'engager</a>
+      </div>
+      <aside class="facts reveal" style="--d:.2s" aria-labelledby="t-facts">
+        <h3 id="t-facts">GE-FAIS en bref</h3>
+        <dl>
+          <div><dt>Forme</dt><dd>Association à but non lucratif</dd></div>
+          <div><dt>Siège</dt><dd>Genève, Suisse</dd></div>
+          <div><dt>Fonctionnement</dt><dd>Entièrement bénévole, avec un comité de quatre personnes</dd></div>
+          <div><dt>Action principale</dt><dd>Les maraudes dans les rues de Genève</dd></div>
+          <div><dt>Cotisation</dt><dd>50 CHF par an, quel que soit le statut</dd></div>
+          <div><dt>Devise</dt><dd>« Ensemble, faisons qu'un »</dd></div>
+        </dl>
+      </aside>
     </div>
   </div>
 </section>
 
-<!-- AGENDA -->
-<section id="agenda" class="agenda">
+<!-- 02 MARAUDES -->
+<section id="maraudes" class="section maraude on-dark" aria-labelledby="t-maraude">
   <div class="wrap">
-    <div class="section-head" style="margin-bottom:32px;">
-      <h2 class="big-h2">Prochains rendez-vous</h2>
-      <a href="adhesion.html" class="ulink" style="font-size:16px;">Recevoir les dates</a>
+    <p class="marker reveal"><b>02</b><span>Sur le terrain</span></p>
+    <div class="m-head">
+      <h2 id="t-maraude" class="h2 reveal">Une maraude, concrètement.</h2>
+      <p class="m-intro reveal" style="--d:.1s">Une maraude, c'est une tournée à pied dans la ville, à la rencontre des personnes qui vivent dans la rue. Pas de guichet, pas de file d'attente : c'est nous qui nous déplaçons.</p>
     </div>
-    <div class="rows">
-      <a href="adhesion.html" class="row">
-        <span class="row-date">Date à confirmer</span>
-        <span>
-          <span class="row-title ar">Maraude du mois</span>
-          <span class="row-type" style="color:#d42a20;">Maraude</span>
-        </span>
-        <span class="row-place">Genève, centre-ville</span>
-        <span class="row-arrow" aria-hidden="true">→</span>
-      </a>
-      <a href="adhesion.html" class="row">
-        <span class="row-date">Date à confirmer</span>
-        <span>
-          <span class="row-title ar">Rencontre des membres</span>
-          <span class="row-type">Réunion</span>
-        </span>
-        <span class="row-place">Genève</span>
-        <span class="row-arrow" aria-hidden="true">→</span>
-      </a>
-      <a href="adhesion.html" class="row">
-        <span class="row-date">Date à confirmer</span>
-        <span>
-          <span class="row-title ar">Assemblée générale</span>
-          <span class="row-type" style="color:#8a6c00;">Assemblée générale</span>
-        </span>
-        <span class="row-place">Genève</span>
-        <span class="row-arrow" aria-hidden="true">→</span>
-      </a>
+    <div class="m-grid">
+      <figure class="m-photo reveal reveal-img">
+        <div class="frame">
+          <img src="images/geneve-jet-deau.webp" srcset="images/geneve-jet-deau.webp 1600w, images/geneve-jet-deau-3200.webp 3200w" sizes="100vw" alt="Les façades et les lumières des quais de Genève à la tombée du jour, au bord du lac" width="1600" height="900" loading="lazy">
+        </div>
+        <figcaption><span>Genève, à la tombée du jour.</span><span>La ville est notre terrain.</span></figcaption>
+      </figure>
+      <div>
+        <ol class="steps">
+          <li class="reveal"><span class="n" aria-hidden="true">01</span><div><h3>On se retrouve</h3><p>Les membres qui participent se donnent rendez-vous avant le départ. On prépare ensemble ce qu'on emporte et on s'organise.</p></div></li>
+          <li class="reveal"><span class="n" aria-hidden="true">02</span><div><h3>On part à plusieurs</h3><p>La tournée se fait à pied, en petit groupe, dans les rues de Genève.</p></div></li>
+          <li class="reveal"><span class="n" aria-hidden="true">03</span><div><h3>On va vers les gens</h3><p>On s'arrête, on se présente, on propose un repas ou une boisson chaude. Rien n'est imposé : chacun est libre d'accepter, de discuter, ou de passer son tour.</p></div></li>
+          <li class="reveal"><span class="n" aria-hidden="true">04</span><div><h3>On prend le temps</h3><p>Souvent, le café n'est qu'un point de départ. Ce qui compte, c'est la conversation, l'écoute, le fait d'être salué et reconnu.</p></div></li>
+          <li class="reveal"><span class="n" aria-hidden="true">05</span><div><h3>On en reparle</h3><p>Après la tournée, on prend un moment entre nous pour partager ce qu'on a vécu, et préparer la suivante.</p></div></li>
+        </ol>
+        <p class="m-note reveal"><span class="pin" aria-hidden="true"></span><span>Plusieurs maraudes ont eu lieu au début de l'année 2026. Les prochaines dates sont communiquées aux membres.</span></p>
+      </div>
+    </div>
+
+    <div class="carry">
+      <p class="lbl reveal">Ce qu'on emporte</p>
+      <p class="carry-words reveal" style="--d:.1s">
+        <span>Un repas,</span> <span>une boisson chaude.</span><br>
+        <span class="g">Du temps,</span> <span class="g">de l'écoute.</span>
+      </p>
     </div>
   </div>
 </section>
 
-<!-- ADHÉSION -->
-<section id="adhesion" class="section">
-  <div class="wrap two-col">
-    <div>
-      <h2 class="big-h2" style="margin-bottom:22px;">Devenir membre</h2>
-      <p class="body-text" style="margin:0 0 32px;">La cotisation est de 50 CHF par an, quel que soit votre statut. Le formulaire se remplit en ligne en quelques minutes, signature comprise. Le comité vous recontacte ensuite pour confirmer votre adhésion.</p>
-      <a href="adhesion.html" class="btn btn-red">Remplir le formulaire</a>
+<!-- 03 VIE ASSOCIATIVE -->
+<section id="vie" class="section" aria-labelledby="t-vie">
+  <div class="wrap">
+    <p class="marker reveal"><b>03</b><span>La vie de l'association</span></p>
+    <div class="life-head">
+      <h2 id="t-vie" class="h2 reveal">Entre deux maraudes.</h2>
+      <p class="text reveal" style="--d:.1s">Une association, ce sont aussi des rendez-vous plus discrets. Ce sont eux qui permettent de partir sur le terrain bien préparés, et de décider ensemble de la suite.</p>
     </div>
-    <div class="status-list">
-      <div class="status">
-        <div class="status-top">
-          <span class="status-name ar"><span class="dot" style="background:#d42a20;"></span>Membre actif</span>
-          <span class="status-price">50 CHF / an</span>
+    <ul class="index">
+      <li class="reveal"><h3>Réunions de membres</h3><p>Pour organiser les prochaines sorties, se donner des nouvelles et prendre les décisions du quotidien.</p><span class="tag" style="--c:var(--ink)">Réunion</span></li>
+      <li class="reveal"><h3>Formations</h3><p>Pour se préparer avant d'aller sur le terrain et échanger sur nos manières de faire.</p><span class="tag" style="--c:transparent" data-hollow>Formation</span></li>
+      <li class="reveal"><h3>Sorties</h3><p>Des moments entre membres, pour apprendre à se connaître autrement qu'en action.</p><span class="tag" style="--c:var(--red-light)">Sortie</span></li>
+      <li class="reveal"><h3>Permanences</h3><p>Des créneaux tenus par des membres de l'association, annoncés dans l'agenda.</p><span class="tag" style="--c:#8b8b86">Permanence</span></li>
+      <li class="reveal"><h3>Assemblée générale</h3><p>Le rendez-vous où toutes et tous les membres font le point sur l'année et votent les grandes orientations. La dernière a eu lieu en décembre 2025.</p><span class="tag" style="--c:var(--gold)">AG</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- 04 AGENDA -->
+<section id="agenda" class="section agenda" aria-labelledby="t-agenda">
+  <div class="wrap">
+    <p class="marker reveal"><b>04</b><span>Agenda</span></p>
+    <div class="agenda-grid">
+      <div>
+        <div class="agenda-top">
+          <h2 id="t-agenda" class="h2 reveal">Prochains <span style="white-space:nowrap">rendez-vous</span></h2>
+          <p class="reveal" style="--d:.1s">Les dates sont d'abord confirmées aux membres, puis publiées ici.</p>
         </div>
-        <p>Participation active · présence attendue à 80 % des rendez-vous</p>
+        <ul class="rows">
+          <li class="reveal">
+            <span class="cal" aria-hidden="true"><b>—</b><small>à confirmer</small></span>
+            <div><h3>Prochaine maraude</h3><p class="meta">Date à confirmer · Genève</p></div>
+            <span class="tag" style="--c:var(--red)">Maraude</span>
+          </li>
+          <li class="reveal">
+            <span class="cal" aria-hidden="true"><b>—</b><small>à confirmer</small></span>
+            <div><h3>Réunion des membres</h3><p class="meta">Date à confirmer · Genève</p></div>
+            <span class="tag" style="--c:var(--ink)">Réunion</span>
+          </li>
+          <li class="reveal">
+            <span class="cal" aria-hidden="true"><b>—</b><small>à confirmer</small></span>
+            <div><h3>Formation avant le terrain</h3><p class="meta">Date à confirmer · Genève</p></div>
+            <span class="tag" style="--c:transparent" data-hollow>Formation</span>
+          </li>
+        </ul>
       </div>
-      <div class="status">
-        <div class="status-top">
-          <span class="status-name ar"><span class="dot" style="background:#c49a00;"></span>Membre actif suisse</span>
-          <span class="status-price">50 CHF / an</span>
+      <aside class="past reveal" style="--d:.15s" aria-labelledby="t-past">
+        <h3 id="t-past">Ces derniers mois</h3>
+        <ol>
+          <li style="--c:var(--red)"><time>Début 2026</time><p>Plusieurs maraudes dans les rues de Genève.</p></li>
+          <li style="--c:var(--gold)"><time datetime="2025-12">Décembre 2025</time><p>Assemblée générale de l'association.</p></li>
+        </ol>
+        <p class="foot">Vous voulez être informé·e des prochaines dates ? <a href="adhesion.html" class="link">Devenez membre</a>.</p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- 05 S'ENGAGER -->
+<section id="engager" class="section" aria-labelledby="t-engager">
+  <div class="wrap">
+    <p class="marker reveal"><b>05</b><span>S'engager</span></p>
+    <div class="engage-head">
+      <h2 id="t-engager" class="h2 reveal">Trois façons d'en être.</h2>
+      <p class="reveal" style="--d:.1s">On peut venir sur le terrain, soutenir de loin, ou simplement aider l'association à tenir. Toutes ces formes d'engagement comptent.</p>
+    </div>
+    <div class="ways">
+      <article class="way way-member reveal">
+        <svg class="ring" viewBox="-1 -1 42 42" aria-hidden="true"><g fill="#fff" fill-opacity=".32"><circle cx="20.24" cy="3.56" r="2.8"/><circle cx="28.72" cy="5.76" r="2.52"/><circle cx="35.24" cy="11.6" r="2.16"/><circle cx="37.88" cy="19.92" r="2.12"/><circle cx="35.72" cy="28.56" r="2.04"/><circle cx="29.2" cy="34.64" r="1.84"/><circle cx="20.48" cy="37.48" r="1.76"/><circle cx="12.08" cy="35.4" r="1.84"/><circle cx="5.76" cy="29.44" r="2.68"/><circle cx="5.36" cy="12.28" r="3.32"/><circle cx="11.64" cy="6.04" r="2.84"/></g><circle cx="3.36" cy="20.8" r="3.36" fill="#fdc915"/></svg>
+        <span class="k">Le plus simple</span>
+        <h3>Devenir<br>membre</h3>
+        <p>Un formulaire en ligne, une signature électronique, et le comité s'occupe du reste. Vous choisissez le statut qui correspond à votre disponibilité.</p>
+        <p class="price">50 CHF <span>par an, pour tous les statuts</span></p>
+        <div class="acts">
+          <a href="adhesion.html" class="btn btn-white">Remplir le formulaire <span class="arr" aria-hidden="true">→</span></a>
+          <a href="#adhesion" class="link">Voir les étapes</a>
         </div>
-        <p>Nationalité suisse · présence attendue à 40 %</p>
+      </article>
+      <article class="way way-field reveal" style="--d:.1s">
+        <span class="k">Sur le terrain</span>
+        <h3>Venir en maraude</h3>
+        <p>Le statut de membre actif est fait pour celles et ceux qui veulent participer aux maraudes et aux rendez-vous de l'association.</p>
+        <div class="acts"><a href="#maraudes" class="link link-arrow">Comment ça se passe</a></div>
+      </article>
+      <article class="way way-gift reveal" style="--d:.2s">
+        <span class="k">À distance</span>
+        <h3>Faire un don</h3>
+        <p>Pas le temps de vous engager en personne ? Un don soutient directement les actions de l'association.</p>
+        <div class="acts"><a href="#don" class="link link-arrow">Soutenir GE-FAIS</a></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- 06 ADHÉSION -->
+<section id="adhesion" class="section adh" aria-labelledby="t-adh">
+  <div class="wrap">
+    <p class="marker reveal"><b>06</b><span>Adhésion</span></p>
+    <div class="adh-top">
+      <div>
+        <h2 id="t-adh" class="h2 reveal">Trois statuts, une seule cotisation.</h2>
+        <div class="text reveal" style="--d:.1s">
+          <p>La cotisation est de 50 CHF par an, quel que soit votre statut. Ce qui change, c'est la présence attendue aux rendez-vous de l'association.</p>
+          <p>Vous hésitez entre deux statuts ? Indiquez-le dans le formulaire, le comité en discutera avec vous.</p>
+        </div>
       </div>
-      <div class="status">
-        <div class="status-top">
-          <span class="status-name ar"><span class="dot" style="background:#8b8b86;"></span>Membre passif</span>
-          <span class="status-price">50 CHF / an</span>
+      <ul class="status reveal" style="--d:.15s">
+        <li style="--c:var(--red)">
+          <div><h3>Membre actif</h3><p>Vous participez aux maraudes et à la vie de l'association.</p></div>
+          <div class="meter"><b>80 %</b>de présence attendue<span class="bar" aria-hidden="true"><i style="--v:80%"></i></span></div>
+        </li>
+        <li style="--c:var(--gold)">
+          <div><h3>Membre actif suisse</h3><p>Le statut actif pour les membres de nationalité suisse.</p></div>
+          <div class="meter"><b>40 %</b>de présence attendue<span class="bar" aria-hidden="true"><i style="--v:40%"></i></span></div>
+        </li>
+        <li style="--c:#8b8b86">
+          <div><h3>Membre passif</h3><p>Vous soutenez l'association sans participer aux activités.</p></div>
+          <div class="meter"><b>—</b>pas de présence attendue<span class="bar" aria-hidden="true"><i style="--v:0%"></i></span></div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="howto">
+      <div class="howto-head">
+        <h3 class="reveal">Comment se passe une adhésion</h3>
+        <a href="adhesion.html" class="btn btn-red reveal">Commencer mon adhésion <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+      <ol class="flow reveal">
+        <li><span class="dot" aria-hidden="true">1</span><h4>Vous choisissez votre statut</h4><p>Actif, actif suisse ou passif, selon le temps que vous pouvez donner.</p></li>
+        <li><span class="dot" aria-hidden="true">2</span><h4>Vous remplissez le formulaire</h4><p>En ligne, en quelques minutes, signature électronique comprise.</p></li>
+        <li><span class="dot" aria-hidden="true">3</span><h4>Le comité étudie la demande</h4><p>Chaque demande est lue par le comité de l'association.</p></li>
+        <li><span class="dot" aria-hidden="true">4</span><h4>Double signature</h4><p>La présidence et la vice-présidence cosignent votre adhésion.</p></li>
+        <li><span class="dot" aria-hidden="true">5</span><h4>Confirmation et cotisation</h4><p>On vous contacte pour confirmer votre adhésion et régler les 50 CHF.</p></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- 07 DON -->
+<section id="don" class="section gift" aria-labelledby="t-don">
+  <div class="wrap">
+    <div class="gift-grid">
+      <div>
+        <p class="marker reveal"><b>07</b><span>Faire un don</span></p>
+        <h2 id="t-don" class="h2 reveal">Soutenir, même de loin.</h2>
+        <p class="text reveal" style="--d:.1s">GE-FAIS fonctionne grâce aux cotisations de ses membres et aux dons. Il n'est pas nécessaire d'être membre pour donner : chaque contribution, quel que soit son montant, aide l'association à poursuivre ses actions.</p>
+        <p class="gift-note reveal" style="--d:.15s">Les dons sont possibles par TWINT ou par virement. Les coordonnées seront publiées ici très prochainement.</p>
+      </div>
+      <div class="reveal" style="--d:.15s"><div class="slip" role="group" aria-label="Coordonnées pour un don">
+        <div class="stub">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#62625e" stroke-width="1.6" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.6 7.6 20 18M8.6 16.4 20 6"/></svg>
+          <h4>Par TWINT</h4>
+          <dl>
+            <div><dt>Numéro</dt><dd><span class="ph">[numéro TWINT]</span></dd></div>
+            <div><dt>Bénéficiaire</dt><dd>Association GE-FAIS</dd></div>
+          </dl>
         </div>
-        <p>Vous soutenez l'association sans participer aux activités</p>
+        <div>
+          <h4>Par virement</h4>
+          <dl>
+            <div><dt>Compte / Payable à</dt><dd><span class="ph">[IBAN]</span><br>Association GE-FAIS<br>Genève, Suisse</dd></div>
+            <div><dt>Communication</dt><dd>Don GE-FAIS</dd></div>
+            <div class="amount"><div><dt>Monnaie</dt><dd>CHF</dd></div><div><dt>Montant</dt><dd>Libre</dd></div></div>
+          </dl>
+        </div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 FAQ -->
+<section id="faq" class="section" aria-labelledby="t-faq">
+  <div class="wrap">
+    <p class="marker reveal"><b>08</b><span>Questions fréquentes</span></p>
+    <div class="faq-grid">
+      <div class="faq-side reveal">
+        <h2 id="t-faq" class="h2">Vous vous posez des questions&nbsp;?</h2>
+        <p>Voici celles qu'on nous pose le plus souvent avant d'adhérer.</p>
+        <a href="#contact" class="link link-arrow">Une autre question</a>
+      </div>
+      <div class="qa reveal" style="--d:.1s">
+        <details>
+          <summary>Faut-il de l'expérience pour participer à une maraude&nbsp;? <span class="pm" aria-hidden="true"></span></summary>
+          <div class="ans"><p>Non. Personne ne vous demandera un diplôme ou un parcours dans le social. Des formations sont organisées entre membres pour se préparer au terrain, et l'on part en maraude à plusieurs.</p></div>
+        </details>
+        <details>
+          <summary>Combien coûte l'adhésion&nbsp;? <span class="pm" aria-hidden="true"></span></summary>
+          <div class="ans"><p>50 CHF par an, quel que soit le statut choisi : membre actif, membre actif suisse ou membre passif.</p></div>
+        </details>
+        <details>
+          <summary>Quelle différence entre membre actif et membre actif suisse&nbsp;? <span class="pm" aria-hidden="true"></span></summary>
+          <div class="ans"><p>Les deux statuts permettent de participer pleinement aux activités. Le statut de membre actif suisse concerne les personnes de nationalité suisse, avec une présence attendue à 40 % des rendez-vous, contre 80 % pour le statut de membre actif.</p></div>
+        </details>
+        <details>
+          <summary>Je n'ai pas beaucoup de temps. Puis-je quand même soutenir l'association&nbsp;? <span class="pm" aria-hidden="true"></span></summary>
+          <div class="ans"><p>Oui, de deux façons. Le statut de membre passif vous permet de soutenir GE-FAIS sans participer aux activités. Et vous pouvez faire un don, sans être membre, par TWINT ou par virement.</p></div>
+        </details>
+        <details>
+          <summary>Que se passe-t-il après l'envoi du formulaire&nbsp;? <span class="pm" aria-hidden="true"></span></summary>
+          <div class="ans"><p>Le comité étudie votre demande. Si elle est acceptée, la présidence et la vice-présidence cosignent votre adhésion. Vous êtes ensuite contacté·e pour confirmer et régler la cotisation.</p></div>
+        </details>
+        <details>
+          <summary>Comment payer la cotisation&nbsp;? <span class="pm" aria-hidden="true"></span></summary>
+          <div class="ans"><p>Rien à payer au moment du formulaire. C'est une fois votre adhésion validée que le comité vous contacte et vous indique comment régler les 50 CHF.</p></div>
+        </details>
+        <details>
+          <summary>Qui fait vivre l'association&nbsp;? <span class="pm" aria-hidden="true"></span></summary>
+          <div class="ans"><p>Ses membres, tous bénévoles. Un comité de quatre personnes coordonne l'ensemble : présidence, vice-présidence et trésorerie, secrétariat, et communication.</p></div>
+        </details>
       </div>
     </div>
   </div>
 </section>
 
-<!-- BANDEAU -->
-<section class="band">
-  <div class="wrap band-row">
-    <h2 class="big-h2" style="font-size:44px;">Envie de nous rejoindre ?</h2>
-    <a href="adhesion.html" class="btn btn-white" style="white-space:nowrap;">Adhérer à GE-FAIS</a>
+<!-- 09 CONTACT -->
+<section id="contact" class="section contact on-dark" aria-labelledby="t-contact">
+  <div class="contact-media" aria-hidden="true">
+    <img src="images/geneve-jet-deau.webp" srcset="images/geneve-jet-deau.webp 1600w, images/geneve-jet-deau-3200.webp 3200w" sizes="100vw" alt="" width="1600" height="900" loading="lazy">
+  </div>
+  <div class="wrap">
+    <p class="marker reveal"><b>09</b><span>Contact</span></p>
+    <div class="contact-grid">
+      <div>
+        <h2 id="t-contact" class="h2 reveal">Écrire au comité.</h2>
+        <p class="intro-txt reveal" style="--d:.1s">Une question sur l'adhésion, une envie de nous rencontrer, une proposition ? Le comité vous répond.</p>
+        <div class="contact-cta reveal" style="--d:.15s">
+          <a href="adhesion.html" class="btn btn-red">Devenir membre <span class="arr" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+      <dl class="coords reveal" style="--d:.2s">
+        <div><dt>E-mail</dt><dd>[adresse e-mail]</dd></div>
+        <div><dt>Courrier</dt><dd>[adresse postale]<br>Genève, Suisse</dd></div>
+        <div><dt>Réseaux</dt><dd>[liens des réseaux sociaux]</dd></div>
+      </dl>
+    </div>
+    <p class="caption">Le Jet d'eau, Genève · Photo : [crédit photo]</p>
   </div>
 </section>
 
 </main>
 
 <!-- PIED DE PAGE -->
-<footer>
+<footer class="on-dark">
   <div class="wrap">
-    <div class="footer-grid">
-      <div>
-        <div class="ar" style="font-size:22px;font-weight:800;margin-bottom:12px;">GE-FAIS</div>
-        <p style="font-size:15px;line-height:1.6;color:#b9b9b4;margin:0;max-width:260px;">« Ensemble, faisons qu'un. »<br>Association à but non lucratif, Genève.</p>
+    <div class="foot-top">
+      <div class="foot-slogan">
+        <svg viewBox="0 0 40 40" fill="#fff" aria-hidden="true">
+          <circle cx="20.24" cy="3.56" r="2.8"/>
+          <circle cx="28.72" cy="5.76" r="2.52"/>
+          <circle cx="35.24" cy="11.6" r="2.16"/>
+          <circle cx="37.88" cy="19.92" r="2.12"/>
+          <circle cx="35.72" cy="28.56" r="2.04"/>
+          <circle cx="29.2" cy="34.64" r="1.84"/>
+          <circle cx="20.48" cy="37.48" r="1.76"/>
+          <circle cx="12.08" cy="35.4" r="1.84"/>
+          <circle cx="5.76" cy="29.44" r="2.68"/>
+          <circle cx="3.36" cy="20.8" r="3.36" fill="#fdc915"/>
+          <circle cx="5.36" cy="12.28" r="3.32" fill="#ee1e27"/>
+          <circle cx="11.64" cy="6.04" r="2.84"/>
+        </svg>
+        <p>Ensemble,<br>faisons qu'un.</p>
       </div>
-      <div>
-        <div class="footer-title">Contact</div>
-        <div class="footer-col">
-          <span>[adresse email]</span>
-          <span>[adresse postale]</span>
-          <span>Genève, Suisse</span>
-        </div>
-      </div>
-      <div>
-        <div class="footer-title">Le site</div>
-        <div class="footer-col">
-          <a href="#association" class="flink">L'association</a>
-          <a href="#actions" class="flink">Nos actions</a>
-          <a href="#agenda" class="flink">Agenda</a>
-          <a href="adhesion.html" class="flink">Adhésion</a>
-        </div>
-      </div>
-      <div>
-        <div class="footer-title">Nous suivre</div>
-        <div class="footer-col">
-          <a href="#" class="flink">Instagram</a>
-          <a href="#" class="flink">Facebook</a>
-        </div>
+      <nav class="foot-col" aria-labelledby="f-site">
+        <h3 id="f-site">Le site</h3>
+        <ul>
+          <li><a href="#association">L'association</a></li>
+          <li><a href="#maraudes">Maraudes</a></li>
+          <li><a href="#agenda">Agenda</a></li>
+          <li><a href="#faq">Questions fréquentes</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="foot-col">
+        <h3>Nous rejoindre</h3>
+        <ul>
+          <li><a href="adhesion.html">Formulaire d'adhésion</a></li>
+          <li><a href="#adhesion">Les statuts de membre</a></li>
+          <li><a href="#don">Faire un don</a></li>
+        </ul>
       </div>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Association GE-FAIS · Photo : [crédit]</span>
-      <a href="gestion/" class="flink">Accès comité</a>
+      <span>© 2026 Association GE-FAIS · Association à but non lucratif, Genève</span>
+      <a href="gestion/">Accès comité</a>
     </div>
   </div>
 </footer>
 
+<script>
+(function(){
+  var root = document.documentElement;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  root.classList.add('js');
+
+  /* En-tête qui se condense au défilement */
+  var header = document.querySelector('.site-header');
+  var ticking = false;
+  function onScroll(){
+    header.classList.toggle('is-scrolled', window.scrollY > 40);
+    ticking = false;
+  }
+  window.addEventListener('scroll', function(){
+    if(!ticking){ ticking = true; window.requestAnimationFrame(onScroll); }
+  }, {passive:true});
+  onScroll();
+
+  /* Menu mobile */
+  var btn = document.querySelector('.menu-btn');
+  var panel = document.getElementById('menu');
+  var label = btn.querySelector('.menu-label');
+  function focusables(){
+    return [btn].concat(Array.prototype.slice.call(panel.querySelectorAll('a')));
+  }
+  function setMenu(open, restoreFocus){
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    panel.classList.toggle('is-open', open);
+    document.body.classList.toggle('menu-open', open);
+    label.textContent = open ? 'Fermer' : 'Menu';
+    if(open){
+      window.setTimeout(function(){ var f = panel.querySelector('a'); if(f) f.focus(); }, 60);
+    } else if(restoreFocus){
+      btn.focus();
+    }
+  }
+  btn.addEventListener('click', function(){
+    setMenu(btn.getAttribute('aria-expanded') !== 'true', true);
+  });
+  panel.addEventListener('click', function(e){
+    if(e.target.closest('a')) setMenu(false, false);
+  });
+  document.addEventListener('keydown', function(e){
+    if(!panel.classList.contains('is-open')) return;
+    if(e.key === 'Escape'){ setMenu(false, true); return; }
+    if(e.key === 'Tab'){
+      var f = focusables(), first = f[0], last = f[f.length - 1];
+      if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+      else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+    }
+  });
+  window.matchMedia('(min-width: 921px)').addEventListener('change', function(m){
+    if(m.matches) setMenu(false, false);
+  });
+
+  /* Apparition au défilement */
+  var items = document.querySelectorAll('.reveal');
+  if(reduce || !('IntersectionObserver' in window)){
+    items.forEach(function(el){ el.classList.add('is-in'); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){ en.target.classList.add('is-in'); io.unobserve(en.target); }
+      });
+    }, {rootMargin:'0px 0px -8% 0px', threshold:0.12});
+    items.forEach(function(el){ io.observe(el); });
+  }
+
+  /* Lien actif dans la navigation */
+  var links = document.querySelectorAll('.nav-links a');
+  if('IntersectionObserver' in window){
+    var map = {};
+    links.forEach(function(a){ map[a.getAttribute('href').slice(1)] = a; });
+    var spy = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        var a = map[en.target.id];
+        if(a && en.isIntersecting){
+          links.forEach(function(l){ l.classList.remove('is-current'); });
+          a.classList.add('is-current');
+        }
+      });
+    }, {rootMargin:'-45% 0px -50% 0px'});
+    Object.keys(map).forEach(function(id){ var s = document.getElementById(id); if(s) spy.observe(s); });
+  }
+})();
+</script>
 </body>
 </html>
