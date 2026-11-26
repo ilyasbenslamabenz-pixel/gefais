@@ -1546,6 +1546,78 @@ td{font-size:14px;color:var(--text2);}
   .main{padding:84px 16px 96px;}
   .page-header-left h2{font-size:28px;}
 }
+
+/* ── Pages éditoriales (même construction que le tableau de bord et le site public) ── */
+#app .page{max-width:1180px;}
+/* En-tête de page */
+#app .page-header{margin:0 0 32px;padding:8px 0 0;align-items:flex-end;gap:20px;}
+#app .page-header-left h2{font-size:52px;line-height:1;letter-spacing:-.035em;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+#app .page-header-left h2 .badge,#app .page-header-left h2 span{font-family:'Hanken Grotesk',sans-serif;font-size:18px!important;font-weight:500;letter-spacing:0;color:var(--text3)!important;background:none!important;border:none!important;padding:0!important;}
+#app .page-header-left p{font-size:18px;line-height:1.5;margin-top:14px;color:var(--text2);}
+/* Fiches de chiffres */
+#app #membres-kpi,#app #presences-stats-band,#app #events-stats-row,#app #cotis-stats,#app #compta-summary,#app #stats-kpi-row,#app .rapport-kpi-row{
+  display:grid!important;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:0!important;
+  border-top:1px solid var(--text)!important;border-bottom:1px solid var(--border)!important;border-left:none!important;border-right:none!important;border-radius:0!important;box-shadow:none!important;overflow:visible!important;margin:0 0 36px!important;background:none!important;padding:0!important;}
+#app #membres-kpi>*,#app #presences-stats-band>*,#app #events-stats-row>*,#app #cotis-stats>*,#app #compta-summary>*,#app #stats-kpi-row>*,#app .rapport-kpi-row>*{
+  background:none!important;border:none!important;border-left:1px solid var(--border)!important;border-radius:0!important;box-shadow:none!important;
+  padding:20px 24px 22px!important;margin:0!important;text-align:left!important;display:flex!important;flex-direction:column;align-items:flex-start!important;justify-content:flex-start!important;gap:6px;min-height:0!important;transform:none!important;}
+#app #membres-kpi>:first-child,#app #presences-stats-band>:first-child,#app #events-stats-row>:first-child,#app #cotis-stats>:first-child,#app #compta-summary>:first-child,#app #stats-kpi-row>:first-child,#app .rapport-kpi-row>:first-child{border-left:none!important;padding-left:0!important;}
+#app #membres-kpi .kpi-mini{flex-direction:column-reverse!important;justify-content:flex-end!important;}
+.kpi-mini-val,.stat-value,.pres-stat-val,.stat-kpi-val,.rapport-kpi-val{font-family:var(--head)!important;font-size:40px!important;font-weight:800!important;letter-spacing:-.03em!important;line-height:1!important;color:var(--text)!important;}
+.stat-value.amount-out,.rapport-kpi-val.neg{color:var(--red)!important;}
+.kpi-mini-lbl,.stat-label,.pres-stat-label,.stat-kpi-label,.rapport-kpi-label{font-size:14px!important;font-weight:500!important;color:var(--text2)!important;margin:0!important;}
+#membres-kpi-total{display:none!important;}  /* même information que l'en-tête */
+/* Sections au lieu de cartes encadrées */
+#app .page:not(#page-dashboard) .card,#app .rapport-section{
+  background:none!important;border:none!important;border-top:1px solid var(--border)!important;border-radius:0!important;box-shadow:none!important;
+  padding:20px 0 0!important;margin:0 0 40px!important;overflow:visible!important;}
+#app .page:not(#page-dashboard) .card-title,#app .rapport-section-header,#app .stat-section-title{font-family:var(--head)!important;font-size:24px!important;font-weight:800!important;letter-spacing:-.02em!important;color:var(--text)!important;margin:0 0 18px!important;}
+#app .stat-section-title{border-top:1px solid var(--border);padding-top:20px;}
+#app .stat-section-title + .card{border-top:none!important;padding-top:0!important;}
+#app .toolbar + .card,#app .pres-toolbar + div{border-top:none!important;}
+/* Tableaux : lignes fines, sans fond */
+#app .page table th{padding:12px 14px;font-size:13px!important;color:var(--text3)!important;border-bottom:1px solid var(--text)!important;}
+#app .page table td{padding:14px;border-bottom:1px solid var(--border);}
+#app .page .card table th:first-child,#app .page .card table td:first-child{padding-left:0;}
+#app .page tr:hover td{background:none!important;}
+#app .page tr:hover .td-name{color:var(--red);}
+/* Listes en lignes */
+#app .event-row,#app .pres-rank-row,#app .member-card-v2,#app .cotis-card-v2,#app .compta-card-v2{
+  background:none!important;border:none!important;border-bottom:1px solid var(--border)!important;border-radius:0!important;box-shadow:none!important;margin:0!important;}
+#app .event-row:hover,#app .pres-rank-row:hover{background:var(--card2)!important;}
+#app .events-month-label{font-family:var(--head);font-size:20px!important;font-weight:800!important;letter-spacing:-.01em!important;margin:32px 0 6px!important;padding-bottom:10px;border-bottom:1px solid var(--text);color:var(--text)!important;}
+#app .events-month-label:first-child{margin-top:0!important;}
+/* Onglets soulignés */
+#app .tabs{background:none!important;border:none!important;border-bottom:1px solid var(--border)!important;border-radius:0!important;padding:0!important;gap:28px!important;justify-content:flex-start!important;margin-bottom:28px!important;}
+#app .tab{flex:0 0 auto!important;background:none!important;border:none!important;border-bottom:2px solid transparent!important;border-radius:0!important;padding:10px 0 12px!important;margin-bottom:-1px;color:var(--text2)!important;font-size:15px!important;font-weight:600!important;box-shadow:none!important;}
+#app .tab:hover{color:var(--text)!important;}
+#app .tab.active{background:none!important;color:var(--text)!important;border-bottom-color:var(--red)!important;}
+/* Barre d'outils */
+#app .toolbar,#app .pres-toolbar{margin-bottom:20px!important;background:none!important;border:none!important;padding:0!important;}
+#app .rapport-section-header,#app .rapport-section-header *{font-family:var(--head)!important;font-size:24px!important;font-weight:800!important;letter-spacing:-.02em!important;color:var(--text)!important;}
+#app .rapport-section-header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:18px!important;}
+#app .rapport-section-header span:last-child:not(:first-child){font-family:'Hanken Grotesk',sans-serif!important;font-size:14px!important;font-weight:500!important;color:var(--text3)!important;}
+#app .rapport-kpi-row .rapport-kpi{flex-direction:column-reverse!important;justify-content:flex-end!important;}
+#app .rapport-list-item{border-bottom:1px solid var(--border);padding:12px 0;}
+@media (max-width:900px){
+  #app .page-header-left h2{font-size:36px;}
+  #app .page-header-left p{font-size:16px;}
+  #app #membres-kpi,#app #presences-stats-band,#app #events-stats-row,#app #cotis-stats,#app #compta-summary,#app #stats-kpi-row,#app .rapport-kpi-row{grid-auto-flow:row!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+  #app #membres-kpi>:nth-child(odd),#app #presences-stats-band>:nth-child(odd),#app #events-stats-row>:nth-child(odd),#app #cotis-stats>:nth-child(odd),#app #compta-summary>:nth-child(odd),#app #stats-kpi-row>:nth-child(odd),#app .rapport-kpi-row>:nth-child(odd){border-left:none!important;padding-left:0!important;}
+  #app #membres-kpi>:nth-child(n+3),#app #presences-stats-band>:nth-child(n+3),#app #events-stats-row>:nth-child(n+3),#app #cotis-stats>:nth-child(n+3),#app #compta-summary>:nth-child(n+3),#app #stats-kpi-row>:nth-child(n+3),#app .rapport-kpi-row>:nth-child(n+3){border-top:1px solid var(--border)!important;}
+  .kpi-mini-val,.stat-value,.pres-stat-val,.stat-kpi-val,.rapport-kpi-val{font-size:32px!important;}
+  #app .tabs{gap:20px!important;overflow-x:auto;}
+}
+#app .page-header-left{display:block!important;min-width:0;flex:1 1 auto;}
+@media (max-width:900px){#app .page-header-left{flex:none!important;}}
+#app .page-header-left p{white-space:normal!important;overflow:visible!important;max-width:none!important;text-overflow:clip!important;}
+@media (max-width:900px){
+  #app .page-header{flex-direction:column!important;align-items:stretch!important;gap:18px!important;margin-bottom:24px!important;}
+  #app .page-header-left h2{font-size:36px!important;}
+  #app .page-header-left p{font-size:16px!important;margin-top:10px!important;}
+  #app .page-header > div:not(.page-header-left){display:flex;gap:8px;flex-wrap:wrap;}
+  #app .page-header > div:not(.page-header-left) .btn,#app .page-header > .btn{flex:0 0 auto!important;width:auto!important;}
+}
 </style>
 </head>
 <body>
@@ -2047,7 +2119,7 @@ td{font-size:14px;color:var(--text2);}
     <div id="page-demandes" class="page">
 
       <!-- HERO BANNER -->
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:24px;margin-bottom:16px;position:relative;overflow:hidden;">
+      <div class="page-header" style="display:block;position:relative;">
                 <div style="position:relative;">
           <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;">
             <div style="font-size:13px;font-weight:600;color:var(--text3);">Adhésions</div>
@@ -2055,8 +2127,8 @@ td{font-size:14px;color:var(--text2);}
               Partager
             </button>
           </div>
-          <div style="font-family:var(--head);font-size:30px;font-weight:800;letter-spacing:-0.03em;color:var(--text);margin-bottom:4px;">Demandes d'adhésion</div>
-          <div id="demandes-header-sub" style="font-size:14px;color:var(--text2);">Chargement…</div>
+          <div class="page-header-left"><h2>Demandes d'adhésion</h2></div>
+          <div id="demandes-header-sub" style="font-size:18px;color:var(--text2);margin-top:14px;">Chargement…</div>
         </div>
       </div>
 
