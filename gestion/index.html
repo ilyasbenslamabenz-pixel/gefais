@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Espace comité — GE-FAIS</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%23fff'/%3E%3Ccircle cx='24.25' cy='6.74' r='3.78' fill='%23131313'/%3E%3Ccircle cx='33.16' cy='9.05' r='3.40' fill='%23131313'/%3E%3Ccircle cx='40.00' cy='15.18' r='2.92' fill='%23131313'/%3E%3Ccircle cx='42.77' cy='23.92' r='2.86' fill='%23131313'/%3E%3Ccircle cx='40.51' cy='32.99' r='2.75' fill='%23131313'/%3E%3Ccircle cx='33.66' cy='39.37' r='2.48' fill='%23131313'/%3E%3Ccircle cx='24.50' cy='42.35' r='2.38' fill='%23131313'/%3E%3Ccircle cx='15.68' cy='40.17' r='2.48' fill='%23131313'/%3E%3Ccircle cx='9.05' cy='33.91' r='3.62' fill='%23131313'/%3E%3Ccircle cx='6.53' cy='24.84' r='4.54' fill='%23fdc915'/%3E%3Ccircle cx='8.63' cy='15.89' r='4.48' fill='%23ee1e27'/%3E%3Ccircle cx='15.22' cy='9.34' r='3.83' fill='%23131313'/%3E%3C/svg%3E">
-<link rel="apple-touch-icon" href="/images/icon-180.png?v=3">
+<link rel="apple-touch-icon" href="/images/icon-180.png?v=4">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://www.gstatic.com">
 <link rel="preconnect" href="https://firestore.googleapis.com">
@@ -1165,7 +1165,7 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
   .tab{font-size:12px;padding:9px 6px;}
 
   /* Bottom nav amélioré */
-  .bottom-nav{height:68px;padding-bottom:env(safe-area-inset-bottom);}
+  .bottom-nav{height:calc(68px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);}
   .bottom-nav-item svg{width:21px;height:21px;}
   .bottom-nav-item span{font-size:9px;font-weight:600;}
 
@@ -1594,6 +1594,9 @@ td{font-size:14px;color:var(--text2);}
 .mcard-actions button.is-danger{color:var(--red);border-bottom-color:transparent;}
 #member-cards{gap:0!important;}
 
+.bottom-nav{height:calc(var(--bottom-bar) + env(safe-area-inset-bottom,0px))!important;padding-bottom:env(safe-area-inset-bottom,0px)!important;align-items:stretch!important;box-sizing:border-box;}
+.bottom-nav-item{margin:0!important;padding:8px 6px 10px!important;}
+@media (max-width:900px){.main{padding-bottom:calc(var(--bottom-bar) + env(safe-area-inset-bottom,0px) + 28px)!important;}}
 /* Liste compacte des membres (mobile) */
 #member-cards{gap:0!important;border-top:1px solid var(--text);}
 .mrow{display:flex;align-items:center;gap:12px;width:100%;padding:13px 2px;background:none;border:none;border-bottom:1px solid var(--border);text-align:left;font:inherit;color:var(--text);cursor:pointer;}
@@ -3015,7 +3018,7 @@ function save(key,value){
     return;
   }
   if(!db){_showSaveStatus(localOk?'saved':'error',localOk?'Sauvé sur cet appareil':'Échec de la sauvegarde');return;}
-  if(!_donneesChargees){
+  if(!_donneesChargees||(_SECONDAIRES.includes(key)&&!_secondairesChargees.has(key))){
     _showSaveStatus('error','Non synchronisé');
     iosAlert('Les données en ligne ne sont pas encore chargées. Pour ne pas écraser les vraies données, cette modification n\'est pas envoyée. Touchez « Réessayer » dans le bandeau, puis refaites la modification.','Modification non enregistrée','⚠️');
     return;
@@ -3150,8 +3153,12 @@ let _cacheDisponible=false;
 let _cacheAffiche=false,_chargementEnCours=false,_tentative=0,_minuterieChargement=null;
 const _CLES=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents','gef_event_subpages','gef_don_data'];
 let _prechargement=null;
+// Chargées après l'affichage (lourdes, inutiles au tableau de bord)
+const _SECONDAIRES=['gef_email_historique','gef_documents'];
+const _secondairesChargees=new Set();
+const _lireEssentiels=()=>Promise.all(_CLES.map(k=>_SECONDAIRES.includes(k)?Promise.resolve(null):db.collection('gef_data').doc(k).get()));
 function _lancerPrechargement(){
-  if(db&&!_prechargement&&!_donneesChargees){_prechargement=Promise.all(_CLES.map(k=>db.collection('gef_data').doc(k).get()));_prechargement.catch(()=>{});}
+  if(db&&!_prechargement&&!_donneesChargees){_prechargement=_lireEssentiels();_prechargement.catch(()=>{});}
 }
 const _PAUSES=[2,4,8,15,30]; // secondes entre deux tentatives
 function _etatChargement(texte,actions){
@@ -3176,13 +3183,14 @@ async function _chargerDonnees(){
   try{
     const keys=_CLES;
     const defaults=[DEFAULT_MEMBRES,DEFAULT_EVENTS,DEFAULT_PRESENCES,DEFAULT_COMPTA,buildDefaultCotisations(DEFAULT_MEMBRES),DEFAULT_EVENT_TYPES,[],[],DEFAULT_EVENT_SUBPAGES,null];
-    const demande=_prechargement||Promise.all(keys.map(k=>db.collection('gef_data').doc(k).get()));
+    const demande=_prechargement||_lireEssentiels();
     _prechargement=null;
     const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),DELAI_CHARGEMENT));
     const docs=await Promise.race([demande,timeout]);
     _firebaseOk=true;_donneesChargees=true;_tentative=0;
     _masquerHorsLigne();
     docs.forEach((d,i)=>{
+      if(d===null)return; // chargée juste après l'affichage
       const val=d.exists?d.data().value:defaults[i];
       if(i===0)membres=val;
       else if(i===1)events=val;
@@ -3201,7 +3209,7 @@ async function _chargerDonnees(){
     compta&&lsSet('gef_compta',compta);
     cotisations&&lsSet('gef_cotisations',cotisations);
     // Création des seuls documents absents, jamais avec des listes vides : rien n'est écrasé
-    docs.forEach((d,i)=>{const v=defaults[i];if(!d.exists&&v&&!(Array.isArray(v)&&!v.length))db.collection('gef_data').doc(keys[i]).set({value:v}).catch(()=>{});});
+    docs.forEach((d,i)=>{const v=defaults[i];if(d&&!d.exists&&v&&!(Array.isArray(v)&&!v.length))db.collection('gef_data').doc(keys[i]).set({value:v}).catch(()=>{});});
     setupListeners();
     _majUtilisateurAffiche();
     _loadDemandesBadge();
@@ -3218,6 +3226,7 @@ async function _chargerDonnees(){
     const si=document.getElementById('sync-indicator');
     if(si){si.textContent='À jour';si.style.color='var(--green)';si.style.display='inline';clearTimeout(si._t);si._t=setTimeout(()=>si.style.display='none',2500);}
     _migrerFichiersAdhesion();
+    _chargerSecondaires();
   }catch(e){
     console.warn('Chargement des données impossible :',e);
     const refus=/permission/i.test(String((e&&(e.code||e.message))||''));
@@ -3239,6 +3248,26 @@ async function _chargerDonnees(){
     }
   }finally{
     _chargementEnCours=false;
+  }
+}
+// Deuxième temps : documents et historique des e-mails, avec nouveaux essais
+async function _chargerSecondaires(essai=1){
+  const manquantes=_SECONDAIRES.filter(k=>!_secondairesChargees.has(k));
+  if(!db||!manquantes.length)return;
+  try{
+    const docs=await Promise.all(manquantes.map(k=>db.collection('gef_data').doc(k).get()));
+    docs.forEach((d,i)=>{
+      const k=manquantes[i];const val=d.exists?d.data().value:[];
+      if(k==='gef_documents')documents_list=val||[];
+      if(k==='gef_email_historique')emailHistorique=val||[];
+      lsSet(k,val||[]);_secondairesChargees.add(k);
+    });
+    const p=document.querySelector('.page.active')?.id?.replace('page-','');
+    if(p==='documents')renderDocuments();
+    if(p==='messagerie')renderMessagerie();
+  }catch(e){
+    console.warn('Documents non chargés, nouvel essai :',e);
+    setTimeout(()=>_chargerSecondaires(essai+1),Math.min(30,2*essai)*1000);
   }
 }
 // Le réseau revient ou l'on revient sur l'application : on relance tout de suite
