@@ -6,12 +6,26 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta name="robots" content="noindex, nofollow">
 <meta name="description" content="Espace de gestion interne de l'association GE-FAIS — membres, présences, cotisations, comptabilité.">
-<meta name="theme-color" content="#0e0e18">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Espace comité — GE-FAIS</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%23fff'/%3E%3Ccircle cx='24.25' cy='6.74' r='3.78' fill='%23131313'/%3E%3Ccircle cx='33.16' cy='9.05' r='3.40' fill='%23131313'/%3E%3Ccircle cx='40.00' cy='15.18' r='2.92' fill='%23131313'/%3E%3Ccircle cx='42.77' cy='23.92' r='2.86' fill='%23131313'/%3E%3Ccircle cx='40.51' cy='32.99' r='2.75' fill='%23131313'/%3E%3Ccircle cx='33.66' cy='39.37' r='2.48' fill='%23131313'/%3E%3Ccircle cx='24.50' cy='42.35' r='2.38' fill='%23131313'/%3E%3Ccircle cx='15.68' cy='40.17' r='2.48' fill='%23131313'/%3E%3Ccircle cx='9.05' cy='33.91' r='3.62' fill='%23131313'/%3E%3Ccircle cx='6.53' cy='24.84' r='4.54' fill='%23fdc915'/%3E%3Ccircle cx='8.63' cy='15.89' r='4.48' fill='%23ee1e27'/%3E%3Ccircle cx='15.22' cy='9.34' r='3.83' fill='%23131313'/%3E%3C/svg%3E">
-<link rel="apple-touch-icon" href="/images/icon-180.png">
+<link rel="apple-touch-icon" href="/images/icon-180.png?v=2">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://www.gstatic.com">
+<link rel="preconnect" href="https://firestore.googleapis.com">
+<link rel="preconnect" href="https://identitytoolkit.googleapis.com">
+<link rel="preconnect" href="https://securetoken.googleapis.com">
+<link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js">
+<link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js">
+<link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141414" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="GE-FAIS">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="application-name" content="GE-FAIS">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1549,6 +1563,34 @@ td{font-size:14px;color:var(--text2);}
 }
 
 
+.login-install{display:none;grid-column:2;margin:14px 0 0;font-size:13px;line-height:1.5;color:rgba(255,255,255,.8);}
+.login-install b{color:#fff;font-weight:600;}
+@media (max-width:900px){.login-install{grid-column:1;}}
+
+/* Carte membre (mobile) : un seul bloc par personne */
+.mcard{padding:18px 0;border-bottom:1px solid var(--border);}
+.mcard:first-child{border-top:1px solid var(--text);}
+.mcard-top{display:flex;align-items:flex-start;gap:14px;}
+.mcard-avatar{width:42px;height:42px;flex-shrink:0;border-radius:50%;background:var(--bg3);color:var(--text);display:flex;align-items:center;justify-content:center;font-family:var(--head);font-size:15px;font-weight:700;}
+.mcard-id{flex:1;min-width:0;}
+.mcard-name{font-family:var(--head);font-size:19px;font-weight:700;letter-spacing:-.01em;line-height:1.2;margin:0 0 6px;color:var(--text);}
+.mcard-new{font-family:'Hanken Grotesk',sans-serif;font-size:11px;font-weight:600;color:var(--green);background:var(--green-light);padding:2px 6px;border-radius:2px;vertical-align:middle;}
+.mcard-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.mcard-role{font-size:14px;color:var(--text2);}
+.mcard-pres{display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0;}
+.mcard-pres b{font-family:var(--head);font-size:24px;font-weight:800;line-height:1;color:var(--text);}
+.mcard-pres b small{font-size:13px;font-weight:600;margin-left:1px;}
+.mcard-pres span{font-size:12px;color:var(--text3);margin-top:4px;}
+.mcard-pres.is-good b{color:var(--green);}
+.mcard-pres.is-mid b{color:var(--gold);}
+.mcard-pres.is-low b{color:var(--red);}
+.mcard-contact{display:flex;flex-direction:column;gap:4px;margin:12px 0 0 56px;font-size:15px;}
+.mcard-contact a{color:var(--text2);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mcard-contact span{color:var(--text3);}
+.mcard-actions{display:flex;gap:18px;flex-wrap:wrap;margin:12px 0 0 56px;}
+.mcard-actions button{background:none;border:none;padding:4px 0;font:inherit;font-size:14px;font-weight:600;color:var(--text);cursor:pointer;border-bottom:1px solid var(--border2);}
+.mcard-actions button.is-danger{color:var(--red);border-bottom-color:transparent;}
+#member-cards{gap:0!important;}
 /* Logo officiel : écran de chargement et mode présentation */
 .loading-logo{display:flex;align-items:center;gap:16px;animation:logoPulse 1.6s ease-in-out infinite;}
 .loading-logo .wordmark{height:26px;}
@@ -1644,7 +1686,11 @@ td{font-size:14px;color:var(--text2);}
 <!-- LOADING -->
 <div id="loading-overlay" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:998;flex-direction:column;align-items:center;justify-content:center;gap:18px;color:var(--text);">
   <div class="loading-logo"><svg width="64" height="64" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20.24" cy="3.56" r="2.8" fill="currentColor"/><circle cx="28.72" cy="5.76" r="2.52" fill="currentColor"/><circle cx="35.24" cy="11.6" r="2.16" fill="currentColor"/><circle cx="37.88" cy="19.92" r="2.12" fill="currentColor"/><circle cx="35.72" cy="28.56" r="2.04" fill="currentColor"/><circle cx="29.2" cy="34.64" r="1.84" fill="currentColor"/><circle cx="20.48" cy="37.48" r="1.76" fill="currentColor"/><circle cx="12.08" cy="35.4" r="1.84" fill="currentColor"/><circle cx="5.76" cy="29.44" r="2.68" fill="currentColor"/><circle cx="3.36" cy="20.8" r="3.36" fill="#fdc915"/><circle cx="5.36" cy="12.28" r="3.32" fill="#ee1e27"/><circle cx="11.64" cy="6.04" r="2.84" fill="currentColor"/></svg><span class="wordmark" role="img" aria-label="GE-FAIS"></span></div>
-  <div style="font-size:14px;color:var(--text3);">Chargement…</div>
+  <div id="loading-text" style="font-size:15px;color:var(--text2);text-align:center;max-width:320px;line-height:1.5;padding:0 20px;">Chargement des données…</div>
+  <div id="loading-actions" style="display:none;gap:10px;">
+    <button class="btn btn-secondary" onclick="_chargerDonnees()">Réessayer</button>
+    <button class="btn btn-secondary" onclick="logout()">Se déconnecter</button>
+  </div>
 </div>
 <style>
 @keyframes logoSpin{
@@ -1712,6 +1758,7 @@ td{font-size:14px;color:var(--text2);}
 
         <div id="login-error" role="alert" style="display:none;"></div>
       </div>
+      <p id="install-hint" class="login-install">À installer comme une application : dans Safari, touchez <b>Partager</b> puis <b>Sur l'écran d'accueil</b>.</p>
     </main>
 
     <div class="login-foot">
@@ -1734,9 +1781,9 @@ td{font-size:14px;color:var(--text2);}
     <span id="sync-indicator" style="font-size:11px;color:var(--green);display:none;cursor:default;"></span>
   </div>
   <!-- BANNIÈRE HORS LIGNE -->
-  <div id="offline-banner" style="display:none;background:rgba(255,159,10,0.12);border-bottom:1px solid rgba(255,159,10,0.2);padding:6px 16px;font-size:11px;color:var(--gold);align-items:center;gap:8px;position:fixed;top:58px;left:0;right:0;z-index:38;">
-    <span>📴</span><span style="flex:1;">Mode hors ligne — données locales.</span>
-    <button id="offline-banner-btn" onclick="syncNow()" style="background:rgba(196,154,0,0.25);border:1px solid rgba(196,154,0,0.4);color:#f0b429;padding:4px 12px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,sans-serif;">Reconnecter</button>
+  <div id="offline-banner" role="alert" style="display:none;background:var(--gold-light);border-bottom:1px solid var(--border);padding:10px 16px;font-size:14px;color:var(--text);align-items:center;gap:12px;position:fixed;top:58px;left:0;right:0;z-index:38;">
+    <span id="offline-banner-msg" style="flex:1;">Données non chargées.</span>
+    <button id="offline-banner-btn" onclick="syncNow()" style="background:var(--card);border:1px solid var(--border2);color:var(--text);padding:7px 14px;border-radius:3px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;">Réessayer</button>
   </div>
   <!-- WIDGET STATUT SAUVEGARDE -->
   <div id="save-status"><span id="save-status-icon"></span><span id="save-status-text"></span></div>
@@ -2676,7 +2723,7 @@ async function checkLogin(){
 function _comptesRef(){return db.collection('gef_data').doc('gef_comptes');}
 async function _aDejaSonMotDePasse(user){
   try{
-    const d=await _comptesRef().get();
+    const d=await Promise.race([_comptesRef().get(),new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000))]);
     const v=(d.exists&&d.data().value)||{};
     if(v[user.uid]&&v[user.uid].motDePassePerso)return true;
     // Mot de passe déjà changé après la création du compte (par exemple avec
@@ -2704,9 +2751,12 @@ async function _motDePasseChangeDepuisCreation(user){
 async function _apresConnexion(user){
   if(_connexionEnCours||_authUser)return;
   _connexionEnCours=true;
+  _lancerPrechargement(); // les données arrivent pendant la vérification
+  const ov=document.getElementById('loading-overlay');
+  if(ov){_etatChargement('Connexion…',false);ov.style.display='flex';}
   try{
     if(await _aDejaSonMotDePasse(user)){_mdpProvisoire=null;_enterApp(user);}
-    else _afficherChoixMotDePasse(user);
+    else{if(ov)ov.style.display='none';_afficherChoixMotDePasse(user);}
   }finally{_connexionEnCours=false;}
 }
 function _afficherChoixMotDePasse(user){
@@ -2841,14 +2891,7 @@ function navTo(name,title){
 // ── DONNÉES ──────────────────────────────────────────────────────
 // Aucune donnée personnelle dans le code public : les membres sont chargés depuis la base.
 const DEFAULT_MEMBRES=[];
-const DEFAULT_EVENTS=[
-  {id:1,date:"2025-12-04",type:"Réunion",nom:"Réunion 1 — Assemblée générale",commentaires:""},
-  {id:2,date:"2026-02-15",type:"Maraude",nom:"Maraude 1",commentaires:""},
-  {id:3,date:"2026-03-01",type:"Maraude",nom:"Maraude 2",commentaires:""},
-  {id:4,date:"2026-03-05",type:"Réunion",nom:"Réunion 2",commentaires:""},
-  {id:5,date:"2026-03-15",type:"Maraude",nom:"Maraude 3",commentaires:""},
-  {id:6,date:"2026-03-29",type:"Maraude",nom:"Maraude 4",commentaires:""},
-];
+const DEFAULT_EVENTS=[];
 const DEFAULT_PRESENCES={};
 const DEFAULT_COMPTA=[];
 const DEFAULT_MESSAGES=[];
@@ -2935,6 +2978,11 @@ function save(key,value){
     return;
   }
   if(!db){_showSaveStatus(localOk?'saved':'error',localOk?'Sauvé sur cet appareil':'Échec de la sauvegarde');return;}
+  if(!_donneesChargees){
+    _showSaveStatus('error','Non synchronisé');
+    iosAlert('Les données en ligne ne sont pas encore chargées. Pour ne pas écraser les vraies données, cette modification n\'est pas envoyée. Touchez « Réessayer » dans le bandeau, puis refaites la modification.','Modification non enregistrée','⚠️');
+    return;
+  }
   const onFail=e=>{
     console.warn('Firebase save error:',e);
     _showSaveStatus('error','Non synchronisé');
@@ -3002,47 +3050,41 @@ function badgeType(t){
 function lsGet(key,def){try{const v=localStorage.getItem(key);return v?JSON.parse(v):def;}catch(e){return def;}}
 function lsSet(key,val){try{localStorage.setItem(key,JSON.stringify(val));return true;}catch(e){console.warn('Stockage local impossible :',key,e);return false;}}
 let _firebaseOk=false;
+// Tant que les vraies données ne sont pas chargées, aucune sauvegarde n'est
+// envoyée en ligne : sinon des listes vides pourraient écraser la base.
+let _donneesChargees=false;
+const DELAI_CHARGEMENT=20000;
+function _raisonHorsLigne(e){
+  const c=String((e&&(e.code||e.message))||'');
+  if(/permission/i.test(c))return `Accès refusé par la base pour ${(_authUser&&_authUser.email)||'ce compte'}. Cette adresse doit figurer dans les règles Firestore.`;
+  if(/timeout|unavailable|deadline|network|offline/i.test(c))return 'La base de données ne répond pas (connexion lente ou coupée). Vos données ne sont pas affichées.';
+  return 'Les données n\'ont pas pu être chargées ('+c+').';
+}
+function _afficherHorsLigne(e){
+  console.warn('Chargement des données impossible :',e);
+  const msg=document.getElementById('offline-banner-msg');if(msg)msg.textContent=_raisonHorsLigne(e)+' Les modifications ne seront pas enregistrées en ligne.';
+  const si=document.getElementById('sync-indicator');
+  if(si){si.textContent='Hors ligne';si.style.display='inline';si.style.color='var(--text3)';}
+  const banner=document.getElementById('offline-banner');
+  if(banner){banner.style.display='flex';const m=document.querySelector('.main');if(m)m.style.paddingTop='';}
+}
+function _masquerHorsLigne(){const b=document.getElementById('offline-banner');if(b)b.style.display='none';}
 
 async function syncNow(){return reconnectFirebase();}
 
 async function reconnectFirebase(){
-  const btn=document.querySelector('#offline-banner button');
-  if(btn){btn.textContent='Connexion…';btn.disabled=true;}
-  try{
-    const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents','gef_event_subpages','gef_don_data'];
-    const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000));
-    const docs=await Promise.race([Promise.all(keys.map(k=>db.collection('gef_data').doc(k).get())),timeout]);
-    _firebaseOk=true;
-    docs.forEach((d,i)=>{
-      const val=d.exists?d.data().value:null;
-      if(!val)return;
-      if(i===0)membres=val;
-      else if(i===1)events=val;
-      else if(i===2)presences=val;
-      else if(i===3)compta=val;
-      else if(i===4)cotisations=val;
-      else if(i===5)eventTypes=val;
-      else if(i===6)emailHistorique=val;
-      else if(i===7)documents_list=val;
-      else if(i===8)event_subpages=val;
-      else if(i===9&&val){Object.assign(_donData,val);lsSet('gef_don_data',_donData);_donApplyUI();}
-    });
-    setupListeners();
-    document.getElementById('offline-banner').style.display='none';
-    document.querySelector('.main').style.paddingTop='';
-    const s=document.getElementById('sync-indicator');
-    if(s){s.textContent='Sync';s.style.color='var(--green)';s.style.display='inline';clearTimeout(s._t);s._t=setTimeout(()=>s.style.display='none',2000);}
-    renderDashboard();renderMembres();renderEvents();
-  }catch(e){
-    if(btn){btn.textContent='Reconnecter';btn.disabled=false;}
-    iosAlert('Impossible de se connecter à Firebase. Vérifiez votre connexion internet.');
+  if(_donneesChargees){
+    // Données déjà chargées : simple relecture pour être à jour
+    _donneesChargees=false;
   }
+  _tentative=0;
+  await _chargerDonnees();
 }
 
 async function initApp(){
-  document.getElementById('loading-overlay').style.display='flex';
+  const ov=document.getElementById('loading-overlay');
 
-  // ── ÉTAPE 1 : Cache local immédiat ───────────────────────────────
+  // ── ÉTAPE 1 : données gardées sur cet appareil (dernière visite) ──
   membres=lsGet('gef_membres',DEFAULT_MEMBRES);
   events=lsGet('gef_events',DEFAULT_EVENTS);
   presences=lsGet('gef_presences',DEFAULT_PRESENCES);
@@ -3055,64 +3097,110 @@ async function initApp(){
   const cachedDon=lsGet('gef_don_data',null);
   if(cachedDon)Object.assign(_donData,cachedDon);
 
-  // ── Afficher l'app immédiatement ─────────────────────────────────
-  document.getElementById('loading-overlay').style.display='none';
-  renderDashboard(); renderMembres();
-  _populateCotisAnneeSel(); _checkCotisationsAnnee();
-  let migrated=false;
-  membres.forEach(m=>{if(!m.createdAt){m.createdAt='2026-01-01';migrated=true;}});
-  if(migrated){lsSet('gef_membres',membres);renderMembres();}
+  // Pas d'écran vide : on n'affiche l'application que s'il y a déjà des données
+  _cacheAffiche=Array.isArray(membres)&&membres.length>0;
+  if(_cacheAffiche){
+    ov.style.display='none';
+    renderDashboard(); renderMembres();
+    _populateCotisAnneeSel();
+    const si=document.getElementById('sync-indicator');
+    if(si){si.textContent='Mise à jour…';si.style.color='var(--text3)';si.style.display='inline';}
+  }else{
+    _etatChargement('Chargement des données…',false);
+    ov.style.display='flex';
+  }
 
-  // ── ÉTAPE 2 : Firebase en arrière-plan ───────────────────────────
-  _loadFirebase(async()=>{
-    try{
-      const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents','gef_event_subpages','gef_don_data'];
-      const defaults=[DEFAULT_MEMBRES,DEFAULT_EVENTS,DEFAULT_PRESENCES,DEFAULT_COMPTA,buildDefaultCotisations(DEFAULT_MEMBRES),DEFAULT_EVENT_TYPES,[],[],DEFAULT_EVENT_SUBPAGES,null];
-      const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000));
-      const docs=await Promise.race([
-        Promise.all(keys.map(k=>db.collection('gef_data').doc(k).get())),
-        timeout
-      ]);
-      _firebaseOk=true;
-      const isNew=!docs[0].exists;
-      docs.forEach((d,i)=>{
-        const val=d.exists?d.data().value:defaults[i];
-        if(i===0)membres=val;
-        else if(i===1)events=val;
-        else if(i===2)presences=val;
-        else if(i===3)compta=val;
-        else if(i===4)cotisations=val;
-        else if(i===5)eventTypes=val;
-        else if(i===6)emailHistorique=val;
-        else if(i===7)documents_list=val;
-        else if(i===8)event_subpages=val||lsGet('gef_event_subpages',DEFAULT_EVENT_SUBPAGES);
-        else if(i===9&&val){Object.assign(_donData,val);lsSet('gef_don_data',_donData);}
-      });
-      membres&&lsSet('gef_membres',membres);
-      events&&lsSet('gef_events',events);
-      presences&&lsSet('gef_presences',presences);
-      compta&&lsSet('gef_compta',compta);
-      cotisations&&lsSet('gef_cotisations',cotisations);
-      if(isNew){keys.forEach((k,i)=>{if(defaults[i])db.collection('gef_data').doc(k).set({value:defaults[i]}).catch(()=>{});});}
-      setupListeners();
-      _majUtilisateurAffiche();
-      _loadDemandesBadge();
-      renderDashboard(); renderMembres();
-      _populateCotisAnneeSel(); _checkCotisationsAnnee();
-      let migrated2=false;
-      membres.forEach(m=>{if(!m.createdAt){m.createdAt='2026-01-01';migrated2=true;}});
-      if(migrated2){lsSet('gef_membres',membres);renderMembres();}
-      const si=document.getElementById('sync-indicator');
-      if(si){si.textContent='Sync';si.style.color='var(--green)';si.style.display='inline';clearTimeout(si._t);si._t=setTimeout(()=>si.style.display='none',2500);}
-    }catch(e){
-      console.warn('Firebase indisponible:',e.message);
-      const si=document.getElementById('sync-indicator');
-      if(si){si.textContent='Hors ligne';si.style.display='inline';si.style.color='var(--text3)';}
-      const banner=document.getElementById('offline-banner');
-      if(banner){banner.style.display='flex';document.querySelector('.main').style.paddingTop='100px';}
-    }
-  });
+  // ── ÉTAPE 2 : données en ligne (avec nouvelles tentatives automatiques)
+  _loadFirebase(()=>_chargerDonnees());
 }
+
+// ── CHARGEMENT DES DONNÉES ───────────────────────────────────────
+let _cacheAffiche=false,_chargementEnCours=false,_tentative=0,_minuterieChargement=null;
+const _CLES=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents','gef_event_subpages','gef_don_data'];
+let _prechargement=null;
+function _lancerPrechargement(){
+  if(db&&!_prechargement&&!_donneesChargees){_prechargement=Promise.all(_CLES.map(k=>db.collection('gef_data').doc(k).get()));_prechargement.catch(()=>{});}
+}
+const _PAUSES=[2,4,8,15,30]; // secondes entre deux tentatives
+function _etatChargement(texte,actions){
+  const t=document.getElementById('loading-text');if(t)t.textContent=texte;
+  const a=document.getElementById('loading-actions');if(a)a.style.display=actions?'flex':'none';
+}
+async function _chargerDonnees(){
+  if(!db||_chargementEnCours||_donneesChargees)return;
+  clearTimeout(_minuterieChargement);
+  _chargementEnCours=true;_tentative++;
+  if(!_cacheAffiche)_etatChargement(_tentative>1?'Nouvel essai de connexion…':'Chargement des données…',false);
+  try{
+    const keys=_CLES;
+    const defaults=[DEFAULT_MEMBRES,DEFAULT_EVENTS,DEFAULT_PRESENCES,DEFAULT_COMPTA,buildDefaultCotisations(DEFAULT_MEMBRES),DEFAULT_EVENT_TYPES,[],[],DEFAULT_EVENT_SUBPAGES,null];
+    const demande=_prechargement||Promise.all(keys.map(k=>db.collection('gef_data').doc(k).get()));
+    _prechargement=null;
+    const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),DELAI_CHARGEMENT));
+    const docs=await Promise.race([demande,timeout]);
+    _firebaseOk=true;_donneesChargees=true;_tentative=0;
+    _masquerHorsLigne();
+    docs.forEach((d,i)=>{
+      const val=d.exists?d.data().value:defaults[i];
+      if(i===0)membres=val;
+      else if(i===1)events=val;
+      else if(i===2)presences=val;
+      else if(i===3)compta=val;
+      else if(i===4)cotisations=val;
+      else if(i===5)eventTypes=val;
+      else if(i===6)emailHistorique=val;
+      else if(i===7)documents_list=val;
+      else if(i===8)event_subpages=val||lsGet('gef_event_subpages',DEFAULT_EVENT_SUBPAGES);
+      else if(i===9&&val){Object.assign(_donData,val);lsSet('gef_don_data',_donData);}
+    });
+    membres&&lsSet('gef_membres',membres);
+    events&&lsSet('gef_events',events);
+    presences&&lsSet('gef_presences',presences);
+    compta&&lsSet('gef_compta',compta);
+    cotisations&&lsSet('gef_cotisations',cotisations);
+    // Création des seuls documents absents, jamais avec des listes vides : rien n'est écrasé
+    docs.forEach((d,i)=>{const v=defaults[i];if(!d.exists&&v&&!(Array.isArray(v)&&!v.length))db.collection('gef_data').doc(keys[i]).set({value:v}).catch(()=>{});});
+    setupListeners();
+    _majUtilisateurAffiche();
+    _loadDemandesBadge();
+    document.getElementById('loading-overlay').style.display='none';
+    _cacheAffiche=true;
+    const p=document.querySelector('.page.active')?.id?.replace('page-','');
+    renderDashboard(); renderMembres();
+    const map={presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport,dons:renderDons,demandes:renderDemandes};
+    map[p]?.();
+    _populateCotisAnneeSel(); _checkCotisationsAnnee();
+    let migrated=false;
+    membres.forEach(m=>{if(!m.createdAt){m.createdAt='2026-01-01';migrated=true;}});
+    if(migrated){lsSet('gef_membres',membres);renderMembres();}
+    const si=document.getElementById('sync-indicator');
+    if(si){si.textContent='À jour';si.style.color='var(--green)';si.style.display='inline';clearTimeout(si._t);si._t=setTimeout(()=>si.style.display='none',2500);}
+  }catch(e){
+    console.warn('Chargement des données impossible :',e);
+    const refus=/permission/i.test(String((e&&(e.code||e.message))||''));
+    if(refus){
+      // Accès refusé : réessayer ne changerait rien
+      _etatChargement(_raisonHorsLigne(e),true);
+      if(_cacheAffiche)_afficherHorsLigne(e);
+    }else{
+      const pause=_PAUSES[Math.min(_tentative-1,_PAUSES.length-1)];
+      if(_cacheAffiche){
+        const msg=document.getElementById('offline-banner-msg');
+        const banner=document.getElementById('offline-banner');
+        if(msg)msg.textContent=`Connexion lente : les données affichées sont celles de votre dernière visite. Nouvel essai automatique dans ${pause} s.`;
+        if(banner)banner.style.display='flex';
+      }else{
+        _etatChargement(`La connexion est lente. Nouvel essai automatique dans ${pause} secondes…`,_tentative>=2);
+      }
+      _minuterieChargement=setTimeout(_chargerDonnees,pause*1000);
+    }
+  }finally{
+    _chargementEnCours=false;
+  }
+}
+// Le réseau revient ou l'on revient sur l'application : on relance tout de suite
+window.addEventListener('online',()=>{if(_authUser&&!_donneesChargees){_tentative=0;_chargerDonnees();}});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&_authUser&&!_donneesChargees){_tentative=0;_chargerDonnees();}});
 
 // ── DASHBOARD ────────────────────────────────────────────────────
 let _demandesEnAttente=0;
@@ -3248,11 +3336,9 @@ function renderMembres(){
 
   const chartEl=document.getElementById('membres-repartition-chart');
   if(chartEl){
-    const types=[['Actif',actifs,'var(--red)'],['Actif Suisse',suisses,'#c49a00'],['Passif',passifs,'#9ca3af'],['Autre',total-actifs-suisses-passifs,'#e5e7eb']];
-    chartEl.innerHTML=`<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">`+
-      types.filter(t=>t[1]>0).map(t=>`<div style="flex:${t[1]};min-width:28px;height:26px;background:${t[2]};border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;" title="${t[0]}: ${t[1]}">${t[1]>1?t[1]:''}</div>`).join('')+
-      `</div><div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;">`+
-      types.filter(t=>t[1]>0).map(t=>`<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);"><div style="width:8px;height:8px;border-radius:50%;background:${t[2]};"></div>${t[0]} <span style="font-weight:700;color:var(--text);">${t[1]}</span></div>`).join('')+`</div>`;
+    const types=[['Actifs',actifs,'var(--red)'],['Actifs suisses',suisses,'var(--gold2)'],['Passifs',passifs,'var(--text3)'],['Sans statut',total-actifs-suisses-passifs,'var(--border2)']].filter(t=>t[1]>0);
+    chartEl.innerHTML=total?`<div class="db-stack">${types.map(t=>`<i style="flex:${t[1]};background:${t[2]}" title="${t[0]} : ${t[1]}"></i>`).join('')}</div>
+      <ul class="db-legend">${types.map(t=>`<li><span style="background:${t[2]}"></span>${t[0]}<b>${t[1]}</b></li>`).join('')}</ul>`:'<p class="db-empty">Aucun membre.</p>';
   }
 
   const PAGE_SIZE_M=25;
@@ -3281,28 +3367,31 @@ function renderMembres(){
   </tr>`;}).join('');
 
   document.getElementById('member-cards').innerHTML=paged.map(m=>{
+    const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const isNew=m.createdAt&&(new Date()-new Date(m.createdAt))<30*86400000;
-    const typeColor=m.type==='Actif'?'var(--red)':m.type==='Actif Suisse'?'var(--gold)':'var(--text3)';
-    const initials=(m.prenom[0]||'')+(m.nom[0]||'');
+    const initials=esc(((m.prenom||'')[0]||'')+((m.nom||'')[0]||''));
     const pres=events.length>0?Math.round(events.filter(e=>presences[m.id+'_'+e.id]).length/events.length*100):null;
-    return`<div class="member-card-v2">
-      <div class="member-card-v2-header">
-        <div class="member-card-v2-avatar" style="background:${typeColor}20;color:${typeColor};">${initials}</div>
-        <div class="member-card-v2-info">
-          <div class="member-card-v2-name">${m.prenom} ${m.nom}${isNew?` <span style="background:rgba(34,197,94,0.2);color:var(--green);font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;">NOUVEAU</span>`:''}</div>
-          <div class="member-card-v2-role">${m.role?m.role+' · ':''}${m.type||'—'}</div>
+    const presCls=pres===null?'':pres>=70?'is-good':pres>=40?'is-mid':'is-low';
+    const tel=(m.tel||'').trim();
+    return`<article class="mcard">
+      <div class="mcard-top">
+        <span class="mcard-avatar">${initials}</span>
+        <div class="mcard-id">
+          <h3 class="mcard-name">${esc(m.prenom)} ${esc(m.nom)}${isNew?' <span class="mcard-new">Nouveau</span>':''}</h3>
+          <div class="mcard-meta">${m.type?badgeType(m.type):'<span class="badge badge-passif">Sans statut</span>'}${m.role?`<span class="mcard-role">${esc(m.role)}</span>`:''}</div>
         </div>
-        <div class="member-card-v2-actions">
-          <button class="btn-icon" onclick="editMember(${m.id})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
-          <button class="btn-icon" onclick="deleteMember(${m.id})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg></button>
-        </div>
+        ${pres!==null?`<div class="mcard-pres ${presCls}"><b>${pres}<small>%</small></b><span>présence</span></div>`:''}
       </div>
-      <div class="member-card-v2-footer">
-        ${m.email?`<span style="font-size:11px;color:var(--text3);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.email}</span>`:`<span style="font-size:11px;color:var(--text3);flex:1;">Pas d'email</span>`}
-        ${pres!==null?`<span style="font-size:11px;font-weight:700;color:${pres>=70?'var(--green)':pres>=40?'var(--gold)':'var(--red)'};">🏅 ${pres}%</span>`:''}
-        <button class="btn-icon" onclick="ouvrirFicheAdhesion(${m.id})" title="Formulaire d'adhésion" style="font-size:14px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg></button>
+      <div class="mcard-contact">
+        ${m.email?`<a href="mailto:${esc(m.email)}">${esc(m.email)}</a>`:'<span>Pas d\'e-mail</span>'}
+        ${tel?`<a href="tel:${esc(tel.replace(/\s/g,''))}">${esc(tel)}</a>`:''}
       </div>
-    </div>`;}).join('');
+      <div class="mcard-actions">
+        <button onclick="ouvrirFicheAdhesion(${m.id})">Fiche d'adhésion</button>
+        <button onclick="editMember(${m.id})">Modifier</button>
+        <button class="is-danger" onclick="deleteMember(${m.id})">Supprimer</button>
+      </div>
+    </article>`;}).join('');
 
   // Pagination controls (append after table)
   const paginEl=document.getElementById('membres-pagination');
@@ -5850,6 +5939,16 @@ function _tryInitApp(){
     });
   }).catch(()=>_loginMsg('Impossible de joindre le serveur. Vérifiez votre connexion internet puis rechargez la page.'));
 }
+// Mode application (installation sur l'écran d'accueil)
+if('serviceWorker' in navigator&&location.protocol==='https:'){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{scope:'./'}).catch(e=>console.warn('Mode application indisponible :',e)));
+}
+(function(){
+  const ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  const installe=window.navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;
+  const el=document.getElementById('install-hint');
+  if(el&&ios&&!installe)el.style.display='block';
+})();
 // Lancer immédiatement et aussi attendre DOMContentLoaded
 if(document.readyState==='loading'){
   document.addEventListener('DOMContentLoaded',()=>_tryInitApp(0));
