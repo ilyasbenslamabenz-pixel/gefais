@@ -1589,7 +1589,7 @@ td{font-size:14px;color:var(--text2);}
 .mcard-contact{display:flex;flex-direction:column;gap:4px;margin:12px 0 0 56px;font-size:15px;}
 .mcard-contact a{color:var(--text2);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .mcard-contact span{color:var(--text3);}
-.mcard-actions{display:flex;gap:18px;flex-wrap:wrap;margin:12px 0 0 56px;}
+.mcard-actions{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0 0 56px;}
 .mcard-actions button{background:none;border:none;padding:4px 0;font:inherit;font-size:14px;font-weight:600;color:var(--text);cursor:pointer;border-bottom:1px solid var(--border2);}
 .mcard-actions button.is-danger{color:var(--red);border-bottom-color:transparent;}
 #member-cards{gap:0!important;}
@@ -3383,7 +3383,6 @@ function renderMembres(){
     const initials=esc(((m.prenom||'')[0]||'')+((m.nom||'')[0]||''));
     const pres=events.length>0?Math.round(events.filter(e=>presences[m.id+'_'+e.id]).length/events.length*100):null;
     const presCls=pres===null?'':pres>=70?'is-good':pres>=40?'is-mid':'is-low';
-    const tel=(m.tel||'').trim();
     return`<article class="mcard">
       <div class="mcard-top">
         <span class="mcard-avatar">${initials}</span>
@@ -3392,10 +3391,6 @@ function renderMembres(){
           <div class="mcard-meta">${m.type?badgeType(m.type):'<span class="badge badge-passif">Sans statut</span>'}${m.role?`<span class="mcard-role">${esc(m.role)}</span>`:''}</div>
         </div>
         ${pres!==null?`<div class="mcard-pres ${presCls}"><b>${pres}<small>%</small></b><span>présence</span></div>`:''}
-      </div>
-      <div class="mcard-contact">
-        ${m.email?`<a href="mailto:${esc(m.email)}">${esc(m.email)}</a>`:'<span>Pas d\'e-mail</span>'}
-        ${tel?`<a href="tel:${esc(tel.replace(/\s/g,''))}">${esc(tel)}</a>`:''}
       </div>
       <div class="mcard-actions">
         <button onclick="ouvrirFicheAdhesion(${m.id})">Fiche d'adhésion</button>
