@@ -71,6 +71,9 @@
     .signer p{color:#000;}
     .art{break-inside:avoid;}
   }
+  @view-transition{navigation:auto;}
+  ::view-transition-old(root),::view-transition-new(root){animation-duration:.22s;}
+  @media (prefers-reduced-motion:reduce){@view-transition{navigation:none;}}
 </style>
 </head>
 <body>

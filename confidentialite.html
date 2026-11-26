@@ -83,6 +83,9 @@
   .doc th{font-weight:600;color:var(--muted);font-size:13px;}
   .tab{overflow-x:auto;}
   .maj{color:var(--muted);font-size:14px;}
+  @view-transition{navigation:auto;}
+  ::view-transition-old(root),::view-transition-new(root){animation-duration:.22s;}
+  @media (prefers-reduced-motion:reduce){@view-transition{navigation:none;}}
 </style>
 </head>
 <body>

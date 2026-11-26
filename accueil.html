@@ -505,6 +505,28 @@
   .sC .panneau{border-left:none;border-top:1px solid rgba(243,241,236,.15);padding:14px 16px}
   .sC .etapes{min-height:150px}
 }
+
+/* ── Animations utiles : lecture, retour en haut, FAQ, copie, rejouer ── */
+.lecture{position:absolute;left:0;right:0;bottom:0;height:2px;pointer-events:none}
+.lecture i{display:block;height:100%;background:var(--red);transform:scaleX(0);transform-origin:left}
+.site-header:not(.is-scrolled) .lecture{opacity:0}
+.haut{position:fixed;right:calc(18px + env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:40;width:48px;height:48px;border-radius:50%;border:0;background:var(--ink);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .25s,transform .3s var(--ease);box-shadow:0 8px 20px -8px rgba(20,20,20,.5)}
+.haut.visible{opacity:1;transform:none;pointer-events:auto}
+.haut:hover{transform:translateY(-2px)}
+.haut svg.anneau{position:absolute;inset:0;transform:rotate(-90deg)}
+.haut svg.anneau circle{fill:none;stroke:var(--red);stroke-width:3;stroke-dasharray:138.2;stroke-dashoffset:138.2}
+body.menu-open .haut{opacity:0;pointer-events:none}
+.qa details .ans{overflow:hidden}
+.flash{animation:flash 1s ease}
+@keyframes flash{0%,100%{background:transparent}25%{background:rgba(253,201,21,.65)}}
+.rejouer{background:none;border:0;padding:0;font:600 13px var(--body);color:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px;opacity:.8}
+.rejouer:hover{opacity:1}
+.sC .rejouer{color:#c9c6bd;margin-top:10px;align-self:flex-start}
+.menu-panel ol a.is-current{color:var(--gold)}
+.menu-panel ol a.is-current small{color:var(--gold)}
+@view-transition{navigation:auto}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.22s}
+@media (prefers-reduced-motion:reduce){.haut,.lecture i{transition:none}.flash{animation:none}@view-transition{navigation:none}}
 /* ── Rubrique Dons : bulletin QR-facture et don de vêtements ── */
 .slip.qrb{grid-template-columns:minmax(0,1.6fr) minmax(0,3fr)}
 .pay-grid{display:grid;grid-template-columns:132px minmax(0,1fr);gap:20px;align-items:start}
@@ -620,6 +642,7 @@
       <span class="menu-icon" aria-hidden="true"><span></span><span></span></span>
     </button>
   </div>
+  <div class="lecture" aria-hidden="true"><i></i></div>
 </header>
 
 <div class="menu-panel" id="menu" aria-label="Menu">
@@ -644,6 +667,8 @@
     <p>« Ensemble, faisons qu'un »</p>
   </div>
 </div>
+
+<button type="button" class="haut" aria-label="Revenir en haut de la page"><svg class="anneau" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22"/></svg><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
 
 <!-- HERO -->
 <section class="hero on-dark" aria-labelledby="hero-title">
@@ -684,7 +709,7 @@
         <div class="cta" id="ctaA"><a href="adhesion.html">Devenir membre →</a><a href="#maraudes">Comment se passe une maraude</a></div>
       </div>
     </div>
-    <div class="pied"><span>Touchez un point pour lire sa valeur</span><a href="charte.html" class="link link-arrow">Lire la charte éthique et de valeurs</a></div>
+    <div class="pied"><span>Touchez un point pour lire sa valeur · <button type="button" class="rejouer" id="rejouerA">Revoir le tour</button></span><a href="charte.html" class="link link-arrow">Lire la charte éthique et de valeurs</a></div>
   </div>
 </section>
 
@@ -735,6 +760,7 @@
           <div class="compteur"><div>Parcouru<b id="kmC">0,0 km</b></div><div>Arrêt<b id="noC">1 / 4</b></div></div>
           <div class="etapes" id="etapesC"></div>
           <div class="exemple">Parcours type : il varie selon les soirs.</div>
+          <button type="button" class="rejouer" id="rejouerC">Revoir le trajet</button>
         </div>
       </div>
     </div>
@@ -1125,6 +1151,55 @@
   }, {passive:true});
   onScroll();
 
+  /* Barre de lecture et bouton « retour en haut » */
+  var barreL = document.querySelector('.lecture i'), haut = document.querySelector('.haut'), anneau = document.querySelector('.haut .anneau circle'), rafL = 0;
+  function majLecture(){
+    rafL = 0;
+    var max = document.documentElement.scrollHeight - innerHeight, f = max > 0 ? Math.min(1, scrollY / max) : 0;
+    barreL.style.transform = 'scaleX(' + f.toFixed(4) + ')';
+    anneau.style.strokeDashoffset = (138.2 * (1 - f)).toFixed(1);
+    haut.classList.toggle('visible', scrollY > innerHeight * 1.2);
+  }
+  addEventListener('scroll', function(){ if(!rafL) rafL = requestAnimationFrame(majLecture); }, {passive:true});
+  addEventListener('resize', majLecture); majLecture();
+  haut.addEventListener('click', function(){ scrollTo({top:0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); document.querySelector('.brand').focus({preventScroll:true}); });
+
+  /* FAQ : ouverture et fermeture en douceur */
+  var reduitM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('.qa details').forEach(function(d){
+    var sum = d.querySelector('summary'), ans = d.querySelector('.ans'), anim = null;
+    sum.addEventListener('click', function(e){
+      if(reduitM || !ans.animate) return;
+      e.preventDefault();
+      if(anim) anim.cancel();
+      if(!d.open){
+        d.open = true;
+        var h = ans.scrollHeight;
+        anim = ans.animate([{height:'0px',opacity:0},{height:h+'px',opacity:1}], {duration:280, easing:'cubic-bezier(.2,.7,.2,1)'});
+      } else {
+        anim = ans.animate([{height:ans.scrollHeight+'px',opacity:1},{height:'0px',opacity:0}], {duration:220, easing:'ease-in'});
+        anim.onfinish = function(){ d.open = false; anim = null; };
+      }
+    });
+  });
+
+  /* IBAN copié : il s'allume brièvement */
+  document.querySelectorAll('.copier').forEach(function(b){
+    b.addEventListener('click', function(){ var i = document.getElementById('iban'); if(!i) return; i.classList.remove('flash'); void i.offsetWidth; i.classList.add('flash'); });
+  });
+
+  /* Menu mobile : rubrique en cours */
+  var liensM = document.querySelectorAll('.menu-panel ol > li > a');
+  if('IntersectionObserver' in window){
+    var spyM = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(!en.isIntersecting) return;
+        liensM.forEach(function(a){ a.classList.toggle('is-current', a.getAttribute('href') === '#' + en.target.id); });
+      });
+    }, {rootMargin:'-45% 0px -50% 0px'});
+    liensM.forEach(function(a){ var s = document.getElementById(a.getAttribute('href').slice(1)); if(s) spyM.observe(s); });
+  }
+
   /* Sous-menu « Dons » */
   document.querySelectorAll('.has-sub').forEach(function(li){
     var b = li.querySelector('.sub-btn'), t;
@@ -1334,6 +1409,7 @@ function jouerC(){
 [...gP.children].forEach(p=>p.classList.remove('on'));aigA.style.display='none';ctaA.classList.remove('on');tr.style.strokeDashoffset=L;majPassages(-1);arretC(0);kmC.textContent=fmtKm(0);
 const vus=new Set();
 if('IntersectionObserver' in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting&&!vus.has(e.target.id)){vus.add(e.target.id);({sceneA:jouerA,sceneC:jouerC})[e.target.id]();}}),{threshold:.55});['sceneA','sceneC'].forEach(id=>io.observe(document.getElementById(id)));}
+document.getElementById('rejouerA').addEventListener('click',jouerA);document.getElementById('rejouerC').addEventListener('click',jouerC);
 </script>
 <script>
 document.querySelectorAll('.copier').forEach(b=>b.addEventListener('click',async()=>{

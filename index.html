@@ -60,6 +60,9 @@
   @media (prefers-reduced-motion:reduce){
     .bg,.content > *{animation:none;}
   }
+  @view-transition{navigation:auto;}
+  ::view-transition-old(root),::view-transition-new(root){animation-duration:.22s;}
+  @media (prefers-reduced-motion:reduce){@view-transition{navigation:none;}}
 </style>
 </head>
 <body>
