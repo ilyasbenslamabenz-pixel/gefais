@@ -1313,6 +1313,21 @@ td{font-size:14px;color:var(--text2);}
 .pres-ag-num{font-family:var(--head);font-size:56px;font-weight:800;letter-spacing:-.03em;line-height:1;color:#fff;}
 .pres-ag-sub{font-size:14px;color:rgba(243,241,236,.55);}
 .pres-ag-foot{margin:40px 0 0;font-size:16px;color:rgba(243,241,236,.55);}
+@media(max-width:768px){
+  #modal-presentation{padding:76px 20px calc(32px + env(safe-area-inset-bottom,0px))!important;justify-content:flex-start!important;}
+  #modal-presentation>button{top:calc(16px + env(safe-area-inset-top,0px))!important;right:16px!important;}
+  .pres-ag-head{margin-bottom:28px;}
+  .pres-ag-logo{margin-bottom:28px;}
+  .pres-ag-kicker{font-size:14px;}
+  .pres-ag-title{font-size:clamp(32px,10vw,44px);overflow-wrap:break-word;}
+  .pres-ag-facts{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .pres-ag-fact,.pres-ag-fact:nth-child(3n+1){padding:18px 0 20px 14px;border-left:1px solid rgba(243,241,236,.15);}
+  .pres-ag-fact:nth-child(odd){border-left:none;padding-left:0;}
+  .pres-ag-label{font-size:13px;}
+  .pres-ag-num{font-size:clamp(24px,8vw,34px);overflow-wrap:anywhere;}
+  .pres-ag-sub{font-size:12px;}
+  .pres-ag-foot{margin-top:24px;font-size:14px;}
+}
 /* ── Pages éditoriales (même construction que le tableau de bord et le site public) ── */
 #app .page{max-width:1180px;}
 /* En-tête de page */
@@ -2577,6 +2592,8 @@ function showPage(name,el,title){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
   if(el)el.classList.add('active');
+  // Barre du bas : même onglet actif, quel que soit le chemin (menu latéral, raccourci, recherche)
+  document.querySelectorAll('.bottom-nav-item').forEach(i=>i.classList.toggle('active',i.id==='bnav-'+name));
   // Titre de la barre mobile
   const titleEl=document.getElementById('topbar-title');
   if(titleEl)titleEl.textContent=title;
@@ -2589,8 +2606,6 @@ function showPage(name,el,title){
   if(_staticMap[name])_staticMap[name]();
 }
 function navTo(name,title){
-  document.querySelectorAll('.bottom-nav-item').forEach(i=>i.classList.remove('active'));
-  document.getElementById('bnav-'+name)?.classList.add('active');
   showPage(name,document.getElementById('nav-'+name),title);
 }function switchTab(id,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -3156,8 +3171,8 @@ function saveMember(){
     const ay=document.getElementById('m-adhesion-annee')?.value||'';
     const adhesion=mo&&ay?`${ay}-${mo}`:'';
     const data={nom,prenom,role:document.getElementById('m-role').value,type:document.getElementById('m-type').value,email:document.getElementById('m-email').value,tel:document.getElementById('m-tel').value,adhesion,presence_attendue:parseFloat(document.getElementById('m-presence').value)||0,notes:document.getElementById('m-notes').value};
-    if(editingMembre){const i=membres.findIndex(m=>m.id===editingMembre);membres[i]={...membres[i],...data,createdAt:`${yr}-01-01`};}
-    else{const newId=Math.max(0,...membres.map(m=>m.id))+1;const anneeEnCours=new Date().getFullYear();membres.push({id:newId,...data,createdAt:`${yr}-01-01`});cotisations.push({membreId:newId,annee:anneeEnCours,montant:50,statut:'impaye',datePaiement:'',notes:''});save('gef_cotisations',cotisations);}
+    if(editingMembre){const i=membres.findIndex(m=>m.id===editingMembre);const ancien=membres[i].createdAt;membres[i]={...membres[i],...data,createdAt:(ancien&&new Date(ancien).getFullYear()===yr)?ancien:`${yr}-01-01`};}
+    else{const newId=Math.max(0,...membres.map(m=>m.id))+1;const anneeEnCours=new Date().getFullYear();membres.push({id:newId,...data,createdAt:yr===anneeEnCours?new Date().toISOString().slice(0,10):`${yr}-01-01`});cotisations.push({membreId:newId,annee:anneeEnCours,montant:50,statut:'impaye',datePaiement:'',notes:''});save('gef_cotisations',cotisations);}
     save('gef_membres',membres);closeModal('modal-membre');renderMembres();
   };
   if(doublon){
@@ -3685,7 +3700,8 @@ function comptaAjouterFichier(input){
           canvas.width=w;canvas.height=h;
           canvas.getContext('2d').drawImage(img,0,0,w,h);
           const dataUrl=canvas.toDataURL('image/jpeg',0.7);
-          _comptaAttachments.push({name:file.name,type:'image/jpeg',size:Math.round(dataUrl.length*0.75),data:dataUrl});
+          const nomJpg=/\.jpe?g$/i.test(file.name)?file.name:file.name.replace(/\.[^.]+$/,'')+'.jpg';
+          _comptaAttachments.push({name:nomJpg,type:'image/jpeg',size:Math.round(dataUrl.length*0.75),data:dataUrl});
           _renderAttachmentsPreview();
         };
         img.src=ev.target.result;
@@ -5667,7 +5683,7 @@ function closePresentationMode(){document.getElementById('modal-presentation').s
 
 document.addEventListener('keydown', e => {
   if((e.ctrlKey||e.metaKey) && e.key === 'k'){e.preventDefault();openGlobalSearch();}
-  if(e.key==='Escape'){document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));closeFAB();}
+  if(e.key==='Escape'){document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));closeFAB();if(document.getElementById('modal-presentation')?.style.display==='flex')closePresentationMode();}
 });
 function _tryInitApp(){
   _firebasePret().then(()=>{
