@@ -289,6 +289,12 @@
   .slip dl{margin:0;display:grid;gap:14px;}
   .slip dt{font-size:12px;font-weight:600;color:var(--muted);}
   .slip dd{margin:2px 0 0;font-size:15.5px;line-height:1.4;font-weight:500;}
+  .nature{margin-top:32px;padding-top:24px;border-top:1px solid var(--line);}
+  .nature h3{font-family:var(--head);font-size:20px;letter-spacing:-.015em;margin:0 0 8px;}
+  .nature p{margin:0 0 12px;font-size:15.5px;line-height:1.6;color:var(--ink-2);}
+  .nature a{color:inherit;text-decoration:underline;text-underline-offset:2px;}
+  .nature ul{list-style:none;margin:0 0 14px;padding:0;display:flex;flex-wrap:wrap;gap:8px;}
+  .nature li{font-family:var(--head);font-weight:700;font-size:15px;border:1.5px solid var(--ink);border-radius:3px;padding:6px 12px;}
   .slip .iban{font-family:var(--head);font-weight:700;letter-spacing:.02em;font-variant-numeric:tabular-nums;white-space:nowrap;user-select:all;}
   .slip .copier{margin-left:6px;font:600 12px var(--body);color:var(--ink);background:none;border:1px solid var(--line);border-radius:2px;padding:2px 8px;cursor:pointer;vertical-align:1px;}
   .slip .copier:hover{border-color:var(--ink);}
@@ -868,6 +874,12 @@
         <h2 id="t-don" class="h2 reveal">Soutenir, même de loin.</h2>
         <p class="text reveal" style="--d:.1s">GE-FAIS fonctionne grâce aux cotisations de ses membres et aux dons. Il n'est pas nécessaire d'être membre pour donner : chaque contribution, quel que soit son montant, aide l'association à poursuivre ses actions.</p>
         <p class="gift-note reveal" style="--d:.15s">Les dons sont possibles dès maintenant par virement. Le numéro TWINT sera publié ici très prochainement.</p>
+        <div class="nature reveal" style="--d:.2s">
+          <h3>Donner des vêtements chauds</h3>
+          <p>Pour les prochaines maraudes, nous avons besoin de :</p>
+          <ul><li>Vestes</li><li>Sous-vêtements</li><li>Chaussettes</li><li>Plaids et couvertures</li></ul>
+          <p>Des vêtements chauds que vous ne portez plus ? Donnez-leur une seconde vie : écrivez-nous en message sur <a href="https://www.instagram.com/associationgefais/" target="_blank" rel="noopener">Instagram</a> ou à <a href="mailto:contact@gefais.ch">contact@gefais.ch</a> pour organiser le dépôt.</p>
+        </div>
       </div>
       <div class="reveal" style="--d:.15s"><div class="slip" role="group" aria-label="Coordonnées pour un don">
         <div class="stub">
@@ -918,7 +930,7 @@
         </details>
         <details>
           <summary>Je n'ai pas beaucoup de temps. Puis-je quand même soutenir l'association&nbsp;? <span class="pm" aria-hidden="true"></span></summary>
-          <div class="ans"><p>Oui, de deux façons. Le statut de membre passif vous permet de soutenir GE-FAIS sans participer aux activités. Et vous pouvez faire un don, sans être membre, par TWINT ou par virement.</p></div>
+          <div class="ans"><p>Oui, de deux façons. Le statut de membre passif vous permet de soutenir GE-FAIS sans participer aux activités. Et vous pouvez faire un don, sans être membre : par virement, bientôt par TWINT, ou en donnant des vêtements chauds.</p></div>
         </details>
         <details>
           <summary>Que se passe-t-il après l'envoi du formulaire&nbsp;? <span class="pm" aria-hidden="true"></span></summary>
@@ -941,6 +953,10 @@
           <div class="ans"><p>Les maraudes ont lieu à Genève, mais l'association mène des actions de solidarité en Suisse et hors frontières, toujours dans le respect des cultures et des réalités locales.</p></div>
         </details>
         <details>
+          <summary>Peut-on donner des vêtements&nbsp;? <span class="pm" aria-hidden="true"></span></summary>
+          <div class="ans"><p>Oui, et c'est très utile en hiver : vestes, sous-vêtements, chaussettes, plaids et couvertures. Écrivez-nous en message sur Instagram (@associationgefais) ou à contact@gefais.ch pour organiser le dépôt.</p></div>
+        </details>
+        <details>
           <summary>Qui fait vivre l'association&nbsp;? <span class="pm" aria-hidden="true"></span></summary>
           <div class="ans"><p>Ses membres, tous bénévoles. Un comité de quatre personnes coordonne l'ensemble : présidence, vice-présidence et trésorerie, secrétariat, et communication.</p></div>
         </details>
@@ -959,7 +975,7 @@
     <div class="contact-grid">
       <div>
         <h2 id="t-contact" class="h2 reveal">Écrire au comité.</h2>
-        <p class="intro-txt reveal" style="--d:.1s">Une question sur l'adhésion, une envie de nous rencontrer, une proposition ? Le comité vous répond.</p>
+        <p class="intro-txt reveal" style="--d:.1s">Une question sur l'adhésion, une envie de nous rencontrer, une proposition ? Le comité vous répond, par e-mail ou en message sur Instagram.</p>
         <div class="contact-cta reveal" style="--d:.15s">
           <a href="adhesion.html" class="btn btn-red">Devenir membre <span class="arr" aria-hidden="true">→</span></a>
           <a href="mailto:contact@gefais.ch" class="link link-arrow">Écrire au comité</a>
@@ -968,7 +984,7 @@
       <dl class="coords reveal" style="--d:.2s">
         <div><dt>E-mail</dt><dd><a href="mailto:contact@gefais.ch">contact@gefais.ch</a></dd></div>
         <div><dt>Courrier</dt><dd>[adresse postale]<br>Genève, Suisse</dd></div>
-        <div><dt>Réseaux</dt><dd>[liens des réseaux sociaux]</dd></div>
+        <div><dt>Instagram</dt><dd><a href="https://www.instagram.com/associationgefais/" target="_blank" rel="noopener">@associationgefais</a></dd></div>
       </dl>
     </div>
     <p class="caption">Le Jet d'eau, Genève · Photo : [crédit photo]</p>
@@ -1006,6 +1022,7 @@
           <li><a href="#agenda">Agenda</a></li>
           <li><a href="#faq">Questions fréquentes</a></li>
           <li><a href="#contact">Contact</a></li>
+          <li><a href="https://www.instagram.com/associationgefais/" target="_blank" rel="noopener">Instagram</a></li>
         </ul>
       </nav>
       <div class="foot-col">
