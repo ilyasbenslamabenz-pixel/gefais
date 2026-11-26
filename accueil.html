@@ -92,6 +92,21 @@
   .nav-links a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1.5px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .3s var(--ease);}
   .nav-links a:hover,.nav-links a.is-current{opacity:1;}
   .nav-links a:hover::after,.nav-links a.is-current::after{transform:scaleX(1);transform-origin:left;}
+  .has-sub{position:relative;}
+  .sub-btn{display:flex;align-items:center;gap:6px;background:none;border:0;color:inherit;font:inherit;padding:6px 0;cursor:pointer;opacity:.88;}
+  .sub-btn:hover,.has-sub.is-open .sub-btn{opacity:1;}
+  .sub-btn svg{transition:transform .2s;}
+  .has-sub.is-open .sub-btn svg{transform:rotate(180deg);}
+  .sub{position:absolute;top:calc(100% + 14px);left:-18px;min-width:270px;list-style:none;margin:0;padding:8px;background:#fff;color:var(--ink);border-radius:4px;box-shadow:0 1px 0 var(--line),0 14px 34px rgba(20,20,20,.16);visibility:hidden;opacity:0;transform:translateY(-4px);transition:opacity .15s,transform .15s,visibility 0s linear .15s;}
+  .sub::before{content:"";position:absolute;left:0;right:0;top:-16px;height:16px;}
+  .has-sub.is-open .sub{visibility:visible;opacity:1;transform:none;transition:opacity .15s,transform .15s,visibility 0s;}
+  .sub a{display:block;padding:11px 12px;border-radius:3px;}
+  .sub a:hover,.sub a:focus-visible{background:var(--paper);}
+  .sub b{display:block;font-family:var(--head);font-size:15.5px;font-weight:700;}
+  .sub span{display:block;font-size:13px;color:var(--muted);margin-top:2px;}
+  #don-financier,#don-vetements{scroll-margin-top:96px;}
+  .menu-panel .m-sub ul{list-style:none;margin:-4px 0 12px;padding:0 0 0 38px;display:flex;flex-direction:column;gap:2px;}
+  .menu-panel .m-sub ul a{display:block;padding:6px 0;font-family:var(--body);font-size:17px;font-weight:600;color:#d5d5cf;}
   .site-header:not(.is-scrolled) .nav .btn-red{background:#fff;color:var(--ink);}
   .site-header:not(.is-scrolled) .nav .btn-red:hover{background:var(--paper);}
   .menu-btn{display:none;align-items:center;gap:10px;background:none;border:0;color:inherit;font:600 15px/1 var(--body);padding:10px 0 10px 8px;cursor:pointer;}
@@ -289,8 +304,9 @@
   .slip dl{margin:0;display:grid;gap:14px;}
   .slip dt{font-size:12px;font-weight:600;color:var(--muted);}
   .slip dd{margin:2px 0 0;font-size:15.5px;line-height:1.4;font-weight:500;}
-  .nature{margin-top:32px;padding-top:24px;border-top:1px solid var(--line);}
-  .nature h3{font-family:var(--head);font-size:20px;letter-spacing:-.015em;margin:0 0 8px;}
+  .nature{margin-top:clamp(40px,5vw,64px);padding-top:28px;border-top:1px solid rgba(20,20,20,.25);max-width:760px;}
+  .nature-k{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin:0 0 8px!important;}
+  .nature h3{font-family:var(--head);font-size:clamp(24px,2.6vw,32px);letter-spacing:-.015em;margin:0 0 8px;}
   .nature p{margin:0 0 12px;font-size:15.5px;line-height:1.6;color:var(--ink-2);}
   .nature a{color:inherit;text-decoration:underline;text-underline-offset:2px;}
   .nature ul{list-style:none;margin:0 0 14px;padding:0;display:flex;flex-wrap:wrap;gap:8px;}
@@ -566,6 +582,13 @@
         <li><a href="#maraudes">Maraudes</a></li>
         <li><a href="#agenda">Agenda</a></li>
         <li><a href="#adhesion">Adhésion</a></li>
+        <li class="has-sub">
+          <button type="button" class="sub-btn" aria-expanded="false" aria-controls="sub-dons">Dons<svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 3.5 5 7l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+          <ul class="sub" id="sub-dons">
+            <li><a href="#don-financier"><b>Don financier</b><span>Par virement, bientôt par TWINT</span></a></li>
+            <li><a href="#don-vetements"><b>Don de vêtements</b><span>Vestes, chaussettes, couvertures…</span></a></li>
+          </ul>
+        </li>
         <li><a href="#faq">Questions</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
@@ -586,7 +609,12 @@
     <li><a href="#agenda"><small>04</small>Agenda</a></li>
     <li><a href="#engager"><small>05</small>S'engager</a></li>
     <li><a href="#adhesion"><small>06</small>Adhésion</a></li>
-    <li><a href="#don"><small>07</small>Faire un don</a></li>
+    <li class="m-sub"><a href="#don"><small>07</small>Dons</a>
+      <ul>
+        <li><a href="#don-financier">Don financier</a></li>
+        <li><a href="#don-vetements">Don de vêtements</a></li>
+      </ul>
+    </li>
     <li><a href="#faq"><small>08</small>Questions</a></li>
     <li><a href="#contact"><small>09</small>Contact</a></li>
   </ol>
@@ -874,14 +902,8 @@
         <h2 id="t-don" class="h2 reveal">Soutenir, même de loin.</h2>
         <p class="text reveal" style="--d:.1s">GE-FAIS fonctionne grâce aux cotisations de ses membres et aux dons. Il n'est pas nécessaire d'être membre pour donner : chaque contribution, quel que soit son montant, aide l'association à poursuivre ses actions.</p>
         <p class="gift-note reveal" style="--d:.15s">Les dons sont possibles dès maintenant par virement. Le numéro TWINT sera publié ici très prochainement.</p>
-        <div class="nature reveal" style="--d:.2s">
-          <h3>Donner des vêtements chauds</h3>
-          <p>Pour les prochaines maraudes, nous avons besoin de :</p>
-          <ul><li>Vestes</li><li>Sous-vêtements</li><li>Chaussettes</li><li>Plaids et couvertures</li></ul>
-          <p>Des vêtements chauds que vous ne portez plus ? Donnez-leur une seconde vie : écrivez-nous en message sur <a href="https://www.instagram.com/associationgefais/" target="_blank" rel="noopener">Instagram</a> ou à <a href="mailto:contact@gefais.ch">contact@gefais.ch</a> pour organiser le dépôt.</p>
-        </div>
       </div>
-      <div class="reveal" style="--d:.15s"><div class="slip" role="group" aria-label="Coordonnées pour un don">
+      <div class="reveal" style="--d:.15s" id="don-financier"><div class="slip" role="group" aria-label="Coordonnées pour un don financier">
         <div class="stub">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#62625e" stroke-width="1.6" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.6 7.6 20 18M8.6 16.4 20 6"/></svg>
           <h4>Par TWINT</h4>
@@ -901,6 +923,13 @@
           </dl>
         </div>
       </div></div>
+    </div>
+    <div class="nature reveal" id="don-vetements">
+      <p class="nature-k">Don de vêtements</p>
+      <h3>Donner des vêtements chauds</h3>
+      <p>Pour les prochaines maraudes, nous avons besoin de :</p>
+      <ul><li>Vestes</li><li>Sous-vêtements</li><li>Chaussettes</li><li>Plaids et couvertures</li></ul>
+      <p>Des vêtements chauds que vous ne portez plus ? Donnez-leur une seconde vie : écrivez-nous en message sur <a href="https://www.instagram.com/associationgefais/" target="_blank" rel="noopener">Instagram</a> ou à <a href="mailto:contact@gefais.ch">contact@gefais.ch</a> pour organiser le dépôt.</p>
     </div>
   </div>
 </section>
@@ -1031,7 +1060,8 @@
           <li><a href="adhesion.html">Formulaire d'adhésion</a></li>
           <li><a href="#adhesion">Les statuts de membre</a></li>
           <li><a href="charte.html">La charte éthique</a></li>
-          <li><a href="#don">Faire un don</a></li>
+          <li><a href="#don-financier">Don financier</a></li>
+          <li><a href="#don-vetements">Don de vêtements</a></li>
         </ul>
       </div>
     </div>
@@ -1059,6 +1089,18 @@
     if(!ticking){ ticking = true; window.requestAnimationFrame(onScroll); }
   }, {passive:true});
   onScroll();
+
+  /* Sous-menu « Dons » */
+  document.querySelectorAll('.has-sub').forEach(function(li){
+    var b = li.querySelector('.sub-btn'), t;
+    function ouvrir(o){ li.classList.toggle('is-open', o); b.setAttribute('aria-expanded', o ? 'true' : 'false'); }
+    b.addEventListener('click', function(){ ouvrir(!li.classList.contains('is-open')); });
+    li.addEventListener('mouseenter', function(){ clearTimeout(t); if(matchMedia('(hover:hover)').matches) ouvrir(true); });
+    li.addEventListener('mouseleave', function(){ t = setTimeout(function(){ ouvrir(false); }, 180); });
+    li.addEventListener('click', function(e){ if(e.target.closest('.sub a')) ouvrir(false); });
+    document.addEventListener('click', function(e){ if(!li.contains(e.target)) ouvrir(false); });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && li.classList.contains('is-open')){ ouvrir(false); b.focus(); } });
+  });
 
   /* Menu mobile */
   var btn = document.querySelector('.menu-btn');
