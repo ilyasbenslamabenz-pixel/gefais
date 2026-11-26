@@ -3004,7 +3004,7 @@ function _showSaveStatus(state,text){
 // Firestore refuse tout document de plus de 1 Mio : on garde une marge.
 const FIRESTORE_MAX_BYTES=1000000;
 // Taille maximale d'un fichier joint stocké dans la base (base64 = +33 %).
-const FICHIER_MAX_BYTES=400*1024;
+const FICHIER_MAX_BYTES=700*1024; // chaque fichier a son propre document (limite de 1 Mo, encodage compris)
 const _SAVE_LABELS={gef_membres:'membres',gef_compta:'comptabilité',gef_documents:'documents',gef_cotisations:'cotisations',gef_events:'événements',gef_presences:'présences',gef_email_historique:'historique des e-mails',gef_don_data:'dons'};
 
 function _jsonBytes(v){try{return new Blob([JSON.stringify(v)]).size;}catch(e){return 0;}}
@@ -3274,6 +3274,7 @@ async function _chargerSecondaires(essai=1){
     const p=document.querySelector('.page.active')?.id?.replace('page-','');
     if(p==='documents')renderDocuments();
     if(p==='messagerie')renderMessagerie();
+    _migrerPiecesJointes();
   }catch(e){
     console.warn('Documents non chargés, nouvel essai :',e);
     setTimeout(()=>_chargerSecondaires(essai+1),Math.min(30,2*essai)*1000);
@@ -4120,7 +4121,7 @@ function comptaAjouterFichier(input){
       };
       reader.readAsDataURL(file);
     } else if(file.size>FICHIER_MAX_BYTES){
-      iosAlert(`« ${file.name} » fait ${(file.size/1048576).toFixed(1)} Mo. Les justificatifs non-image sont limités à 400 Ko. Prenez plutôt une photo du ticket, ou rangez le PDF sur kDrive.`,'Fichier trop volumineux','⚠️');
+      iosAlert(`« ${file.name} » fait ${(file.size/1048576).toFixed(1)} Mo. Les justificatifs non-image sont limités à 700 Ko. Prenez plutôt une photo du ticket, ou rangez le PDF sur kDrive.`,'Fichier trop volumineux','⚠️');
     } else {
       const reader=new FileReader();
       reader.onload=e=>{
@@ -4150,12 +4151,12 @@ function _renderAttachmentsPreview(){
     const isImage=a.type&&a.type.startsWith('image/');
     if(isImage){
       return`<div style="position:relative;display:inline-block;">
-        <img src="${a.data}" class="attach-thumb" onclick="openPhotoViewer('${a.data}')" title="${a.name}">
+        <img src="${a.thumb||a.data}" class="attach-thumb" onclick="voirPJEdition(${i})" title="${a.name}">
         <button onclick="_removeAttachment(${i})" style="position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">✕</button>
       </div>`;
     }
     return`<div class="attach-file">
-      ${a.name}<span style="color:var(--text3);font-size:11px;margin-left:4px;">${(a.size/1024).toFixed(0)}Ko</span>
+      <span onclick="voirPJEdition(${i})" style="cursor:pointer;text-decoration:underline;text-underline-offset:2px;">${a.name}</span><span style="color:var(--text3);font-size:11px;margin-left:4px;">${(a.size/1024).toFixed(0)}Ko</span>
       <button onclick="_removeAttachment(${i})" class="attach-remove">✕</button>
     </div>`;
   }).join('');
@@ -4169,9 +4170,13 @@ function _removeAttachment(i){
   _comptaAttachments.splice(i,1);
   _renderAttachmentsPreview();
 }
+function voirPJEdition(i){const a=_comptaAttachments[i];if(a)_pjOuvrir(a);}
+function voirPJCompta(id,i){const c=compta.find(x=>x.id===id);const a=c&&(c.attachments||[])[i];if(a)_pjOuvrir(a);}
 
-function openPhotoViewer(src){
+let _photoViewerNom='justificatif.jpg';
+function openPhotoViewer(src,nom){
   _photoViewerSrc=src;
+  _photoViewerNom=nom||'justificatif.jpg';
   document.getElementById('photo-viewer-img').src=src;
   document.getElementById('photo-viewer').classList.add('open');
 }
@@ -4182,14 +4187,24 @@ function closePhotoViewer(){
 function telechargerPhoto(){
   const a=document.createElement('a');
   a.href=_photoViewerSrc;
-  a.download='justificatif.jpg';
+  a.download=_photoViewerNom;
   a.click();
 }
 
-function saveCompta(){
+let _comptaEnregistrement=false;
+async function saveCompta(){
   const montant=parseFloat(document.getElementById('c-montant').value);
   const desc=document.getElementById('c-desc').value.trim();
   if(!desc||isNaN(montant)||montant<=0){iosAlert('Description et montant requis.');return;}
+  if(_comptaEnregistrement)return;
+  // Les nouveaux fichiers sont d'abord rangés chacun à part (voir _pjRanger)
+  const nouveaux=_comptaAttachments.filter(a=>a.data&&!a.ref);
+  if(nouveaux.length&&db&&_donneesChargees){
+    _comptaEnregistrement=true;
+    _showSaveStatus('saving','Envoi des pièces jointes…');
+    try{await Promise.all(nouveaux.map(a=>_pjRanger(a)));}finally{_comptaEnregistrement=false;}
+  }
+  const avant=editingCompta?((compta.find(c=>c.id===editingCompta)||{}).attachments||[]).map(a=>a.ref).filter(Boolean):[];
   const data={
     date:document.getElementById('c-date').value,
     type:document.getElementById('c-type').value,
@@ -4205,6 +4220,9 @@ function saveCompta(){
     compta.push({id:Math.max(0,...compta.map(c=>c.id))+1,...data});
   }
   save('gef_compta',compta);
+  // Fichiers retirés de l'écriture : leur document est supprimé
+  const gardes=new Set(_comptaAttachments.map(a=>a.ref).filter(Boolean));
+  if(_donneesChargees)_pjSupprimer(avant.filter(r=>!gardes.has(r)));
   closeModal('modal-compta');
   renderCompta();
 }
@@ -4212,7 +4230,7 @@ function saveCompta(){
 function deleteCompta(id){
   const c=compta.find(x=>x.id===id);
   if(!c)return;
-  confirmDelete(`Supprimer ${c.description} ?`,`Cette écriture de ${c.montant.toFixed(2)} CHF sera supprimée définitivement.`,()=>{compta=compta.filter(x=>x.id!==id);save('gef_compta',compta);renderCompta();});
+  confirmDelete(`Supprimer ${c.description} ?`,`Cette écriture de ${c.montant.toFixed(2)} CHF sera supprimée définitivement.`,()=>{compta=compta.filter(x=>x.id!==id);save('gef_compta',compta);if(_donneesChargees)_pjSupprimer((c.attachments||[]).map(a=>a.ref));renderCompta();});
 }
 
 function renderCompta(){
@@ -4266,9 +4284,9 @@ function renderCompta(){
   }
   document.getElementById('compta-tbody').innerHTML=list.map(c=>{
     const atts=c.attachments||[];
-    const thumbs=atts.filter(a=>a.type&&a.type.startsWith('image/')).slice(0,3);
+    const thumbs=atts.map((a,i)=>({a,i})).filter(({a})=>a.type&&a.type.startsWith('image/')&&(a.thumb||a.data)).slice(0,3);
     const justif=thumbs.length
-      ? thumbs.map(a=>`<img src="${a.data}" class="attach-thumb" style="width:32px;height:32px;border-radius:6px;object-fit:cover;cursor:pointer;" onclick="openPhotoViewer('${a.data}')" title="${a.name}">`).join('')
+      ? thumbs.map(({a,i})=>`<img src="${a.thumb||a.data}" class="attach-thumb" style="width:32px;height:32px;border-radius:6px;object-fit:cover;cursor:pointer;" onclick="voirPJCompta(${c.id},${i})" title="${a.name}">`).join('')
       : (atts.length?`<span style="font-size:11px;color:var(--text3);">📎 ${atts.length}</span>`:'<span style="color:var(--border);">—</span>');
     return`<tr>
       <td>${fmtDate(c.date)}</td>
@@ -4709,7 +4727,7 @@ function ajouterDocuments(input){
   const tropGros=all.filter(f=>f.size>FICHIER_MAX_BYTES);
   const files=all.filter(f=>f.size<=FICHIER_MAX_BYTES);
   if(tropGros.length){
-    iosAlert(`${tropGros.map(f=>`« ${f.name} » (${(f.size/1048576).toFixed(1)} Mo)`).join(', ')} : trop volumineux pour la base en ligne (400 Ko maximum par fichier). Rangez ${tropGros.length>1?'ces fichiers':'ce fichier'} sur kDrive et ajoutez-y plutôt un lien.`,'Fichier trop volumineux','⚠️');
+    iosAlert(`${tropGros.map(f=>`« ${f.name} » (${(f.size/1048576).toFixed(1)} Mo)`).join(', ')} : trop volumineux pour la base en ligne (700 Ko maximum par fichier). Rangez ${tropGros.length>1?'ces fichiers':'ce fichier'} sur kDrive et ajoutez-y plutôt un lien.`,'Fichier trop volumineux','⚠️');
   }
   files.forEach(file=>{
     const reader=new FileReader();
@@ -4726,9 +4744,10 @@ function ajouterDocuments(input){
         parentId:_currentFolder,
         data:e.target.result
       };
-      documents_list.push(doc);
-      save('gef_documents',documents_list);
-      renderDocuments();
+      const ajouter=()=>{documents_list.push(doc);save('gef_documents',documents_list);renderDocuments();};
+      // Rangé dans son propre document avant d'être ajouté à la liste
+      if(db&&_donneesChargees&&_secondairesChargees.has('gef_documents')){_showSaveStatus('saving','Envoi du fichier…');_pjRanger(doc,'data','mimeType','nom').then(ajouter);}
+      else ajouter();
     };
     reader.readAsDataURL(file);
   });
@@ -4764,24 +4783,27 @@ function docIcon(nom){
 function telechargerDoc(id){
   const doc=documents_list.find(d=>d.id===id);
   if(!doc)return;
-  const a=document.createElement('a');
-  a.href=doc.data;a.download=doc.nom;a.click();
+  _pjOuvrir(doc,'data','mimeType','nom');
 }
 
 function supprimerDoc(id){
   const doc=documents_list.find(d=>d.id===id);
   if(!doc)return;
   const _doDelete=()=>{
+    let refs=[];
     if(doc.type==='folder'){
       // Supprimer récursivement
       const toDelete=[id];
       const collectChildren=(pid)=>{documents_list.filter(d=>d.parentId===pid).forEach(d=>{toDelete.push(d.id);if(d.type==='folder')collectChildren(d.id);});};
       collectChildren(id);
+      refs=documents_list.filter(d=>toDelete.includes(d.id)).map(d=>d.ref);
       documents_list=documents_list.filter(d=>!toDelete.includes(d.id));
     } else {
+      refs=[doc.ref];
       documents_list=documents_list.filter(d=>d.id!==id);
     }
     save('gef_documents',documents_list);
+    if(_donneesChargees&&_secondairesChargees.has('gef_documents'))_pjSupprimer(refs);
     renderDocuments();
   };
   if(doc.type==='folder'){
@@ -5234,6 +5256,83 @@ async function _migrerFichiersAdhesion(){
   if(deplaces){save('gef_membres',membres);console.log(deplaces+' fichier(s) d\'adhésion rangé(s) à part');}
 }
 
+// ── Pièces jointes (comptabilité, documents) ──
+// Chaque fichier est rangé dans son propre document gef_data/pj_<id> ; la liste
+// ne garde que son nom, sa taille, sa référence et, pour une image, une miniature.
+const _pjCache={};
+function _pjNouvelId(){return 'pj_'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
+function _pjMiniature(src){
+  return new Promise(res=>{
+    const img=new Image();
+    img.onload=()=>{
+      const M=96,r=Math.min(1,M/Math.max(img.width,img.height));
+      const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*r));c.height=Math.max(1,Math.round(img.height*r));
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      res(c.toDataURL('image/jpeg',0.6));
+    };
+    img.onerror=()=>res(null);
+    img.src=src;
+  });
+}
+// Range un fichier encore intégré à la liste. Renvoie true s'il a été déplacé ;
+// en cas d'échec il reste dans la liste, rien n'est perdu.
+async function _pjRanger(f,cleData='data',cleType='type',cleNom='name'){
+  if(!f||!f[cleData]||f.ref||!db||!_donneesChargees)return false;
+  const ref=_pjNouvelId();
+  try{
+    const estImage=String(f[cleType]||'').startsWith('image/');
+    if(estImage&&!f.thumb)f.thumb=await _pjMiniature(f[cleData]);
+    await db.collection('gef_data').doc(ref).set({value:{data:f[cleData],name:f[cleNom]||'',type:f[cleType]||''},majPar:_authUser?_authUser.email:null,majLe:new Date().toISOString()});
+    _pjCache[ref]=f[cleData];
+    f.ref=ref;delete f[cleData];
+    return true;
+  }catch(e){console.warn('Pièce jointe non rangée à part :',e);return false;}
+}
+async function _pjLire(f,cleData='data'){
+  if(f[cleData])return f[cleData];
+  if(!f.ref)return null;
+  if(_pjCache[f.ref])return _pjCache[f.ref];
+  if(!db)throw new Error('hors ligne');
+  const d=await db.collection('gef_data').doc(f.ref).get();
+  if(!d.exists)throw new Error('introuvable');
+  return(_pjCache[f.ref]=d.data().value.data);
+}
+function _pjSupprimer(refs){
+  (refs||[]).forEach(ref=>{if(!ref)return;delete _pjCache[ref];if(db)db.collection('gef_data').doc(ref).delete().catch(()=>{});});
+}
+async function _pjOuvrir(f,cleData='data',cleType='type',cleNom='name'){
+  try{
+    showToast('Ouverture…','📎');
+    const data=await _pjLire(f,cleData);
+    if(!data){iosAlert('Ce fichier est introuvable.','Fichier manquant','⚠️');return;}
+    if(String(f[cleType]||'').startsWith('image/'))openPhotoViewer(data,f[cleNom]);
+    else{const a=document.createElement('a');a.href=data;a.download=f[cleNom]||'fichier';a.click();}
+  }catch(e){
+    console.warn(e);
+    iosAlert('Le fichier n\'a pas pu être chargé. Vérifiez la connexion puis réessayez.','Fichier indisponible','⚠️');
+  }
+}
+// Au chargement : déplace les fichiers encore intégrés à la comptabilité ou aux documents.
+let _pjMigration=false;
+async function _migrerPiecesJointes(){
+  if(!db||!_donneesChargees||_pjMigration)return;
+  _pjMigration=true;
+  try{
+  let n=0;
+  if(Array.isArray(compta)){
+    for(const c of compta)for(const a of(c.attachments||[]))if(await _pjRanger(a))n++;
+    if(n)save('gef_compta',compta);
+  }
+  if(_secondairesChargees.has('gef_documents')&&Array.isArray(documents_list)){
+    let d=0;
+    for(const doc of documents_list)if(doc.type==='file'&&await _pjRanger(doc,'data','mimeType','nom'))d++;
+    if(d)save('gef_documents',documents_list);
+    n+=d;
+  }
+  if(n)console.log(n+' pièce(s) jointe(s) rangée(s) à part');
+  }finally{_pjMigration=false;}
+}
+
 function ouvrirFicheAdhesion(id){
   _adhesionMembreId=id;
   const m=membres.find(x=>x.id===id);
@@ -5280,7 +5379,7 @@ function importerAdhesion(input){
   const file=input.files[0];if(!file)return;
   if(file.size>FICHIER_MAX_BYTES){
     input.value='';
-    iosAlert(`Ce fichier fait ${(file.size/1048576).toFixed(1)} Mo. La base en ligne n'accepte que des fichiers de 400 Ko maximum. Compressez le scan (ou prenez une photo moins lourde), ou rangez l'original sur kDrive.`,'Fichier trop volumineux','⚠️');
+    iosAlert(`Ce fichier fait ${(file.size/1048576).toFixed(1)} Mo. La base en ligne n'accepte que des fichiers de 700 Ko maximum. Compressez le scan (ou prenez une photo moins lourde), ou rangez l'original sur kDrive.`,'Fichier trop volumineux','⚠️');
     return;
   }
   const reader=new FileReader();
