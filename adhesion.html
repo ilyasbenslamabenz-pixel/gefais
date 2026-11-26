@@ -3,599 +3,581 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-<meta name="description" content="Formulaire d'adhésion en ligne — Association GE-FAIS, Genève.">
-<meta name="theme-color" content="#f4f4f8">
-<title>Association GE-FAIS — Formulaire d'adhésion</title>
+<meta name="description" content="Formulaire d'adhésion en ligne à l'association GE-FAIS, Genève.">
+<meta name="theme-color" content="#141414">
+<title>Adhésion — Association GE-FAIS</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%230e0e18'/%3E%3Ccircle cx='20' cy='3' r='3.5' fill='%23fff' opacity='.9'/%3E%3Ccircle cx='28' cy='5' r='3' fill='%23fff' opacity='.85'/%3E%3Ccircle cx='34' cy='11' r='2.5' fill='%23fff' opacity='.8'/%3E%3Ccircle cx='37' cy='19' r='2' fill='%23fff' opacity='.7'/%3E%3Ccircle cx='34' cy='27' r='2' fill='%23fff' opacity='.7'/%3E%3Ccircle cx='28' cy='33' r='2.5' fill='%23fff' opacity='.8'/%3E%3Ccircle cx='20' cy='37' r='3' fill='%23fff' opacity='.85'/%3E%3Ccircle cx='12' cy='33' r='2.5' fill='%23fff' opacity='.8'/%3E%3Ccircle cx='6' cy='27' r='2' fill='%23fff' opacity='.7'/%3E%3Ccircle cx='6' cy='19' r='3.5' fill='%23ff3b30'/%3E%3Ccircle cx='9' cy='11' r='3' fill='%23ffd60a'/%3E%3Ccircle cx='14' cy='5' r='2.5' fill='%23fff' opacity='.9'/%3E%3C/svg%3E">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --bg:#f4f4f8;--card:#ffffff;--border:#e4e4ea;--border2:#d0d0da;
-  --red:#e63329;--gold:#c49a00;--green:#1a9e3f;
-  --text:#0f0f14;--text2:#4a4a5a;--text3:#8a8a9a;
-}
-body{font-family:-apple-system,BlinkMacSystemFont,'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:24px 16px 60px;-webkit-font-smoothing:antialiased;}
+  :root{
+    --ink:#141414;--text:#2b2b29;--muted:#6a6a66;--line:rgba(20,20,20,.14);
+    --red:#d42a20;--red-dark:#b8221a;--gold:#c49a00;--grey:#8b8b86;
+    --bg:#f3f1ec;--card:#fff;--field:#fafaf8;--ok:#1a7f3c;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;}
+  h1,h2,h3,legend,.ar{font-family:'Archivo',-apple-system,BlinkMacSystemFont,sans-serif;}
+  a{color:inherit;}
+  .wrap{width:100%;max-width:1160px;margin:0 auto;padding:0 40px;}
 
-/* HEADER */
-.header{text-align:center;margin-bottom:36px;padding-top:20px;}
-.logo-badge{width:80px;height:80px;border-radius:22px;background:linear-gradient(135deg,#1a1a26,#0e0e18);border:none;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 8px 32px rgba(0,0,0,0.15),0 0 0 4px rgba(255,59,48,0.08);}
-.brand{font-size:28px;font-weight:900;letter-spacing:-1px;margin-bottom:4px;color:var(--text);}
-.brand span{color:var(--red);}
-.subtitle{font-size:13px;color:var(--text3);font-style:italic;}
-.form-title{font-size:20px;font-weight:700;margin-top:20px;letter-spacing:-0.5px;color:var(--text);}
-.form-title-line{width:40px;height:3px;background:var(--red);border-radius:2px;margin:8px auto 0;}
+  /* En-tête */
+  .top{background:var(--ink);color:#fff;}
+  .top-inner{display:flex;align-items:center;justify-content:space-between;padding-top:18px;padding-bottom:18px;}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-size:18px;font-weight:800;letter-spacing:-.3px;}
+  .back{font-size:14px;font-weight:500;text-decoration:none;opacity:.85;transition:opacity .15s;}
+  .back:hover{opacity:1;}
 
-/* CARD */
-.card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:28px 24px;width:100%;max-width:520px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,0.06);}
-.card-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:20px;display:flex;align-items:center;gap:8px;}
-.card-title::before{content:'';display:inline-block;width:3px;height:14px;background:var(--red);border-radius:2px;}
+  /* Mise en page */
+  .layout{display:grid;grid-template-columns:4fr 7fr;gap:64px;align-items:start;padding-top:72px;padding-bottom:96px;}
+  .intro{position:sticky;top:32px;}
+  .kicker{font-size:15px;font-weight:600;color:var(--red);margin:0 0 14px;}
+  .intro h1{font-size:44px;line-height:1.06;font-weight:800;letter-spacing:-1.4px;margin:0 0 20px;}
+  .intro p{font-size:17px;line-height:1.65;color:var(--text);margin:0 0 28px;}
+  .facts{list-style:none;margin:0;padding:0;border-top:1px solid var(--line);}
+  .facts li{display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);font-size:15px;}
+  .facts span:first-child{color:var(--muted);}
+  .facts span:last-child{font-weight:600;text-align:right;}
 
-/* FORM */
-.form-group{margin-bottom:18px;}
-label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px;letter-spacing:0.3px;}
-input[type=text],input[type=email],input[type=tel],select{width:100%;background:#f8f8fc;border:1.5px solid var(--border);color:var(--text);padding:14px 16px;border-radius:14px;font-size:15px;font-family:-apple-system,BlinkMacSystemFont,'Plus Jakarta Sans',sans-serif;outline:none;transition:all 0.2s;-webkit-appearance:none;}
-input:focus,select:focus{border-color:var(--red);background:#fff;box-shadow:0 0 0 4px rgba(230,51,41,0.08);}
-input::placeholder{color:var(--text3);}
+  /* Carte formulaire */
+  .card{background:var(--card);border-radius:6px;padding:48px;box-shadow:0 1px 2px rgba(20,20,20,.05);}
+  fieldset{border:0;margin:0 0 40px;padding:0;}
+  fieldset + fieldset{padding-top:40px;border-top:1px solid var(--line);}
+  legend{float:left;width:100%;display:flex;align-items:center;gap:12px;font-size:21px;font-weight:700;letter-spacing:-.3px;margin-bottom:24px;padding:0;}
+  legend + *{clear:both;}
+  .num{width:28px;height:28px;border-radius:50%;background:var(--ink);color:#fff;font-size:13px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 16px;}
+  .grid-npa{display:grid;grid-template-columns:1fr 2fr;gap:16px;}
+  .full{grid-column:1/-1;}
+  .field > label,.label{display:block;font-size:14px;font-weight:600;margin-bottom:7px;color:var(--ink);}
+  .opt-tag{font-weight:400;color:var(--muted);}
+  input[type=text],input[type=email],input[type=tel],select,textarea{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:6px;padding:13px 14px;outline:none;transition:border-color .15s,box-shadow .15s,background .15s;-webkit-appearance:none;appearance:none;}
+  textarea{min-height:96px;resize:vertical;line-height:1.5;}
+  select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236a6a66' stroke-width='1.6' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:34px;cursor:pointer;}
+  input:focus,select:focus,textarea:focus{border-color:var(--ink);background:#fff;box-shadow:0 0 0 3px rgba(20,20,20,.08);}
+  .tel-row{display:flex;gap:10px;}
+  .tel-row select{width:118px;flex-shrink:0;}
+  .err{display:none;font-size:13px;color:var(--red);margin-top:6px;font-weight:500;}
+  .invalid input,.invalid select,.invalid textarea{border-color:var(--red);background:#fff8f7;}
+  .invalid .err{display:block;}
 
-/* TYPE SELECTOR */
-.type-options{display:flex;flex-direction:column;gap:10px;}
-.type-option{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;border:1.5px solid var(--border);cursor:pointer;transition:all 0.2s;background:#fff;}
-.type-option:hover{border-color:var(--border2);background:#f8f8fc;}
-.type-option.selected-actif{border-color:var(--red);background:rgba(230,51,41,0.05);}
-.type-option.selected-suisse{border-color:var(--gold);background:rgba(196,154,0,0.05);}
-.type-option.selected-passif{border-color:var(--text3);background:#f8f8fc;}
-.type-radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
-.type-radio.checked-actif{background:var(--red);border-color:var(--red);}
-.type-radio.checked-suisse{background:var(--gold);border-color:var(--gold);}
-.type-radio.checked-passif{background:var(--text3);border-color:var(--text3);}
-.type-radio::after{content:'';width:7px;height:7px;border-radius:50%;background:#fff;display:none;}
-.type-radio.checked-actif::after,.type-radio.checked-suisse::after,.type-radio.checked-passif::after{display:block;}
-.type-label{font-size:14px;font-weight:600;color:var(--text);}
-.type-desc{font-size:11px;color:var(--text3);margin-top:2px;}
+  /* Statuts */
+  .opts{display:flex;flex-direction:column;gap:10px;}
+  .opt{position:relative;display:flex;gap:14px;align-items:flex-start;border:1px solid var(--line);border-radius:6px;padding:16px 18px;cursor:pointer;transition:border-color .15s,background .15s;}
+  .opt:hover{border-color:rgba(20,20,20,.35);}
+  .opt input{position:absolute;opacity:0;pointer-events:none;}
+  .radio{width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(20,20,20,.35);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:border-color .15s;}
+  .radio::after{content:'';width:10px;height:10px;border-radius:50%;background:var(--ink);transform:scale(0);transition:transform .15s;}
+  .opt input:checked ~ .radio{border-color:var(--ink);}
+  .opt input:checked ~ .radio::after{transform:scale(1);}
+  .opt:has(input:checked){border-color:var(--ink);background:#fbfaf7;box-shadow:inset 0 0 0 1px var(--ink);}
+  .opt input:focus-visible ~ .radio{box-shadow:0 0 0 3px rgba(20,20,20,.15);}
+  .opt-body{flex:1;min-width:0;}
+  .opt-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;}
+  .opt-name{font-size:16px;font-weight:700;display:flex;align-items:center;gap:9px;}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex-shrink:0;}
+  .opt-price{font-size:14px;font-weight:600;white-space:nowrap;}
+  .opt-desc{display:block;font-size:14px;color:var(--muted);margin-top:4px;line-height:1.5;}
+  .invalid .opt{border-color:var(--red);}
 
-/* SIGNATURE CANVAS */
-.sig-wrap{background:#ffffff;border:1.5px solid var(--border);border-radius:14px;overflow:hidden;position:relative;}
-canvas{display:block;width:100%;touch-action:none;cursor:crosshair;}
-.sig-clear{position:absolute;top:10px;right:10px;background:#f0f0f4;border:1px solid var(--border);color:var(--text2);padding:5px 12px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Plus Jakarta Sans',sans-serif;}
-.sig-label{font-size:11px;color:var(--text3);text-align:center;padding:8px;border-top:1px solid var(--border);}
+  /* Engagement */
+  .check{display:flex;gap:12px;align-items:flex-start;font-size:15px;line-height:1.55;color:var(--text);cursor:pointer;margin-bottom:14px;}
+  .check input{width:20px;height:20px;margin:2px 0 0;flex-shrink:0;accent-color:var(--ink);cursor:pointer;}
+  .check.invalid{color:var(--red);}
 
-/* SUBMIT */
-.btn-submit{width:100%;background:linear-gradient(135deg,var(--red),#c0271e);color:#fff;border:none;padding:18px;border-radius:16px;font-size:16px;font-weight:700;font-family:-apple-system,BlinkMacSystemFont,'Plus Jakarta Sans',sans-serif;cursor:pointer;box-shadow:0 4px 20px rgba(230,51,41,0.25);transition:all 0.2s;-webkit-appearance:none;margin-top:8px;}
-.btn-submit:hover{transform:translateY(-1px);box-shadow:0 6px 28px rgba(230,51,41,0.35);}
-.btn-submit:active{transform:none;}
-.btn-submit:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+  /* Signature */
+  .sig{border:1px solid var(--line);border-radius:6px;background:#fff;overflow:hidden;margin-top:22px;}
+  .sig-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line);font-size:14px;font-weight:600;}
+  .sig-clear{font:inherit;font-size:13px;font-weight:600;background:none;border:1px solid var(--line);border-radius:6px;padding:7px 12px;cursor:pointer;color:var(--ink);}
+  .sig-clear:hover{border-color:var(--ink);}
+  #sig-canvas{display:block;width:100%;height:180px;touch-action:none;cursor:crosshair;background:#fff;}
+  .sig-foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:10px 14px;border-top:1px dashed var(--line);font-size:13px;color:var(--muted);}
+  .sig.invalid{border-color:var(--red);}
+  .sig-err{display:none;font-size:13px;color:var(--red);margin-top:6px;font-weight:500;}
+  .sig.invalid + .sig-err{display:block;}
 
-/* SUCCESS */
-.success-screen{display:none;text-align:center;padding:40px 20px;}
-.success-icon{font-size:64px;margin-bottom:20px;animation:bounceIn 0.6s ease;}
-.success-title{font-size:24px;font-weight:800;margin-bottom:8px;letter-spacing:-0.5px;}
-.success-sub{font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:28px;}
-.btn-pdf{background:#fff;border:1.5px solid var(--border);color:var(--text);padding:14px 24px;border-radius:14px;font-size:14px;font-weight:600;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Plus Jakarta Sans',sans-serif;display:inline-flex;align-items:center;gap:8px;-webkit-appearance:none;}
+  /* Envoi */
+  .alert{display:none;border:1px solid var(--red);background:#fff8f7;color:var(--red);border-radius:6px;padding:14px 16px;font-size:15px;font-weight:500;margin-bottom:28px;}
+  .alert.show{display:block;}
+  .submit-row{display:flex;flex-direction:column;gap:14px;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font:inherit;font-size:16px;font-weight:600;border:0;border-radius:6px;padding:17px 28px;cursor:pointer;text-decoration:none;transition:background .15s;}
+  .btn-red{background:var(--red);color:#fff;}
+  .btn-red:hover{background:var(--red-dark);}
+  .btn-red:disabled{opacity:.6;cursor:wait;}
+  .btn-ghost{background:none;color:var(--ink);border:1px solid var(--line);}
+  .btn-ghost:hover{border-color:var(--ink);}
+  .fine{font-size:13px;line-height:1.55;color:var(--muted);margin:0;}
+  .spinner{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;animation:spin .8s linear infinite;display:none;}
+  .sending .spinner{display:inline-block;}
+  @keyframes spin{to{transform:rotate(360deg)}}
 
-/* TOAST */
-.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(15,15,20,0.95);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:12px 20px;font-size:13px;font-weight:600;color:#fff;display:none;align-items:center;gap:10px;z-index:999;backdrop-filter:blur(20px);box-shadow:0 8px 32px rgba(0,0,0,0.2);white-space:nowrap;}
+  /* Confirmation */
+  .done{display:none;}
+  .done.show{display:block;}
+  .done-icon{width:56px;height:56px;border-radius:50%;background:#e9f5ee;color:var(--ok);display:flex;align-items:center;justify-content:center;margin-bottom:24px;}
+  .done h2{font-size:32px;line-height:1.1;font-weight:800;letter-spacing:-1px;margin:0 0 14px;}
+  .done > p{font-size:17px;line-height:1.65;color:var(--text);margin:0 0 30px;}
+  .steps{list-style:none;margin:0 0 34px;padding:0;border-top:1px solid var(--line);}
+  .steps li{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--line);font-size:15px;line-height:1.5;}
+  .steps b{font-family:'Archivo',sans-serif;color:var(--muted);min-width:22px;}
+  .done-actions{display:flex;gap:12px;flex-wrap:wrap;}
 
-@keyframes bounceIn{0%{transform:scale(0.3);opacity:0}50%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-.card{animation:fadeUp 0.4s ease both;}
-.card:nth-child(2){animation-delay:0.05s;}
-.card:nth-child(3){animation-delay:0.1s;}
-.card:nth-child(4){animation-delay:0.15s;}
+  .foot{border-top:1px solid var(--line);padding:24px 0 40px;font-size:13px;color:var(--muted);}
 
-/* REQUIRED */
-.required{color:var(--red);}
-.field-error{font-size:11px;color:var(--red);margin-top:5px;display:none;font-weight:600;}
-input.error{border-color:var(--red)!important;background:#fff5f5!important;}
-
-.footer{font-size:11px;color:var(--text3);text-align:center;margin-top:24px;}
-
-/* ── FINITIONS STYLE iOS ── */
-.type-option:active,.btn-submit:active,.btn-pdf:active,.sig-clear:active{
-  transform:scale(0.975);transition:transform 0.12s cubic-bezier(0.4,0,0.2,1);
-}
-body{-webkit-overflow-scrolling:touch;}
-::selection{background:rgba(230,51,41,0.25);}
+  @media (max-width:960px){
+    .layout{grid-template-columns:1fr;gap:36px;padding-top:44px;padding-bottom:64px;}
+    .intro{position:static;}
+    .intro h1{font-size:34px;letter-spacing:-1px;}
+  }
+  @media (max-width:640px){
+    .wrap{padding:0 18px;}
+    .card{padding:28px 20px;}
+    .grid{grid-template-columns:1fr;}
+    .grid > .field{grid-column:1/-1;}
+    .back span{display:none;}
+  }
+  @media (prefers-reduced-motion:reduce){.spinner{animation:none;}}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<div class="header">
-  <div class="logo-badge">
-    <svg width="46" height="46" viewBox="0 0 40 40" fill="none">
-      <circle cx="20" cy="3" r="3.5" fill="rgba(255,255,255,0.9)"/>
-      <circle cx="28" cy="5" r="3" fill="rgba(255,255,255,0.85)"/>
-      <circle cx="34" cy="11" r="2.5" fill="rgba(255,255,255,0.8)"/>
-      <circle cx="37" cy="19" r="2" fill="rgba(255,255,255,0.7)"/>
-      <circle cx="34" cy="27" r="2" fill="rgba(255,255,255,0.7)"/>
-      <circle cx="28" cy="33" r="2.5" fill="rgba(255,255,255,0.8)"/>
-      <circle cx="20" cy="37" r="3" fill="rgba(255,255,255,0.85)"/>
-      <circle cx="12" cy="33" r="2.5" fill="rgba(255,255,255,0.8)"/>
-      <circle cx="6" cy="27" r="2" fill="rgba(255,255,255,0.7)"/>
-      <circle cx="6" cy="19" r="3.5" fill="#ff3b30"/>
-      <circle cx="9" cy="11" r="3" fill="#ffd60a"/>
-      <circle cx="14" cy="5" r="2.5" fill="rgba(255,255,255,0.9)"/>
-    </svg>
+<header class="top">
+  <div class="wrap top-inner">
+    <a class="brand ar" href="./">
+      <svg width="24" height="24" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <circle cx="20" cy="3" r="3.5" fill="#fff"/><circle cx="28" cy="5" r="3" fill="#fff" opacity=".85"/>
+        <circle cx="34" cy="11" r="2.5" fill="#fff" opacity=".75"/><circle cx="37" cy="19" r="2" fill="#fff" opacity=".65"/>
+        <circle cx="34" cy="27" r="2" fill="#fff" opacity=".65"/><circle cx="28" cy="33" r="2.5" fill="#fff" opacity=".75"/>
+        <circle cx="20" cy="37" r="3" fill="#fff" opacity=".85"/><circle cx="12" cy="33" r="2.5" fill="#fff" opacity=".75"/>
+        <circle cx="6" cy="27" r="2" fill="#fff" opacity=".65"/><circle cx="6" cy="19" r="3.5" fill="#ff3b30"/>
+        <circle cx="9" cy="11" r="3" fill="#ffd60a"/><circle cx="14" cy="5" r="2.5" fill="#fff"/>
+      </svg>
+      GE-FAIS
+    </a>
+    <a class="back" href="./">← <span>Retour au site</span></a>
   </div>
-  <div class="brand">GE<span>-</span>FAIS</div>
-  <div class="subtitle">« Ensemble, faisons qu'un »</div>
-  <div class="form-title">Formulaire d'adhésion</div>
-  <div class="form-title-line"></div>
-</div>
+</header>
 
-<!-- FORMULAIRE -->
-<div id="form-wrap" style="width:100%;max-width:520px;">
+<main class="wrap layout">
+  <aside class="intro">
+    <p class="kicker">Adhésion</p>
+    <h1>Devenir membre de GE-FAIS</h1>
+    <p>Remplissez ce formulaire et signez-le en ligne. Le comité examine chaque demande, puis vous recontacte pour confirmer votre adhésion et le paiement de la cotisation.</p>
+    <ul class="facts">
+      <li><span>Cotisation</span><span>50 CHF par an</span></li>
+      <li><span>Durée</span><span>Environ 3 minutes</span></li>
+      <li><span>Signature</span><span>Électronique, sur cette page</span></li>
+      <li><span>Validation</span><span>Par le président et la vice-présidente</span></li>
+    </ul>
+  </aside>
 
-  <!-- Infos personnelles -->
   <div class="card">
-    <div class="card-title">👤 Informations personnelles</div>
+    <form id="form" novalidate>
+      <div class="alert" id="alert" role="alert" tabindex="-1"></div>
 
-    <!-- Prénom + Nom côte à côte sur desktop -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
-      <div>
-        <label>Prénom <span class="required">*</span></label>
-        <input type="text" id="f-prenom" placeholder="Prénom" autocomplete="given-name">
-        <div class="field-error" id="err-prenom">Requis</div>
-      </div>
-      <div>
-        <label>Nom <span class="required">*</span></label>
-        <input type="text" id="f-nom" placeholder="Nom" autocomplete="family-name">
-        <div class="field-error" id="err-nom">Requis</div>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label>Adresse électronique <span class="required">*</span></label>
-      <div style="position:relative;">
-        <input type="email" id="f-email" placeholder="votre@email.com" autocomplete="email" style="padding-left:42px;">
-        <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;">✉️</span>
-      </div>
-      <div class="field-error" id="err-email">Email invalide</div>
-    </div>
-
-    <div class="form-group" style="margin-bottom:0;">
-      <label>Numéro de téléphone <span class="required">*</span></label>
-      <div style="display:flex;gap:8px;align-items:stretch;">
-        <select id="f-tel-indicatif" style="width:110px;height:52px;background:#f8f8fc;border:1.5px solid var(--border);color:var(--text);padding:0 10px;border-radius:14px;font-size:13px;font-weight:700;font-family:-apple-system,BlinkMacSystemFont,'Plus Jakarta Sans',sans-serif;outline:none;cursor:pointer;flex-shrink:0;">
-          <option value="+41">CH +41</option>
-          <option value="+33">FR +33</option>
-          <option value="+32">BE +32</option>
-          <option value="+352">LU +352</option>
-          <option value="+49">DE +49</option>
-          <option value="+39">IT +39</option>
-          <option value="+34">ES +34</option>
-          <option value="+44">GB +44</option>
-          <option value="+1">US +1</option>
-          <option value="+212">MA +212</option>
-          <option value="+213">DZ +213</option>
-          <option value="+216">TN +216</option>
-          <option value="+221">SN +221</option>
-          <option value="+225">CI +225</option>
-          <option value="+243">CD +243</option>
-        </select>
-        <div style="position:relative;flex:1;">
-          <input type="tel" id="f-tel" placeholder="79 000 00 00" autocomplete="tel" style="width:100%;padding-left:42px;" inputmode="numeric">
-          <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;">📞</span>
-        </div>
-      </div>
-      <div class="field-error" id="err-tel">Numéro requis</div>
-    </div>
-  </div>
-
-  <!-- Type de membre -->
-  <div class="card">
-    <div class="card-title">🏷️ Type de membre <span class="required">*</span></div>
-    <div class="type-options">
-
-      <div class="type-option" onclick="selectType('Actif')" id="opt-actif">
-        <div class="type-radio" id="radio-actif"></div>
-        <div style="flex:1;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
-            <div class="type-label">Membre actif</div>
-            <span style="font-size:12px;font-weight:700;color:var(--red);background:rgba(230,51,41,0.08);padding:3px 10px;border-radius:20px;">50 CHF/an</span>
+      <fieldset>
+        <legend><span class="num">1</span>Vos coordonnées</legend>
+        <div class="grid">
+          <div class="field" data-f="prenom">
+            <label for="f-prenom">Prénom</label>
+            <input type="text" id="f-prenom" autocomplete="given-name" aria-describedby="e-prenom" required>
+            <div class="err" id="e-prenom">Indiquez votre prénom.</div>
           </div>
-          <div class="type-desc">Participation active · Présence attendue 80%</div>
-        </div>
-      </div>
-
-      <div class="type-option" onclick="selectType('Actif Suisse')" id="opt-suisse">
-        <div class="type-radio" id="radio-suisse"></div>
-        <div style="flex:1;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
-            <div class="type-label">Membre actif Suisse</div>
-            <span style="font-size:12px;font-weight:700;color:var(--gold);background:rgba(196,154,0,0.08);padding:3px 10px;border-radius:20px;">50 CHF/an</span>
+          <div class="field" data-f="nom">
+            <label for="f-nom">Nom</label>
+            <input type="text" id="f-nom" autocomplete="family-name" aria-describedby="e-nom" required>
+            <div class="err" id="e-nom">Indiquez votre nom.</div>
           </div>
-          <div class="type-desc">Nationalité suisse · Présence attendue 40%</div>
-        </div>
-      </div>
-
-      <div class="type-option" onclick="selectType('Passif')" id="opt-passif">
-        <div class="type-radio" id="radio-passif"></div>
-        <div style="flex:1;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
-            <div class="type-label">Membre passif</div>
-            <span style="font-size:12px;font-weight:700;color:var(--text3);background:rgba(0,0,0,0.05);padding:3px 10px;border-radius:20px;">50 CHF/an</span>
+          <div class="field full" data-f="adresse">
+            <label for="f-adresse">Rue et numéro</label>
+            <input type="text" id="f-adresse" autocomplete="address-line1" aria-describedby="e-adresse" required>
+            <div class="err" id="e-adresse">Indiquez votre adresse.</div>
           </div>
-          <div class="type-desc">Soutien sans participation active · Présence 0%</div>
+          <div class="full grid-npa">
+            <div class="field" data-f="npa">
+              <label for="f-npa">NPA</label>
+              <input type="text" id="f-npa" autocomplete="postal-code" inputmode="numeric" maxlength="10" aria-describedby="e-npa" required>
+              <div class="err" id="e-npa">NPA requis.</div>
+            </div>
+            <div class="field" data-f="localite">
+              <label for="f-localite">Localité</label>
+              <input type="text" id="f-localite" autocomplete="address-level2" aria-describedby="e-localite" required>
+              <div class="err" id="e-localite">Indiquez votre localité.</div>
+            </div>
+          </div>
+          <div class="field full" data-f="email">
+            <label for="f-email">Adresse e-mail</label>
+            <input type="email" id="f-email" autocomplete="email" placeholder="prenom.nom@exemple.ch" aria-describedby="e-email" required>
+            <div class="err" id="e-email">Indiquez une adresse e-mail valide.</div>
+          </div>
+          <div class="field full" data-f="tel">
+            <label for="f-tel">Téléphone</label>
+            <div class="tel-row">
+              <select id="f-tel-indicatif" aria-label="Indicatif du pays">
+                <option value="+41">CH +41</option>
+                <option value="+33">FR +33</option>
+                <option value="+32">BE +32</option>
+                <option value="+352">LU +352</option>
+                <option value="+49">DE +49</option>
+                <option value="+39">IT +39</option>
+                <option value="+34">ES +34</option>
+                <option value="+351">PT +351</option>
+                <option value="+44">GB +44</option>
+                <option value="+1">US +1</option>
+                <option value="+212">MA +212</option>
+                <option value="+213">DZ +213</option>
+                <option value="+216">TN +216</option>
+                <option value="+221">SN +221</option>
+                <option value="+225">CI +225</option>
+                <option value="+243">CD +243</option>
+              </select>
+              <input type="tel" id="f-tel" autocomplete="tel-national" inputmode="tel" placeholder="79 000 00 00" aria-describedby="e-tel" required>
+            </div>
+            <div class="err" id="e-tel">Indiquez un numéro de téléphone valide.</div>
+          </div>
         </div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="num">2</span>Votre statut</legend>
+        <div class="field" data-f="type">
+          <div class="opts" role="radiogroup" aria-describedby="e-type">
+            <label class="opt">
+              <input type="radio" name="type" value="Actif">
+              <span class="radio"></span>
+              <span class="opt-body">
+                <span class="opt-top"><span class="opt-name"><span class="dot" style="background:var(--red)"></span>Membre actif</span><span class="opt-price">50 CHF / an</span></span>
+                <span class="opt-desc">Vous participez activement : présence attendue à 80 % des rendez-vous.</span>
+              </span>
+            </label>
+            <label class="opt">
+              <input type="radio" name="type" value="Actif Suisse">
+              <span class="radio"></span>
+              <span class="opt-body">
+                <span class="opt-top"><span class="opt-name"><span class="dot" style="background:var(--gold)"></span>Membre actif suisse</span><span class="opt-price">50 CHF / an</span></span>
+                <span class="opt-desc">Pour les membres de nationalité suisse : présence attendue à 40 %.</span>
+              </span>
+            </label>
+            <label class="opt">
+              <input type="radio" name="type" value="Passif">
+              <span class="radio"></span>
+              <span class="opt-body">
+                <span class="opt-top"><span class="opt-name"><span class="dot" style="background:var(--grey)"></span>Membre passif</span><span class="opt-price">50 CHF / an</span></span>
+                <span class="opt-desc">Vous soutenez l'association sans participer aux activités.</span>
+              </span>
+            </label>
+          </div>
+          <div class="err" id="e-type">Choisissez un statut.</div>
+        </div>
+        <div class="field" style="margin-top:22px;">
+          <label for="f-motivation">Pourquoi souhaitez-vous nous rejoindre ? <span class="opt-tag">(facultatif)</span></label>
+          <textarea id="f-motivation" maxlength="1000"></textarea>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="num">3</span>Engagement et signature</legend>
+        <label class="check" id="c-statuts">
+          <input type="checkbox" id="f-statuts">
+          <span>Je souhaite adhérer à l'association GE-FAIS. Je m'engage à respecter ses statuts et à verser la cotisation annuelle de 50 CHF.</span>
+        </label>
+        <label class="check" id="c-donnees">
+          <input type="checkbox" id="f-donnees">
+          <span>J'accepte que mes données soient utilisées par le comité de GE-FAIS uniquement pour la gestion des membres de l'association.</span>
+        </label>
+
+        <div class="sig" id="sig-box">
+          <div class="sig-head">
+            <span>Votre signature</span>
+            <button type="button" class="sig-clear" id="sig-clear">Effacer</button>
+          </div>
+          <canvas id="sig-canvas" aria-label="Zone de signature : signez avec le doigt ou la souris"></canvas>
+          <div class="sig-foot">
+            <span>Signez avec le doigt ou la souris</span>
+            <span id="sig-date"></span>
+          </div>
+        </div>
+        <div class="sig-err">Merci de signer dans le cadre ci-dessus.</div>
+      </fieldset>
+
+      <div class="submit-row">
+        <button type="submit" class="btn btn-red" id="btn-submit"><span class="spinner" aria-hidden="true"></span><span id="btn-label">Envoyer ma demande</span></button>
+        <p class="fine">Vos données sont transmises de façon sécurisée et servent uniquement à la gestion des membres de l'association.</p>
       </div>
+    </form>
 
-    </div>
-    <div class="field-error" id="err-type" style="margin-top:10px;">Veuillez choisir un type</div>
-  </div>
-
-  <!-- Signature -->
-  <div class="card">
-    <div class="card-title">✍️ Signature du membre <span class="required">*</span></div>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.5;">Signez ci-dessous avec votre doigt ou stylet. Cette signature sera intégrée au document final.</p>
-    <div class="sig-wrap" style="border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
-      <canvas id="sig-canvas" height="180"></canvas>
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-top:1px solid var(--border);background:#fafafa;">
-        <span style="font-size:12px;color:#999;">← Signez dans cet espace →</span>
-        <button class="sig-clear" onclick="clearSig()" style="background:none;border:1px solid #ddd;color:#888;padding:4px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Plus Jakarta Sans',sans-serif;">✕ Effacer</button>
+    <section class="done" id="done" aria-live="polite">
+      <div class="done-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
       </div>
-    </div>
-    <div class="field-error" id="err-sig" style="margin-top:8px;">Signature requise</div>
+      <h2 tabindex="-1" id="done-title">Merci, votre demande est envoyée.</h2>
+      <p>Le comité de GE-FAIS a bien reçu votre demande d'adhésion. Voici la suite :</p>
+      <ol class="steps">
+        <li><b>1</b><span>Le comité examine votre demande.</span></li>
+        <li><b>2</b><span>Le président et la vice-présidente la signent à leur tour.</span></li>
+        <li><b>3</b><span>Vous êtes recontacté·e pour confirmer votre adhésion et le paiement de la cotisation.</span></li>
+      </ol>
+      <div class="done-actions">
+        <button type="button" class="btn btn-red" id="btn-pdf">Télécharger le récapitulatif (PDF)</button>
+        <a class="btn btn-ghost" href="./">Retour au site</a>
+      </div>
+    </section>
   </div>
+</main>
 
-  <!-- Submit -->
-  <div style="width:100%;max-width:520px;padding:0;">
-    <button class="btn-submit" onclick="submitForm()" id="btn-submit">
-      Soumettre ma demande →
-    </button>
-    <p style="font-size:12px;color:var(--text3);text-align:center;margin-top:14px;line-height:1.6;">
-      🔒 Vos données sont transmises de façon sécurisée.<br>
-      Le bureau vous contactera pour confirmer votre adhésion.
-    </p>
-  </div>
-</div>
-
-<!-- SUCCESS -->
-<div class="success-screen" id="success-screen">
-  <div style="width:88px;height:88px;border-radius:28px;background:linear-gradient(135deg,rgba(48,209,88,0.15),rgba(48,209,88,0.08));border:1.5px solid rgba(48,209,88,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:44px;">🎉</div>
-  <div class="success-title">Demande envoyée !</div>
-  <div class="success-sub">Votre demande d'adhésion à l'association GE-FAIS a bien été reçue.<br>Le bureau vous contactera prochainement.</div>
-
-  <div style="background:#f8f8fc;border:1px solid #e4e4ea;border-radius:16px;padding:16px;margin:20px 0;text-align:left;max-width:360px;width:100%;">
-    <div style="font-size:10px;font-weight:700;color:#8a8a9a;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Ce qui se passe ensuite</div>
-    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;">
-      <div style="width:22px;height:22px;border-radius:50%;background:#e63329;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">1</div>
-      <div style="font-size:13px;color:#4a4a5a;">Le bureau examine votre demande</div>
-    </div>
-    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;">
-      <div style="width:22px;height:22px;border-radius:50%;background:#e63329;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">2</div>
-      <div style="font-size:13px;color:#4a4a5a;">Le président et la VP signent le formulaire</div>
-    </div>
-    <div style="display:flex;align-items:flex-start;gap:10px;">
-      <div style="width:22px;height:22px;border-radius:50%;background:#1a9e3f;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">✓</div>
-      <div style="font-size:13px;color:#4a4a5a;">Vous êtes officiellement membre de GE-FAIS</div>
-    </div>
-  </div>
-
-  <button class="btn-pdf" onclick="downloadPDF()" id="btn-dl-pdf" style="width:100%;justify-content:center;padding:14px;">
-    ⬇️ Télécharger mon formulaire (PDF)
-  </button>
-</div>
-
-<!-- TOAST -->
-<div class="toast" id="toast">
-  <span id="toast-icon">✅</span>
-  <span id="toast-msg">Envoyé</span>
-</div>
-
-<div class="footer">Association GE-FAIS · Genève · © 2026</div>
+<footer class="wrap foot">© 2026 Association GE-FAIS · Genève · « Ensemble, faisons qu'un »</footer>
 
 <script>
-// ── FIREBASE ──────────────────────────────────────────────────────
+// ── Firebase (même projet que l'espace comité) ──────────────────────
 const FB_CONFIG={apiKey:"AIzaSyD7DeDaEEPIpbeR9fCfDBXVPzYeyFm04Ns",authDomain:"ge-fais.firebaseapp.com",projectId:"ge-fais",storageBucket:"ge-fais.firebasestorage.app",messagingSenderId:"908562621208",appId:"1:908562621208:web:1dae6e132a60f78051746d"};
-let db=null; // Initialisé par _initFirebase()
+let db=null;
 
-// ── SIGNATURE CANVAS ──────────────────────────────────────────────
+function loadScript(src){
+  return new Promise((resolve,reject)=>{
+    const s=document.createElement('script');
+    s.src=src;s.async=true;s.onload=resolve;s.onerror=()=>reject(new Error('Chargement impossible : '+src));
+    document.head.appendChild(s);
+  });
+}
+
+const firebaseReady=loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js')
+  .then(()=>loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js'))
+  .then(()=>{
+    if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);
+    db=firebase.firestore();
+    return db;
+  })
+  .catch(e=>{console.warn(e);return null;});
+
+loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js').catch(e=>console.warn(e));
+
+function waitForDb(ms){
+  return Promise.race([firebaseReady,new Promise(r=>setTimeout(()=>r(null),ms))]);
+}
+
+// ── Date du jour ────────────────────────────────────────────────────
+const today=new Date();
+const todayLong=today.toLocaleDateString('fr-CH',{day:'numeric',month:'long',year:'numeric'});
+document.getElementById('sig-date').textContent='Genève, le '+todayLong;
+
+// ── Signature ───────────────────────────────────────────────────────
 const canvas=document.getElementById('sig-canvas');
 const ctx=canvas.getContext('2d');
-let drawing=false,sigEmpty=true;
+let sigEmpty=true,drawing=false,lastW=0;
 
-function resizeCanvas(){
-  const rect=canvas.parentElement.getBoundingClientRect();
+function setupCanvas(){
+  const w=Math.round(canvas.getBoundingClientRect().width);
+  if(!w||w===lastW)return; // iOS déclenche "resize" au défilement : on ignore si la largeur ne change pas
   const dpr=window.devicePixelRatio||1;
-  canvas.width=rect.width*dpr;
-  canvas.height=160*dpr;
-  ctx.scale(dpr,dpr);
-  ctx.strokeStyle='#111111';
-  ctx.lineWidth=2.5;
-  ctx.lineCap='round';
-  ctx.lineJoin='round';
-  // Fond blanc explicite
-  ctx.fillStyle='#ffffff';
-  ctx.fillRect(0,0,canvas.width/dpr,canvas.height/dpr);
+  let previous=null;
+  if(!sigEmpty){previous=document.createElement('canvas');previous.width=canvas.width;previous.height=canvas.height;previous.getContext('2d').drawImage(canvas,0,0);}
+  const h=180;
+  canvas.width=w*dpr;canvas.height=h*dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);
+  if(previous)ctx.drawImage(previous,0,0,previous.width,previous.height,0,0,w,h);
+  ctx.strokeStyle='#141414';ctx.lineWidth=2.2;ctx.lineCap='round';ctx.lineJoin='round';
+  lastW=w;
 }
-resizeCanvas();
-window.addEventListener('resize',resizeCanvas);
+setupCanvas();
+window.addEventListener('resize',setupCanvas);
 
-function getPos(e){
-  const r=canvas.getBoundingClientRect();
-  const src=e.touches?e.touches[0]:e;
-  return{x:src.clientX-r.left,y:src.clientY-r.top};
+function pos(e){const r=canvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
+canvas.addEventListener('pointerdown',e=>{
+  e.preventDefault();canvas.setPointerCapture(e.pointerId);drawing=true;
+  const p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x+0.01,p.y+0.01);ctx.stroke();
+});
+canvas.addEventListener('pointermove',e=>{
+  if(!drawing)return;e.preventDefault();
+  const p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();
+  if(sigEmpty){sigEmpty=false;document.getElementById('sig-box').classList.remove('invalid');}
+});
+['pointerup','pointercancel','pointerleave'].forEach(t=>canvas.addEventListener(t,()=>{drawing=false;}));
+document.getElementById('sig-clear').addEventListener('click',()=>{
+  const w=canvas.getBoundingClientRect().width;
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,w,180);sigEmpty=true;
+});
+
+// ── Validation ──────────────────────────────────────────────────────
+const $=id=>document.getElementById(id);
+function val(id){return $(id).value.trim();}
+function setInvalid(key,bad){
+  const el=document.querySelector('[data-f="'+key+'"]');
+  if(!el)return;
+  el.classList.toggle('invalid',bad);
+  const input=el.querySelector('input:not([type=radio]),select,textarea');
+  if(input)input.setAttribute('aria-invalid',bad?'true':'false');
 }
-canvas.addEventListener('mousedown',e=>{drawing=true;const p=getPos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);});
-canvas.addEventListener('mousemove',e=>{if(!drawing)return;const p=getPos(e);ctx.lineTo(p.x,p.y);ctx.stroke();sigEmpty=false;});
-canvas.addEventListener('mouseup',()=>drawing=false);
-canvas.addEventListener('mouseleave',()=>drawing=false);
-canvas.addEventListener('touchstart',e=>{e.preventDefault();drawing=true;const p=getPos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);},{passive:false});
-canvas.addEventListener('touchmove',e=>{e.preventDefault();if(!drawing)return;const p=getPos(e);ctx.lineTo(p.x,p.y);ctx.stroke();sigEmpty=false;},{passive:false});
-canvas.addEventListener('touchend',()=>drawing=false);
+function selectedType(){const r=document.querySelector('input[name="type"]:checked');return r?r.value:'';}
 
-function clearSig(){
-  const dpr=window.devicePixelRatio||1;
-  ctx.clearRect(0,0,canvas.width/dpr,canvas.height/dpr);
-  ctx.fillStyle='#ffffff';
-  ctx.fillRect(0,0,canvas.width/dpr,canvas.height/dpr);
-  sigEmpty=true;
-}
+const rules={
+  prenom:()=>val('f-prenom').length>0,
+  nom:()=>val('f-nom').length>0,
+  adresse:()=>val('f-adresse').length>2,
+  npa:()=>/^[0-9A-Za-z \-]{3,10}$/.test(val('f-npa')),
+  localite:()=>val('f-localite').length>1,
+  email:()=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val('f-email')),
+  tel:()=>val('f-tel').replace(/\D/g,'').length>=6,
+  type:()=>!!selectedType(),
+};
 
-// ── TYPE SELECTION ────────────────────────────────────────────────
-let selectedType='';
-function selectType(type){
-  selectedType=type;
-  ['Actif','Actif Suisse','Passif'].forEach(t=>{
-    const key=t==='Actif Suisse'?'suisse':t.toLowerCase();
-    const opt=document.getElementById('opt-'+key);
-    const radio=document.getElementById('radio-'+key);
-    if(opt){opt.className='type-option';}
-    if(radio){radio.className='type-radio';}
-  });
-  const key=type==='Actif Suisse'?'suisse':type.toLowerCase();
-  const opt=document.getElementById('opt-'+key);
-  const radio=document.getElementById('radio-'+key);
-  if(opt)opt.className='type-option selected-'+key;
-  if(radio)radio.className='type-radio checked-'+key;
-  document.getElementById('err-type').style.display='none';
-}
-
-// ── VALIDATION ────────────────────────────────────────────────────
 function validate(){
-  let ok=true;
-  const prenom=document.getElementById('f-prenom').value.trim();
-  const nom=document.getElementById('f-nom').value.trim();
-  const email=document.getElementById('f-email').value.trim();
-  const tel=document.getElementById('f-tel').value.trim();
-
-  if(!prenom){document.getElementById('f-prenom').classList.add('error');document.getElementById('err-prenom').style.display='block';ok=false;}
-  else{document.getElementById('f-prenom').classList.remove('error');document.getElementById('err-prenom').style.display='none';}
-
-  if(!nom){document.getElementById('f-nom').classList.add('error');document.getElementById('err-nom').style.display='block';ok=false;}
-  else{document.getElementById('f-nom').classList.remove('error');document.getElementById('err-nom').style.display='none';}
-
-  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){document.getElementById('f-email').classList.add('error');document.getElementById('err-email').style.display='block';ok=false;}
-  else{document.getElementById('f-email').classList.remove('error');document.getElementById('err-email').style.display='none';}
-
-  if(!tel){document.getElementById('f-tel').classList.add('error');document.getElementById('err-tel').style.display='block';ok=false;}
-  else{document.getElementById('f-tel').classList.remove('error');document.getElementById('err-tel').style.display='none';}
-
-  if(!selectedType){document.getElementById('err-type').style.display='block';ok=false;}
-  if(sigEmpty){document.getElementById('err-sig').style.display='block';ok=false;}
-  else{document.getElementById('err-sig').style.display='none';}
-  return ok;
+  const bad=[];
+  Object.keys(rules).forEach(k=>{const ok=rules[k]();setInvalid(k,!ok);if(!ok)bad.push(k);});
+  const statutsOk=$('f-statuts').checked, donneesOk=$('f-donnees').checked;
+  $('c-statuts').classList.toggle('invalid',!statutsOk);
+  $('c-donnees').classList.toggle('invalid',!donneesOk);
+  if(!statutsOk)bad.push('statuts');
+  if(!donneesOk)bad.push('donnees');
+  $('sig-box').classList.toggle('invalid',sigEmpty);
+  if(sigEmpty)bad.push('signature');
+  return bad;
 }
 
-// ── TOAST ─────────────────────────────────────────────────────────
-function showToast(msg,icon,dur){
-  const t=document.getElementById('toast');
-  document.getElementById('toast-msg').textContent=msg;
-  document.getElementById('toast-icon').textContent=icon||'✅';
-  t.style.display='flex';
-  setTimeout(()=>t.style.display='none',dur||3000);
-}
+// Retire l'erreur dès que le champ est corrigé
+Object.keys(rules).forEach(k=>{
+  const el=document.querySelector('[data-f="'+k+'"]');
+  el.addEventListener('input',()=>{if(el.classList.contains('invalid')&&rules[k]())setInvalid(k,false);});
+  el.addEventListener('change',()=>{if(el.classList.contains('invalid')&&rules[k]())setInvalid(k,false);});
+});
+['statuts','donnees'].forEach(k=>$('f-'+k).addEventListener('change',e=>{if(e.target.checked)$('c-'+k).classList.remove('invalid');}));
 
-// ── DATA STORED ───────────────────────────────────────────────────
-let _formData=null;
-let _sigDataUrl='';
+function showAlert(msg){const a=$('alert');a.textContent=msg;a.classList.add('show');a.focus();a.scrollIntoView({behavior:'smooth',block:'center'});}
+function hideAlert(){$('alert').classList.remove('show');}
 
-// ── SUBMIT ────────────────────────────────────────────────────────
-async function submitForm(){
-  if(!validate())return;
-  const btn=document.getElementById('btn-submit');
-  btn.disabled=true;btn.textContent='Envoi en cours…';
+// ── Envoi ───────────────────────────────────────────────────────────
+let formData=null;
 
-  const indicatif=document.getElementById('f-tel-indicatif').value;
-  const telNum=document.getElementById('f-tel').value.trim();
-  const telComplet=indicatif+' '+telNum;
+$('form').addEventListener('submit',async e=>{
+  e.preventDefault();
+  hideAlert();
+  const bad=validate();
+  if(bad.length){
+    showAlert(bad.length===1?'Un élément est à compléter ou à corriger.':bad.length+' éléments sont à compléter ou à corriger.');
+    const first=document.querySelector('.invalid input:not([type=radio]), .invalid select, .field.invalid input[type=radio], .check.invalid input');
+    if(first)setTimeout(()=>first.focus({preventScroll:true}),400);
+    if(bad.length===1&&bad[0]==='signature')$('sig-box').scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
 
-  _sigDataUrl=canvas.toDataURL('image/png');
-  _formData={
-    prenom:document.getElementById('f-prenom').value.trim(),
-    nom:document.getElementById('f-nom').value.trim(),
-    email:document.getElementById('f-email').value.trim(),
-    tel:telComplet,
-    type:selectedType,
-    signature:_sigDataUrl,
-    date:new Date().toISOString(),
+  const btn=$('btn-submit');
+  btn.disabled=true;btn.classList.add('sending');$('btn-label').textContent='Envoi en cours…';
+
+  const now=new Date().toISOString();
+  formData={
+    prenom:val('f-prenom'),
+    nom:val('f-nom'),
+    adresse:val('f-adresse'),
+    npa:val('f-npa'),
+    localite:val('f-localite'),
+    email:val('f-email'),
+    tel:$('f-tel-indicatif').value+' '+val('f-tel'),
+    type:selectedType(),
+    motivation:val('f-motivation'),
+    consentementStatuts:true,
+    consentementDonnees:true,
+    signature:canvas.toDataURL('image/png'),
+    date:now,
     statut:'en_attente'
   };
 
-  // Save to Firebase
   try{
-    if(db){
-      await db.collection('gef_demandes').add(_formData);
-      showToast('Demande envoyée avec succès','✅');
-    } else {
-      showToast('Mode hors ligne — demande enregistrée localement','⚠️');
-    }
-  }catch(e){
-    console.warn('Firebase error:',e);
-    showToast('Envoyé en mode local','⚠️');
+    const database=await waitForDb(10000);
+    if(!database)throw new Error('Firebase indisponible');
+    await database.collection('gef_demandes').add(formData);
+    $('form').style.display='none';
+    $('done').classList.add('show');
+    $('done').scrollIntoView({behavior:'smooth',block:'start'});
+    setTimeout(()=>$('done-title').focus({preventScroll:true}),400);
+  }catch(err){
+    console.warn('Envoi impossible :',err);
+    showAlert("Votre demande n'a pas pu être envoyée. Vérifiez votre connexion internet puis réessayez : vos informations sont conservées sur cette page.");
+  }finally{
+    btn.disabled=false;btn.classList.remove('sending');$('btn-label').textContent='Envoyer ma demande';
   }
+});
 
-  // Show success
-  document.getElementById('form-wrap').style.display='none';
-  const s=document.getElementById('success-screen');
-  s.style.display='block';
-  s.style.animation='fadeUp 0.5s ease';
-}
-
-// ── PDF GENERATION ────────────────────────────────────────────────
-async function downloadPDF(sigPresidentB64, sigVpB64, validated){
+// ── Récapitulatif PDF ───────────────────────────────────────────────
+$('btn-pdf').addEventListener('click',()=>{
+  if(!window.jspdf||!formData){alert('Le PDF ne peut pas être généré pour le moment. Réessayez dans quelques secondes.');return;}
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  const W=210,margin=20;
+  const W=210,M=20;
+  const INK=[20,20,20],MUTED=[106,106,102],LINE=[220,218,212],RED=[212,42,32];
 
-  // Fonts
-  doc.setFont('helvetica');
+  // Logo
+  const dots=[[20,3,3.5,INK],[28,5,3,INK],[34,11,2.5,INK],[37,19,2,INK],[34,27,2,INK],[28,33,2.5,INK],[20,37,3,INK],[12,33,2.5,INK],[6,27,2,INK],[6,19,3.5,RED],[9,11,3,[196,154,0]],[14,5,2.5,INK]];
+  const s=0.42;
+  dots.forEach(([cx,cy,r,c])=>{doc.setFillColor(...c);doc.circle(M+cx*s,16+cy*s,r*s,'F');});
+  doc.setTextColor(...INK);doc.setFont('helvetica','bold');doc.setFontSize(15);
+  doc.text('Association GE-FAIS',M+21,21);
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...MUTED);
+  doc.text('« Ensemble, faisons qu\'un » · Genève · gefais.ch',M+21,27);
 
-  // Header background
-  doc.setFillColor(9,9,15);
-  doc.rect(0,0,W,297,'F');
+  doc.setDrawColor(...RED);doc.setLineWidth(0.8);doc.line(M,40,W-M,40);
 
-  // Header band
-  doc.setFillColor(255,59,48);
-  doc.rect(0,0,W,2,'F');
+  doc.setTextColor(...INK);doc.setFont('helvetica','bold');doc.setFontSize(20);
+  doc.text('Demande d\'adhésion',M,54);
+  doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(...MUTED);
+  const dateTxt=new Date(formData.date).toLocaleDateString('fr-CH',{day:'numeric',month:'long',year:'numeric'});
+  doc.text('Envoyée le '+dateTxt+' · Statut : en attente de validation par le comité',M,61);
 
-  // Title
-  doc.setTextColor(245,245,247);
-  doc.setFontSize(22);doc.setFont('helvetica','bold');
-  doc.text('Association GE-FAIS',W/2,22,{align:'center'});
-  doc.setFontSize(10);doc.setFont('helvetica','italic');
-  doc.setTextColor(171,171,187);
-  doc.text('« Ensemble, faisons qu\'un »',W/2,29,{align:'center'});
-
-  // Divider
-  doc.setDrawColor(255,59,48);doc.setLineWidth(0.5);
-  doc.line(margin,34,W-margin,34);
-
-  // Form title
-  doc.setFontSize(14);doc.setFont('helvetica','bold');doc.setTextColor(245,245,247);
-  doc.text('FORMULAIRE D\'ADHÉSION',W/2,44,{align:'center'});
-
-  // Status badge
-  if(validated){
-    doc.setFillColor(48,209,88);doc.setTextColor(9,9,15);
-    doc.roundedRect(W/2-20,48,40,8,2,2,'F');
-    doc.setFontSize(8);doc.setFont('helvetica','bold');
-    doc.text('✓ VALIDÉ',W/2,53.5,{align:'center'});
-  } else {
-    doc.setFillColor(255,159,10);doc.setTextColor(9,9,15);
-    doc.roundedRect(W/2-20,48,40,8,2,2,'F');
-    doc.setFontSize(8);doc.setFont('helvetica','bold');
-    doc.text('EN ATTENTE',W/2,53.5,{align:'center'});
+  let y=76;
+  function section(title){
+    doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(...RED);
+    doc.text(title.toUpperCase(),M,y);y+=4;
+    doc.setDrawColor(...LINE);doc.setLineWidth(0.3);doc.line(M,y,W-M,y);y+=7;
+  }
+  function row(label,value){
+    doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(...MUTED);
+    doc.text(label,M,y);
+    doc.setTextColor(...INK);
+    const lines=doc.splitTextToSize(value||'—',W-M*2-55);
+    doc.text(lines,M+55,y);
+    y+=Math.max(1,lines.length)*5+3;
   }
 
-  // Fields
-  let y=70;
-  const fields=[
-    ['Prénom',_formData?.prenom||''],
-    ['Nom',_formData?.nom||''],
-    ['Adresse électronique',_formData?.email||''],
-    ['Numéro de téléphone',_formData?.tel||'—'],
-    ['Type de membre',_formData?.type||''],
-  ];
+  section('Coordonnées');
+  row('Prénom',formData.prenom);
+  row('Nom',formData.nom);
+  row('Adresse',formData.adresse+', '+formData.npa+' '+formData.localite);
+  row('E-mail',formData.email);
+  row('Téléphone',formData.tel);
+  y+=4;
+  section('Statut');
+  const labels={'Actif':'Membre actif','Actif Suisse':'Membre actif suisse','Passif':'Membre passif'};
+  row('Statut choisi',labels[formData.type]||formData.type);
+  row('Cotisation annuelle','50 CHF');
+  if(formData.motivation)row('Motivation',formData.motivation);
+  y+=4;
+  section('Engagement');
+  row('Statuts','Accepte de respecter les statuts et de verser la cotisation annuelle');
+  row('Données','Accepte leur utilisation par le comité pour la gestion des membres');
+  y+=6;
+  section('Signatures');
 
-  fields.forEach(([label,val])=>{
-    doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(102,102,122);
-    doc.text(label.toUpperCase(),margin,y);
-    doc.setFontSize(12);doc.setFont('helvetica','normal');doc.setTextColor(245,245,247);
-    doc.text(val,margin,y+7);
-    doc.setDrawColor(50,50,70);doc.setLineWidth(0.3);
-    doc.line(margin,y+10,W-margin,y+10);
-    y+=20;
+  const bw=52,bh=26,cols=[M,M+59,M+118];
+  const sigs=[['Membre',formData.prenom+' '+formData.nom,formData.signature],['Président','Louka Pasche',null],['Vice-présidente','Sana Janezic',null]];
+  sigs.forEach(([role,name,img],i)=>{
+    const x=cols[i];
+    doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...MUTED);
+    doc.text(role.toUpperCase(),x,y);
+    doc.setDrawColor(...LINE);doc.setLineWidth(0.3);doc.rect(x,y+3,bw,bh);
+    if(img){try{doc.addImage(img,'PNG',x+1,y+4,bw-2,bh-2,undefined,'FAST');}catch(e){}}
+    else{doc.setFont('helvetica','italic');doc.setFontSize(8);doc.setTextColor(170,170,165);doc.text('En attente',x+bw/2,y+3+bh/2+1,{align:'center'});}
+    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...INK);
+    doc.text(name,x,y+bh+9);
   });
 
-  // Date
-  const dateStr=new Date().toLocaleDateString('fr-CH',{day:'2-digit',month:'long',year:'numeric'});
-  doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(102,102,122);
-  doc.text('DATE',margin,y);
-  doc.setFontSize(11);doc.setFont('helvetica','normal');doc.setTextColor(245,245,247);
-  doc.text(dateStr,margin,y+7);
-  doc.line(margin,y+10,W-margin,y+10);
-  y+=22;
+  doc.setDrawColor(...LINE);doc.setLineWidth(0.3);doc.line(M,280,W-M,280);
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...MUTED);
+  doc.text('Association GE-FAIS · Genève · gefais.ch',M,286);
+  doc.text('Document généré automatiquement lors de la demande d\'adhésion',W-M,286,{align:'right'});
 
-  // Signatures section
-  doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(255,59,48);
-  doc.text('SIGNATURES',margin,y);
-  y+=8;
-
-  const sigW=50,sigH=22;
-  const col1=margin,col2=margin+60,col3=margin+120;
-
-  // Membre signature
-  doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(102,102,122);
-  doc.text('MEMBRE',col1,y);
-  if(_sigDataUrl){
-    try{doc.addImage(_sigDataUrl,'PNG',col1,y+2,sigW,sigH);}catch(e){}
-  }
-  doc.setDrawColor(50,50,70);doc.line(col1,y+sigH+4,col1+sigW,y+sigH+4);
-
-  // Président signature
-  doc.setTextColor(102,102,122);
-  doc.text('PRÉSIDENT',col2,y);
-  if(sigPresidentB64){
-    try{doc.addImage(sigPresidentB64,'PNG',col2,y+2,sigW,sigH);}catch(e){}
-  } else {
-    doc.setFontSize(8);doc.setTextColor(50,50,70);
-    doc.text('[En attente]',col2,y+14);
-  }
-  doc.setDrawColor(50,50,70);doc.line(col2,y+sigH+4,col2+sigW,y+sigH+4);
-  doc.setFontSize(7);doc.setFont('helvetica','italic');doc.setTextColor(171,171,187);
-  doc.text('Pasche Louka',col2,y+sigH+9);
-
-  // VP signature
-  doc.setFont('helvetica','bold');doc.setTextColor(102,102,122);
-  doc.text('VICE-PRÉSIDENTE',col3,y);
-  if(sigVpB64){
-    try{doc.addImage(sigVpB64,'PNG',col3,y+2,sigW,sigH);}catch(e){}
-  } else {
-    doc.setFontSize(8);doc.setTextColor(50,50,70);
-    doc.text('[En attente]',col3,y+14);
-  }
-  doc.setDrawColor(50,50,70);doc.line(col3,y+sigH+4,col3+sigW,y+sigH+4);
-  doc.setFontSize(7);doc.setFont('helvetica','italic');doc.setTextColor(171,171,187);
-  doc.text('Janezic Sana',col3,y+sigH+9);
-
-  // Footer
-  doc.setFontSize(8);doc.setTextColor(102,102,122);doc.setFont('helvetica','normal');
-  doc.text('Association GE-FAIS · Genève · gefais.ch',W/2,285,{align:'center'});
-  doc.setDrawColor(255,59,48);doc.line(0,289,W,289);
-
-  doc.save(`adhesion_gefais_${(_formData?.nom||'membre').toLowerCase()}.pdf`);
-}
-</script>
-
-<script>
-// Chargement dynamique Firebase + jsPDF — compatible iOS Safari
-(function(){
-  function loadScript(src, onLoad){
-    const s=document.createElement('script');
-    s.src=src;
-    s.async=true;
-    s.onload=onLoad;
-    s.onerror=function(){console.warn('Erreur chargement:',src);};
-    document.head.appendChild(s);
-  }
-
-  // Charger Firebase en séquence
-  loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js', function(){
-    loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js', function(){
-      try{
-        if(!firebase.apps.length){
-          firebase.initializeApp(FB_CONFIG);
-        }
-        db = firebase.firestore();
-        console.log('Firebase connecté ✅');
-      } catch(e){
-        console.warn('Firebase init error:', e.message);
-      }
-    });
-  });
-
-  // Charger jsPDF en parallèle
-  loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', function(){
-    console.log('jsPDF chargé ✅');
-  });
-})();
+  const safe=(formData.nom||'membre').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-');
+  doc.save('demande-adhesion-gefais-'+safe+'.pdf');
+});
 </script>
 </body>
 </html>

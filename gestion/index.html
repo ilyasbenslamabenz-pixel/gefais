@@ -4854,6 +4854,9 @@ let _sigPresCtx=null,_sigVpCtx=null;
 let _sigPresDrawing=false,_sigVpDrawing=false;
 let _sigPresEmpty=true,_sigVpEmpty=true;
 
+// Les demandes viennent du formulaire public : tout texte est échappé avant d'être inséré dans la page.
+function _escHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
 async function renderDemandes(){
   const sub=document.getElementById('demandes-header-sub');
   const list=document.getElementById('demandes-list');
@@ -4899,7 +4902,11 @@ async function renderDemandes(){
     const isActif=d.type==='Actif', isSuisse=d.type==='Actif Suisse';
     const typeColor=isActif?'#ff6b6b':isSuisse?'#ffd60a':'#ababbb';
     const typeBg=isActif?'rgba(255,59,48,0.18)':isSuisse?'rgba(255,214,10,0.14)':'rgba(255,255,255,0.07)';
-    const initials=(d.prenom?.[0]||'').toUpperCase()+(d.nom?.[0]||'').toUpperCase();
+    const initials=_escHtml((d.prenom?.[0]||'').toUpperCase()+(d.nom?.[0]||'').toUpperCase());
+    const e={prenom:_escHtml(d.prenom),nom:_escHtml(d.nom),email:_escHtml(d.email),tel:_escHtml(d.tel),type:_escHtml(d.type),
+      adresse:_escHtml([d.adresse,[d.npa,d.localite].filter(Boolean).join(' ')].filter(Boolean).join(', ')),motivation:_escHtml(d.motivation)};
+    const safeId=String(d.id).replace(/[^A-Za-z0-9_-]/g,'');
+    const sigSrc=/^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(d.signature||'')?d.signature:'';
     const hasPres=!!d.sigPresident, hasVp=!!d.sigVp;
     const sigEnCours=d.statut==='en_attente'||d.statut==='signatures_en_cours';
     const isValidee=d.statut==='validee'||d.statut==='validée';
@@ -4920,9 +4927,9 @@ async function renderDemandes(){
 
         <!-- Infos -->
         <div style="flex:1;min-width:0;">
-          <div style="font-size:18px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;">${d.prenom||''} ${d.nom||''}</div>
+          <div style="font-size:18px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;">${e.prenom} ${e.nom}</div>
           <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
-            <span style="background:${typeBg};color:${typeColor};font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;border:1px solid ${typeColor}40;">${d.type||'—'}</span>
+            <span style="background:${typeBg};color:${typeColor};font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;border:1px solid ${typeColor}40;">${e.type||'—'}</span>
             <span style="background:${accentBg};color:${accentColor};font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">${sigEnCours?'⏳ En attente':isValidee?'✅ Validée':'❌ Refusée'}</span>
             <span style="font-size:11px;color:var(--text3);">${date}</span>
           </div>
@@ -4932,18 +4939,26 @@ async function renderDemandes(){
       <!-- Contact -->
       ${d.email||d.tel?`<div style="padding:0 20px 14px;display:flex;flex-direction:column;gap:7px;">
         ${d.email?`<div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border-radius:10px;padding:9px 12px;">
-          <span style="font-size:13px;">✉️</span><span style="font-size:13px;color:var(--text2);font-weight:500;">${d.email}</span>
+          <span style="font-size:13px;">✉️</span><span style="font-size:13px;color:var(--text2);font-weight:500;">${e.email}</span>
         </div>`:''}
         ${d.tel?`<div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border-radius:10px;padding:9px 12px;">
-          <span style="font-size:13px;">📞</span><span style="font-size:13px;color:var(--text2);font-weight:500;">${d.tel}</span>
+          <span style="font-size:13px;">📞</span><span style="font-size:13px;color:var(--text2);font-weight:500;">${e.tel}</span>
+        </div>`:''}
+        ${e.adresse?`<div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border-radius:10px;padding:9px 12px;">
+          <span style="font-size:13px;">🏠</span><span style="font-size:13px;color:var(--text2);font-weight:500;">${e.adresse}</span>
         </div>`:''}
       </div>`:''}
 
+      ${e.motivation?`<div style="padding:0 20px 14px;">
+        <div style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:6px;">Motivation</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.6;white-space:pre-line;background:var(--bg3);border-radius:10px;padding:10px 12px;">${e.motivation}</div>
+      </div>`:''}
+
       <!-- Signature membre -->
-      ${d.signature?`<div style="padding:0 20px 16px;">
+      ${sigSrc?`<div style="padding:0 20px 16px;">
         <div style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;">✍️ Signature du membre</div>
         <div style="background:#fff;border-radius:12px;padding:8px 12px;display:inline-block;box-shadow:0 2px 8px rgba(0,0,0,0.3);">
-          <img src="${d.signature}" style="max-height:52px;max-width:220px;display:block;">
+          <img src="${sigSrc}" style="max-height:52px;max-width:220px;display:block;">
         </div>
       </div>`:''}
 
@@ -4965,7 +4980,7 @@ async function renderDemandes(){
           </div>
           ${hasPres
             ?`<span style="background:rgba(48,209,88,0.15);color:#30d158;font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;">Signé ✓</span>`
-            :`<button onclick="ouvrirSignature('${d.id}','president')" style="background:var(--red);color:#fff;border:none;padding:9px 18px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Plus Jakarta Sans',sans-serif;display:flex;align-items:center;gap:6px;-webkit-appearance:none;">✍️ Signer</button>`}
+            :`<button onclick="ouvrirSignature('${safeId}','president')" style="background:var(--red);color:#fff;border:none;padding:9px 18px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Plus Jakarta Sans',sans-serif;display:flex;align-items:center;gap:6px;-webkit-appearance:none;">✍️ Signer</button>`}
         </div>
         <!-- VP -->
         <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;${hasVp?'background:rgba(48,209,88,0.05);':''}">
@@ -4978,12 +4993,12 @@ async function renderDemandes(){
           </div>
           ${hasVp
             ?`<span style="background:rgba(48,209,88,0.15);color:#30d158;font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;">Signé ✓</span>`
-            :`<button onclick="ouvrirSignature('${d.id}','vp')" style="background:var(--red);color:#fff;border:none;padding:9px 18px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Plus Jakarta Sans',sans-serif;display:flex;align-items:center;gap:6px;-webkit-appearance:none;">✍️ Signer</button>`}
+            :`<button onclick="ouvrirSignature('${safeId}','vp')" style="background:var(--red);color:#fff;border:none;padding:9px 18px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Plus Jakarta Sans',sans-serif;display:flex;align-items:center;gap:6px;-webkit-appearance:none;">✍️ Signer</button>`}
         </div>
       </div>
       <!-- Refuser -->
       <div style="padding:0 16px 16px;">
-        <button onclick="refuserDemande('${d.id}')" style="width:100%;background:rgba(255,59,48,0.08);color:var(--red);border:1px solid rgba(255,59,48,0.2);padding:12px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Plus Jakarta Sans',sans-serif;">Refuser cette demande</button>
+        <button onclick="refuserDemande('${safeId}')" style="width:100%;background:rgba(255,59,48,0.08);color:var(--red);border:1px solid rgba(255,59,48,0.2);padding:12px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Plus Jakarta Sans',sans-serif;">Refuser cette demande</button>
       </div>`
 
       :isValidee?`
@@ -4992,7 +5007,7 @@ async function renderDemandes(){
           <div style="font-size:14px;font-weight:800;color:#30d158;margin-bottom:3px;">✅ Adhésion validée</div>
           ${d.dateValidation?`<div style="font-size:11px;color:var(--text3);">${new Date(d.dateValidation).toLocaleDateString('fr-CH',{day:'2-digit',month:'long',year:'numeric'})}</div>`:''}
         </div>
-        <button onclick="regenererPDF('${d.id}')" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:0 16px;border-radius:14px;font-size:13px;font-weight:600;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Plus Jakarta Sans',sans-serif;flex-shrink:0;">⬇️ PDF</button>
+        <button onclick="regenererPDF('${safeId}')" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:0 16px;border-radius:14px;font-size:13px;font-weight:600;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Plus Jakarta Sans',sans-serif;flex-shrink:0;">⬇️ PDF</button>
       </div>`:isRefusee?`
       <div style="padding:0 16px 16px;">
         <div style="background:rgba(255,59,48,0.08);border:1px solid rgba(255,59,48,0.2);border-radius:14px;padding:14px 16px;">
@@ -5067,7 +5082,7 @@ async function confirmerSignature(){
     if(!dejaExiste){
       const newId=Math.max(0,...membres.map(m=>m.id))+1;
       const anneeEnCours=new Date().getFullYear();
-      const newMembre={id:newId,prenom:_demandeEnCours.prenom,nom:_demandeEnCours.nom,email:_demandeEnCours.email,tel:_demandeEnCours.tel||'',type:_demandeEnCours.type,role:'',adhesion:'',presence_attendue:_demandeEnCours.type==='Actif Suisse'?0.4:_demandeEnCours.type==='Passif'?0:0.8,notes:'',createdAt:new Date().toISOString().slice(0,10),adhesionDocDate:new Date().toISOString(),adhesionDocName:`adhesion_${(_demandeEnCours.nom||'membre').toLowerCase()}_valide.pdf`};
+      const newMembre={id:newId,prenom:_demandeEnCours.prenom,nom:_demandeEnCours.nom,email:_demandeEnCours.email,tel:_demandeEnCours.tel||'',adresse:[_demandeEnCours.adresse,[_demandeEnCours.npa,_demandeEnCours.localite].filter(Boolean).join(' ')].filter(Boolean).join(', '),type:_demandeEnCours.type,role:'',adhesion:'',presence_attendue:_demandeEnCours.type==='Actif Suisse'?0.4:_demandeEnCours.type==='Passif'?0:0.8,notes:'',createdAt:new Date().toISOString().slice(0,10),adhesionDocDate:new Date().toISOString(),adhesionDocName:`adhesion_${(_demandeEnCours.nom||'membre').toLowerCase()}_valide.pdf`};
       membres.push(newMembre);
       cotisations.push({membreId:newId,annee:anneeEnCours,montant:50,statut:'impaye',datePaiement:'',notes:''});
       save('gef_membres',membres);save('gef_cotisations',cotisations);
@@ -5139,7 +5154,7 @@ function _genererPDFValidation(d,sigPres,sigVp,validated=true){
   if(validated){doc.setFillColor(48,209,88);}else{doc.setFillColor(255,159,10);}
   doc.roundedRect(W/2-22,y-6,44,9,2,2,'F');
   doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(9,9,15);
-  doc.text(validated?'✓ VALIDÉ':'EN ATTENTE',W/2,y,{align:'center'});
+  doc.text(validated?'VALIDÉE':'EN ATTENTE',W/2,y,{align:'center'});
   y+=14;
 
   // ── CHAMPS ────────────────────────────────────────────────────────
@@ -5147,6 +5162,7 @@ function _genererPDFValidation(d,sigPres,sigVp,validated=true){
   const fields=[
     ['Prénom',d.prenom||''],['Nom',d.nom||''],
     ['Adresse électronique',d.email||''],['Numéro de téléphone',d.tel||'—'],
+    ...(d.adresse?[['Adresse postale',[d.adresse,[d.npa,d.localite].filter(Boolean).join(' ')].filter(Boolean).join(', ')]]:[]),
     ['Type de membre',d.type||''],['Date',dateStr]
   ];
   fields.forEach(([label,val])=>{
