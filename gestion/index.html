@@ -9,8 +9,9 @@
 <meta name="theme-color" content="#0e0e18">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>GE-Fais — Espace de gestion</title>
+<title>Espace comité — GE-FAIS</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%23fff'/%3E%3Ccircle cx='24.25' cy='6.74' r='3.78' fill='%23131313'/%3E%3Ccircle cx='33.16' cy='9.05' r='3.40' fill='%23131313'/%3E%3Ccircle cx='40.00' cy='15.18' r='2.92' fill='%23131313'/%3E%3Ccircle cx='42.77' cy='23.92' r='2.86' fill='%23131313'/%3E%3Ccircle cx='40.51' cy='32.99' r='2.75' fill='%23131313'/%3E%3Ccircle cx='33.66' cy='39.37' r='2.48' fill='%23131313'/%3E%3Ccircle cx='24.50' cy='42.35' r='2.38' fill='%23131313'/%3E%3Ccircle cx='15.68' cy='40.17' r='2.48' fill='%23131313'/%3E%3Ccircle cx='9.05' cy='33.91' r='3.62' fill='%23131313'/%3E%3Ccircle cx='6.53' cy='24.84' r='4.54' fill='%23fdc915'/%3E%3Ccircle cx='8.63' cy='15.89' r='4.48' fill='%23ee1e27'/%3E%3Ccircle cx='15.22' cy='9.34' r='3.83' fill='%23131313'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="/images/icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1547,6 +1548,24 @@ td{font-size:14px;color:var(--text2);}
   .page-header-left h2{font-size:28px;}
 }
 
+
+/* Logo officiel : écran de chargement et mode présentation */
+.loading-logo{display:flex;align-items:center;gap:16px;animation:logoPulse 1.6s ease-in-out infinite;}
+.loading-logo .wordmark{height:26px;}
+@keyframes logoPulse{0%,100%{opacity:1}50%{opacity:.45}}
+@media (prefers-reduced-motion:reduce){.loading-logo{animation:none;}}
+.pres-ag-head{margin-bottom:48px;}
+.pres-ag-logo{display:flex;align-items:center;gap:16px;color:#fff;margin-bottom:56px;}
+.pres-ag-logo .wordmark{height:24px;}
+.pres-ag-kicker{font-size:18px;color:rgba(243,241,236,.7);margin:0 0 14px;}
+.pres-ag-title{font-family:var(--head);font-size:72px;line-height:1;font-weight:800;letter-spacing:-.035em;margin:0;color:#fff;}
+.pres-ag-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid #f3f1ec;}
+.pres-ag-fact{display:flex;flex-direction:column;gap:8px;padding:26px 28px 30px;border-left:1px solid rgba(243,241,236,.15);border-bottom:1px solid rgba(243,241,236,.15);}
+.pres-ag-fact:nth-child(3n+1){border-left:none;padding-left:0;}
+.pres-ag-label{font-size:16px;color:rgba(243,241,236,.7);}
+.pres-ag-num{font-family:var(--head);font-size:56px;font-weight:800;letter-spacing:-.03em;line-height:1;color:#fff;}
+.pres-ag-sub{font-size:14px;color:rgba(243,241,236,.55);}
+.pres-ag-foot{margin:40px 0 0;font-size:16px;color:rgba(243,241,236,.55);}
 /* ── Pages éditoriales (même construction que le tableau de bord et le site public) ── */
 #app .page{max-width:1180px;}
 /* En-tête de page */
@@ -1623,28 +1642,9 @@ td{font-size:14px;color:var(--text2);}
 <body>
 
 <!-- LOADING -->
-<div id="loading-overlay" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:998;flex-direction:column;align-items:center;justify-content:center;gap:20px;">
-  <div style="position:relative;width:80px;height:80px;">
-    <!-- Logo animé -->
-    <svg width="80" height="80" viewBox="0 0 40 40" fill="none" style="animation:logoSpin 2s linear infinite;">
-      <circle cx="20.24" cy="3.56" r="2.8" fill="rgba(255,255,255,0.9)"/>
-      <circle cx="28.72" cy="5.76" r="2.52" fill="rgba(255,255,255,0.9)"/>
-      <circle cx="35.24" cy="11.6" r="2.16" fill="rgba(255,255,255,0.9)"/>
-      <circle cx="37.88" cy="19.92" r="2.12" fill="rgba(255,255,255,0.9)"/>
-      <circle cx="35.72" cy="28.56" r="2.04" fill="rgba(255,255,255,0.9)"/>
-      <circle cx="29.2" cy="34.64" r="1.84" fill="rgba(255,255,255,0.9)"/>
-      <circle cx="20.48" cy="37.48" r="1.76" fill="rgba(255,255,255,0.9)"/>
-      <circle cx="12.08" cy="35.4" r="1.84" fill="rgba(255,255,255,0.9)"/>
-      <circle cx="5.76" cy="29.44" r="2.68" fill="rgba(255,255,255,0.9)"/>
-      <circle cx="3.36" cy="20.8" r="3.36" fill="#fdc915"/>
-      <circle cx="5.36" cy="12.28" r="3.32" fill="#ee1e27"/>
-      <circle cx="11.64" cy="6.04" r="2.84" fill="rgba(255,255,255,0.9)"/>
-    </svg>
-  </div>
-  <div style="text-align:center;">
-    <div style="font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,sans-serif;font-size:18px;font-weight:800;color:var(--text);letter-spacing:-0.5px;">GE-FAIS</div>
-    <div style="font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,sans-serif;font-size:12px;color:var(--text3);margin-top:4px;">Chargement…</div>
-  </div>
+<div id="loading-overlay" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:998;flex-direction:column;align-items:center;justify-content:center;gap:18px;color:var(--text);">
+  <div class="loading-logo"><svg width="64" height="64" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20.24" cy="3.56" r="2.8" fill="currentColor"/><circle cx="28.72" cy="5.76" r="2.52" fill="currentColor"/><circle cx="35.24" cy="11.6" r="2.16" fill="currentColor"/><circle cx="37.88" cy="19.92" r="2.12" fill="currentColor"/><circle cx="35.72" cy="28.56" r="2.04" fill="currentColor"/><circle cx="29.2" cy="34.64" r="1.84" fill="currentColor"/><circle cx="20.48" cy="37.48" r="1.76" fill="currentColor"/><circle cx="12.08" cy="35.4" r="1.84" fill="currentColor"/><circle cx="5.76" cy="29.44" r="2.68" fill="currentColor"/><circle cx="3.36" cy="20.8" r="3.36" fill="#fdc915"/><circle cx="5.36" cy="12.28" r="3.32" fill="#ee1e27"/><circle cx="11.64" cy="6.04" r="2.84" fill="currentColor"/></svg><span class="wordmark" role="img" aria-label="GE-FAIS"></span></div>
+  <div style="font-size:14px;color:var(--text3);">Chargement…</div>
 </div>
 <style>
 @keyframes logoSpin{
@@ -5367,6 +5367,9 @@ async function regenererPDF(id){
   _genererPDFValidation(d,d.sigPresident||null,d.sigVp||null,true);
 }
 
+// Logo officiel (version blanche) pour les PDF, préchargé en arrière-plan
+let _LOGO_PDF_BLANC=null;
+fetch('../images/logo-horizontal-blanc.png').then(r=>r.ok?r.blob():null).then(b=>{if(!b)return;const fr=new FileReader();fr.onload=()=>{_LOGO_PDF_BLANC=fr.result;};fr.readAsDataURL(b);}).catch(()=>{});
 function _genererPDFValidation(d,sigPres,sigVp,validated=true){
   const {jsPDF}=window.jspdf;if(!jsPDF)return showToast('jsPDF non chargé','⚠️');
   const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
@@ -5379,7 +5382,14 @@ function _genererPDFValidation(d,sigPres,sigVp,validated=true){
   // ── BANDEAU noir ────────────────────────────────────────────
   doc.setFillColor(20,20,20);doc.rect(0,0,W,38,'F');
 
-  // ── LOGO SVG en cercles ─────────────────────────────────────────
+  // ── LOGO OFFICIEL (image préchargée ; à défaut, l'anneau dessiné) ──
+  if(_LOGO_PDF_BLANC){
+    doc.addImage(_LOGO_PDF_BLANC,'PNG',margin,13.5,11*(849/208),11,'logo','FAST');
+    doc.setTextColor(255,255,255);doc.setFontSize(13);doc.setFont('helvetica','bold');
+    doc.text('FORMULAIRE D\'ADHÉSION',W-margin,19,{align:'right'});
+    doc.setFontSize(9);doc.setFont('helvetica','italic');doc.setTextColor(205,205,205);
+    doc.text('« Ensemble, faisons qu\'un »',W-margin,25.5,{align:'right'});
+  }else{
   const lx=margin,ly=8,scale=0.55;
   const INK=[255,255,255],LRED=[238,30,39],LYEL=[253,201,21]; // logo officiel
   const dots=[[20.24,3.56,2.8,INK],[28.72,5.76,2.52,INK],[35.24,11.6,2.16,INK],[37.88,19.92,2.12,INK],[35.72,28.56,2.04,INK],[29.2,34.64,1.84,INK],[20.48,37.48,1.76,INK],[12.08,35.4,1.84,INK],[5.76,29.44,2.68,INK],[3.36,20.8,3.36,LYEL],[5.36,12.28,3.32,LRED],[11.64,6.04,2.84,INK]].map(([cx,cy,r,c])=>({cx,cy,r,c}));
@@ -5396,6 +5406,8 @@ function _genererPDFValidation(d,sigPres,sigVp,validated=true){
   doc.text('« Ensemble, faisons qu\'un »',W/2,23,{align:'center'});
   doc.setFontSize(13);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);
   doc.text('FORMULAIRE D\'ADHÉSION',W/2,32,{align:'center'});
+
+  }
 
   // ── BADGE STATUT ─────────────────────────────────────────────────
   let y=50;
@@ -5458,7 +5470,7 @@ function _genererPDFValidation(d,sigPres,sigVp,validated=true){
   // ── FOOTER ────────────────────────────────────────────────────────
   doc.setFillColor(230,51,41);doc.rect(0,284,W,13,'F');
   doc.setFontSize(8);doc.setTextColor(255,255,255);doc.setFont('helvetica','normal');
-  doc.text('Association GE-FAIS · Genève · gefais.ch',W/2,292,{align:'center'});
+  doc.text('Association GE-FAIS · Genève · gefais.ch · contact@gefais.ch',W/2,292,{align:'center'});
 
   // ── SAUVEGARDER + TÉLÉCHARGER ─────────────────────────────────────
   const fileName=`adhesion_gefais_${(d.nom||'membre').toLowerCase()}_valide.pdf`;
@@ -5813,19 +5825,15 @@ function openPresentationMode(){
     ['📊','Événements',events.length,(events.length-aVenir)+' passés','var(--gold)'],
   ];
   document.getElementById('presentation-content').innerHTML=`
-    <div style="text-align:center;margin-bottom:40px;">
-      <div style="font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:10px;">GE-FAIS · Tableau de bord</div>
-      <div style="font-size:48px;font-weight:900;color:#fff;letter-spacing:-2px;">${new Date().toLocaleDateString('fr-CH',{day:'numeric',month:'long',year:'numeric'})}</div>
+    <div class="pres-ag-head">
+      <div class="pres-ag-logo"><svg width="56" height="56" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20.24" cy="3.56" r="2.8" fill="#ffffff"/><circle cx="28.72" cy="5.76" r="2.52" fill="#ffffff"/><circle cx="35.24" cy="11.6" r="2.16" fill="#ffffff"/><circle cx="37.88" cy="19.92" r="2.12" fill="#ffffff"/><circle cx="35.72" cy="28.56" r="2.04" fill="#ffffff"/><circle cx="29.2" cy="34.64" r="1.84" fill="#ffffff"/><circle cx="20.48" cy="37.48" r="1.76" fill="#ffffff"/><circle cx="12.08" cy="35.4" r="1.84" fill="#ffffff"/><circle cx="5.76" cy="29.44" r="2.68" fill="#ffffff"/><circle cx="3.36" cy="20.8" r="3.36" fill="#fdc915"/><circle cx="5.36" cy="12.28" r="3.32" fill="#ee1e27"/><circle cx="11.64" cy="6.04" r="2.84" fill="#ffffff"/></svg><span class="wordmark" role="img" aria-label="GE-FAIS"></span></div>
+      <p class="pres-ag-kicker">Assemblée générale · ${new Date().toLocaleDateString('fr-CH',{day:'numeric',month:'long',year:'numeric'})}</p>
+      <h1 class="pres-ag-title">L'association en chiffres</h1>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
-      ${stats.map(([icon,label,val,sub,color])=>`
-        <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:18px;padding:24px 20px;text-align:center;border-top:3px solid ${color};">
-          <div style="font-size:26px;margin-bottom:8px;">${icon}</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">${label}</div>
-          <div style="font-size:34px;font-weight:900;color:${color};letter-spacing:-1px;line-height:1.1;">${val}</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:6px;">${sub}</div>
-        </div>`).join('')}
-    </div>`;
+    <div class="pres-ag-facts">
+      ${stats.map(([icon,label,val,sub])=>`<div class="pres-ag-fact"><span class="pres-ag-label">${label}</span><span class="pres-ag-num">${val}</span><span class="pres-ag-sub">${sub}</span></div>`).join('')}
+    </div>
+    <p class="pres-ag-foot">« Ensemble, faisons qu'un »</p>`;
   modal.style.display='flex';
 }
 function closePresentationMode(){document.getElementById('modal-presentation').style.display='none';}
@@ -5875,9 +5883,9 @@ if(document.readyState==='loading'){
 
 
 <!-- MODAL PRESENTATION MODE -->
-<div id="modal-presentation" style="display:none;position:fixed;inset:0;background:#000;z-index:500;flex-direction:column;align-items:center;justify-content:center;padding:40px;">
-  <button onclick="closePresentationMode()" style="position:fixed;top:20px;right:20px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:8px 16px;border-radius:10px;cursor:pointer;font-size:13px;font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,sans-serif;">Quitter</button>
-  <div id="presentation-content" style="width:100%;max-width:900px;"></div>
+<div id="modal-presentation" style="display:none;position:fixed;inset:0;background:#141414;color:#f3f1ec;z-index:500;flex-direction:column;align-items:center;justify-content:center;padding:48px;overflow-y:auto;">
+  <button onclick="closePresentationMode()" style="position:fixed;top:24px;right:24px;background:none;border:1px solid rgba(243,241,236,.3);color:#f3f1ec;padding:9px 16px;border-radius:3px;cursor:pointer;font-size:14px;font-family:inherit;">Quitter</button>
+  <div id="presentation-content" style="width:100%;max-width:1100px;"></div>
 </div>
 
 <!-- MODAL CONFIRMATION SUPPRESSION -->
