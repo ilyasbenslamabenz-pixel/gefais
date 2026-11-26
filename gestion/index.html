@@ -1329,6 +1329,7 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
       <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;">Espace de gestion</div>
       <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:24px;">Connectez-vous avec votre compte personnel</div>
 
+      <div id="login-form">
       <div style="text-align:left;margin-bottom:8px;">
         <label for="login-email" style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:1.5px;text-transform:uppercase;">Adresse e-mail</label>
       </div>
@@ -1375,6 +1376,22 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
       </button>
 
       <button type="button" onclick="motDePasseOublie()" style="margin-top:14px;background:none;border:none;color:rgba(255,255,255,0.55);font-size:13px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;font-family:inherit;">Mot de passe oublié ?</button>
+      </div>
+
+      <div id="pwd-setup" style="display:none;text-align:left;">
+        <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:6px;">Choisissez votre mot de passe</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.5;margin-bottom:20px;">C'est votre première connexion<span id="pwd-setup-email"></span>. Choisissez un mot de passe personnel : il remplacera le mot de passe provisoire et vous seul le connaîtrez.</div>
+        <label for="pwd-new" style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:1.5px;text-transform:uppercase;display:block;margin-bottom:8px;">Nouveau mot de passe</label>
+        <input type="password" id="pwd-new" autocomplete="new-password" minlength="10" style="width:100%;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);color:#fff;padding:15px 18px;border-radius:14px;font-size:16px;font-family:inherit;outline:none;box-sizing:border-box;-webkit-appearance:none;margin-bottom:6px;"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('pwd-confirm').focus();}">
+        <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:16px;">Au moins 10 caractères. Une courte phrase est plus facile à retenir.</div>
+        <label for="pwd-confirm" style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:1.5px;text-transform:uppercase;display:block;margin-bottom:8px;">Confirmer le mot de passe</label>
+        <input type="password" id="pwd-confirm" autocomplete="new-password" style="width:100%;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);color:#fff;padding:15px 18px;border-radius:14px;font-size:16px;font-family:inherit;outline:none;box-sizing:border-box;-webkit-appearance:none;margin-bottom:16px;"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();validerNouveauMotDePasse();}">
+        <button id="pwd-setup-btn" onclick="validerNouveauMotDePasse()" style="width:100%;background:#d42a20;color:#fff;border:none;padding:16px;border-radius:14px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;-webkit-appearance:none;">Enregistrer et continuer</button>
+        <button type="button" onclick="logout()" style="display:block;margin:14px auto 0;background:none;border:none;color:rgba(255,255,255,0.55);font-size:13px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;font-family:inherit;">Se déconnecter</button>
+      </div>
+
 
       <div id="login-error" role="alert" style="display:none;margin-top:14px;background:rgba(255,59,48,0.1);border:1px solid rgba(255,59,48,0.25);border-radius:10px;padding:10px 14px;color:#ff6b6b;font-size:13px;font-weight:600;text-align:left;line-height:1.45;"></div>
     </div>
@@ -2294,6 +2311,9 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 // Google, pas dans cette page ; les règles Firestore n'ouvrent les données
 // qu'aux adresses du comité.
 let _authUser=null;
+let _mdpProvisoire=null;   // seulement en mémoire, le temps de la première connexion
+let _connexionEnCours=false;
+const MDP_MIN=10;
 function _authErrMsg(e){
   const c=(e&&e.code)||'';
   if(c==='auth/invalid-email')return'Adresse e-mail invalide.';
@@ -2338,6 +2358,7 @@ async function checkLogin(){
   if(btn){btn.disabled=true;btn.textContent='Connexion…';}
   try{
     await _firebasePret();
+    _mdpProvisoire=pwd;
     await firebase.auth().signInWithEmailAndPassword(email,pwd);
     // La suite est gérée par onAuthStateChanged.
   }catch(e){
@@ -2353,6 +2374,87 @@ async function checkLogin(){
     if(btn){btn.disabled=false;btn.textContent='Accéder →';}
   }
 }
+// ── PREMIÈRE CONNEXION : mot de passe personnel obligatoire ─────
+// Les comptes sont créés avec un mot de passe provisoire. Tant que la
+// personne n'a pas choisi le sien, elle n'accède pas à l'espace comité.
+function _comptesRef(){return db.collection('gef_data').doc('gef_comptes');}
+async function _aDejaSonMotDePasse(user){
+  try{
+    const d=await _comptesRef().get();
+    const v=(d.exists&&d.data().value)||{};
+    if(v[user.uid]&&v[user.uid].motDePassePerso)return true;
+    // Mot de passe déjà changé après la création du compte (par exemple avec
+    // « Mot de passe oublié ») : la personne a déjà choisi le sien.
+    if(await _motDePasseChangeDepuisCreation(user)){
+      _comptesRef().set({value:{[user.uid]:{email:user.email,motDePassePerso:new Date().toISOString()}}},{merge:true}).catch(()=>{});
+      return true;
+    }
+    return false;
+  }catch(e){
+    console.warn('Lecture des comptes impossible :',e);
+    return true; // on ne bloque pas l'accès pour une simple erreur réseau
+  }
+}
+async function _motDePasseChangeDepuisCreation(user){
+  try{
+    const token=await user.getIdToken();
+    const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key='+encodeURIComponent(firebaseConfig.apiKey),
+      {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({idToken:token})});
+    const u=((await r.json()).users||[])[0];
+    if(!u||!u.passwordUpdatedAt||!u.createdAt)return false;
+    return Number(u.passwordUpdatedAt)-Number(u.createdAt)>60000;
+  }catch(e){return false;}
+}
+async function _apresConnexion(user){
+  if(_connexionEnCours||_authUser)return;
+  _connexionEnCours=true;
+  try{
+    if(await _aDejaSonMotDePasse(user)){_mdpProvisoire=null;_enterApp(user);}
+    else _afficherChoixMotDePasse(user);
+  }finally{_connexionEnCours=false;}
+}
+function _afficherChoixMotDePasse(user){
+  const lf=document.getElementById('login-form'),ps=document.getElementById('pwd-setup');
+  if(lf)lf.style.display='none';
+  if(ps)ps.style.display='block';
+  const em=document.getElementById('pwd-setup-email');if(em)em.textContent=user.email?` (${user.email})`:'';
+  _loginMsg('');
+  setTimeout(()=>document.getElementById('pwd-new')?.focus(),50);
+}
+async function validerNouveauMotDePasse(){
+  const user=firebase.auth().currentUser;
+  const p1=document.getElementById('pwd-new').value;
+  const p2=document.getElementById('pwd-confirm').value;
+  if(!user){_loginMsg('Votre session a expiré. Reconnectez-vous.');return;}
+  if(p1.length<MDP_MIN){_loginMsg(`Le mot de passe doit contenir au moins ${MDP_MIN} caractères.`);return;}
+  if(p1!==p2){_loginMsg('Les deux mots de passe ne sont pas identiques.');return;}
+  if(_mdpProvisoire&&p1===_mdpProvisoire){_loginMsg('Choisissez un mot de passe différent du mot de passe provisoire.');return;}
+  const btn=document.getElementById('pwd-setup-btn');
+  if(btn){btn.disabled=true;btn.textContent='Enregistrement…';}
+  try{
+    await user.updatePassword(p1);
+    await _comptesRef().set({value:{[user.uid]:{email:user.email,motDePassePerso:new Date().toISOString()}}},{merge:true});
+    _mdpProvisoire=null;
+    document.getElementById('pwd-new').value='';document.getElementById('pwd-confirm').value='';
+    _loginMsg('');
+    _enterApp(user);
+    showToast&&showToast('Mot de passe enregistré','✓');
+  }catch(e){
+    console.warn('Changement de mot de passe refusé :',e&&e.code);
+    const c=e&&e.code;
+    if(c==='auth/requires-recent-login'){
+      _loginMsg('Par sécurité, reconnectez-vous avec votre mot de passe provisoire, puis choisissez le nouveau.');
+      try{await firebase.auth().signOut();}catch(_){}
+      document.getElementById('pwd-setup').style.display='none';
+      document.getElementById('login-form').style.display='block';
+    }else if(c==='auth/weak-password')_loginMsg('Ce mot de passe est trop faible. Choisissez-en un plus long.');
+    else if(c==='auth/network-request-failed')_loginMsg('Pas de connexion internet. Réessayez.');
+    else _loginMsg('Le mot de passe n\'a pas pu être enregistré. Réessayez.');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Enregistrer et continuer';}
+  }
+}
+
 async function motDePasseOublie(){
   const email=(document.getElementById('login-email')?.value||'').trim();
   if(!email){_loginMsg('Saisissez d\'abord votre adresse e-mail ci-dessus, puis touchez « Mot de passe oublié ».','info');document.getElementById('login-email')?.focus();return;}
@@ -5664,7 +5766,7 @@ document.addEventListener('keydown', e => {
 function _tryInitApp(){
   _firebasePret().then(()=>{
     firebase.auth().onAuthStateChanged(user=>{
-      if(user){if(!_authUser)_enterApp(user);}
+      if(user){if(!_authUser)_apresConnexion(user);}
       else if(_authUser){location.reload();} // session terminée
     });
   }).catch(()=>_loginMsg('Impossible de joindre le serveur. Vérifiez votre connexion internet puis rechargez la page.'));
