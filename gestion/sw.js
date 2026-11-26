@@ -3,7 +3,7 @@
 // dernière version) ; la copie gardée ne sert que si le réseau ne répond pas.
 // Les bibliothèques versionnées (Firebase, jsPDF, polices) sont gardées en cache.
 // Les données (Firestore) ne passent jamais par ce cache.
-const CACHE = 'gefais-comite-v1';
+const CACHE = 'gefais-comite-v2';
 const PAGE = '/gestion/';
 
 self.addEventListener('install', e => {
@@ -29,7 +29,8 @@ self.addEventListener('fetch', e => {
   // Page de l'application : réseau d'abord, copie de secours ensuite
   if (req.mode === 'navigate' && url.origin === location.origin && url.pathname.startsWith('/gestion/')) {
     e.respondWith(
-      fetch(req).then(res => {
+      // « no-cache » : on revérifie toujours auprès du serveur, chaque mise à jour est donc visible tout de suite
+      fetch(req.url, { cache: 'no-cache', credentials: 'same-origin' }).then(res => {
         if (res.ok) { const copie = res.clone(); caches.open(CACHE).then(c => c.put(PAGE, copie)); }
         return res;
       }).catch(() => caches.match(PAGE))
