@@ -1477,6 +1477,12 @@ td{font-size:14px;color:var(--text2);}
 .sidebar .sidebar-footer button:hover{color:#fff!important;border-color:rgba(243,241,236,.4)!important;}
 .sidebar .btn-logout{color:rgba(243,241,236,.75);}
 .sidebar .btn-logout:hover{color:#fff;}
+/* Menu : hauteur bornée à l'écran visible, liste qui défile, pied toujours accessible */
+.sidebar{height:100vh;height:100dvh;min-height:0!important;max-height:100dvh;overflow:hidden;}
+.sidebar .logo,.sidebar .sidebar-footer{flex-shrink:0;}
+.sidebar .nav{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+.sidebar .sidebar-footer{flex-wrap:wrap;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))!important;}
+@media(hover:none){.sidebar .nav-item:not(.active):hover{background:none!important;color:rgba(243,241,236,.72)!important;}}
 /* ── Tableau de bord éditorial (même construction que le site public) ── */
 #page-dashboard{max-width:1180px;}
 .db-head{padding:8px 0 40px;}
