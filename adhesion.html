@@ -100,6 +100,12 @@
   .check{display:flex;gap:12px;align-items:flex-start;font-size:15px;line-height:1.55;color:var(--text);cursor:pointer;margin-bottom:14px;}
   .check input{width:20px;height:20px;margin:2px 0 0;flex-shrink:0;accent-color:var(--ink);cursor:pointer;}
   .check.invalid{color:var(--red);}
+  .check a{color:inherit;text-decoration:underline;text-underline-offset:2px;}
+  .charte-box{border:1px solid var(--line);border-left:3px solid var(--ink);border-radius:3px;background:#fff;padding:16px 18px;margin:0 0 20px;font-size:14.5px;line-height:1.55;color:var(--text);}
+  .charte-box p{margin:0 0 8px;}
+  .charte-box ul{margin:0;padding-left:18px;}
+  .charte-box li{margin:3px 0;}
+  .charte-box a{color:inherit;font-weight:600;text-decoration:underline;text-underline-offset:2px;}
 
   /* Signature */
   .sig{border:1px solid var(--line);border-radius:3px;background:#fff;overflow:hidden;margin-top:22px;}
@@ -302,9 +308,18 @@
 
       <fieldset>
         <legend><span class="num">3</span>Engagement et signature</legend>
+        <div class="charte-box">
+          <p>En adhérant, vous signez notre <a href="charte.html" target="_blank" rel="noopener">charte éthique et de valeurs</a>. Elle vous engage notamment à :</p>
+          <ul>
+            <li>respecter la dignité, l'intimité et la confidentialité des personnes rencontrées, sans jugement ;</li>
+            <li>ne jamais utiliser l'image, la vidéo ou le témoignage d'une personne sans son autorisation préalable ;</li>
+            <li>participer activement aux activités auxquelles vous vous inscrivez, et prévenir en cas d'absence ;</li>
+            <li>respecter les consignes et signaler au comité toute situation à risque.</li>
+          </ul>
+        </div>
         <label class="check" id="c-statuts">
           <input type="checkbox" id="f-statuts">
-          <span>Je souhaite adhérer à l'association GE-FAIS. Je m'engage à respecter ses statuts et à verser la cotisation annuelle de 50 CHF.</span>
+          <span>Je souhaite adhérer à l'association GE-FAIS. Je m'engage à respecter ses statuts et sa <a href="charte.html" target="_blank" rel="noopener">charte éthique et de valeurs</a>, et à verser la cotisation annuelle de 50 CHF.</span>
         </label>
         <label class="check" id="c-donnees">
           <input type="checkbox" id="f-donnees">
@@ -588,7 +603,7 @@ $('btn-pdf').addEventListener('click',()=>{
   if(formData.motivation)row('Motivation',formData.motivation);
   y+=4;
   section('Engagement');
-  row('Statuts','Accepte de respecter les statuts et de verser la cotisation annuelle');
+  row('Statuts et charte','Accepte de respecter les statuts et la charte éthique et de valeurs, et de verser la cotisation annuelle');
   row('Données','Accepte leur utilisation par le comité pour la gestion des membres');
   y+=6;
   section('Signatures');
