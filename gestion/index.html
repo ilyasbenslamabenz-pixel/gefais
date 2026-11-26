@@ -1315,7 +1315,9 @@ h1,h2,h3,.stat-value,.kpi-val,.kpi-band-val,.dh-kpi-val,.dh-bubble-num,.pres-sta
 .bottom-nav{background:var(--card)!important;backdrop-filter:none;border-top:1px solid var(--border);}
 .bottom-nav-item{border-radius:var(--r);}
 .bottom-nav-item span{font-size:11px;font-weight:600;letter-spacing:0;text-transform:none;}
-.bottom-nav-item.active::after{width:16px;height:2px;border-radius:1px;}
+.bottom-nav-item{position:relative;justify-content:center;}
+.bottom-nav-item.active{transform:none!important;}
+.bottom-nav-item.active::after{position:absolute;left:50%;bottom:0;width:16px;height:2px;margin:0;border-radius:1px;transform:translateX(-50%);}
 
 /* Contenu */
 .main{padding:36px 44px 56px;}
@@ -3281,10 +3283,19 @@ function renderDashboard(){
   set('db-composition',`<h3 class="db-sub">Composition</h3>${total?`<div class="db-stack">${parts.map(p=>`<i style="flex:${p[1]};background:${p[2]}"></i>`).join('')}</div>
     <ul class="db-legend">${parts.map(p=>`<li><span style="background:${p[2]}"></span>${p[0]}<b>${p[1]}</b></li>`).join('')}</ul>`:'<p class="db-empty">Aucun membre.</p>'}`,true);
 
-  // Pied : volume des données
+  // Pied : document le plus lourd (Firebase limite chaque document à 1 Mo)
   try{
-    let bytes=0;['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents'].forEach(k=>{bytes+=new TextEncoder().encode(localStorage.getItem(k)||'').length;});
-    set('db-storage',bytes>100?`Données synchronisées : ${bytes<1048576?(bytes/1024).toFixed(0)+' Ko':(bytes/1048576).toFixed(1)+' Mo'}.`:'');
+    const noms={gef_membres:'Membres',gef_events:'Événements',gef_presences:'Présences',gef_compta:'Comptabilité',gef_cotisations:'Cotisations',gef_email_historique:'Historique des e-mails',gef_documents:'Documents'};
+    let max={k:null,b:0};
+    Object.keys(noms).forEach(k=>{const b=new TextEncoder().encode(localStorage.getItem(k)||'').length;if(b>max.b)max={k,b};});
+    const el=document.getElementById('db-storage');
+    if(el&&max.k){
+      const pct=Math.round(max.b/1048576*100);
+      const ko=Math.round(max.b/1024);
+      el.innerHTML=pct>=70
+        ?`<span style="color:var(--red);font-weight:600;">Attention : « ${noms[max.k]} » pèse ${ko} Ko, soit ${pct} % de la limite de 1 Mo par document.</span> Retirez des fichiers joints (ou rangez-les sur kDrive) pour garder de la marge.`
+        :`Document le plus lourd : « ${noms[max.k]} », ${ko} Ko (${pct} % de la limite de 1 Mo).`;
+    }
   }catch(e){}
 }
 function renderMembres(){
