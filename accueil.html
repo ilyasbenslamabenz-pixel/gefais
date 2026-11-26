@@ -304,13 +304,6 @@
   .slip dl{margin:0;display:grid;gap:14px;}
   .slip dt{font-size:12px;font-weight:600;color:var(--muted);}
   .slip dd{margin:2px 0 0;font-size:15.5px;line-height:1.4;font-weight:500;}
-  .nature{margin-top:clamp(40px,5vw,64px);padding-top:28px;border-top:1px solid rgba(20,20,20,.25);max-width:760px;}
-  .nature-k{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin:0 0 8px!important;}
-  .nature h3{font-family:var(--head);font-size:clamp(24px,2.6vw,32px);letter-spacing:-.015em;margin:0 0 8px;}
-  .nature p{margin:0 0 12px;font-size:15.5px;line-height:1.6;color:var(--ink-2);}
-  .nature a{color:inherit;text-decoration:underline;text-underline-offset:2px;}
-  .nature ul{list-style:none;margin:0 0 14px;padding:0;display:flex;flex-wrap:wrap;gap:8px;}
-  .nature li{font-family:var(--head);font-weight:700;font-size:15px;border:1.5px solid var(--ink);border-radius:3px;padding:6px 12px;}
   .slip .iban{font-family:var(--head);font-weight:700;letter-spacing:.02em;font-variant-numeric:tabular-nums;white-space:nowrap;user-select:all;}
   .slip .copier{margin-left:6px;font:600 12px var(--body);color:var(--ink);background:none;border:1px solid var(--line);border-radius:2px;padding:2px 8px;cursor:pointer;vertical-align:1px;}
   .slip .copier:hover{border-color:var(--ink);}
@@ -512,6 +505,34 @@
   .sC .panneau{border-left:none;border-top:1px solid rgba(243,241,236,.15);padding:14px 16px}
   .sC .etapes{min-height:150px}
 }
+/* ── Rubrique Dons : bulletin QR-facture et don de vêtements ── */
+.slip.qrb{grid-template-columns:minmax(0,1.6fr) minmax(0,3fr)}
+.pay-grid{display:grid;grid-template-columns:132px minmax(0,1fr);gap:20px;align-items:start}
+.qr-zone .qr{aspect-ratio:1;border:1.5px dashed rgba(20,20,20,.35);display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;font-weight:700;color:var(--muted);padding:6px;margin-bottom:16px}
+.qr-zone .qr small{font-weight:500;font-size:10.5px}
+.slip .stub dd{font-size:13.5px}
+.vet{margin-top:clamp(72px,9vw,128px);padding-top:clamp(36px,4vw,56px);border-top:1px solid rgba(20,20,20,.3);display:grid;grid-template-columns:minmax(0,3fr) minmax(0,9fr);gap:24px;align-items:start}
+.vet .lbl{font-size:15px;font-weight:600;padding-top:12px}
+.vet-words{font-family:var(--head);font-size:clamp(32px,5.4vw,76px);line-height:1.04;letter-spacing:-.04em;font-weight:800;margin:0}
+.vet-words span{display:inline-block}
+.vet-words i{font-style:normal;color:var(--red)}
+.slip.qrb .pay .iban{font-size:14px;white-space:normal}
+.slip.qrb .pay .copier{margin:6px 0 2px;display:inline-block}
+.vet-bas{margin-top:28px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.vet-bas p{margin:0;max-width:34em;font-size:16px;line-height:1.55}
+.vet-acts{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.btn-ink{background:var(--ink);color:#fff}
+@media (max-width:920px){.vet{grid-template-columns:minmax(0,1fr)}.vet .lbl{padding-top:0}.pay-grid{grid-template-columns:minmax(0,1fr);gap:18px}.qr-zone{display:flex;gap:22px;align-items:flex-end}.qr-zone .qr{width:120px;margin:0}.slip.qrb{grid-template-columns:minmax(0,1fr)}.slip.qrb .stub{border-right:0;border-bottom:1.5px dashed rgba(20,20,20,.35)}.slip.qrb .stub svg{right:18px;top:auto;bottom:-11px;transform:rotate(90deg)}}
+
+.vet-g{display:flex;flex-direction:column;gap:22px}
+.vet-estampe{margin:0;max-width:280px;background:#fff;padding:10px 10px 12px;border-radius:3px;box-shadow:0 1px 0 rgba(20,20,20,.08),0 24px 48px -28px rgba(20,20,20,.45);transform:rotate(-1.6deg);transition:transform .5s var(--ease)}
+.vet-estampe:hover{transform:rotate(0)}
+.vet-estampe img{display:block;width:100%;aspect-ratio:8/7;object-fit:cover}
+.vet-words span{white-space:nowrap}
+@media (max-width:920px){.vet-estampe{max-width:260px}}
+
+.qr-zone .qr-img{display:block;width:132px;height:132px;margin-bottom:16px}
+@media (max-width:920px){.qr-zone .qr-img{width:120px;height:120px;margin:0}}
 /* ── Ce qu'on attend de chaque membre (charte) ── */
 .attendu{margin-top:clamp(48px,6vw,80px);padding-top:32px;border-top:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:40px}
 .attendu h3{font-family:var(--head);font-size:clamp(22px,2.4vw,30px);line-height:1.1;letter-spacing:-.02em;margin:0 0 10px}
@@ -585,7 +606,7 @@
         <li class="has-sub">
           <button type="button" class="sub-btn" aria-expanded="false" aria-controls="sub-dons">Dons<svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 3.5 5 7l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
           <ul class="sub" id="sub-dons">
-            <li><a href="#don-financier"><b>Don financier</b><span>Par virement, bientôt par TWINT</span></a></li>
+            <li><a href="#don-financier"><b>Don financier</b><span>QR code ou virement</span></a></li>
             <li><a href="#don-vetements"><b>Don de vêtements</b><span>Vestes, chaussettes, couvertures…</span></a></li>
           </ul>
         </li>
@@ -896,40 +917,54 @@
 <!-- 07 DON -->
 <section id="don" class="section gift" aria-labelledby="t-don">
   <div class="wrap">
-    <div class="gift-grid">
+    <div class="gift-grid" id="don-financier">
       <div>
-        <p class="marker reveal"><b>07</b><span>Faire un don</span></p>
-        <h2 id="t-don" class="h2 reveal">Soutenir, même de loin.</h2>
-        <p class="text reveal" style="--d:.1s">GE-FAIS fonctionne grâce aux cotisations de ses membres et aux dons. Il n'est pas nécessaire d'être membre pour donner : chaque contribution, quel que soit son montant, aide l'association à poursuivre ses actions.</p>
-        <p class="gift-note reveal" style="--d:.15s">Les dons sont possibles dès maintenant par virement. Le numéro TWINT sera publié ici très prochainement.</p>
+        <p class="marker"><b>07</b><span>Dons</span></p>
+        <h2 id="t-don" class="h2">Soutenir, même de loin.</h2>
+        <p class="text">Pas besoin d'être membre pour aider. Chaque contribution, quel que soit son montant, permet à l'association de poursuivre ses actions.</p>
+        <p class="gift-note">Scannez le QR code avec l'application de votre banque : l'IBAN et le bénéficiaire se remplissent tout seuls. Le paiement par TWINT arrive bientôt.</p>
       </div>
-      <div class="reveal" style="--d:.15s" id="don-financier"><div class="slip" role="group" aria-label="Coordonnées pour un don financier">
+      <div><div class="slip qrb" role="group" aria-label="Bulletin de versement pour un don">
         <div class="stub">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#62625e" stroke-width="1.6" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.6 7.6 20 18M8.6 16.4 20 6"/></svg>
-          <h4>Par TWINT</h4>
+          <h4>Récépissé</h4>
           <dl>
-            <div><dt>Numéro</dt><dd><span class="ph">[numéro TWINT]</span></dd></div>
-            <div><dt>Bénéficiaire</dt><dd>Association GE-FAIS</dd></div>
-          </dl>
-        </div>
-        <div>
-          <h4>Par virement</h4>
-          <dl>
-            <div><dt>IBAN</dt><dd><span class="iban" id="iban">CH58 0021 5215 3246 9901 V</span> <button type="button" class="copier" data-copie="CH580021521532469901V" aria-describedby="iban">Copier</button></dd></div>
-            <div><dt>Payable à</dt><dd>Association GE-FAIS<br>Genève, Suisse</dd></div>
-            <div><dt>Banque</dt><dd>UBS Switzerland AG</dd></div>
-            <div><dt>Communication</dt><dd>Don GE-FAIS</dd></div>
+            <div><dt>Compte / Payable à</dt><dd>CH58 0021 5215 3246 9901 V<br>Association GE-FAIS<br>Chemin des Raclerets 14<br>1284 Chancy</dd></div>
             <div class="amount"><div><dt>Monnaie</dt><dd>CHF</dd></div><div><dt>Montant</dt><dd>Libre</dd></div></div>
           </dl>
         </div>
+        <div class="pay">
+          <h4>Section paiement</h4>
+          <div class="pay-grid">
+            <div class="qr-zone"><img class="qr-img" src="images/qr-don.svg" width="132" height="132" alt="QR code de paiement : don à l'Association GE-FAIS, montant libre">
+              <div class="amount"><div><dt>Monnaie</dt><dd>CHF</dd></div><div><dt>Montant</dt><dd>Libre</dd></div></div></div>
+            <dl>
+              <div><dt>Compte / Payable à</dt><dd><span class="iban" id="iban">CH58 0021 5215 3246 9901 V</span><br><button type="button" class="copier" data-copie="CH580021521532469901V" aria-describedby="iban">Copier</button><br>Association GE-FAIS<br>Chemin des Raclerets 14<br>1284 Chancy</dd></div>
+              <div><dt>Informations supplémentaires</dt><dd>Don GE-FAIS</dd></div>
+              <div><dt>Banque</dt><dd>UBS Switzerland AG</dd></div>
+            </dl>
+          </div>
+        </div>
       </div></div>
     </div>
-    <div class="nature reveal" id="don-vetements">
-      <p class="nature-k">Don de vêtements</p>
-      <h3>Donner des vêtements chauds</h3>
-      <p>Pour les prochaines maraudes, nous avons besoin de :</p>
-      <ul><li>Vestes</li><li>Sous-vêtements</li><li>Chaussettes</li><li>Plaids et couvertures</li></ul>
-      <p>Des vêtements chauds que vous ne portez plus ? Donnez-leur une seconde vie : écrivez-nous en message sur <a href="https://www.instagram.com/associationgefais/" target="_blank" rel="noopener">Instagram</a> ou à <a href="mailto:contact@gefais.ch">contact@gefais.ch</a> pour organiser le dépôt.</p>
+
+    <div class="vet" id="don-vetements">
+      <div class="vet-g">
+        <p class="lbl">Don de vêtements</p>
+        <figure class="vet-estampe"><img src="images/don-vetements.webp" loading="lazy" width="1200" height="1050" alt="Gravure sur linoléum : une pile de vêtements chauds, une veste, une écharpe et des chaussettes"></figure>
+      </div>
+      <div class="vet-corps">
+        <div class="vet-texte">
+        <p class="vet-words"><span>Vestes<i>.</i></span> <span>Sous-vêtements<i>.</i></span> <span>Chaussettes<i>.</i></span> <span>Plaids et couvertures<i>.</i></span></p>
+        <div class="vet-bas">
+          <p>Pour nos prochaines maraudes. Des vêtements propres et en bon état&nbsp;; sous-vêtements et chaussettes neufs.</p>
+          <div class="vet-acts">
+            <a class="btn btn-ink" href="https://www.instagram.com/associationgefais/" target="_blank" rel="noopener">Écrire sur Instagram <span class="arr" aria-hidden="true">→</span></a>
+            <a class="link link-arrow" href="mailto:contact@gefais.ch">Écrire par e-mail</a>
+          </div>
+        </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -1012,7 +1047,7 @@
       </div>
       <dl class="coords reveal" style="--d:.2s">
         <div><dt>E-mail</dt><dd><a href="mailto:contact@gefais.ch">contact@gefais.ch</a></dd></div>
-        <div><dt>Courrier</dt><dd>[adresse postale]<br>Genève, Suisse</dd></div>
+        <div><dt>Courrier</dt><dd>Association GE-FAIS<br>Chemin des Raclerets 14<br>1284 Chancy, Suisse</dd></div>
         <div><dt>Instagram</dt><dd><a href="https://www.instagram.com/associationgefais/" target="_blank" rel="noopener">@associationgefais</a></dd></div>
       </dl>
     </div>
@@ -1067,7 +1102,7 @@
     </div>
     <div class="foot-bottom">
       <span>© 2026 Association GE-FAIS · Association à but non lucratif, Genève</span>
-      <a href="gestion/">Accès comité</a>
+      <span><a href="confidentialite.html">Confidentialité et mentions légales</a> · <a href="gestion/">Accès comité</a></span>
     </div>
   </div>
 </footer>

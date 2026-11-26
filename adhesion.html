@@ -100,6 +100,7 @@
   .check{display:flex;gap:12px;align-items:flex-start;font-size:15px;line-height:1.55;color:var(--text);cursor:pointer;margin-bottom:14px;}
   .check input{width:20px;height:20px;margin:2px 0 0;flex-shrink:0;accent-color:var(--ink);cursor:pointer;}
   .check.invalid{color:var(--red);}
+  .hp{position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;}
   .check a{color:inherit;text-decoration:underline;text-underline-offset:2px;}
   .charte-box{border:1px solid var(--line);border-left:3px solid var(--ink);border-radius:3px;background:#fff;padding:16px 18px;margin:0 0 20px;font-size:14.5px;line-height:1.55;color:var(--text);}
   .charte-box p{margin:0 0 8px;}
@@ -145,6 +146,7 @@
   .done-actions{display:flex;gap:12px;flex-wrap:wrap;}
 
   .foot{border-top:1px solid var(--line);padding:24px 0 40px;font-size:13px;color:var(--muted);}
+  .foot a{color:inherit;text-decoration:underline;text-underline-offset:2px;}
 
   @media (max-width:960px){
     .layout{grid-template-columns:1fr;gap:36px;padding-top:44px;padding-bottom:64px;}
@@ -206,6 +208,7 @@
     <form id="form" novalidate>
       <div class="alert" id="alert" role="alert" tabindex="-1"></div>
 
+      <div class="hp" aria-hidden="true"><label for="f-site">Ne pas remplir ce champ</label><input type="text" id="f-site" name="site" tabindex="-1" autocomplete="off"></div>
       <fieldset>
         <legend><span class="num">1</span>Vos coordonnées</legend>
         <div class="grid">
@@ -323,7 +326,7 @@
         </label>
         <label class="check" id="c-donnees">
           <input type="checkbox" id="f-donnees">
-          <span>J'accepte que mes données soient utilisées par le comité de GE-FAIS uniquement pour la gestion des membres de l'association.</span>
+          <span>J'accepte que mes données soient utilisées par le comité de GE-FAIS uniquement pour la gestion des membres de l'association (<a href="confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a>).</span>
         </label>
 
         <div class="sig" id="sig-box">
@@ -366,7 +369,7 @@
   </div>
 </main>
 
-<footer class="wrap foot">© 2026 Association GE-FAIS · Genève · « Ensemble, faisons qu'un »</footer>
+<footer class="wrap foot">© 2026 Association GE-FAIS · Genève · « Ensemble, faisons qu'un » · <a href="charte.html">Charte éthique</a> · <a href="confidentialite.html">Confidentialité</a></footer>
 
 <script>
 // ── Firebase (même projet que l'espace comité) ──────────────────────
@@ -488,6 +491,16 @@ function hideAlert(){$('alert').classList.remove('show');}
 
 // ── Envoi ───────────────────────────────────────────────────────────
 let formData=null;
+// Anti-spam : un robot remplit le champ invisible ou envoie en quelques secondes ;
+// on lui affiche la confirmation sans rien envoyer. Une seule demande toutes les 10 minutes par appareil.
+const T_CHARGEMENT=Date.now(),DELAI_MIN=5000,PAUSE_ENVOIS=10*60*1000;
+function derniereDemande(){try{return Number(localStorage.getItem('gef_adh_envoi'))||0;}catch(e){return 0;}}
+function afficherMerci(){
+  $('form').style.display='none';
+  $('done').classList.add('show');
+  $('done').scrollIntoView({behavior:'smooth',block:'start'});
+  setTimeout(()=>$('done-title').focus({preventScroll:true}),400);
+}
 
 $('form').addEventListener('submit',async e=>{
   e.preventDefault();
@@ -498,6 +511,12 @@ $('form').addEventListener('submit',async e=>{
     const first=document.querySelector('.invalid input:not([type=radio]), .invalid select, .field.invalid input[type=radio], .check.invalid input');
     if(first)setTimeout(()=>first.focus({preventScroll:true}),400);
     if(bad.length===1&&bad[0]==='signature')$('sig-box').scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+
+  if($('f-site').value.trim()!==''||Date.now()-T_CHARGEMENT<DELAI_MIN){afficherMerci();return;}
+  if(Date.now()-derniereDemande()<PAUSE_ENVOIS){
+    showAlert("Une demande vient déjà d'être envoyée depuis cet appareil. Pour en envoyer une autre, attendez quelques minutes ou écrivez-nous à contact@gefais.ch.");
     return;
   }
 
@@ -526,10 +545,8 @@ $('form').addEventListener('submit',async e=>{
     const database=await waitForDb(10000);
     if(!database)throw new Error('Firebase indisponible');
     await database.collection('gef_demandes').add(formData);
-    $('form').style.display='none';
-    $('done').classList.add('show');
-    $('done').scrollIntoView({behavior:'smooth',block:'start'});
-    setTimeout(()=>$('done-title').focus({preventScroll:true}),400);
+    try{localStorage.setItem('gef_adh_envoi',String(Date.now()));}catch(e){}
+    afficherMerci();
   }catch(err){
     console.warn('Envoi impossible :',err);
     showAlert("Votre demande n'a pas pu être envoyée. Vérifiez votre connexion internet puis réessayez : vos informations sont conservées sur cette page.");
