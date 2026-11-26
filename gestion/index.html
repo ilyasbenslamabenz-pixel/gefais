@@ -1720,6 +1720,7 @@ td{font-size:14px;color:var(--text2);}
     <button class="btn btn-secondary" onclick="_chargerDonnees()">Réessayer</button>
     <button class="btn btn-secondary" onclick="logout()">Se déconnecter</button>
   </div>
+  <button id="loading-cache-btn" onclick="afficherDerniereVersion()" style="display:none;background:none;border:none;font:inherit;font-size:14px;color:var(--text2);text-decoration:underline;text-underline-offset:3px;cursor:pointer;">Consulter la dernière version enregistrée</button>
 </div>
 <style>
 @keyframes logoSpin{
@@ -3133,24 +3134,19 @@ async function initApp(){
   const cachedDon=lsGet('gef_don_data',null);
   if(cachedDon)Object.assign(_donData,cachedDon);
 
-  // Pas d'écran vide : on n'affiche l'application que s'il y a déjà des données
-  _cacheAffiche=Array.isArray(membres)&&membres.length>0;
-  if(_cacheAffiche){
-    ov.style.display='none';
-    renderDashboard(); renderMembres();
-    _populateCotisAnneeSel();
-    const si=document.getElementById('sync-indicator');
-    if(si){si.textContent='Mise à jour…';si.style.color='var(--text3)';si.style.display='inline';}
-  }else{
-    _etatChargement('Chargement des données…',false);
-    ov.style.display='flex';
-  }
+  // On attend toujours les données à jour avant d'afficher l'application.
+  // Les données de la dernière visite ne servent qu'en secours (bouton dédié).
+  _cacheDisponible=Array.isArray(membres)&&membres.length>0;
+  _cacheAffiche=false;
+  _etatChargement('Chargement des données…',false);
+  ov.style.display='flex';
 
   // ── ÉTAPE 2 : données en ligne (avec nouvelles tentatives automatiques)
   _loadFirebase(()=>_chargerDonnees());
 }
 
 // ── CHARGEMENT DES DONNÉES ───────────────────────────────────────
+let _cacheDisponible=false;
 let _cacheAffiche=false,_chargementEnCours=false,_tentative=0,_minuterieChargement=null;
 const _CLES=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents','gef_event_subpages','gef_don_data'];
 let _prechargement=null;
@@ -3161,6 +3157,16 @@ const _PAUSES=[2,4,8,15,30]; // secondes entre deux tentatives
 function _etatChargement(texte,actions){
   const t=document.getElementById('loading-text');if(t)t.textContent=texte;
   const a=document.getElementById('loading-actions');if(a)a.style.display=actions?'flex':'none';
+  const c=document.getElementById('loading-cache-btn');if(c)c.style.display=(actions&&_cacheDisponible&&!_donneesChargees)?'block':'none';
+}
+// Secours : afficher les données de la dernière visite, en lecture seule
+function afficherDerniereVersion(){
+  _cacheAffiche=true;
+  document.getElementById('loading-overlay').style.display='none';
+  renderDashboard(); renderMembres(); _populateCotisAnneeSel();
+  const msg=document.getElementById('offline-banner-msg');
+  if(msg)msg.textContent='Données de votre dernière visite, en lecture seule : la connexion à la base n\'a pas abouti. Nouvel essai automatique en cours.';
+  const b=document.getElementById('offline-banner');if(b)b.style.display='flex';
 }
 async function _chargerDonnees(){
   if(!db||_chargementEnCours||_donneesChargees)return;
