@@ -5,8 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Formulaire d'adhésion en ligne à l'association GE-FAIS, Genève.">
 <meta name="theme-color" content="#141414">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_CH">
+<meta property="og:site_name" content="GE-FAIS">
+<meta property="og:title" content="Devenir membre de GE-FAIS">
+<meta property="og:description" content="Formulaire d'adhésion en ligne à l'association GE-FAIS, Genève.">
+<meta property="og:url" content="https://www.gefais.ch/adhesion.html">
+<meta property="og:image" content="https://www.gefais.ch/images/og-gefais.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <title>Adhésion — Association GE-FAIS</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%23fff'/%3E%3Ccircle cx='24.25' cy='6.74' r='3.78' fill='%23131313'/%3E%3Ccircle cx='33.16' cy='9.05' r='3.40' fill='%23131313'/%3E%3Ccircle cx='40.00' cy='15.18' r='2.92' fill='%23131313'/%3E%3Ccircle cx='42.77' cy='23.92' r='2.86' fill='%23131313'/%3E%3Ccircle cx='40.51' cy='32.99' r='2.75' fill='%23131313'/%3E%3Ccircle cx='33.66' cy='39.37' r='2.48' fill='%23131313'/%3E%3Ccircle cx='24.50' cy='42.35' r='2.38' fill='%23131313'/%3E%3Ccircle cx='15.68' cy='40.17' r='2.48' fill='%23131313'/%3E%3Ccircle cx='9.05' cy='33.91' r='3.62' fill='%23131313'/%3E%3Ccircle cx='6.53' cy='24.84' r='4.54' fill='%23fdc915'/%3E%3Ccircle cx='8.63' cy='15.89' r='4.48' fill='%23ee1e27'/%3E%3Ccircle cx='15.22' cy='9.34' r='3.83' fill='%23131313'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="/images/icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
@@ -42,7 +53,7 @@
   .facts span:last-child{font-weight:600;text-align:right;}
 
   /* Carte formulaire */
-  .card{background:var(--card);border-radius:6px;padding:48px;box-shadow:0 1px 2px rgba(20,20,20,.05);}
+  .card{background:var(--card);border-radius:3px;padding:48px;box-shadow:0 1px 2px rgba(20,20,20,.05);}
   fieldset{border:0;margin:0 0 40px;padding:0;}
   fieldset + fieldset{padding-top:40px;border-top:1px solid var(--line);}
   legend{float:left;width:100%;display:flex;align-items:center;gap:12px;font-size:21px;font-weight:700;letter-spacing:-.3px;margin-bottom:24px;padding:0;}
@@ -53,7 +64,7 @@
   .full{grid-column:1/-1;}
   .field > label,.label{display:block;font-size:14px;font-weight:600;margin-bottom:7px;color:var(--ink);}
   .opt-tag{font-weight:400;color:var(--muted);}
-  input[type=text],input[type=email],input[type=tel],select,textarea{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:6px;padding:13px 14px;outline:none;transition:border-color .15s,box-shadow .15s,background .15s;-webkit-appearance:none;appearance:none;}
+  input[type=text],input[type=email],input[type=tel],select,textarea{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:3px;padding:13px 14px;outline:none;transition:border-color .15s,box-shadow .15s,background .15s;-webkit-appearance:none;appearance:none;}
   textarea{min-height:96px;resize:vertical;line-height:1.5;}
   select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236a6a66' stroke-width='1.6' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:34px;cursor:pointer;}
   input:focus,select:focus,textarea:focus{border-color:var(--ink);background:#fff;box-shadow:0 0 0 3px rgba(20,20,20,.08);}
@@ -65,7 +76,7 @@
 
   /* Statuts */
   .opts{display:flex;flex-direction:column;gap:10px;}
-  .opt{position:relative;display:flex;gap:14px;align-items:flex-start;border:1px solid var(--line);border-radius:6px;padding:16px 18px;cursor:pointer;transition:border-color .15s,background .15s;}
+  .opt{position:relative;display:flex;gap:14px;align-items:flex-start;border:1px solid var(--line);border-radius:3px;padding:16px 18px;cursor:pointer;transition:border-color .15s,background .15s;}
   .opt:hover{border-color:rgba(20,20,20,.35);}
   .opt input{position:absolute;opacity:0;pointer-events:none;}
   .radio{width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(20,20,20,.35);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:border-color .15s;}
@@ -88,9 +99,9 @@
   .check.invalid{color:var(--red);}
 
   /* Signature */
-  .sig{border:1px solid var(--line);border-radius:6px;background:#fff;overflow:hidden;margin-top:22px;}
+  .sig{border:1px solid var(--line);border-radius:3px;background:#fff;overflow:hidden;margin-top:22px;}
   .sig-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line);font-size:14px;font-weight:600;}
-  .sig-clear{font:inherit;font-size:13px;font-weight:600;background:none;border:1px solid var(--line);border-radius:6px;padding:7px 12px;cursor:pointer;color:var(--ink);}
+  .sig-clear{font:inherit;font-size:13px;font-weight:600;background:none;border:1px solid var(--line);border-radius:3px;padding:7px 12px;cursor:pointer;color:var(--ink);}
   .sig-clear:hover{border-color:var(--ink);}
   #sig-canvas{display:block;width:100%;height:180px;touch-action:none;cursor:crosshair;background:#fff;}
   .sig-foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:10px 14px;border-top:1px dashed var(--line);font-size:13px;color:var(--muted);}
@@ -99,10 +110,10 @@
   .sig.invalid + .sig-err{display:block;}
 
   /* Envoi */
-  .alert{display:none;border:1px solid var(--red);background:#fff8f7;color:var(--red);border-radius:6px;padding:14px 16px;font-size:15px;font-weight:500;margin-bottom:28px;}
+  .alert{display:none;border:1px solid var(--red);background:#fff8f7;color:var(--red);border-radius:3px;padding:14px 16px;font-size:15px;font-weight:500;margin-bottom:28px;}
   .alert.show{display:block;}
   .submit-row{display:flex;flex-direction:column;gap:14px;}
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font:inherit;font-size:16px;font-weight:600;border:0;border-radius:6px;padding:17px 28px;cursor:pointer;text-decoration:none;transition:background .15s;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font:inherit;font-size:16px;font-weight:600;border:0;border-radius:3px;padding:17px 28px;cursor:pointer;text-decoration:none;transition:background .15s;}
   .btn-red{background:var(--red);color:#fff;}
   .btn-red:hover{background:var(--red-dark);}
   .btn-red:disabled{opacity:.6;cursor:wait;}
@@ -139,6 +150,8 @@
     .back span{display:none;}
   }
   @media (prefers-reduced-motion:reduce){.spinner{animation:none;}}
+  .facts a,.done-contact a{color:inherit;text-decoration:underline;text-underline-offset:3px;}
+  .done-contact{margin:0 0 24px;color:var(--muted,#6a6a66);}
 </style>
 </head>
 <body>
@@ -176,6 +189,7 @@
       <li><span>Durée</span><span>Environ 3 minutes</span></li>
       <li><span>Signature</span><span>Électronique, sur cette page</span></li>
       <li><span>Validation</span><span>Par le président et la vice-présidente</span></li>
+      <li><span>Une question ?</span><span><a href="mailto:contact@gefais.ch">contact@gefais.ch</a></span></li>
     </ul>
   </aside>
 
@@ -325,6 +339,7 @@
         <li><b>2</b><span>Le président et la vice-présidente la signent à leur tour.</span></li>
         <li><b>3</b><span>Vous êtes recontacté·e pour confirmer votre adhésion et le paiement de la cotisation.</span></li>
       </ol>
+      <p class="done-contact">Une question en attendant ? Écrivez-nous à <a href="mailto:contact@gefais.ch">contact@gefais.ch</a>.</p>
       <div class="done-actions">
         <button type="button" class="btn btn-red" id="btn-pdf">Télécharger le récapitulatif (PDF)</button>
         <a class="btn btn-ghost" href="./">Retour au site</a>
@@ -505,6 +520,10 @@ $('form').addEventListener('submit',async e=>{
   }
 });
 
+// Logo officiel pour le PDF, préchargé en arrière-plan
+let LOGO_PDF=null;const LOGO_RATIO=849/208;
+fetch('images/logo-horizontal-noir.png').then(r=>r.ok?r.blob():null).then(b=>{if(!b)return;const fr=new FileReader();fr.onload=()=>{LOGO_PDF=fr.result;};fr.readAsDataURL(b);}).catch(()=>{});
+
 // ── Récapitulatif PDF ───────────────────────────────────────────────
 $('btn-pdf').addEventListener('click',()=>{
   if(!window.jspdf||!formData){alert('Le PDF ne peut pas être généré pour le moment. Réessayez dans quelques secondes.');return;}
@@ -513,7 +532,12 @@ $('btn-pdf').addEventListener('click',()=>{
   const W=210,M=20;
   const INK=[20,20,20],MUTED=[106,106,102],LINE=[220,218,212],RED=[212,42,32];
 
-  // Logo
+  // Logo officiel (image préchargée) ; à défaut, l'anneau dessiné et le nom en texte
+  if(LOGO_PDF){
+    doc.addImage(LOGO_PDF,'PNG',M,14,11*LOGO_RATIO,11,'logo','FAST');
+    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...MUTED);
+    doc.text('« Ensemble, faisons qu\'un » · Genève · gefais.ch',M,32);
+  }else{
   const LRED=[238,30,39],LYEL=[253,201,21]; // couleurs du logo officiel
   const dots=[[20.24,3.56,2.8,INK],[28.72,5.76,2.52,INK],[35.24,11.6,2.16,INK],[37.88,19.92,2.12,INK],[35.72,28.56,2.04,INK],[29.2,34.64,1.84,INK],[20.48,37.48,1.76,INK],[12.08,35.4,1.84,INK],[5.76,29.44,2.68,INK],[3.36,20.8,3.36,LYEL],[5.36,12.28,3.32,LRED],[11.64,6.04,2.84,INK]];
   const s=0.42;
@@ -522,6 +546,7 @@ $('btn-pdf').addEventListener('click',()=>{
   doc.text('Association GE-FAIS',M+21,21);
   doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...MUTED);
   doc.text('« Ensemble, faisons qu\'un » · Genève · gefais.ch',M+21,27);
+  }
 
   doc.setDrawColor(...RED);doc.setLineWidth(0.8);doc.line(M,40,W-M,40);
 
@@ -580,7 +605,7 @@ $('btn-pdf').addEventListener('click',()=>{
 
   doc.setDrawColor(...LINE);doc.setLineWidth(0.3);doc.line(M,280,W-M,280);
   doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...MUTED);
-  doc.text('Association GE-FAIS · Genève · gefais.ch',M,286);
+  doc.text('Association GE-FAIS · Genève · gefais.ch · contact@gefais.ch',M,286);
   doc.text('Document généré automatiquement lors de la demande d\'adhésion',W-M,286,{align:'right'});
 
   const safe=(formData.nom||'membre').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-');
