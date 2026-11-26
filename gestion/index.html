@@ -1434,6 +1434,111 @@ td{font-size:14px;color:var(--text2);}
 .btn-gold{background:var(--gold2)!important;color:#141414!important;border:1px solid var(--gold2)!important;}
 .kpi-band-card,.stat-card{transform:none!important;}
 .rapport-section-icon{display:none!important;}
+
+
+/* Menu latéral en noir encre, comme les sections sombres du site */
+.sidebar{background:#141414!important;border-right:none!important;color:#f3f1ec;}
+.sidebar .logo{border-bottom:1px solid rgba(243,241,236,.1);}
+.sidebar .logo-dot{fill:#f3f1ec;}
+.sidebar .logo h1{color:#f3f1ec;}
+.sidebar .logo span#user-label{color:rgba(243,241,236,.55);}
+.sidebar .nav-section{color:rgba(243,241,236,.45);}
+.sidebar .nav-item{color:rgba(243,241,236,.72);}
+.sidebar .nav-item:hover{color:#fff;background:rgba(243,241,236,.07)!important;}
+.sidebar .nav-item.active{background:rgba(243,241,236,.1)!important;color:#fff!important;}
+.sidebar .nav-item.active .nav-icon{color:#fff;stroke:#fff;}
+.sidebar .nav-item.active::before{background:var(--red);}
+.sidebar .nav-icon{opacity:.7;}
+.sidebar .sidebar-footer{border-top:1px solid rgba(243,241,236,.1);}
+.sidebar .sidebar-footer button{color:rgba(243,241,236,.75)!important;border-color:rgba(243,241,236,.18)!important;background:none!important;}
+.sidebar .sidebar-footer button:hover{color:#fff!important;border-color:rgba(243,241,236,.4)!important;}
+.sidebar .btn-logout{color:rgba(243,241,236,.75);}
+.sidebar .btn-logout:hover{color:#fff;}
+/* ── Tableau de bord éditorial (même construction que le site public) ── */
+#page-dashboard{max-width:1180px;}
+.db-head{padding:8px 0 40px;}
+.db-kicker{font-size:15px;font-weight:500;color:var(--text2);margin:0 0 14px;}
+.db-kicker::first-letter{text-transform:uppercase;}
+.db-title{font-family:var(--head);font-size:64px;line-height:1;font-weight:800;letter-spacing:-.035em;margin:0 0 18px;color:var(--text);}
+.db-lead{font-size:19px;line-height:1.55;color:var(--text2);max-width:640px;margin:0 0 28px;}
+.db-lead strong{color:var(--text);font-weight:600;}
+.db-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.db-actions .btn{padding:12px 20px;font-size:15px;}
+.db-textlink{background:none;border:none;padding:6px 2px;font:inherit;font-size:15px;font-weight:600;color:var(--text);cursor:pointer;border-bottom:1px solid currentColor;line-height:1.2;}
+.db-textlink:hover{color:var(--red);}
+.db-facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--text);border-bottom:1px solid var(--border);margin-bottom:40px;}
+.db-fact{display:flex;flex-direction:column;gap:6px;padding:22px 24px 24px;border-left:1px solid var(--border);}
+.db-fact:first-child{border-left:none;padding-left:0;}
+.db-fact-label{font-size:14px;font-weight:500;color:var(--text2);}
+.db-fact-num{font-family:var(--head);font-size:44px;font-weight:800;letter-spacing:-.03em;line-height:1;color:var(--text);}
+.db-fact-num small{font-family:'Hanken Grotesk',sans-serif;font-size:15px;font-weight:500;letter-spacing:0;color:var(--text3);margin-left:6px;}
+.db-fact-num.is-neg,.db-dl .is-neg{color:var(--red);}
+.db-fact-sub{font-size:13px;color:var(--text3);line-height:1.4;}
+.db-todo{margin-bottom:48px;}
+.db-todo:empty{display:none;}
+.db-todo-title{font-family:var(--head);font-size:20px;font-weight:700;letter-spacing:-.01em;margin:0 0 10px;color:var(--text);}
+.db-todo ul{list-style:none;margin:0;padding:0;border-top:1px solid var(--border);}
+.db-todo li{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0 14px 16px;border-bottom:1px solid var(--border);font-size:15px;color:var(--text);position:relative;}
+.db-todo li::before{content:'';position:absolute;left:0;top:50%;width:6px;height:6px;border-radius:50%;background:var(--red);transform:translateY(-50%);}
+.db-grid{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:56px;}
+.db-grid-even{grid-template-columns:repeat(2,minmax(0,1fr));gap:56px;}
+.db-sec{border-top:1px solid var(--border);padding-top:18px;margin-bottom:48px;}
+.db-sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:18px;}
+.db-num{font-size:14px;font-weight:600;color:var(--red);}
+.db-sec-head h2{font-family:var(--head);font-size:26px;font-weight:800;letter-spacing:-.02em;margin:0;color:var(--text);flex:1;}
+.db-more{background:none;border:none;font:inherit;font-size:14px;color:var(--text2);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+.db-more:hover{color:var(--text);}
+.db-sub{font-size:14px;font-weight:600;color:var(--text2);margin:28px 0 8px;}
+.db-sec > .db-grid .db-sub:first-child,#db-finances .db-sub,#db-composition .db-sub{margin-top:0;}
+.db-list{list-style:none;margin:0;padding:0;}
+.db-event{display:flex;align-items:center;gap:18px;padding:14px 0;border-bottom:1px solid var(--border);}
+.db-event:first-child{padding-top:4px;}
+.db-date{display:flex;flex-direction:column;align-items:center;justify-content:center;width:56px;flex-shrink:0;font-size:12px;color:var(--text3);line-height:1.1;}
+.db-date b{font-family:var(--head);font-size:28px;font-weight:800;color:var(--text);letter-spacing:-.02em;}
+.db-event-body{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.db-event-name{font-size:16px;font-weight:600;color:var(--text);}
+.db-event-meta{font-size:13px;color:var(--text3);}
+.db-row{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 54px;align-items:center;gap:16px;padding:11px 0;border-bottom:1px solid var(--border);font-size:14px;}
+#db-presence .db-row{grid-template-columns:22px minmax(0,1.2fr) minmax(0,1fr) 48px;}
+.db-rank{font-size:13px;color:var(--text3);font-variant-numeric:tabular-nums;}
+.db-row-name{color:var(--text);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.db-row-name small{display:block;font-size:12px;font-weight:400;color:var(--text3);}
+.db-bar{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;}
+.db-bar i{display:block;height:100%;background:var(--text);border-radius:2px;}
+.db-bar i.is-good{background:var(--green);}
+.db-bar i.is-mid{background:var(--gold2);}
+.db-row-val{text-align:right;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;}
+.db-row-val small{font-weight:400;color:var(--text3);}
+.db-dl{margin:0;border-top:1px solid var(--border);}
+.db-dl div{display:flex;justify-content:space-between;align-items:baseline;padding:13px 0;border-bottom:1px solid var(--border);}
+.db-dl dt{font-size:15px;color:var(--text2);}
+.db-dl dd{margin:0;font-size:15px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;}
+.db-dl .is-total dt{color:var(--text);font-weight:600;}
+.db-dl .is-total dd{font-family:var(--head);font-size:24px;font-weight:800;}
+.db-stack{display:flex;height:10px;border-radius:2px;overflow:hidden;gap:2px;margin:6px 0 16px;}
+.db-stack i{display:block;}
+.db-legend{list-style:none;margin:0;padding:0;border-top:1px solid var(--border);}
+.db-legend li{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--border);font-size:15px;color:var(--text2);}
+.db-legend li span{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+.db-legend li b{margin-left:auto;color:var(--text);font-weight:600;}
+.db-empty{font-size:15px;color:var(--text3);padding:8px 0;}
+.db-foot{font-size:13px;color:var(--text3);margin-top:8px;}
+@media (max-width:1100px){
+  .db-grid,.db-grid-even{grid-template-columns:1fr;gap:0;}
+  .db-facts{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .db-fact:nth-child(3){border-left:none;padding-left:0;}
+  .db-fact:nth-child(n+3){border-top:1px solid var(--border);}
+}
+@media (max-width:900px){
+  .db-head{padding:0 0 28px;}
+  .db-title{font-size:40px;}
+  .db-lead{font-size:17px;}
+  .db-fact{padding:18px 14px 20px;}
+  .db-fact:nth-child(odd){padding-left:0;border-left:none;}
+  .db-fact-num{font-size:34px;}
+  .db-sec-head h2{font-size:22px;}
+  .db-actions .btn{flex:1;}
+}
 @media (max-width:900px){
   .main{padding:84px 16px 96px;}
   .page-header-left h2{font-size:28px;}
@@ -1657,65 +1762,43 @@ td{font-size:14px;color:var(--text2);}
     <!-- DASHBOARD -->
     <div id="page-dashboard" class="page active">
 
-      <!-- HERO -->
-      <div class="dash-hero" id="dash-hero">
-        <div class="dash-hero-orb dash-hero-orb1"></div>
-        <div class="dash-hero-orb dash-hero-orb2"></div>
-        <div class="dash-hero-orb dash-hero-orb3"></div>
-        <div class="dash-hero-inner">
-          <div class="dash-hero-left">
-            <div class="dash-hero-eyebrow">GE-FAIS · Espace de gestion</div>
-            <div class="dash-hero-greeting" id="dash-hero-greeting">Bonjour</div>
-            <div class="dash-hero-date" id="dash-hero-sub">Chargement…</div>
-            <div class="dash-hero-actions" id="dash-hero-quick"></div>
-          </div>
-          <div class="dash-hero-badge" id="dash-hero-badge">
-            <div class="dash-hero-badge-num" id="dash-hero-badge-num">—</div>
-            <div class="dash-hero-badge-label">membres</div>
-          </div>
+      <header class="db-head">
+        <p class="db-kicker" id="db-date">Tableau de bord</p>
+        <h1 class="db-title" id="db-greeting">Bonjour.</h1>
+        <p class="db-lead" id="db-lead"></p>
+        <div class="db-actions">
+          <button class="btn btn-primary" onclick="navTo('membres','Membres');setTimeout(openMemberModal,100)">Ajouter un membre</button>
+          <button class="btn btn-secondary" onclick="navTo('evenements','Événements');setTimeout(openEventModal,100)">Créer un événement</button>
+          <button class="db-textlink" onclick="navTo('cotisations','Cotisations')">Cotisations →</button>
         </div>
+      </header>
+
+      <section class="db-facts" id="db-facts" aria-label="En bref"></section>
+
+      <section class="db-todo" id="db-todo"></section>
+
+      <div class="db-grid">
+        <section class="db-sec">
+          <div class="db-sec-head"><span class="db-num">01</span><h2>Agenda</h2><button class="db-more" onclick="navTo('evenements','Événements')">Tout l'agenda</button></div>
+          <div id="db-agenda"></div>
+          <h3 class="db-sub">Dernières sorties</h3>
+          <div id="db-participation"></div>
+        </section>
+        <section class="db-sec">
+          <div class="db-sec-head"><span class="db-num">02</span><h2>Présence</h2><button class="db-more" onclick="navTo('presences','Présences')">Détail</button></div>
+          <div id="db-presence"></div>
+        </section>
       </div>
 
-      <!-- KPI BAND -->
-      <div class="dash-kpi-grid" id="dash-kpi-band"></div>
+      <section class="db-sec">
+        <div class="db-sec-head"><span class="db-num">03</span><h2>Finances et membres</h2><button class="db-more" onclick="navTo('compta','Comptabilité')">Comptabilité</button></div>
+        <div class="db-grid db-grid-even">
+          <div id="db-finances"></div>
+          <div id="db-composition"></div>
+        </div>
+      </section>
 
-      <!-- ALERTES -->
-      <div id="dash-alertes"></div>
-
-      <!-- ROW 1 -->
-      <div class="dash-row">
-        <div class="card dash-card-presence">
-          <div class="card-title">Présence des membres</div>
-          <div id="dash-presence-bars" class="gef-chart"></div>
-        </div>
-        <div class="dash-col-stack">
-          <div class="card">
-            <div class="card-title">Répartition</div>
-            <div id="dash-repartition"></div>
-          </div>
-          <div class="card">
-            <div class="card-title">Prochains événements</div>
-            <div id="dash-events"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ROW 2 -->
-      <div class="dash-row dash-row-bottom">
-        <div class="card">
-          <div class="card-title">Participation par événement</div>
-          <div id="dash-event-bars" class="gef-chart"></div>
-        </div>
-        <div class="card dash-finance-card">
-          <div class="card-title">Santé financière</div>
-          <div id="dash-finance-summary"></div>
-        </div>
-        <div class="card">
-          <div class="card-title">Stockage Firebase</div>
-          <div id="dash-firebase-storage"></div>
-        </div>
-      </div>
-
+      <p class="db-foot" id="db-storage"></p>
     </div>
 
     <!-- MEMBRES -->
@@ -2957,247 +3040,89 @@ async function initApp(){
 }
 
 // ── DASHBOARD ────────────────────────────────────────────────────
+let _demandesEnAttente=0;
 function renderDashboard(){
-  const actifs=membres.filter(m=>(m.type||'').trim()==='Actif').length;
-  const suisses=membres.filter(m=>(m.type||'').trim()==='Actif Suisse').length;
-  const passifs=membres.filter(m=>(m.type||'').trim()==='Passif').length;
-  const autres=membres.filter(m=>!m.type).length;
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const chf=n=>n.toLocaleString('fr-CH',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const type=m=>(m.type||'').trim();
+  const actifs=membres.filter(m=>type(m)==='Actif').length;
+  const suisses=membres.filter(m=>type(m)==='Actif Suisse').length;
+  const passifs=membres.filter(m=>type(m)==='Passif').length;
+  const autres=membres.length-actifs-suisses-passifs;
   const total=membres.length;
-  const totalIn=compta.filter(c=>c.type==='recette').reduce((s,c)=>s+c.montant,0);
-  const totalOut=compta.filter(c=>c.type==='depense').reduce((s,c)=>s+c.montant,0);
+  const totalIn=compta.filter(c=>c.type==='recette').reduce((s,c)=>s+(+c.montant||0),0);
+  const totalOut=compta.filter(c=>c.type==='depense').reduce((s,c)=>s+(+c.montant||0),0);
   const solde=totalIn-totalOut;
-  const anneeEnCours=new Date().getFullYear();
-  const cotisTotal=cotisations.filter(c=>c.annee===anneeEnCours).length;
-  const cotisPayees=cotisations.filter(c=>c.annee===anneeEnCours&&c.statut==='paye').length;
+  const annee=new Date().getFullYear();
+  const cotisAnnee=cotisations.filter(c=>c.annee===annee);
+  const cotisPayees=cotisAnnee.filter(c=>c.statut==='paye').length;
+  const cotisAttente=cotisAnnee.filter(c=>c.statut!=='paye'&&(c.montant==null||c.montant>0)).length;
   const today=new Date().toISOString().slice(0,10);
+  const passes=events.filter(e=>e.date<today);
+  const aVenir=events.filter(e=>e.date>=today).sort((a,b)=>a.date.localeCompare(b.date));
+  const jours=d=>Math.round((new Date(d+'T12:00:00')-new Date(today+'T12:00:00'))/86400000);
+  const quand=d=>{const j=jours(d);return j===0?'aujourd\'hui':j===1?'demain':`dans ${j} jours`;};
+  const presenceMembre=m=>passes.length?Math.round(passes.filter(e=>presences[m.id+'_'+e.id]).length/passes.length*100):0;
+  const presMoy=total&&passes.length?Math.round(membres.reduce((s,m)=>s+presenceMembre(m),0)/total):0;
+
+  // En-tête
   const h=new Date().getHours();
-  const greet=h<6?'Bonne nuit':h<18?'Bonjour':'Bonsoir';
+  const prenom=(()=>{const n=_nomUtilisateur();return n&&!n.includes('@')?n.split(' ')[0]:'';})();
+  const set=(id,v,html)=>{const el=document.getElementById(id);if(el)el[html?'innerHTML':'textContent']=v;};
+  set('db-date','Tableau de bord · '+new Date().toLocaleDateString('fr-CH',{weekday:'long',day:'numeric',month:'long',year:'numeric'}));
+  set('db-greeting',(h<6?'Bonne nuit':h<18?'Bonjour':'Bonsoir')+(prenom?' '+prenom:'')+'.');
+  const lead=[];
+  if(aVenir[0])lead.push(`Prochain rendez-vous : <strong>${esc(aVenir[0].nom||aVenir[0].type)}</strong>, ${quand(aVenir[0].date)}.`);
+  else lead.push('Aucun événement prévu pour le moment.');
+  if(cotisAttente)lead.push(`${cotisAttente} cotisation${cotisAttente>1?'s':''} ${annee} en attente.`);
+  set('db-lead',lead.join(' '),true);
 
-  // Animate hero
-  const hero=document.getElementById('dash-hero');
-  if(hero){hero.style.animation='none';void hero.offsetWidth;hero.style.animation='heroReveal 0.7s cubic-bezier(0.34,1.3,0.64,1) both';}
+  // En bref : fiche de chiffres
+  set('db-facts',`
+    <div class="db-fact"><span class="db-fact-label">Membres</span><span class="db-fact-num">${total}</span><span class="db-fact-sub">${actifs} actifs · ${suisses} actifs suisses · ${passifs} passifs${autres>0?' · '+autres+' sans statut':''}</span></div>
+    <div class="db-fact"><span class="db-fact-label">Présence moyenne</span><span class="db-fact-num">${presMoy}<small>%</small></span><span class="db-fact-sub">sur ${passes.length} événement${passes.length>1?'s':''} passé${passes.length>1?'s':''}</span></div>
+    <div class="db-fact"><span class="db-fact-label">Solde</span><span class="db-fact-num ${solde<0?'is-neg':''}">${solde<0?'−':''}${chf(Math.abs(solde))}<small>CHF</small></span><span class="db-fact-sub">${chf(totalIn)} de recettes · ${chf(totalOut)} de dépenses</span></div>
+    <div class="db-fact"><span class="db-fact-label">Cotisations ${annee}</span><span class="db-fact-num">${cotisPayees}<small>/ ${cotisAnnee.length}</small></span><span class="db-fact-sub">${cotisAnnee.length?(cotisAttente?cotisAttente+' en attente':'toutes réglées'):'pas encore générées'}</span></div>`,true);
 
-  // HERO
-  const el_g=document.getElementById('dash-hero-greeting');
-  const el_s=document.getElementById('dash-hero-sub');
-  const el_q=document.getElementById('dash-hero-quick');
-  const el_b=document.getElementById('dash-hero-badge-num');
-  if(el_g)el_g.textContent=greet;
-  const dateStr=new Date().toLocaleDateString('fr-CH',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  if(el_s)el_s.textContent=dateStr;
-  if(el_b)el_b.textContent=total;
-  if(el_q)el_q.innerHTML=`
-    <button class="dash-quick-btn" onclick="navTo('membres','Membres');setTimeout(openMemberModal,100)">＋ Membre</button>
-    <button class="dash-quick-btn" onclick="navTo('evenements','Événements');setTimeout(openEventModal,100)">＋ Événement</button>
-    <button class="dash-quick-btn" onclick="navTo('cotisations','Cotisations')">Cotisations</button>
-  `;
+  // À faire
+  const todo=[];
+  if(_demandesEnAttente)todo.push({t:`${_demandesEnAttente} demande${_demandesEnAttente>1?'s':''} d'adhésion à traiter`,a:"navTo('demandes','Adhésions')",l:'Ouvrir'});
+  if(!cotisAnnee.length&&total)todo.push({t:`Les cotisations ${annee} ne sont pas encore générées`,a:"navTo('cotisations','Cotisations')",l:'Générer'});
+  else if(cotisAttente)todo.push({t:`${cotisAttente} cotisation${cotisAttente>1?'s':''} ${annee} en attente de paiement`,a:"navTo('cotisations','Cotisations')",l:'Voir'});
+  aVenir.filter(e=>jours(e.date)<=7).forEach(e=>todo.push({t:`${esc(e.nom||e.type)} : ${quand(e.date)}`,a:"navTo('presences','Présences')",l:'Préparer'}));
+  set('db-todo',todo.length?`<h2 class="db-todo-title">À faire</h2><ul>${todo.map(x=>`<li><span>${x.t}</span><button class="db-textlink" onclick="${x.a}">${x.l} →</button></li>`).join('')}</ul>`:'',true);
 
-  // KPI BAND
-  const kpiEl=document.getElementById('dash-kpi-band');
-  if(kpiEl)kpiEl.innerHTML=`
-    <div class="kpi-band-card kpi-animate" style="animation-delay:0s;border-top:3px solid var(--red);">
-      <div class="kpi-band-icon" style="background:rgba(255,59,48,0.12);color:var(--red);">👥</div>
-      <div class="kpi-band-body">
-        <div class="kpi-band-label">Total membres</div>
-        <div class="kpi-band-val">${total}</div>
-        <div class="kpi-band-sub">${actifs} actifs · ${suisses} suisses · ${passifs} passifs${autres>0?' · '+autres+' autres':''}</div>
-      </div>
-    </div>
-    <div class="kpi-band-card kpi-animate" style="animation-delay:0.06s;border-top:3px solid var(--gold);">
-      <div class="kpi-band-icon" style="background:rgba(255,214,10,0.1);">⚡</div>
-      <div class="kpi-band-body">
-        <div class="kpi-band-label">Membres actifs</div>
-        <div class="kpi-band-val">${actifs+suisses}</div>
-        <div class="kpi-band-sub">${actifs} actifs · ${suisses} suisses</div>
-      </div>
-    </div>
-    <div class="kpi-band-card kpi-animate" style="animation-delay:0.12s">
-      <div class="kpi-band-icon" style="background:${solde>=0?'rgba(48,209,88,0.12)':'rgba(255,59,48,0.12)'};">${solde>=0?'💚':'🔴'}</div>
-      <div class="kpi-band-body">
-        <div class="kpi-band-label">Solde financier</div>
-        <div class="kpi-band-val" style="color:${solde>=0?'var(--green)':'var(--red)'};">${solde>=0?'+':''}${solde.toFixed(0)}<span style="font-size:12px;font-weight:400;color:var(--text3);margin-left:3px;">CHF</span></div>
-        <div class="kpi-band-sub">${totalIn.toFixed(0)} CHF recettes</div>
-      </div>
-    </div>
-    <div class="kpi-band-card kpi-animate" style="animation-delay:0.18s">
-      <div class="kpi-band-icon" style="background:${cotisPayees===cotisTotal&&cotisTotal>0?'rgba(34,197,94,0.15)':'rgba(96,165,250,0.15)'};">${cotisPayees===cotisTotal&&cotisTotal>0?'✅':'💳'}</div>
-      <div class="kpi-band-body">
-        <div class="kpi-band-label">Cotisations</div>
-        <div class="kpi-band-val">${cotisPayees}<span style="font-size:15px;font-weight:400;color:var(--text3);">/${cotisTotal}</span></div>
-        <div class="kpi-band-sub">${cotisTotal-cotisPayees} en attente</div>
-      </div>
-    </div>
-  `;
+  // 01 Agenda
+  const mois=d=>new Date(d+'T12:00:00').toLocaleDateString('fr-CH',{month:'short'}).replace('.','');
+  set('db-agenda',aVenir.length?`<ul class="db-list">${aVenir.slice(0,4).map(e=>`
+    <li class="db-event"><span class="db-date"><b>${+e.date.slice(8,10)}</b>${mois(e.date)}</span>
+      <span class="db-event-body"><span class="db-event-name">${esc(e.nom||e.type)}</span><span class="db-event-meta">${esc(e.type||'')} · ${quand(e.date)}</span></span></li>`).join('')}</ul>`
+    :'<p class="db-empty">Aucun événement à venir. <button class="db-textlink" onclick="navTo(\'evenements\',\'Événements\');setTimeout(openEventModal,100)">Créer un événement →</button></p>',true);
+  const recents=passes.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,4);
+  set('db-participation',recents.length?`<ul class="db-list">${recents.map(e=>{const n=membres.filter(m=>presences[m.id+'_'+e.id]).length;const pct=total?Math.round(n/total*100):0;
+    return`<li class="db-row"><span class="db-row-name">${esc(e.nom||e.type)}<small>${fmtDate(e.date)}</small></span><span class="db-bar"><i style="width:${pct}%"></i></span><span class="db-row-val">${n}<small>/${total}</small></span></li>`;}).join('')}</ul>`
+    :'<p class="db-empty">Aucune sortie passée.</p>',true);
 
-  // ALERTES
-  const alertesEl=document.getElementById('dash-alertes');
-  if(alertesEl){
-    const alertes=[];
-    const upcoming7=events.filter(e=>{const d=new Date(e.date);const diff=(d-new Date())/86400000;return diff>=0&&diff<=7;});
-    if(upcoming7.length)alertes.push({type:'info',icon:'📅',msg:`${upcoming7.length} événement(s) dans les 7 prochains jours : ${upcoming7.map(e=>e.nom||e.type).join(', ')}`});
-    const impayees=cotisations.filter(c=>c.annee===anneeEnCours&&c.statut==='impaye'&&c.montant>0).length;
-    if(impayees>0)alertes.push({type:'warn',icon:'💳',msg:`${impayees} cotisation(s) ${anneeEnCours} en attente de paiement`});
-    else if(cotisTotal>0)alertes.push({type:'success',icon:'🎉',msg:`Toutes les cotisations ${anneeEnCours} sont à jour !`});
-    alertesEl.innerHTML=alertes.map(a=>`<div class="dash-alerte dash-alerte-${a.type}"><span style="font-size:16px;">${a.icon}</span><span>${a.msg}</span></div>`).join('');
-    alertesEl.style.marginBottom=alertes.length?'14px':'0';
-  }
+  // 02 Présence
+  const classement=membres.map(m=>({nom:`${m.prenom||''} ${m.nom||''}`.trim(),pct:presenceMembre(m)})).sort((a,b)=>b.pct-a.pct).slice(0,8);
+  set('db-presence',classement.length&&passes.length?`<ul class="db-list">${classement.map((m,i)=>`
+    <li class="db-row"><span class="db-rank">${i+1}</span><span class="db-row-name">${esc(m.nom)}</span><span class="db-bar"><i class="${m.pct>=70?'is-good':m.pct>=40?'is-mid':''}" style="width:${m.pct}%"></i></span><span class="db-row-val">${m.pct}<small>%</small></span></li>`).join('')}</ul>`
+    :'<p class="db-empty">Les présences apparaîtront après le premier événement.</p>',true);
 
-  // PRESENCE BARS
-  const pbEl=document.getElementById('dash-presence-bars');
-  if(pbEl){
-    const bars=membres.map(m=>{const p=events.filter(e=>presences[m.id+'_'+e.id]).length;return{name:m.prenom+' '+m.nom,pct:events.length>0?Math.round((p/events.length)*100):0};}).sort((a,b)=>b.pct-a.pct).slice(0,8);
-    pbEl.innerHTML=bars.length?bars.map((b,i)=>`
-      <div class="progress-row" style="animation:fadeUp 0.4s ease both;animation-delay:${i*0.05}s">
-        <div class="progress-label">${b.name}</div>
-        <div class="progress-track"><div class="progress-bar" style="width:${b.pct}%;background:${b.pct>=70?'var(--green)':b.pct>=40?'var(--gold)':'var(--red)'}"></div></div>
-        <div class="progress-pct">${b.pct}%</div>
-      </div>`).join(''):'<p style="color:var(--text3);font-size:13px;text-align:center;padding:16px 0;">Aucun événement enregistré.</p>';
-  }
+  // 03 Finances et membres
+  set('db-finances',`<h3 class="db-sub">Comptes</h3><dl class="db-dl">
+    <div><dt>Recettes</dt><dd>${chf(totalIn)} CHF</dd></div>
+    <div><dt>Dépenses</dt><dd>${chf(totalOut)} CHF</dd></div>
+    <div class="is-total"><dt>Solde</dt><dd class="${solde<0?'is-neg':''}">${solde<0?'−':''}${chf(Math.abs(solde))} CHF</dd></div></dl>`,true);
+  const parts=[['Actifs',actifs,'var(--red)'],['Actifs suisses',suisses,'var(--gold2)'],['Passifs',passifs,'var(--text3)'],['Sans statut',autres,'var(--border2)']].filter(p=>p[1]>0);
+  set('db-composition',`<h3 class="db-sub">Composition</h3>${total?`<div class="db-stack">${parts.map(p=>`<i style="flex:${p[1]};background:${p[2]}"></i>`).join('')}</div>
+    <ul class="db-legend">${parts.map(p=>`<li><span style="background:${p[2]}"></span>${p[0]}<b>${p[1]}</b></li>`).join('')}</ul>`:'<p class="db-empty">Aucun membre.</p>'}`,true);
 
-  // REPARTITION
-  const repEl=document.getElementById('dash-repartition');
-  if(repEl){
-    const types=[['Actif',actifs,'var(--red)'],['Actif Suisse',suisses,'#c49a00'],['Passif',passifs,'#9ca3af'],['Autre',autres,'#e5e7eb']];
-    const totalNonZero=types.filter(t=>t[1]>0).reduce((s,t)=>s+t[1],0);
-    repEl.innerHTML=types.filter(t=>t[1]>0).map(t=>`
-      <div style="margin-bottom:10px;">
-        <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-          <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);">
-            <div style="width:9px;height:9px;border-radius:50%;background:${t[2]};flex-shrink:0;"></div>${t[0]}
-          </div>
-          <span style="font-weight:700;font-size:13px;color:var(--text);">${t[1]}</span>
-        </div>
-        <div style="height:4px;background:var(--bg3);border-radius:4px;overflow:hidden;">
-          <div style="height:100%;width:${totalNonZero>0?Math.round(t[1]/totalNonZero*100):0}%;background:${t[2]};border-radius:4px;transition:width 0.8s ease;"></div>
-        </div>
-      </div>`).join('');
-  }
-
-  // EVENTS
-  const evEl=document.getElementById('dash-events');
-  if(evEl){
-    const upcoming=events.filter(e=>e.date>=today).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,4);
-    evEl.innerHTML=upcoming.length?upcoming.map(e=>{
-      const chipCls=e.type==='Maraude'?'event-chip-maraude':e.type==='Réunion'?'event-chip-reunion':'event-chip-autre';
-      const jours=Math.round((new Date(e.date+'T12:00:00')-new Date(today+'T12:00:00'))/86400000);
-      const label=jours===0?'<span style="color:var(--green);font-weight:700;font-size:11px;">Aujourd\'hui</span>':jours===1?'<span style="color:var(--gold);font-weight:700;font-size:11px;">Demain</span>':`<span style="font-size:11px;color:var(--text3);">${fmtDate(e.date)}</span>`;
-      return`<div style="display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--border);">
-        <span class="event-chip ${chipCls}" style="font-size:10px;padding:2px 7px;">${e.type}</span>
-        <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:500;color:var(--text);">${e.nom||e.type}</span>
-        ${label}
-      </div>`;
-    }).join(''):'<div style="text-align:center;padding:18px 0;color:var(--text3);font-size:13px;">Aucun événement à venir</div>';
-  }
-
-  // EVENT PARTICIPATION BARS
-  const ebEl=document.getElementById('dash-event-bars');
-  if(ebEl){
-    const evtBars=events.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,6).map(e=>{
-      const c=membres.filter(m=>presences[m.id+'_'+e.id]).length;
-      const pct=membres.length>0?Math.round((c/membres.length)*100):0;
-      return{label:(e.nom||e.type).slice(0,22),pct,count:c};
-    });
-    ebEl.innerHTML=evtBars.length?evtBars.map(b=>`
-      <div class="progress-row">
-        <div class="progress-label">${b.label}</div>
-        <div class="progress-track"><div class="progress-bar" style="width:${b.pct}%;background:${b.pct>=70?'var(--green)':b.pct>=40?'var(--gold)':'var(--red)'}"></div></div>
-        <div class="progress-pct">${b.count}</div>
-      </div>`).join(''):'<p style="color:var(--text3);font-size:13px;">Aucun événement.</p>';
-  }
-
-  // FINANCES
-  const finEl=document.getElementById('dash-finance-summary');
-  if(finEl)finEl.innerHTML=`
-    <div class="dash-finance-row dash-finance-in">
-      <div class="dash-finance-icon">⬆️</div>
-      <div class="dash-finance-label">Recettes</div>
-      <div class="dash-finance-amount amount-in">+${totalIn.toFixed(2)} CHF</div>
-    </div>
-    <div class="dash-finance-row dash-finance-out">
-      <div class="dash-finance-icon">⬇️</div>
-      <div class="dash-finance-label">Dépenses</div>
-      <div class="dash-finance-amount amount-out">−${totalOut.toFixed(2)} CHF</div>
-    </div>
-    <div class="dash-finance-divider"></div>
-    <div class="dash-finance-solde ${solde>=0?'dash-finance-solde-pos':'dash-finance-solde-neg'}">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span style="font-weight:700;font-size:14px;color:var(--text);">Solde final</span>
-      </div>
-      <div style="font-size:24px;font-weight:800;letter-spacing:-0.5px;color:${solde>=0?'var(--green)':'var(--red)'};">${solde>=0?'+':''}${solde.toFixed(2)}<span style="font-size:13px;font-weight:400;color:var(--text3);margin-left:4px;">CHF</span></div>
-    </div>
-  `;
-
-  // ── ANIMATIONS DASHBOARD ─────────────────────────────────────────
-  setTimeout(()=>{
-    // KPI cards pop élastique
-    document.querySelectorAll('.kpi-band-card').forEach((el,i)=>{
-      el.style.animation='none';
-      void el.offsetWidth;
-      el.style.animation=`kpiPop 0.6s cubic-bezier(0.34,1.56,0.64,1) ${0.05+i*0.07}s both`;
-    });
-
-    // Compteur animé sur les valeurs KPI
-    document.querySelectorAll('.kpi-band-val').forEach((el,i)=>{
-      const raw=el.innerHTML;
-      const num=parseInt(el.textContent.replace(/[^0-9]/g,''));
-      if(isNaN(num)||num===0)return;
-      const suffix=el.innerHTML.includes('CHF')?el.innerHTML.slice(el.innerHTML.indexOf('<span')):'';
-      const sign=el.innerHTML.includes('+')? '+':'';
-      const neg=el.innerHTML.includes('−')? '−':'';
-      let start=null;
-      const dur=700+i*80;
-      function step(ts){
-        if(!start)start=ts;
-        const p=Math.min((ts-start)/dur,1);
-        const ease=1-Math.pow(1-p,3);
-        el.innerHTML=sign+neg+Math.round(ease*num)+(suffix||'');
-        if(p<1)requestAnimationFrame(step);
-        else el.innerHTML=raw;
-      }
-      requestAnimationFrame(step);
-      el.style.animation='countFlip 0.5s cubic-bezier(0.34,1.3,0.64,1) both';
-    });
-
-    // Barres de présence animées
-    document.querySelectorAll('#dash-presence-bars .progress-bar, #dash-event-bars .progress-bar').forEach((bar,i)=>{
-      const target=bar.style.width;
-      bar.style.width='0%';
-      bar.style.transition='none';
-      void bar.offsetWidth;
-      bar.style.transition=`width 0.9s cubic-bezier(0.34,1.1,0.64,1) ${i*0.04}s`;
-      requestAnimationFrame(()=>requestAnimationFrame(()=>{bar.style.width=target;}));
-    });
-
-    // Cards dashboard glissent vers le haut
-    document.querySelectorAll('#page-dashboard .card, #page-dashboard .dash-finance-row').forEach((el,i)=>{
-      el.style.animation='none';
-      void el.offsetWidth;
-      el.style.animation=`cardSlideUp 0.45s cubic-bezier(0.34,1.2,0.64,1) ${0.1+i*0.05}s both`;
-    });
-
-    // Alertes glissent depuis la gauche
-    document.querySelectorAll('.dash-alerte').forEach((el,i)=>{
-      el.style.animation='none';
-      void el.offsetWidth;
-      el.style.animation=`slideInLeft 0.35s ease ${i*0.08}s both`;
-    });
-  },80);
-
-  // FIREBASE STORAGE ESTIMATION
-  const fbEl=document.getElementById('dash-firebase-storage');
-  if(fbEl){
-    const keys=['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents'];
-    let totalBytes=0;
-    const details=keys.map(k=>{const raw=localStorage.getItem(k)||'';const bytes=new TextEncoder().encode(raw).length;totalBytes+=bytes;return{k,bytes};});
-    const FREE_LIMIT_MB=1024;const usedMB=totalBytes/1024/1024;const pct=Math.min(100,Math.round(usedMB/FREE_LIMIT_MB*100));
-    const color=pct>=80?'var(--red)':pct>=50?'var(--gold)':'var(--green)';
-    const fmt=b=>b<1024?b+' o':b<1048576?(b/1024).toFixed(1)+' Ko':(b/1048576).toFixed(2)+' Mo';
-    if(totalBytes<100){
-      fbEl.innerHTML=`<div style="text-align:center;padding:12px 0;color:var(--text3);font-size:13px;">En attente de synchronisation Firebase…</div>`;
-    } else {
-      fbEl.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;"><span style="font-size:24px;font-weight:800;color:${color};">${fmt(totalBytes)}</span><span style="font-size:11px;color:var(--text3);">/ 1 Go gratuit</span></div><div style="height:6px;background:var(--bg3);border-radius:6px;overflow:hidden;margin-bottom:12px;"><div style="height:100%;width:${Math.max(pct,0.5)}%;background:${color};border-radius:6px;transition:width 1s ease;"></div></div><div style="display:flex;flex-direction:column;gap:6px;">${details.filter(d=>d.bytes>100).sort((a,b)=>b.bytes-a.bytes).slice(0,5).map(d=>`<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;"><span style="color:var(--text3);">${d.k.replace('gef_','')}</span><span style="font-weight:600;color:var(--text2);">${fmt(d.bytes)}</span></div>`).join('')}</div><div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:10px;color:var(--text3);">Estimation locale · Plan Spark Firebase gratuit</div>`;
-    }
-  }
+  // Pied : volume des données
+  try{
+    let bytes=0;['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents'].forEach(k=>{bytes+=new TextEncoder().encode(localStorage.getItem(k)||'').length;});
+    set('db-storage',bytes>100?`Données synchronisées : ${bytes<1048576?(bytes/1024).toFixed(0)+' Ko':(bytes/1048576).toFixed(1)+' Mo'}.`:'');
+  }catch(e){}
 }
 function renderMembres(){
   const q=(document.getElementById('search-membres')?.value||'').toLowerCase();
@@ -5487,6 +5412,7 @@ function _loadDemandesBadge(){
   if(!db)return;
   db.collection('gef_demandes').where('statut','==','en_attente').get().then(snap=>{
     const n=snap.size;const badge=document.getElementById('demandes-badge');
+    _demandesEnAttente=n;if(document.getElementById('page-dashboard')?.classList.contains('active'))renderDashboard();
     if(badge){if(n>0){badge.textContent=n;badge.style.display='inline';}else{badge.style.display='none';}}
   }).catch(()=>{});
 }
@@ -5777,7 +5703,7 @@ function genererCotisationsAnnee(){
 function _checkCotisationsAnnee(){
   const annee=new Date().getFullYear();
   if(membres.length>0&&!cotisations.find(c=>c.annee===annee))
-    setTimeout(()=>showToast('Cotisations '+annee+' pas encore générées : ouvrez Cotisations, puis « Générer l\'année »','⚠️'),2000);
+    setTimeout(()=>{if(!document.getElementById('page-dashboard')?.classList.contains('active'))showToast('Cotisations '+annee+' pas encore générées : ouvrez Cotisations, puis « Générer l\'année »','⚠️');},2000);
 }
 
 function _populateCotisAnneeSel(){
