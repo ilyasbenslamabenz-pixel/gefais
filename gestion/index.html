@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Espace comité — GE-FAIS</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%23fff'/%3E%3Ccircle cx='24.25' cy='6.74' r='3.78' fill='%23131313'/%3E%3Ccircle cx='33.16' cy='9.05' r='3.40' fill='%23131313'/%3E%3Ccircle cx='40.00' cy='15.18' r='2.92' fill='%23131313'/%3E%3Ccircle cx='42.77' cy='23.92' r='2.86' fill='%23131313'/%3E%3Ccircle cx='40.51' cy='32.99' r='2.75' fill='%23131313'/%3E%3Ccircle cx='33.66' cy='39.37' r='2.48' fill='%23131313'/%3E%3Ccircle cx='24.50' cy='42.35' r='2.38' fill='%23131313'/%3E%3Ccircle cx='15.68' cy='40.17' r='2.48' fill='%23131313'/%3E%3Ccircle cx='9.05' cy='33.91' r='3.62' fill='%23131313'/%3E%3Ccircle cx='6.53' cy='24.84' r='4.54' fill='%23fdc915'/%3E%3Ccircle cx='8.63' cy='15.89' r='4.48' fill='%23ee1e27'/%3E%3Ccircle cx='15.22' cy='9.34' r='3.83' fill='%23131313'/%3E%3C/svg%3E">
-<link rel="apple-touch-icon" href="/images/icon-180.png?v=2">
+<link rel="apple-touch-icon" href="/images/icon-180.png?v=3">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://www.gstatic.com">
 <link rel="preconnect" href="https://firestore.googleapis.com">
@@ -1315,7 +1315,9 @@ h1,h2,h3,.stat-value,.kpi-val,.kpi-band-val,.dh-kpi-val,.dh-bubble-num,.pres-sta
 .bottom-nav{background:var(--card)!important;backdrop-filter:none;border-top:1px solid var(--border);}
 .bottom-nav-item{border-radius:var(--r);}
 .bottom-nav-item span{font-size:11px;font-weight:600;letter-spacing:0;text-transform:none;}
-.bottom-nav-item.active::after{width:16px;height:2px;border-radius:1px;}
+.bottom-nav-item{position:relative;justify-content:center;}
+.bottom-nav-item.active{transform:none!important;}
+.bottom-nav-item.active::after{position:absolute;left:50%;bottom:0;width:16px;height:2px;margin:0;border-radius:1px;transform:translateX(-50%);}
 
 /* Contenu */
 .main{padding:36px 44px 56px;}
@@ -1587,10 +1589,37 @@ td{font-size:14px;color:var(--text2);}
 .mcard-contact{display:flex;flex-direction:column;gap:4px;margin:12px 0 0 56px;font-size:15px;}
 .mcard-contact a{color:var(--text2);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .mcard-contact span{color:var(--text3);}
-.mcard-actions{display:flex;gap:18px;flex-wrap:wrap;margin:12px 0 0 56px;}
+.mcard-actions{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0 0 56px;}
 .mcard-actions button{background:none;border:none;padding:4px 0;font:inherit;font-size:14px;font-weight:600;color:var(--text);cursor:pointer;border-bottom:1px solid var(--border2);}
 .mcard-actions button.is-danger{color:var(--red);border-bottom-color:transparent;}
 #member-cards{gap:0!important;}
+
+/* Liste compacte des membres (mobile) */
+#member-cards{gap:0!important;border-top:1px solid var(--text);}
+.mrow{display:flex;align-items:center;gap:12px;width:100%;padding:13px 2px;background:none;border:none;border-bottom:1px solid var(--border);text-align:left;font:inherit;color:var(--text);cursor:pointer;}
+.mrow:active{background:var(--bg3);}
+.mrow-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.mrow-id{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+.mrow-name{font-size:16px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mrow-meta{font-size:13px;color:var(--text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mrow-pres{font-size:15px;font-weight:600;color:var(--text2);font-variant-numeric:tabular-nums;}
+.mrow-pres small{font-size:12px;font-weight:500;margin-left:1px;}
+.mrow-pres.is-good{color:var(--green);}
+.mrow-chev{color:var(--text3);flex-shrink:0;}
+/* Fiche du membre */
+.mf-close{float:right;background:none;border:none;font:inherit;font-size:14px;color:var(--text2);cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:2px 0;}
+.mf-kicker{display:flex;align-items:center;gap:10px;margin:0 0 10px;}
+.mf-role{font-size:14px;color:var(--text2);}
+.mf-name{font-family:var(--head);font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin:0 0 8px;color:var(--text);}
+.mf-pres{font-size:15px;color:var(--text2);margin:0 0 18px;}
+.mf-pres b{color:var(--text);font-weight:700;}
+.mf-pres b.is-good{color:var(--green);}
+.mf-dl{margin-bottom:20px;}
+.mf-dl dd a{color:var(--text);text-decoration:underline;text-underline-offset:3px;}
+.mf-dl dd{text-align:right;max-width:65%;overflow-wrap:anywhere;}
+.mf-actions{display:flex;gap:10px;}
+.mf-actions .btn{flex:1;justify-content:center;padding:12px;}
+.mf-delete{display:block;margin:18px auto 0;background:none;border:none;font:inherit;font-size:14px;color:var(--red);cursor:pointer;}
 /* Logo officiel : écran de chargement et mode présentation */
 .loading-logo{display:flex;align-items:center;gap:16px;animation:logoPulse 1.6s ease-in-out infinite;}
 .loading-logo .wordmark{height:26px;}
@@ -2462,6 +2491,13 @@ td{font-size:14px;color:var(--text2);}
 </div>
 
 <!-- MODAL MEMBRE -->
+<div class="modal-overlay" id="modal-membre-fiche" onclick="if(event.target===this)closeModal('modal-membre-fiche')">
+  <div class="modal" style="max-width:480px;">
+    <button class="mf-close" onclick="closeModal('modal-membre-fiche')" aria-label="Fermer">Fermer</button>
+    <div id="membre-fiche"></div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modal-membre">
   <div class="modal">
     <h3 id="modal-membre-title">Ajouter un membre</h3>
@@ -3281,10 +3317,19 @@ function renderDashboard(){
   set('db-composition',`<h3 class="db-sub">Composition</h3>${total?`<div class="db-stack">${parts.map(p=>`<i style="flex:${p[1]};background:${p[2]}"></i>`).join('')}</div>
     <ul class="db-legend">${parts.map(p=>`<li><span style="background:${p[2]}"></span>${p[0]}<b>${p[1]}</b></li>`).join('')}</ul>`:'<p class="db-empty">Aucun membre.</p>'}`,true);
 
-  // Pied : volume des données
+  // Pied : document le plus lourd (Firebase limite chaque document à 1 Mo)
   try{
-    let bytes=0;['gef_membres','gef_events','gef_presences','gef_compta','gef_cotisations','gef_event_types','gef_email_historique','gef_documents'].forEach(k=>{bytes+=new TextEncoder().encode(localStorage.getItem(k)||'').length;});
-    set('db-storage',bytes>100?`Données synchronisées : ${bytes<1048576?(bytes/1024).toFixed(0)+' Ko':(bytes/1048576).toFixed(1)+' Mo'}.`:'');
+    const noms={gef_membres:'Membres',gef_events:'Événements',gef_presences:'Présences',gef_compta:'Comptabilité',gef_cotisations:'Cotisations',gef_email_historique:'Historique des e-mails',gef_documents:'Documents'};
+    let max={k:null,b:0};
+    Object.keys(noms).forEach(k=>{const b=new TextEncoder().encode(localStorage.getItem(k)||'').length;if(b>max.b)max={k,b};});
+    const el=document.getElementById('db-storage');
+    if(el&&max.k){
+      const pct=Math.round(max.b/1048576*100);
+      const ko=Math.round(max.b/1024);
+      el.innerHTML=pct>=70
+        ?`<span style="color:var(--red);font-weight:600;">Attention : « ${noms[max.k]} » pèse ${ko} Ko, soit ${pct} % de la limite de 1 Mo par document.</span> Retirez des fichiers joints (ou rangez-les sur kDrive) pour garder de la marge.`
+        :`Document le plus lourd : « ${noms[max.k]} », ${ko} Ko (${pct} % de la limite de 1 Mo).`;
+    }
   }catch(e){}
 }
 function renderMembres(){
@@ -3368,30 +3413,16 @@ function renderMembres(){
 
   document.getElementById('member-cards').innerHTML=paged.map(m=>{
     const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    const isNew=m.createdAt&&(new Date()-new Date(m.createdAt))<30*86400000;
-    const initials=esc(((m.prenom||'')[0]||'')+((m.nom||'')[0]||''));
+    const t=(m.type||'').trim();
+    const dot=t==='Actif'?'var(--red)':t==='Actif Suisse'?'var(--gold2)':t==='Passif'?'var(--text3)':'var(--border2)';
     const pres=events.length>0?Math.round(events.filter(e=>presences[m.id+'_'+e.id]).length/events.length*100):null;
-    const presCls=pres===null?'':pres>=70?'is-good':pres>=40?'is-mid':'is-low';
-    const tel=(m.tel||'').trim();
-    return`<article class="mcard">
-      <div class="mcard-top">
-        <span class="mcard-avatar">${initials}</span>
-        <div class="mcard-id">
-          <h3 class="mcard-name">${esc(m.prenom)} ${esc(m.nom)}${isNew?' <span class="mcard-new">Nouveau</span>':''}</h3>
-          <div class="mcard-meta">${m.type?badgeType(m.type):'<span class="badge badge-passif">Sans statut</span>'}${m.role?`<span class="mcard-role">${esc(m.role)}</span>`:''}</div>
-        </div>
-        ${pres!==null?`<div class="mcard-pres ${presCls}"><b>${pres}<small>%</small></b><span>présence</span></div>`:''}
-      </div>
-      <div class="mcard-contact">
-        ${m.email?`<a href="mailto:${esc(m.email)}">${esc(m.email)}</a>`:'<span>Pas d\'e-mail</span>'}
-        ${tel?`<a href="tel:${esc(tel.replace(/\s/g,''))}">${esc(tel)}</a>`:''}
-      </div>
-      <div class="mcard-actions">
-        <button onclick="ouvrirFicheAdhesion(${m.id})">Fiche d'adhésion</button>
-        <button onclick="editMember(${m.id})">Modifier</button>
-        <button class="is-danger" onclick="deleteMember(${m.id})">Supprimer</button>
-      </div>
-    </article>`;}).join('');
+    const meta=[t?t.replace('Actif Suisse','Actif suisse'):'Sans statut',m.role].filter(Boolean).map(esc).join(' · ');
+    return`<button class="mrow" onclick="ouvrirMembre(${m.id})">
+      <span class="mrow-dot" style="background:${dot}"></span>
+      <span class="mrow-id"><span class="mrow-name">${esc(m.prenom)} ${esc(m.nom)}</span><span class="mrow-meta">${meta}</span></span>
+      ${pres!==null?`<span class="mrow-pres${pres>=70?' is-good':''}">${pres}<small>%</small></span>`:''}
+      <svg class="mrow-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+    </button>`;}).join('');
 
   // Pagination controls (append after table)
   const paginEl=document.getElementById('membres-pagination');
@@ -3425,6 +3456,36 @@ function saveMember(){
   } else {
     _saveMemberProceed();
   }
+}
+// ── FICHE MEMBRE (mobile) ────────────────────────────────────────
+function ouvrirMembre(id){
+  const m=membres.find(x=>x.id===id);if(!m)return;
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const t=(m.type||'').trim();
+  const passes=events.filter(e=>e.date<new Date().toISOString().slice(0,10));
+  const nbPres=events.filter(e=>presences[m.id+'_'+e.id]).length;
+  const pres=events.length?Math.round(nbPres/events.length*100):null;
+  const tel=(m.tel||'').trim();
+  const ligne=(l,v)=>v?`<div><dt>${l}</dt><dd>${v}</dd></div>`:'';
+  const mois=['','janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  const adh=(m.adhesion||'').split('-');const adhTxt=adh[0]?((adh[1]?mois[+adh[1]]+' ':'')+adh[0]):'';
+  document.getElementById('membre-fiche').innerHTML=`
+    <p class="mf-kicker">${t?badgeType(t):'<span class="badge badge-passif">Sans statut</span>'}${m.role?`<span class="mf-role">${esc(m.role)}</span>`:''}</p>
+    <h3 class="mf-name">${esc(m.prenom)} ${esc(m.nom)}</h3>
+    ${pres!==null?`<p class="mf-pres"><b class="${pres>=70?'is-good':''}">${pres} %</b> de présence · ${nbPres} sur ${events.length} événement${events.length>1?'s':''}</p>`:''}
+    <dl class="db-dl mf-dl">
+      ${ligne('E-mail',m.email?`<a href="mailto:${esc(m.email)}">${esc(m.email)}</a>`:'')}
+      ${ligne('Téléphone',tel?`<a href="tel:${esc(tel.replace(/\s/g,''))}">${esc(tel)}</a>`:'')}
+      ${ligne('Adresse',esc(m.adresse||''))}
+      ${ligne('Adhésion',esc(adhTxt))}
+      ${ligne('Notes',esc(m.notes||''))}
+    </dl>
+    <div class="mf-actions">
+      <button class="btn btn-secondary" onclick="closeModal('modal-membre-fiche');ouvrirFicheAdhesion(${m.id})">Fiche d'adhésion</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-membre-fiche');editMember(${m.id})">Modifier</button>
+    </div>
+    <button class="mf-delete" onclick="closeModal('modal-membre-fiche');deleteMember(${m.id})">Supprimer ce membre</button>`;
+  document.getElementById('modal-membre-fiche').classList.add('open');
 }
 function deleteMember(id){
   const m=membres.find(x=>x.id===id);
