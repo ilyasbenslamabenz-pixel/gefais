@@ -289,6 +289,9 @@
   .slip dl{margin:0;display:grid;gap:14px;}
   .slip dt{font-size:12px;font-weight:600;color:var(--muted);}
   .slip dd{margin:2px 0 0;font-size:15.5px;line-height:1.4;font-weight:500;}
+  .slip .iban{font-family:var(--head);font-weight:700;letter-spacing:.02em;font-variant-numeric:tabular-nums;white-space:nowrap;user-select:all;}
+  .slip .copier{margin-left:6px;font:600 12px var(--body);color:var(--ink);background:none;border:1px solid var(--line);border-radius:2px;padding:2px 8px;cursor:pointer;vertical-align:1px;}
+  .slip .copier:hover{border-color:var(--ink);}
   .slip .ph{font-family:var(--head);font-weight:600;color:var(--ink);background:var(--paper);padding:1px 6px;border-radius:2px;}
   .slip .amount{display:flex;gap:28px;}
   .gift-note{margin-top:24px;font-size:14.5px;display:flex;gap:10px;align-items:flex-start;}
@@ -864,7 +867,7 @@
         <p class="marker reveal"><b>07</b><span>Faire un don</span></p>
         <h2 id="t-don" class="h2 reveal">Soutenir, même de loin.</h2>
         <p class="text reveal" style="--d:.1s">GE-FAIS fonctionne grâce aux cotisations de ses membres et aux dons. Il n'est pas nécessaire d'être membre pour donner : chaque contribution, quel que soit son montant, aide l'association à poursuivre ses actions.</p>
-        <p class="gift-note reveal" style="--d:.15s">Les dons sont possibles par TWINT ou par virement. Les coordonnées seront publiées ici très prochainement.</p>
+        <p class="gift-note reveal" style="--d:.15s">Les dons sont possibles dès maintenant par virement. Le numéro TWINT sera publié ici très prochainement.</p>
       </div>
       <div class="reveal" style="--d:.15s"><div class="slip" role="group" aria-label="Coordonnées pour un don">
         <div class="stub">
@@ -878,7 +881,9 @@
         <div>
           <h4>Par virement</h4>
           <dl>
-            <div><dt>Compte / Payable à</dt><dd><span class="ph">[IBAN]</span><br>Association GE-FAIS<br>Genève, Suisse</dd></div>
+            <div><dt>IBAN</dt><dd><span class="iban" id="iban">CH58 0021 5215 3246 9901 V</span> <button type="button" class="copier" data-copie="CH580021521532469901V" aria-describedby="iban">Copier</button></dd></div>
+            <div><dt>Payable à</dt><dd>Association GE-FAIS<br>Genève, Suisse</dd></div>
+            <div><dt>Banque</dt><dd>UBS Switzerland AG</dd></div>
             <div><dt>Communication</dt><dd>Don GE-FAIS</dd></div>
             <div class="amount"><div><dt>Monnaie</dt><dd>CHF</dd></div><div><dt>Montant</dt><dd>Libre</dd></div></div>
           </dl>
@@ -1235,6 +1240,13 @@ function jouerC(){
 [...gP.children].forEach(p=>p.classList.remove('on'));aigA.style.display='none';ctaA.classList.remove('on');tr.style.strokeDashoffset=L;majPassages(-1);arretC(0);kmC.textContent=fmtKm(0);
 const vus=new Set();
 if('IntersectionObserver' in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting&&!vus.has(e.target.id)){vus.add(e.target.id);({sceneA:jouerA,sceneC:jouerC})[e.target.id]();}}),{threshold:.55});['sceneA','sceneC'].forEach(id=>io.observe(document.getElementById(id)));}
+</script>
+<script>
+document.querySelectorAll('.copier').forEach(b=>b.addEventListener('click',async()=>{
+  const t=b.dataset.copie,ok=()=>{b.textContent='Copié';setTimeout(()=>b.textContent='Copier',1800);};
+  try{await navigator.clipboard.writeText(t);ok();}
+  catch(e){const r=document.createRange();r.selectNodeContents(document.getElementById('iban'));const sel=getSelection();sel.removeAllRanges();sel.addRange(r);}
+}));
 </script>
 </body>
 </html>
