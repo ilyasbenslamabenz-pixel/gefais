@@ -2473,19 +2473,45 @@ function _showSaveStatus(state,text){
   if(state!=='saving')el._hide=setTimeout(()=>{el.className='';el.style.display='';},2000);
 }
 
+// Firestore refuse tout document de plus de 1 Mio : on garde une marge.
+const FIRESTORE_MAX_BYTES=1000000;
+// Taille maximale d'un fichier joint stocké dans la base (base64 = +33 %).
+const FICHIER_MAX_BYTES=400*1024;
+const _SAVE_LABELS={gef_membres:'membres',gef_compta:'comptabilité',gef_documents:'documents',gef_cotisations:'cotisations',gef_events:'événements',gef_presences:'présences',gef_email_historique:'historique des e-mails',gef_don_data:'dons'};
+
+function _jsonBytes(v){try{return new Blob([JSON.stringify(v)]).size;}catch(e){return 0;}}
+
+// Les PDF d'adhésion validés se régénèrent depuis la demande : inutile de les stocker dans la liste des membres.
+function _allegerMembres(list){
+  if(!Array.isArray(list))return;
+  list.forEach(m=>{if(m&&m.adhesionDoc&&/_valide\.pdf$/.test(m.adhesionDocName||''))delete m.adhesionDoc;});
+}
+
 function save(key,value){
-  lsSet(key,value);
+  if(key==='gef_membres')_allegerMembres(value);
+  const localOk=lsSet(key,value);
   _lastSave[key]=Date.now();
   _showSaveStatus('saving','Sauvegarde…');
-  if(!db){_showSaveStatus('saved','Sauvé localement');return;}
+  const size=_jsonBytes({value});
+  if(size>FIRESTORE_MAX_BYTES){
+    _showSaveStatus('error','Non synchronisé');
+    iosAlert(`Les données « ${_SAVE_LABELS[key]||key} » pèsent ${(size/1048576).toFixed(1)} Mo, au-delà de la limite de 1 Mo de la base en ligne. Elles sont ${localOk?'enregistrées uniquement sur cet appareil':'impossibles à enregistrer'}. Retirez des fichiers joints volumineux pour réactiver la synchronisation.`,'Synchronisation impossible','⚠️');
+    return;
+  }
+  if(!db){_showSaveStatus(localOk?'saved':'error',localOk?'Sauvé sur cet appareil':'Échec de la sauvegarde');return;}
+  const onFail=e=>{
+    console.warn('Firebase save error:',e);
+    _showSaveStatus('error','Non synchronisé');
+    showToast('La sauvegarde en ligne a échoué : les données sont seulement sur cet appareil','⚠️','warn');
+  };
   try{
     db.collection('gef_data').doc(key).set({value:value}).then(()=>{
       _showSaveStatus('saved','Sauvegardé');
       const p=document.querySelector('.page.active')?.id?.replace('page-','');
       const map={dashboard:renderDashboard,membres:renderMembres,presences:renderPresences,evenements:renderEvents,cotisations:renderCotisations,compta:renderCompta,statistiques:renderStatistiques,messagerie:renderMessagerie,documents:renderDocuments,rapport:renderRapport,dons:renderDons,demandes:renderDemandes};
       map[p]?.();
-    }).catch(e=>{console.warn('Firebase save error:',e);_showSaveStatus('saved','Sauvé localement');});
-  }catch(e){console.warn('Firebase unavailable:',e);_showSaveStatus('saved','Sauvé localement');}
+    }).catch(onFail);
+  }catch(e){onFail(e);}
 }
 
 let membres=DEFAULT_MEMBRES;
@@ -2538,7 +2564,7 @@ function badgeType(t){
 
 // ── LOCALSTORAGE FALLBACK ─────────────────────────────────────────
 function lsGet(key,def){try{const v=localStorage.getItem(key);return v?JSON.parse(v):def;}catch(e){return def;}}
-function lsSet(key,val){try{localStorage.setItem(key,JSON.stringify(val));}catch(e){}}
+function lsSet(key,val){try{localStorage.setItem(key,JSON.stringify(val));return true;}catch(e){console.warn('Stockage local impossible :',key,e);return false;}}
 let _firebaseOk=false;
 
 async function syncNow(){return reconnectFirebase();}
@@ -3606,19 +3632,22 @@ function comptaAjouterFichier(input){
       const reader=new FileReader();
       reader.onload=ev=>{
         img.onload=()=>{
-          const MAX=1600;
+          // Assez lisible pour un ticket, assez léger pour la base (limite de 1 Mo pour toute la comptabilité).
+          const MAX=1200;
           let w=img.width,h=img.height;
           if(w>MAX||h>MAX){const r=Math.min(MAX/w,MAX/h);w=Math.round(w*r);h=Math.round(h*r);}
           const canvas=document.createElement('canvas');
           canvas.width=w;canvas.height=h;
           canvas.getContext('2d').drawImage(img,0,0,w,h);
-          const dataUrl=canvas.toDataURL('image/jpeg',0.82);
+          const dataUrl=canvas.toDataURL('image/jpeg',0.7);
           _comptaAttachments.push({name:file.name,type:'image/jpeg',size:Math.round(dataUrl.length*0.75),data:dataUrl});
           _renderAttachmentsPreview();
         };
         img.src=ev.target.result;
       };
       reader.readAsDataURL(file);
+    } else if(file.size>FICHIER_MAX_BYTES){
+      iosAlert(`« ${file.name} » fait ${(file.size/1048576).toFixed(1)} Mo. Les justificatifs non-image sont limités à 400 Ko. Prenez plutôt une photo du ticket, ou rangez le PDF sur kDrive.`,'Fichier trop volumineux','⚠️');
     } else {
       const reader=new FileReader();
       reader.onload=e=>{
@@ -4203,7 +4232,12 @@ function renommerDossier(id){
 }
 
 function ajouterDocuments(input){
-  const files=Array.from(input.files);
+  const all=Array.from(input.files);
+  const tropGros=all.filter(f=>f.size>FICHIER_MAX_BYTES);
+  const files=all.filter(f=>f.size<=FICHIER_MAX_BYTES);
+  if(tropGros.length){
+    iosAlert(`${tropGros.map(f=>`« ${f.name} » (${(f.size/1048576).toFixed(1)} Mo)`).join(', ')} : trop volumineux pour la base en ligne (400 Ko maximum par fichier). Rangez ${tropGros.length>1?'ces fichiers':'ce fichier'} sur kDrive et ajoutez-y plutôt un lien.`,'Fichier trop volumineux','⚠️');
+  }
   files.forEach(file=>{
     const reader=new FileReader();
     reader.onload=e=>{
@@ -4795,7 +4829,7 @@ function ouvrirFicheAdhesion(id){
       .where('statut','==','validee').get()
       .then(snap=>{
         const demande=snap.docs.map(d=>({id:d.id,...d.data()}))
-          .find(d=>d.prenom?.toLowerCase()===m.prenom?.toLowerCase()&&d.nom?.toLowerCase()===m.nom?.toLowerCase());
+          .find(d=>(m.adhesionDemandeId&&d.id===m.adhesionDemandeId)||(d.prenom?.toLowerCase()===m.prenom?.toLowerCase()&&d.nom?.toLowerCase()===m.nom?.toLowerCase()));
         if(demande){
           emptyEl.innerHTML=`
           <div style="background:rgba(48,209,88,0.08);border:1px solid rgba(48,209,88,0.2);border-radius:14px;padding:16px;margin-bottom:14px;text-align:center;">
@@ -4819,8 +4853,11 @@ function remplacerAdhesion(){
 
 function importerAdhesion(input){
   const file=input.files[0];if(!file)return;
-  const maxSize=5*1024*1024; // 5MB
-  if(file.size>maxSize){showToast('Fichier trop grand (max 5MB)','⚠️','warn');return;}
+  if(file.size>FICHIER_MAX_BYTES){
+    input.value='';
+    iosAlert(`Ce fichier fait ${(file.size/1048576).toFixed(1)} Mo. La base en ligne n'accepte que des fichiers de 400 Ko maximum. Compressez le scan (ou prenez une photo moins lourde), ou rangez l'original sur kDrive.`,'Fichier trop volumineux','⚠️');
+    return;
+  }
   const reader=new FileReader();
   reader.onload=async e=>{
     const data=e.target.result;
@@ -5078,11 +5115,16 @@ async function confirmerSignature(){
     update.statut='validee';
     update.dateValidation=new Date().toISOString();
     // Ajouter le membre s'il n'existe pas déjà
-    const dejaExiste=membres.find(m=>m.prenom===_demandeEnCours.prenom&&m.nom===_demandeEnCours.nom);
+    // Données issues du formulaire public : on retire les caractères qui permettraient d'injecter du HTML.
+    const _net=s=>String(s??'').replace(/[<>"`]/g,'').trim().slice(0,200);
+    const dm={prenom:_net(_demandeEnCours.prenom),nom:_net(_demandeEnCours.nom),email:_net(_demandeEnCours.email),tel:_net(_demandeEnCours.tel),
+      adresse:_net([_demandeEnCours.adresse,[_demandeEnCours.npa,_demandeEnCours.localite].filter(Boolean).join(' ')].filter(Boolean).join(', ')),
+      type:['Actif','Actif Suisse','Passif'].includes(_demandeEnCours.type)?_demandeEnCours.type:''};
+    const dejaExiste=membres.find(m=>m.prenom===dm.prenom&&m.nom===dm.nom);
     if(!dejaExiste){
       const newId=Math.max(0,...membres.map(m=>m.id))+1;
       const anneeEnCours=new Date().getFullYear();
-      const newMembre={id:newId,prenom:_demandeEnCours.prenom,nom:_demandeEnCours.nom,email:_demandeEnCours.email,tel:_demandeEnCours.tel||'',adresse:[_demandeEnCours.adresse,[_demandeEnCours.npa,_demandeEnCours.localite].filter(Boolean).join(' ')].filter(Boolean).join(', '),type:_demandeEnCours.type,role:'',adhesion:'',presence_attendue:_demandeEnCours.type==='Actif Suisse'?0.4:_demandeEnCours.type==='Passif'?0:0.8,notes:'',createdAt:new Date().toISOString().slice(0,10),adhesionDocDate:new Date().toISOString(),adhesionDocName:`adhesion_${(_demandeEnCours.nom||'membre').toLowerCase()}_valide.pdf`};
+      const newMembre={id:newId,prenom:dm.prenom,nom:dm.nom,email:dm.email,tel:dm.tel,adresse:dm.adresse,type:dm.type,role:'',adhesion:'',presence_attendue:dm.type==='Actif Suisse'?0.4:dm.type==='Passif'?0:0.8,notes:'',createdAt:new Date().toISOString().slice(0,10),adhesionDemandeId:_demandeEnCours.id,adhesionDocDate:new Date().toISOString(),adhesionDocName:`adhesion_${(dm.nom||'membre').toLowerCase()}_valide.pdf`};
       membres.push(newMembre);
       cotisations.push({membreId:newId,annee:anneeEnCours,montant:50,statut:'impaye',datePaiement:'',notes:''});
       save('gef_membres',membres);save('gef_cotisations',cotisations);
@@ -5196,7 +5238,7 @@ function _genererPDFValidation(d,sigPres,sigVp,validated=true){
   [[col1,d.signature],[col2,sigPres],[col3,sigVp]].forEach(([cx,sig])=>{
     doc.setFillColor(248,248,252);doc.setDrawColor(220,220,230);doc.setLineWidth(0.3);
     doc.roundedRect(cx,y,sigW,sigH,2,2,'FD');
-    if(sig){try{doc.addImage(sig,'PNG',cx+1,y+1,sigW-2,sigH-2);}catch(e){}}
+    if(sig){try{doc.addImage(sig,'PNG',cx+1,y+1,sigW-2,sigH-2,undefined,'FAST');}catch(e){}}
     else{doc.setFontSize(7);doc.setTextColor(180,180,190);doc.text('[—]',cx+sigW/2,y+sigH/2,{align:'center'});}
   });
   y+=sigH+4;
@@ -5221,14 +5263,11 @@ function _genererPDFValidation(d,sigPres,sigVp,validated=true){
     m.nom?.toLowerCase()===d.nom?.toLowerCase()
   );
   if(membreIdx>=0){
-    try{
-      const pdfBase64=doc.output('datauristring');
-      membres[membreIdx].adhesionDoc=pdfBase64;
-      membres[membreIdx].adhesionDocDate=new Date().toISOString();
-      membres[membreIdx].adhesionDocName=fileName;
-      save('gef_membres',membres);
-      console.log('PDF sauvegardé dans fiche membre',membres[membreIdx].prenom);
-    }catch(e){console.warn('Sauvegarde PDF:',e);}
+    // On ne stocke pas le PDF (trop lourd pour la base) : il se régénère à partir de la demande.
+    membres[membreIdx].adhesionDemandeId=d.id;
+    membres[membreIdx].adhesionDocDate=new Date().toISOString();
+    membres[membreIdx].adhesionDocName=fileName;
+    save('gef_membres',membres);
   } else {
     console.warn('Membre non trouvé pour sauvegarde PDF:',d.prenom,d.nom);
   }
