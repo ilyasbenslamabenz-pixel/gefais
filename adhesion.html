@@ -6,7 +6,7 @@
 <meta name="description" content="Formulaire d'adhésion en ligne à l'association GE-FAIS, Genève.">
 <meta name="theme-color" content="#141414">
 <title>Adhésion — Association GE-FAIS</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%230e0e18'/%3E%3Ccircle cx='20' cy='3' r='3.5' fill='%23fff' opacity='.9'/%3E%3Ccircle cx='28' cy='5' r='3' fill='%23fff' opacity='.85'/%3E%3Ccircle cx='34' cy='11' r='2.5' fill='%23fff' opacity='.8'/%3E%3Ccircle cx='37' cy='19' r='2' fill='%23fff' opacity='.7'/%3E%3Ccircle cx='34' cy='27' r='2' fill='%23fff' opacity='.7'/%3E%3Ccircle cx='28' cy='33' r='2.5' fill='%23fff' opacity='.8'/%3E%3Ccircle cx='20' cy='37' r='3' fill='%23fff' opacity='.85'/%3E%3Ccircle cx='12' cy='33' r='2.5' fill='%23fff' opacity='.8'/%3E%3Ccircle cx='6' cy='27' r='2' fill='%23fff' opacity='.7'/%3E%3Ccircle cx='6' cy='19' r='3.5' fill='%23ff3b30'/%3E%3Ccircle cx='9' cy='11' r='3' fill='%23ffd60a'/%3E%3Ccircle cx='14' cy='5' r='2.5' fill='%23fff' opacity='.9'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%23fff'/%3E%3Ccircle cx='24.25' cy='6.74' r='3.78' fill='%23131313'/%3E%3Ccircle cx='33.16' cy='9.05' r='3.40' fill='%23131313'/%3E%3Ccircle cx='40.00' cy='15.18' r='2.92' fill='%23131313'/%3E%3Ccircle cx='42.77' cy='23.92' r='2.86' fill='%23131313'/%3E%3Ccircle cx='40.51' cy='32.99' r='2.75' fill='%23131313'/%3E%3Ccircle cx='33.66' cy='39.37' r='2.48' fill='%23131313'/%3E%3Ccircle cx='24.50' cy='42.35' r='2.38' fill='%23131313'/%3E%3Ccircle cx='15.68' cy='40.17' r='2.48' fill='%23131313'/%3E%3Ccircle cx='9.05' cy='33.91' r='3.62' fill='%23131313'/%3E%3Ccircle cx='6.53' cy='24.84' r='4.54' fill='%23fdc915'/%3E%3Ccircle cx='8.63' cy='15.89' r='4.48' fill='%23ee1e27'/%3E%3Ccircle cx='15.22' cy='9.34' r='3.83' fill='%23131313'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
@@ -25,6 +25,7 @@
   /* En-tête */
   .top{background:var(--ink);color:#fff;}
   .top-inner{display:flex;align-items:center;justify-content:space-between;padding-top:18px;padding-bottom:18px;}
+  .wordmark{display:block;height:15px;aspect-ratio:771/150;background:currentColor;-webkit-mask:url(images/gefais-mot.svg) center/contain no-repeat;mask:url(images/gefais-mot.svg) center/contain no-repeat;}
   .brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-size:18px;font-weight:800;letter-spacing:-.3px;}
   .back{font-size:14px;font-weight:500;text-decoration:none;opacity:.85;transition:opacity .15s;}
   .back:hover{opacity:1;}
@@ -146,14 +147,20 @@
   <div class="wrap top-inner">
     <a class="brand ar" href="./">
       <svg width="24" height="24" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-        <circle cx="20" cy="3" r="3.5" fill="#fff"/><circle cx="28" cy="5" r="3" fill="#fff" opacity=".85"/>
-        <circle cx="34" cy="11" r="2.5" fill="#fff" opacity=".75"/><circle cx="37" cy="19" r="2" fill="#fff" opacity=".65"/>
-        <circle cx="34" cy="27" r="2" fill="#fff" opacity=".65"/><circle cx="28" cy="33" r="2.5" fill="#fff" opacity=".75"/>
-        <circle cx="20" cy="37" r="3" fill="#fff" opacity=".85"/><circle cx="12" cy="33" r="2.5" fill="#fff" opacity=".75"/>
-        <circle cx="6" cy="27" r="2" fill="#fff" opacity=".65"/><circle cx="6" cy="19" r="3.5" fill="#ff3b30"/>
-        <circle cx="9" cy="11" r="3" fill="#ffd60a"/><circle cx="14" cy="5" r="2.5" fill="#fff"/>
+        <circle cx="20.24" cy="3.56" r="2.8" fill="#fff"/>
+        <circle cx="28.72" cy="5.76" r="2.52" fill="#fff"/>
+        <circle cx="35.24" cy="11.6" r="2.16" fill="#fff"/>
+        <circle cx="37.88" cy="19.92" r="2.12" fill="#fff"/>
+        <circle cx="35.72" cy="28.56" r="2.04" fill="#fff"/>
+        <circle cx="29.2" cy="34.64" r="1.84" fill="#fff"/>
+        <circle cx="20.48" cy="37.48" r="1.76" fill="#fff"/>
+        <circle cx="12.08" cy="35.4" r="1.84" fill="#fff"/>
+        <circle cx="5.76" cy="29.44" r="2.68" fill="#fff"/>
+        <circle cx="3.36" cy="20.8" r="3.36" fill="#fdc915"/>
+        <circle cx="5.36" cy="12.28" r="3.32" fill="#ee1e27"/>
+        <circle cx="11.64" cy="6.04" r="2.84" fill="#fff"/>
       </svg>
-      GE-FAIS
+      <span class="wordmark" role="img" aria-label="GE-FAIS"></span>
     </a>
     <a class="back" href="./">← <span>Retour au site</span></a>
   </div>
@@ -507,7 +514,8 @@ $('btn-pdf').addEventListener('click',()=>{
   const INK=[20,20,20],MUTED=[106,106,102],LINE=[220,218,212],RED=[212,42,32];
 
   // Logo
-  const dots=[[20,3,3.5,INK],[28,5,3,INK],[34,11,2.5,INK],[37,19,2,INK],[34,27,2,INK],[28,33,2.5,INK],[20,37,3,INK],[12,33,2.5,INK],[6,27,2,INK],[6,19,3.5,RED],[9,11,3,[196,154,0]],[14,5,2.5,INK]];
+  const LRED=[238,30,39],LYEL=[253,201,21]; // couleurs du logo officiel
+  const dots=[[20.24,3.56,2.8,INK],[28.72,5.76,2.52,INK],[35.24,11.6,2.16,INK],[37.88,19.92,2.12,INK],[35.72,28.56,2.04,INK],[29.2,34.64,1.84,INK],[20.48,37.48,1.76,INK],[12.08,35.4,1.84,INK],[5.76,29.44,2.68,INK],[3.36,20.8,3.36,LYEL],[5.36,12.28,3.32,LRED],[11.64,6.04,2.84,INK]];
   const s=0.42;
   dots.forEach(([cx,cy,r,c])=>{doc.setFillColor(...c);doc.circle(M+cx*s,16+cy*s,r*s,'F');});
   doc.setTextColor(...INK);doc.setFont('helvetica','bold');doc.setFontSize(15);

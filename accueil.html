@@ -10,7 +10,7 @@
 <meta property="og:description" content="Des bénévoles qui vont, en maraude, à la rencontre des personnes qui vivent dans la rue à Genève.">
 <meta property="og:image" content="images/geneve-jet-deau.webp">
 <title>GE-FAIS — Association genevoise</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%230e0e18'/%3E%3Ccircle cx='20' cy='3' r='3.5' fill='%23fff' opacity='.9'/%3E%3Ccircle cx='28' cy='5' r='3' fill='%23fff' opacity='.85'/%3E%3Ccircle cx='34' cy='11' r='2.5' fill='%23fff' opacity='.8'/%3E%3Ccircle cx='37' cy='19' r='2' fill='%23fff' opacity='.7'/%3E%3Ccircle cx='34' cy='27' r='2' fill='%23fff' opacity='.7'/%3E%3Ccircle cx='28' cy='33' r='2.5' fill='%23fff' opacity='.8'/%3E%3Ccircle cx='20' cy='37' r='3' fill='%23fff' opacity='.85'/%3E%3Ccircle cx='12' cy='33' r='2.5' fill='%23fff' opacity='.8'/%3E%3Ccircle cx='6' cy='27' r='2' fill='%23fff' opacity='.7'/%3E%3Ccircle cx='6' cy='19' r='3.5' fill='%23ff3b30'/%3E%3Ccircle cx='9' cy='11' r='3' fill='%23ffd60a'/%3E%3Ccircle cx='14' cy='5' r='2.5' fill='%23fff' opacity='.9'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%23fff'/%3E%3Ccircle cx='24.25' cy='6.74' r='3.78' fill='%23131313'/%3E%3Ccircle cx='33.16' cy='9.05' r='3.40' fill='%23131313'/%3E%3Ccircle cx='40.00' cy='15.18' r='2.92' fill='%23131313'/%3E%3Ccircle cx='42.77' cy='23.92' r='2.86' fill='%23131313'/%3E%3Ccircle cx='40.51' cy='32.99' r='2.75' fill='%23131313'/%3E%3Ccircle cx='33.66' cy='39.37' r='2.48' fill='%23131313'/%3E%3Ccircle cx='24.50' cy='42.35' r='2.38' fill='%23131313'/%3E%3Ccircle cx='15.68' cy='40.17' r='2.48' fill='%23131313'/%3E%3Ccircle cx='9.05' cy='33.91' r='3.62' fill='%23131313'/%3E%3Ccircle cx='6.53' cy='24.84' r='4.54' fill='%23fdc915'/%3E%3Ccircle cx='8.63' cy='15.89' r='4.48' fill='%23ee1e27'/%3E%3Ccircle cx='15.22' cy='9.34' r='3.83' fill='%23131313'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
@@ -75,7 +75,7 @@
   .site-header.is-scrolled .bar{height:66px;}
   .brand{display:flex;align-items:center;gap:11px;font-family:var(--head);font-size:19px;font-weight:800;letter-spacing:-.02em;}
   .brand svg{width:28px;height:28px;flex-shrink:0;transition:transform .8s var(--ease);}
-  .brand:hover svg{transform:rotate(30deg);}
+  .wordmark{display:block;height:17px;aspect-ratio:771/150;background:currentColor;-webkit-mask:url(images/gefais-mot.svg) center/contain no-repeat;mask:url(images/gefais-mot.svg) center/contain no-repeat;}
   .nav{display:flex;align-items:center;gap:32px;font-size:15px;font-weight:500;}
   .nav-links{display:flex;gap:26px;list-style:none;margin:0;padding:0;}
   .nav-links a{position:relative;padding:6px 0;opacity:.88;transition:opacity .2s;}
@@ -325,7 +325,7 @@
   footer{background:var(--ink);color:#fff;padding:clamp(64px,8vw,104px) 0 28px;overflow:hidden;}
   .foot-top{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,3fr) minmax(0,3fr);gap:40px;align-items:start;padding-bottom:clamp(48px,6vw,80px);}
   .foot-slogan{display:flex;align-items:center;gap:clamp(18px,2.5vw,32px);}
-  .foot-slogan svg{width:clamp(64px,7vw,96px);height:auto;flex-shrink:0;animation:spin 90s linear infinite;}
+  .foot-slogan svg{width:clamp(64px,7vw,96px);height:auto;flex-shrink:0;}
   .foot-slogan p{font-family:var(--head);font-weight:800;font-size:clamp(28px,3.4vw,46px);line-height:1.02;letter-spacing:-.035em;}
   .foot-col h3{font-family:var(--body);font-size:14px;font-weight:600;color:#8f8f8a;margin-bottom:14px;}
   .foot-col ul{list-style:none;margin:0;padding:0;display:grid;gap:8px;}
@@ -423,20 +423,20 @@
   <div class="wrap bar">
     <a href="#top" class="brand" aria-label="GE-FAIS, retour en haut de page">
       <svg viewBox="0 0 40 40" fill="currentColor" aria-hidden="true">
-        <circle cx="20" cy="3" r="3.5"/>
-        <circle cx="28" cy="5" r="3" opacity=".85"/>
-        <circle cx="34" cy="11" r="2.5" opacity=".75"/>
-        <circle cx="37" cy="19" r="2" opacity=".65"/>
-        <circle cx="34" cy="27" r="2" opacity=".65"/>
-        <circle cx="28" cy="33" r="2.5" opacity=".75"/>
-        <circle cx="20" cy="37" r="3" opacity=".85"/>
-        <circle cx="12" cy="33" r="2.5" opacity=".75"/>
-        <circle cx="6" cy="27" r="2" opacity=".65"/>
-        <circle cx="6" cy="19" r="3.5" fill="#e63329"/>
-        <circle cx="9" cy="11" r="3" fill="#f2c200"/>
-        <circle cx="14" cy="5" r="2.5"/>
+        <circle cx="20.24" cy="3.56" r="2.8"/>
+        <circle cx="28.72" cy="5.76" r="2.52"/>
+        <circle cx="35.24" cy="11.6" r="2.16"/>
+        <circle cx="37.88" cy="19.92" r="2.12"/>
+        <circle cx="35.72" cy="28.56" r="2.04"/>
+        <circle cx="29.2" cy="34.64" r="1.84"/>
+        <circle cx="20.48" cy="37.48" r="1.76"/>
+        <circle cx="12.08" cy="35.4" r="1.84"/>
+        <circle cx="5.76" cy="29.44" r="2.68"/>
+        <circle cx="3.36" cy="20.8" r="3.36" fill="#fdc915"/>
+        <circle cx="5.36" cy="12.28" r="3.32" fill="#ee1e27"/>
+        <circle cx="11.64" cy="6.04" r="2.84"/>
       </svg>
-      <span>GE-FAIS</span>
+      <span class="wordmark" role="img" aria-label="GE-FAIS"></span>
     </a>
     <nav class="nav" aria-label="Navigation principale">
       <ul class="nav-links">
@@ -630,7 +630,7 @@
     </div>
     <div class="ways">
       <article class="way way-member reveal">
-        <svg class="ring" viewBox="-1 -1 42 42" aria-hidden="true"><g fill="#fff" fill-opacity=".32"><circle cx="20" cy="3" r="3.5"/><circle cx="28" cy="5" r="3"/><circle cx="34" cy="11" r="2.5"/><circle cx="37" cy="19" r="2"/><circle cx="34" cy="27" r="2"/><circle cx="28" cy="33" r="2.5"/><circle cx="20" cy="37" r="3"/><circle cx="12" cy="33" r="2.5"/><circle cx="6" cy="27" r="2"/><circle cx="6" cy="19" r="3.5"/><circle cx="14" cy="5" r="2.5"/></g><circle cx="9" cy="11" r="3" fill="#f2c200"/></svg>
+        <svg class="ring" viewBox="-1 -1 42 42" aria-hidden="true"><g fill="#fff" fill-opacity=".32"><circle cx="20.24" cy="3.56" r="2.8"/><circle cx="28.72" cy="5.76" r="2.52"/><circle cx="35.24" cy="11.6" r="2.16"/><circle cx="37.88" cy="19.92" r="2.12"/><circle cx="35.72" cy="28.56" r="2.04"/><circle cx="29.2" cy="34.64" r="1.84"/><circle cx="20.48" cy="37.48" r="1.76"/><circle cx="12.08" cy="35.4" r="1.84"/><circle cx="5.76" cy="29.44" r="2.68"/><circle cx="5.36" cy="12.28" r="3.32"/><circle cx="11.64" cy="6.04" r="2.84"/></g><circle cx="3.36" cy="20.8" r="3.36" fill="#fdc915"/></svg>
         <span class="k">Le plus simple</span>
         <h3>Devenir<br>membre</h3>
         <p>Un formulaire en ligne, une signature électronique, et le comité s'occupe du reste. Vous choisissez le statut qui correspond à votre disponibilité.</p>
@@ -809,18 +809,18 @@
     <div class="foot-top">
       <div class="foot-slogan">
         <svg viewBox="0 0 40 40" fill="#fff" aria-hidden="true">
-          <circle cx="20" cy="3" r="3.5"/>
-          <circle cx="28" cy="5" r="3" opacity=".85"/>
-          <circle cx="34" cy="11" r="2.5" opacity=".75"/>
-          <circle cx="37" cy="19" r="2" opacity=".65"/>
-          <circle cx="34" cy="27" r="2" opacity=".65"/>
-          <circle cx="28" cy="33" r="2.5" opacity=".75"/>
-          <circle cx="20" cy="37" r="3" opacity=".85"/>
-          <circle cx="12" cy="33" r="2.5" opacity=".75"/>
-          <circle cx="6" cy="27" r="2" opacity=".65"/>
-          <circle cx="6" cy="19" r="3.5" fill="#e63329"/>
-          <circle cx="9" cy="11" r="3" fill="#f2c200"/>
-          <circle cx="14" cy="5" r="2.5"/>
+          <circle cx="20.24" cy="3.56" r="2.8"/>
+          <circle cx="28.72" cy="5.76" r="2.52"/>
+          <circle cx="35.24" cy="11.6" r="2.16"/>
+          <circle cx="37.88" cy="19.92" r="2.12"/>
+          <circle cx="35.72" cy="28.56" r="2.04"/>
+          <circle cx="29.2" cy="34.64" r="1.84"/>
+          <circle cx="20.48" cy="37.48" r="1.76"/>
+          <circle cx="12.08" cy="35.4" r="1.84"/>
+          <circle cx="5.76" cy="29.44" r="2.68"/>
+          <circle cx="3.36" cy="20.8" r="3.36" fill="#fdc915"/>
+          <circle cx="5.36" cy="12.28" r="3.32" fill="#ee1e27"/>
+          <circle cx="11.64" cy="6.04" r="2.84"/>
         </svg>
         <p>Ensemble,<br>faisons qu'un.</p>
       </div>
