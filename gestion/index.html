@@ -2748,7 +2748,7 @@ function setupListeners(){
 }
 
 function fmtDate(d){if(!d)return'—';const[y,m,day]=d.split('T')[0].split('-');return`${day}/${m}/${y}`;}
-function fmtMonthYear(d){if(!d)return'—';const parts=d.split('T')[0].split('-');const y=parts[0];const mo=parseInt(parts[1]);const mois=['','Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];return mo&&mois[mo]?`${mois[mo]} ${y}`:y||'—';}
+
 function fmtDateTime(d){if(!d)return'—';const dt=new Date(d);return dt.toLocaleDateString('fr-CH',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 function badgeType(t){
@@ -3276,98 +3276,6 @@ function renderPresences(){
   }).join('');
 }
 
-function togglePresEvt(eid, cardEl){
-  const body=document.getElementById('pres-body-'+eid);
-  if(!body)return;
-  const isOpen=body.style.display!=='none';
-  // Fermer tous les autres
-  document.querySelectorAll('.pres-evt-body').forEach(b=>b.style.display='none');
-  document.querySelectorAll('.pres-evt-card').forEach(c=>c.classList.remove('open'));
-  document.querySelectorAll('.pres-evt-chevron').forEach(c=>c.style.transform='');
-  if(!isOpen){
-    body.style.display='block';
-    cardEl.classList.add('open');
-    cardEl.querySelector('.pres-evt-chevron').style.transform='rotate(90deg)';
-  }
-}
-
-function togglePresEvtMember(mid, eid){
-  haptic('light');
-  const key=mid+'_'+eid;
-  presences[key]=!presences[key];
-  save('gef_presences',presences);
-  const row=document.getElementById('pres-mr-'+mid+'-'+eid);
-  if(row){
-    const isP=presences[key];
-    row.className='pres-member-row '+(isP?'pres-present':'pres-absent');
-    row.querySelector('.pres-member-avatar').style.background=isP?'rgba(34,197,94,0.2)':'rgba(255,59,48,0.1)';
-    row.querySelector('.pres-member-avatar').style.color=isP?'var(--green)':'var(--red)';
-    row.querySelector('.pres-member-badge').innerHTML=isP?'<span class="pres-badge-yes">Présent</span>':'<span class="pres-badge-no">Absent</span>';
-  }
-  // Mettre à jour le header de la card
-  const evts=events.slice().sort((a,b)=>a.date.localeCompare(b.date));
-  const q=(document.getElementById('search-presences')?.value||'').toLowerCase();
-  const ft=document.getElementById('filter-presences-type')?.value||'';
-  const list=membres.filter(m=>(m.nom+' '+m.prenom).toLowerCase().includes(q)&&(!ft||m.type===ft));
-  const presCount=list.filter(m=>presences[m.id+'_'+eid]).length;
-  const presPct=list.length>0?Math.round(presCount/list.length*100):0;
-  const color=presPct>=70?'var(--green)':presPct>=40?'var(--gold)':'var(--red)';
-  const card=document.querySelector('.pres-evt-card[onclick*="togglePresEvt('+eid+',"]');
-  if(card){
-    const dot=card.querySelector('.pres-evt-dot');if(dot)dot.style.background=color;
-    const pct=card.querySelector('.pres-evt-pct');if(pct){pct.textContent=presPct+'%';pct.style.color=color;}
-    const cnt=card.querySelector('.pres-evt-count');if(cnt)cnt.textContent=presCount+'/'+list.length;
-    const bar=card.querySelector('.pres-evt-bar-fill');if(bar){bar.style.width=presPct+'%';bar.style.background=color;}
-    // Mettre à jour les avatars
-    const avatarZone=card.querySelector('.pres-evt-avatars');
-    if(avatarZone){
-      const presents=list.filter(m=>presences[m.id+'_'+eid]);
-      avatarZone.innerHTML=presents.slice(0,8).map(m=>`<div class="pres-evt-avatar" style="background:rgba(34,197,94,0.2);color:var(--green);" title="${m.prenom} ${m.nom}">${m.prenom[0]}${m.nom[0]}</div>`).join('')+(presents.length>8?`<div class="pres-evt-avatar" style="background:var(--bg3);color:var(--text3);">+${presents.length-8}</div>`:'');
-    }
-  }
-}
-
-function togglePresenceEvt(mid,eid,rowEl){
-  togglePresEvtMember(mid,eid);
-}
-
-function togglePresenceRank(mid,eid,dotEl){
-  haptic('light');
-  const key=mid+'_'+eid;
-  presences[key]=!presences[key];
-  save('gef_presences',presences);
-  dotEl.className='pres-dot-mini '+(presences[key]?'pres-dot-mini-yes':'pres-dot-mini-no');
-  // Recalculer le % de la ligne
-  const row=document.querySelector(`.pres-rank-row[data-mid="${mid}"]`);
-  if(row){
-    const evts=events.slice().sort((a,b)=>a.date.localeCompare(b.date));
-    const p=evts.filter(e=>presences[mid+'_'+e.id]).length;
-    const pct=evts.length>0?Math.round((p/evts.length)*100):0;
-    const color=pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';
-    const pctEl=row.querySelector('.pres-rank-pct');
-    if(pctEl){pctEl.textContent=pct+'%';pctEl.style.color=color;}
-    const fill=row.querySelector('.pres-rank-fill');
-    if(fill){fill.style.width=pct+'%';fill.style.background=color;}
-    const cnt=row.querySelector('.pres-rank-count');
-    if(cnt)cnt.textContent=p+'/'+evts.length;
-  }
-}
-
-function togglePresenceCard(mid,eid,dotEl){togglePresenceRank(mid,eid,dotEl);}
-
-function togglePresence(mid,eid,td){
-  const key=mid+'_'+eid;
-  presences[key]=!presences[key];
-  save('gef_presences',presences);
-  td.innerHTML=`<span class="dot ${presences[key]?'dot-yes':'dot-no'}"></span>`;
-  const evts=events.slice().sort((a,b)=>a.date.localeCompare(b.date));
-  const p=evts.filter(e=>presences[mid+'_'+e.id]).length;
-  const pct=evts.length>0?Math.round((p/evts.length)*100):0;
-  const color=pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';
-  td.closest('tr').querySelector('td:last-child').innerHTML=`<div style="display:flex;align-items:center;gap:6px;min-width:80px;"><div class="pct-bar"><div class="pct-fill" style="width:${pct}%;background:${color}"></div></div><span style="font-size:11px;font-weight:700;color:${color}">${pct}%</span></div>`;
-}
-
-
 
 // ── MEMBRES ── TRI ────────────────────────────────────────────────
 let _sortDir=1;
@@ -3607,9 +3515,9 @@ function toggleAllPresencesInline(eid,val){
 }
 
 // Garder les anciennes fonctions modal pour compatibilité
-function openPresencesEvent(eventId){toggleEventRow(eventId);}
-function renderPresenceCheckList(){} // remplacé par inline
-function togglePresenceModal(mid){togglePresenceInline(mid,currentEventId,document.querySelector(`.presence-inline-item[onclick*="${mid},${currentEventId}"]`));}
+
+
+
 function toggleAllPresences(val){toggleAllPresencesInline(currentEventId,val);}
 function populateEventTypes(selected){const sel=document.getElementById('e-type');sel.innerHTML=eventTypes.map(t=>`<option value="${t}"${t===selected?'selected':''}>${t}</option>`).join('');}
 function openEventModal(){editingEvent=null;document.getElementById('modal-event-title').textContent='Ajouter un événement';document.getElementById('e-date').value='';populateEventTypes('Réunion');document.getElementById('e-nom').value='';document.getElementById('e-comment').value='';document.getElementById('modal-event').classList.add('open');}
@@ -4580,18 +4488,6 @@ function renderDocuments(){
   }
 }
 
-function openEventModalType(type){
-  openEventModal();
-  setTimeout(()=>{
-    const t=document.getElementById('e-type');
-    if(t){
-      let found=false;
-      Array.from(t.options).forEach(o=>{if(o.value===type)found=true;});
-      if(!found){const opt=document.createElement('option');opt.value=type;opt.text=type;t.add(opt);}
-      t.value=type;
-    }
-  },100);
-}
 
 // ── DONS & PAIEMENTS ──────────────────────────────────────────────
 function _donSave() {
@@ -5530,8 +5426,6 @@ function haptic(type){
 }
 
 // ── BANNIÈRE HORS-LIGNE ───────────────────────────────────────────
-function _showOfflineBanner(){const b=document.getElementById('offline-banner');if(b)b.style.display='flex';}
-function _hideOfflineBanner(){const b=document.getElementById('offline-banner');if(b)b.style.display='none';}
 
 // ── RIPPLE EFFECT ─────────────────────────────────────────────────
 function addRipple(el, e){
@@ -5600,37 +5494,8 @@ document.addEventListener('click',e=>{
 })();
 
 // ── SKELETON LOADING ──────────────────────────────────────────────
-function showSkeleton(containerId, count=3){
-  const el=document.getElementById(containerId);
-  if(!el)return;
-  el.innerHTML=Array(count).fill(0).map((_,i)=>`
-    <div class="skeleton-card" style="animation-delay:${i*0.08}s;">
-      <div class="skeleton-row">
-        <div class="skeleton skeleton-avatar"></div>
-        <div style="flex:1;">
-          <div class="skeleton skeleton-title"></div>
-          <div class="skeleton skeleton-text" style="width:70%;"></div>
-        </div>
-      </div>
-      <div class="skeleton skeleton-text"></div>
-      <div class="skeleton skeleton-text" style="width:85%;"></div>
-    </div>`).join('');
-}
 
 // ── ANIMATED COUNTER ──────────────────────────────────────────────
-function animateCounter(el, target, duration=800){
-  if(!el)return;
-  const start=0;
-  const step=timestamp=>{
-    if(!start)start=timestamp;
-    const progress=Math.min((timestamp-start)/duration,1);
-    const ease=1-Math.pow(1-progress,3);
-    el.textContent=Math.round(ease*target);
-    if(progress<1)requestAnimationFrame(step);
-    else el.textContent=target;
-  };
-  requestAnimationFrame(step);
-}
 
 // ── TOAST AMÉLIORÉ ────────────────────────────────────────────────
 let _toastTimer=null;
@@ -5654,33 +5519,8 @@ function showToast(msg,icon,type){
 }
 
 // ── STAGGERED CARD ANIMATIONS ─────────────────────────────────────
-function animateCards(containerId){
-  const container=document.getElementById(containerId);
-  if(!container)return;
-  const cards=container.querySelectorAll('.card,.member-card-v2,.cotis-card-v2,.compta-card-v2,.pres-rank-row,.pres-evt-card');
-  cards.forEach((card,i)=>{
-    card.style.animation='none';
-    card.style.opacity='0';
-    card.style.transform='translateY(16px)';
-    setTimeout(()=>{
-      card.style.transition='opacity 0.35s ease, transform 0.35s ease';
-      card.style.opacity='1';
-      card.style.transform='none';
-    },i*50);
-  });
-}
 
 // ── BAR ANIMATIONS ────────────────────────────────────────────────
-function animateBars(containerId){
-  const container=document.getElementById(containerId);
-  if(!container)return;
-  container.querySelectorAll('[style*="width:"]').forEach((bar,i)=>{
-    const targetWidth=bar.style.width;
-    bar.style.width='0';
-    bar.style.transition=`width 0.7s cubic-bezier(0.34,1.2,0.64,1) ${i*0.05}s`;
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{bar.style.width=targetWidth;}));
-  });
-}
 
 // Trigger animations on page change (called from showPage)
 function _triggerPageAnimations(name){
