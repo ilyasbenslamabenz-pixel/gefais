@@ -3217,6 +3217,7 @@ async function _chargerDonnees(){
     if(migrated){lsSet('gef_membres',membres);renderMembres();}
     const si=document.getElementById('sync-indicator');
     if(si){si.textContent='À jour';si.style.color='var(--green)';si.style.display='inline';clearTimeout(si._t);si._t=setTimeout(()=>si.style.display='none',2500);}
+    _migrerFichiersAdhesion();
   }catch(e){
     console.warn('Chargement des données impossible :',e);
     const refus=/permission/i.test(String((e&&(e.code||e.message))||''));
@@ -5176,6 +5177,24 @@ async function regenererDepuisFirebase(demandeId, membreId){
 
 // ── FICHE ADHÉSION MEMBRE ─────────────────────────────────────────
 let _adhesionMembreId=null;
+// Chaque fichier d'adhésion importé est rangé dans son propre document
+// (gef_data/adh_<id>) : la liste des membres reste légère (limite de 1 Mo).
+function _docAdhesion(id){return db.collection('gef_data').doc('adh_'+id);}
+async function _migrerFichiersAdhesion(){
+  if(!db||!_donneesChargees||!Array.isArray(membres))return;
+  const aDeplacer=membres.filter(m=>m&&m.adhesionDoc&&!/_valide\.pdf$/.test(m.adhesionDocName||''));
+  if(!aDeplacer.length)return;
+  let deplaces=0;
+  for(const m of aDeplacer){
+    try{
+      await _docAdhesion(m.id).set({value:{data:m.adhesionDoc,name:m.adhesionDocName||'',date:m.adhesionDocDate||''},majPar:_authUser?_authUser.email:null,majLe:new Date().toISOString()});
+      delete m.adhesionDoc;           // retiré seulement après confirmation de la copie
+      m.adhesionFichier=true;
+      deplaces++;
+    }catch(e){console.warn('Fichier d\'adhésion non déplacé (membre '+m.id+') :',e);}
+  }
+  if(deplaces){save('gef_membres',membres);console.log(deplaces+' fichier(s) d\'adhésion rangé(s) à part');}
+}
 
 function ouvrirFicheAdhesion(id){
   _adhesionMembreId=id;
@@ -5183,7 +5202,7 @@ function ouvrirFicheAdhesion(id){
   if(!m)return;
   document.getElementById('modal-adhesion-titre').textContent='Formulaire d\'adhésion';
   document.getElementById('modal-adhesion-nom').textContent=m.prenom+' '+m.nom;
-  const hasDoc=!!(m.adhesionDoc);
+  const hasDoc=!!(m.adhesionDoc||m.adhesionFichier);
   document.getElementById('adhesion-doc-exists').style.display=hasDoc?'block':'none';
   document.getElementById('adhesion-doc-empty').style.display=hasDoc?'none':'block';
   if(hasDoc&&m.adhesionDocDate){
@@ -5230,23 +5249,35 @@ function importerAdhesion(input){
   reader.onload=async e=>{
     const data=e.target.result;
     const m=membres.find(x=>x.id===_adhesionMembreId);if(!m)return;
-    m.adhesionDoc=data;
+    if(!db||!_donneesChargees){iosAlert('Les données en ligne ne sont pas chargées : le fichier n\'a pas été enregistré. Réessayez dans un instant.','Import impossible','⚠️');input.value='';return;}
+    const date=new Date().toISOString();
+    try{
+      await _docAdhesion(m.id).set({value:{data,name:file.name,date},majPar:_authUser?_authUser.email:null,majLe:date});
+    }catch(err){iosAlert('Le fichier n\'a pas pu être enregistré en ligne. Réessayez.','Import impossible','⚠️');input.value='';return;}
+    delete m.adhesionDoc;
+    m.adhesionFichier=true;
     m.adhesionDocName=file.name;
-    m.adhesionDocDate=new Date().toISOString();
+    m.adhesionDocDate=date;
     save('gef_membres',membres);
-    showToast('Formulaire importé','✅','success');
+    showToast('Formulaire importé','✓','success');
     ouvrirFicheAdhesion(_adhesionMembreId);
     input.value='';
   };
   reader.readAsDataURL(file);
 }
 
-function telechargerAdhesionMembre(){
+async function telechargerAdhesionMembre(){
   const m=membres.find(x=>x.id===_adhesionMembreId);
-  if(!m||!m.adhesionDoc)return;
+  if(!m)return;
+  let data=m.adhesionDoc||null,name=m.adhesionDocName;
+  if(!data&&m.adhesionFichier&&db){
+    try{const d=await _docAdhesion(m.id).get();if(d.exists){data=d.data().value.data;name=name||d.data().value.name;}}
+    catch(e){iosAlert('Le fichier n\'a pas pu être chargé. Vérifiez la connexion et réessayez.','Téléchargement impossible','⚠️');return;}
+  }
+  if(!data){iosAlert('Aucun fichier enregistré pour ce membre.','Fiche d\'adhésion','ℹ️');return;}
   const a=document.createElement('a');
-  a.href=m.adhesionDoc;
-  a.download=m.adhesionDocName||`adhesion_${m.nom.toLowerCase()}.pdf`;
+  a.href=data;
+  a.download=name||`adhesion_${(m.nom||'membre').toLowerCase()}.pdf`;
   a.click();
 }
 
