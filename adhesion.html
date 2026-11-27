@@ -231,6 +231,12 @@
   .done.show .cercle-fin .vous{animation:vous .7s 1.3s cubic-bezier(.3,1.6,.5,1) forwards}
   @keyframes vous{to{transform:scale(1)}}
   @media (prefers-reduced-motion:reduce){.cercle circle,.bulletin,.facts,.rdv-cases i,.b-sig img{transition:none}.bulletin dd.maj{animation:none}.done.show .cercle-fin .vous{animation:none;transform:none}}
+  @media (max-width:820px){
+    .back{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;font-size:18px}
+    .brand{min-height:44px}
+    .foot a{display:inline-block;padding:10px 2px}
+    .check input,input[type=checkbox]{width:22px;height:22px}
+  }
 </style>
 </head>
 <body>
@@ -254,7 +260,7 @@
       </svg>
       <span class="wordmark" role="img" aria-label="GE-FAIS"></span>
     </a>
-    <a class="back" href="./">← <span>Retour au site</span></a>
+    <a class="back" href="./" aria-label="Retour au site">← <span>Retour au site</span></a>
   </div>
 </header>
 
