@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
-<meta name="description" content="GE-FAIS, association genevoise à but non lucratif : des bénévoles qui vont en maraude à la rencontre des personnes qui vivent dans la rue. Adhésion 50 CHF par an.">
+<meta name="description" content="GE-FAIS, association genevoise à but non lucratif : des bénévoles qui vont en maraude à la rencontre des personnes qui vivent dans la rue.">
 <meta name="theme-color" content="#141414">
 <meta property="og:title" content="GE-FAIS — Association genevoise">
 <meta property="og:description" content="Des bénévoles qui vont, en maraude, à la rencontre des personnes qui vivent dans la rue à Genève.">
@@ -598,14 +598,46 @@ body.menu-open .haut{opacity:0;pointer-events:none}
   .parcours-bloc .sC .etapes{min-height:150px}
 }
 </style>
-</head>
-<body>
-<a href="#contenu" class="skip">Aller au contenu</a>
 
+<style>
+/* ── Site en onglets ── */
+.sous-page .site-header{background:rgba(255,255,255,.96);color:var(--ink);box-shadow:0 1px 0 var(--line);--focus:var(--ink)}
+.nav-links a[aria-current="page"],.sub-btn[aria-current="page"]{opacity:1;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:8px}
+.nav-aide{color:var(--red)!important;font-weight:600}
+.site-header:not(.is-scrolled) .nav-aide{color:#fff!important}
+.menu-panel ol a[aria-current="page"]{color:var(--gold)}
+.page-tete{padding:clamp(140px,16vw,200px) 0 clamp(40px,5vw,64px);background:var(--paper)}
+.page-tete .fil{font-size:14px;font-weight:500;color:var(--muted);margin-bottom:22px}
+.page-tete .fil a{text-decoration:none}.page-tete .fil a:hover{text-decoration:underline}
+.page-tete h1{font:800 clamp(48px,7.4vw,104px)/.95 var(--head);letter-spacing:-.045em;max-width:13ch}
+.page-tete p.lead{margin-top:24px;max-width:46ch;font-size:clamp(18px,1.7vw,22px);color:var(--ink-2)}
+.page-tete+.section{padding-top:clamp(48px,6vw,88px)}
+.page-tete+.section.on-dark,.page-tete+.section.agenda,.page-tete+.section.adh,.page-tete+.section.gift{padding-top:clamp(64px,8vw,112px)}
+.suite{padding:clamp(72px,9vw,128px) 0;background:#fff}
+.suite-head{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;margin-bottom:clamp(28px,4vw,48px)}
+.cartes{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.carte{position:relative;display:flex;flex-direction:column;min-height:340px;padding:28px 26px 26px;border-radius:4px;text-decoration:none;color:inherit;transition:transform .35s var(--ease),box-shadow .35s var(--ease)}
+.carte:hover{transform:translateY(-6px);box-shadow:0 26px 46px -28px rgba(20,20,20,.55)}
+.carte .k{font-size:14px;font-weight:600;opacity:.8}
+.carte h3{font:800 clamp(28px,2.6vw,36px)/1 var(--head);letter-spacing:-.03em;margin:auto 0 12px}
+.carte p{font-size:15.5px;line-height:1.5;opacity:.9}
+.carte .fl{margin-top:22px;font-weight:600;font-size:15px;display:flex;align-items:center;gap:8px}
+.carte .fl i{font-style:normal;transition:transform .3s var(--ease)}.carte:hover .fl i{transform:translateX(6px)}
+.c-mar{background:var(--ink);color:#fff}.c-eng{background:var(--red);color:#fff}.c-don{background:var(--gold);color:var(--ink)}.c-aide{background:var(--paper);color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}
+.c-aide h3{color:var(--red)}
+.rdv{margin-top:14px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:22px;align-items:center;padding:22px 26px;border-radius:4px;background:var(--paper)}
+.rdv .cal{display:flex;flex-direction:column;align-items:center;justify-content:center;width:64px;height:64px;border-radius:3px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--ink);font:800 22px/1 var(--head)}
+.rdv .cal small{font:600 10.5px var(--body);color:var(--muted);margin-top:4px}
+.rdv b{display:block;font:700 19px var(--head)}.rdv span{color:var(--muted);font-size:15px}
+@media (max-width:1000px){.cartes{grid-template-columns:1fr 1fr}.carte{min-height:260px}}
+@media (max-width:620px){.cartes{grid-template-columns:1fr}.carte{min-height:0}.carte h3{margin-top:36px}.rdv{grid-template-columns:auto minmax(0,1fr)}.rdv .link{grid-column:1/-1}}
+</style>
+</head>
+<body class="">
 <!-- EN-TÊTE -->
 <header class="site-header" id="top">
   <div class="wrap bar">
-    <a href="#top" class="brand" aria-label="GE-FAIS, retour en haut de page">
+    <a href="accueil.html" class="brand" aria-label="GE-FAIS, accueil">
       <svg viewBox="0 0 40 40" fill="currentColor" aria-hidden="true">
         <circle cx="20.24" cy="3.56" r="2.8"/>
         <circle cx="28.72" cy="5.76" r="2.52"/>
@@ -624,19 +656,13 @@ body.menu-open .haut{opacity:0;pointer-events:none}
     </a>
     <nav class="nav" aria-label="Navigation principale">
       <ul class="nav-links">
-        <li><a href="#association">L'association</a></li>
-        <li><a href="#maraudes">Maraudes</a></li>
-        <li><a href="#agenda">Agenda</a></li>
-        <li><a href="#adhesion">Adhésion</a></li>
-        <li class="has-sub">
+        <li><a href="association.html">L'association</a></li><li><a href="activites.html">Activités</a></li><li><a href="engager.html">S'engager</a></li><li class="has-sub">
           <button type="button" class="sub-btn" aria-expanded="false" aria-controls="sub-dons">Dons<svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 3.5 5 7l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
           <ul class="sub" id="sub-dons">
-            <li><a href="#don-financier"><b>Don financier</b><span>QR code ou virement</span></a></li>
-            <li><a href="#don-vetements"><b>Don de vêtements</b><span>Vestes, chaussettes, couvertures…</span></a></li>
+            <li><a href="dons.html#don-financier"><b>Don financier</b><span>QR code ou virement</span></a></li>
+            <li><a href="dons.html#don-vetements"><b>Don de vêtements</b><span>Vestes, chaussettes, couvertures…</span></a></li>
           </ul>
-        </li>
-        <li><a href="#faq">Questions</a></li>
-        <li><a href="#contact">Contact</a></li>
+        </li><li><a href="questions.html">Questions</a></li><li><a href="aide.html" class="nav-aide">Besoin d'aide&nbsp;?</a></li>
       </ul>
       <a href="adhesion.html" class="btn btn-red btn-sm">Adhérer</a>
     </nav>
@@ -650,20 +676,7 @@ body.menu-open .haut{opacity:0;pointer-events:none}
 
 <div class="menu-panel" id="menu" role="dialog" aria-label="Menu">
   <ol>
-    <li><a href="#association"><small>01</small>L'association</a></li>
-    <li><a href="#maraudes"><small>02</small>Maraudes</a></li>
-    <li><a href="#vie"><small>03</small>Vie associative</a></li>
-    <li><a href="#agenda"><small>04</small>Agenda</a></li>
-    <li><a href="#engager"><small>05</small>S'engager</a></li>
-    <li><a href="#adhesion"><small>06</small>Adhésion</a></li>
-    <li class="m-sub"><a href="#don"><small>07</small>Dons</a>
-      <ul>
-        <li><a href="#don-financier">Don financier</a></li>
-        <li><a href="#don-vetements">Don de vêtements</a></li>
-      </ul>
-    </li>
-    <li><a href="#faq"><small>08</small>Questions</a></li>
-    <li><a href="#contact"><small>09</small>Contact</a></li>
+    <li><a href="accueil.html" aria-current="page"><small>00</small>Accueil</a></li><li><a href="association.html"><small>01</small>L'association</a></li><li><a href="activites.html"><small>02</small>Activités</a></li><li><a href="engager.html"><small>03</small>S'engager</a></li><li><a href="dons.html"><small>04</small>Dons</a></li><li><a href="questions.html"><small>05</small>Questions</a></li><li><a href="aide.html"><small>06</small>Besoin d'aide ?</a></li>
   </ol>
   <div class="menu-foot">
     <a href="adhesion.html" class="btn btn-red">Devenir membre <span class="arr" aria-hidden="true">→</span></a>
@@ -685,7 +698,7 @@ body.menu-open .haut{opacity:0;pointer-events:none}
     <p class="hero-lead rise d3">Des bénévoles qui vont, en maraude, à la rencontre des personnes qui vivent dans la rue à Genève. Avec un repas, une boisson chaude, et du temps pour écouter.</p>
     <div class="hero-actions rise d4">
       <a href="adhesion.html" class="btn btn-red">Devenir membre <span class="arr" aria-hidden="true">→</span></a>
-      <a href="#maraudes" class="link">Comment se passe une maraude</a>
+      <a href="activites.html" class="link">Comment se passe une maraude</a>
     </div>
   </div>
   <div class="hero-foot">
@@ -709,7 +722,7 @@ body.menu-open .haut{opacity:0;pointer-events:none}
         <div class="num" id="numA"></div>
         <h2 class="val" id="valA">Notre charte,<br>en douze mots.</h2>
         <p class="lig" id="ligA"></p>
-        <div class="cta" id="ctaA"><a href="adhesion.html">Devenir membre →</a><a href="#maraudes">Comment se passe une maraude</a></div>
+        <div class="cta" id="ctaA"><a href="adhesion.html">Devenir membre →</a><a href="activites.html">Comment se passe une maraude</a></div>
       </div>
     </div>
     <div class="pied"><span>Touchez un point pour lire sa valeur · <button type="button" class="rejouer" id="rejouerA">Revoir le tour</button></span><a href="charte.html" class="link link-arrow">Lire la charte éthique et de valeurs</a></div>
@@ -718,353 +731,34 @@ body.menu-open .haut{opacity:0;pointer-events:none}
 
 <main id="contenu">
 
-<!-- 01 L'ASSOCIATION -->
-<section id="association" class="section intro" aria-labelledby="t-asso">
-  <div class="wrap">
-    <p class="marker reveal"><b>01</b><span id="t-asso">L'association</span></p>
-    <div class="grid">
-      <p class="lead reveal">GE-FAIS est une association genevoise portée par des bénévoles. Son action principale, ce sont <strong>les maraudes</strong> : sortir dans la ville pour aller vers les personnes qui vivent dehors, plutôt que d'attendre qu'elles viennent à nous.</p>
-      <div class="intro-body text reveal" style="--d:.1s">
-        <p>Autour de ces tournées, l'association vit comme toutes les associations : on se réunit entre membres, on se forme, on organise des sorties, et l'assemblée générale réunit tout le monde pour faire le point. La dernière s'est tenue en décembre 2025.</p>
-        <p>Personne n'est payé, personne n'a besoin d'être un·e professionnel·le du social pour nous rejoindre. Il suffit d'avoir envie d'être là, à son rythme.</p>
-        <p>Plus largement, GE-FAIS mène des actions de solidarité en Suisse et hors frontières, dans le respect de la dignité humaine, des cultures et des réalités locales. Chaque membre signe <a href="charte.html" class="link">notre charte éthique et de valeurs</a>.</p>
-        <a href="#engager" class="link link-arrow">Les façons de s'engager</a>
-      </div>
-      <div class="facts reveal" style="--d:.2s" role="group" aria-labelledby="t-facts">
-        <h3 id="t-facts">GE-FAIS en bref</h3>
-        <dl>
-          <div><dt>Forme</dt><dd>Association à but non lucratif</dd></div>
-          <div><dt>Siège</dt><dd>Genève, Suisse</dd></div>
-          <div><dt>Fonctionnement</dt><dd>Entièrement bénévole, avec un comité de quatre personnes</dd></div>
-          <div><dt>Action principale</dt><dd>Les maraudes dans les rues de Genève</dd></div>
-          <div><dt>Cotisation</dt><dd>50 CHF par an, quel que soit le statut</dd></div>
-          <div><dt>Champ d'action</dt><dd>Genève, en Suisse et hors frontières</dd></div>
-          <div><dt>Cadre</dt><dd>Une charte éthique et de valeurs, signée par chaque membre</dd></div>
-          <div><dt>Devise</dt><dd>« Ensemble, faisons qu'un »</dd></div>
-        </dl>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- 02 MARAUDES -->
-<section id="maraudes" class="section maraude on-dark" aria-labelledby="t-maraude">
+<!-- SUITE : les onglets -->
+<section class="suite" aria-labelledby="t-suite">
   <div class="wrap">
-    <p class="marker reveal"><b>02</b><span>Sur le terrain</span></p>
-    <div class="m-head">
-      <h2 id="t-maraude" class="h2 reveal">Une maraude, concrètement.</h2>
-      <p class="m-intro reveal" style="--d:.1s">Une maraude, c'est une tournée à pied dans la ville, à la rencontre des personnes qui vivent dans la rue. Pas de guichet, pas de file d'attente : c'est nous qui nous déplaçons.</p>
+    <div class="suite-head">
+      <h2 id="t-suite" class="h2">Par où commencer&nbsp;?</h2>
+      <a href="association.html" class="link link-arrow">Découvrir l'association</a>
     </div>
-    <div class="parcours-bloc">
-      <p class="lbl-p">Notre parcours</p>
-      <div class="scene sC" id="sceneC">
-        <div class="carte"><svg id="carteC" role="img" aria-label="Carte de Genève avec le parcours de nos maraudes : Plainpalais, Bastions, Bel-Air, les Grottes"></svg><div class="legende"><span><i style="background:#f3f1ec"></i>Arrêt</span><span><i style="border:2px solid #c9c6bd;width:7px;height:7px"></i>Passage</span></div><div class="credit">© contributeurs OpenStreetMap</div></div>
-        <div class="panneau">
-          <div class="compteur"><div>Parcouru<b id="kmC">0,0 km</b></div><div>Arrêt<b id="noC">1 / 4</b></div></div>
-          <div class="etapes" id="etapesC"></div>
-          <div class="exemple">Le parcours peut varier selon les soirs.</div>
-          <button type="button" class="rejouer" id="rejouerC">Revoir le trajet</button>
-        </div>
-      </div>
-    </div>
-    <div class="m-grid" style="grid-template-columns:1fr">
-      
-      <div>
-        <ol class="steps">
-          <li class="reveal"><span class="n" aria-hidden="true">01</span><div><h3>On se retrouve</h3><p>Les membres qui participent se donnent rendez-vous avant le départ. On prépare ensemble ce qu'on emporte et on s'organise.</p></div></li>
-          <li class="reveal"><span class="n" aria-hidden="true">02</span><div><h3>On part à plusieurs</h3><p>La tournée se fait à pied, en petit groupe, dans les rues de Genève.</p></div></li>
-          <li class="reveal"><span class="n" aria-hidden="true">03</span><div><h3>On va vers les gens</h3><p>On s'arrête, on se présente, on propose un repas ou une boisson chaude, sans jugement lié à l'origine, à la situation, aux croyances ou au parcours de vie. Rien n'est imposé : chacun est libre d'accepter, de discuter, ou de passer son tour.</p></div></li>
-          <li class="reveal"><span class="n" aria-hidden="true">04</span><div><h3>On prend le temps</h3><p>Souvent, le café n'est qu'un point de départ. Ce qui compte, c'est la conversation, l'écoute, le fait d'être salué et reconnu.</p></div></li>
-          <li class="reveal"><span class="n" aria-hidden="true">05</span><div><h3>On en reparle</h3><p>Après la tournée, on prend un moment entre nous pour partager ce qu'on a vécu, et préparer la suivante.</p></div></li>
-        </ol>
-        <p class="m-note reveal"><span class="pin" aria-hidden="true"></span><span>Ce qui se dit pendant une maraude reste confidentiel. Aucune photo, vidéo ou témoignage d'une personne rencontrée n'est utilisé sans son autorisation préalable : c'est un engagement de notre charte.</span></p>
-        <p class="m-note reveal" style="margin-top:14px"><span class="pin" aria-hidden="true"></span><span>Plusieurs maraudes ont eu lieu au début de l'année 2026. Les prochaines dates et les lieux de rendez-vous sont communiqués aux membres.</span></p>
-      </div>
-    </div>
-
-    <div class="carry">
-      <p class="lbl reveal">Ce qu'on emporte</p>
-      <p class="carry-words reveal" style="--d:.1s">
-        <span>Un repas,</span> <span>une boisson chaude.</span><br>
-        <span class="g">Du temps,</span> <span class="g">de l'écoute.</span>
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- 03 VIE ASSOCIATIVE -->
-<section id="vie" class="section" aria-labelledby="t-vie">
-  <div class="wrap">
-    <p class="marker reveal"><b>03</b><span>La vie de l'association</span></p>
-    <div class="life-head">
-      <h2 id="t-vie" class="h2 reveal">Entre deux maraudes.</h2>
-      <p class="text reveal" style="--d:.1s">Une association, ce sont aussi des rendez-vous plus discrets. Ce sont eux qui permettent de partir sur le terrain bien préparés, et de décider ensemble de la suite.</p>
-    </div>
-    <ul class="index">
-      <li class="reveal"><h3>Réunions de membres</h3><p>Pour organiser les prochaines sorties, se donner des nouvelles et prendre les décisions du quotidien.</p><span class="tag" style="--c:var(--ink)">Réunion</span></li>
-      <li class="reveal"><h3>Formations</h3><p>Pour se préparer avant d'aller sur le terrain et échanger sur nos manières de faire.</p><span class="tag" style="--c:transparent" data-hollow>Formation</span></li>
-      <li class="reveal"><h3>Sorties</h3><p>Des moments entre membres, pour apprendre à se connaître autrement qu'en action.</p><span class="tag" style="--c:var(--red-light)">Sortie</span></li>
-      <li class="reveal"><h3>Permanences</h3><p>Des créneaux tenus par des membres de l'association, annoncés dans l'agenda.</p><span class="tag" style="--c:#8b8b86">Permanence</span></li>
-      <li class="reveal"><h3>Assemblée générale</h3><p>Le rendez-vous où toutes et tous les membres font le point sur l'année et votent les grandes orientations. La dernière a eu lieu en décembre 2025.</p><span class="tag" style="--c:var(--gold)">AG</span></li>
+    <ul class="cartes">
+      <li><a class="carte c-mar" href="activites.html"><span class="k">Sur le terrain</span><h3>Les maraudes</h3><p>Le parcours, les étapes d'un soir, ce qu'on emporte.</p><span class="fl">Voir comment ça se passe <i>→</i></span></a></li>
+      <li><a class="carte c-eng" href="engager.html"><span class="k">Nous rejoindre</span><h3>S'engager</h3><p>Trois statuts, une cotisation de 50 CHF, une adhésion en ligne.</p><span class="fl">Les façons d'en être <i>→</i></span></a></li>
+      <li><a class="carte c-don" href="dons.html"><span class="k">Soutenir</span><h3>Faire un don</h3><p>Un QR code à scanner, ou des vêtements chauds pour l'hiver.</p><span class="fl">Donner <i>→</i></span></a></li>
+      <li><a class="carte c-aide" href="aide.html"><span class="k">Genève</span><h3>Besoin d'aide&nbsp;?</h3><p>Repas, douches, lits et soins gratuits, numéros d'urgence.</p><span class="fl">Trouver un lieu <i>→</i></span></a></li>
     </ul>
-  </div>
-</section>
-
-<!-- 04 AGENDA -->
-<section id="agenda" class="section agenda" aria-labelledby="t-agenda">
-  <div class="wrap">
-    <p class="marker reveal"><b>04</b><span>Agenda</span></p>
-    <div class="agenda-grid">
-      <div>
-        <div class="agenda-top">
-          <h2 id="t-agenda" class="h2 reveal">Prochains <span style="white-space:nowrap">rendez-vous</span></h2>
-          <p class="reveal" style="--d:.1s">Les dates sont d'abord confirmées aux membres, puis publiées ici.</p>
-        </div>
-        <ul class="rows">
-          <li class="reveal">
-            <span class="cal" aria-hidden="true"><b>—</b><small>à confirmer</small></span>
-            <div><h3>Prochaine maraude</h3><p class="meta">Date à confirmer · Genève</p></div>
-            <span class="tag" style="--c:var(--red)">Maraude</span>
-          </li>
-          <li class="reveal">
-            <span class="cal" aria-hidden="true"><b>—</b><small>à confirmer</small></span>
-            <div><h3>Réunion des membres</h3><p class="meta">Date à confirmer · Genève</p></div>
-            <span class="tag" style="--c:var(--ink)">Réunion</span>
-          </li>
-          <li class="reveal">
-            <span class="cal" aria-hidden="true"><b>—</b><small>à confirmer</small></span>
-            <div><h3>Formation avant le terrain</h3><p class="meta">Date à confirmer · Genève</p></div>
-            <span class="tag" style="--c:transparent" data-hollow>Formation</span>
-          </li>
-        </ul>
-      </div>
-      <div class="past reveal" style="--d:.15s" role="group" aria-labelledby="t-past">
-        <h3 id="t-past">Ces derniers mois</h3>
-        <ol>
-          <li style="--c:var(--red)"><time>Début 2026</time><p>Plusieurs maraudes dans les rues de Genève.</p></li>
-          <li style="--c:var(--gold)"><time datetime="2025-12">Décembre 2025</time><p>Assemblée générale de l'association.</p></li>
-        </ol>
-        <p class="foot">Vous voulez être informé·e des prochaines dates ? <a href="adhesion.html" class="link">Devenez membre</a>.</p>
-      </div>
+    <div class="rdv">
+      <span class="cal" aria-hidden="true">—<small>à confirmer</small></span>
+      <div><b>Prochaine maraude</b><span>Date à confirmer · Genève</span></div>
+      <a href="activites.html#agenda" class="link link-arrow">Tout l'agenda</a>
     </div>
   </div>
 </section>
-
-<!-- 05 S'ENGAGER -->
-<section id="engager" class="section" aria-labelledby="t-engager">
-  <div class="wrap">
-    <p class="marker reveal"><b>05</b><span>S'engager</span></p>
-    <div class="engage-head">
-      <h2 id="t-engager" class="h2 reveal">Trois façons d'en être.</h2>
-      <p class="reveal" style="--d:.1s">On peut venir sur le terrain, soutenir de loin, ou simplement aider l'association à tenir. Toutes ces formes d'engagement comptent.</p>
-    </div>
-    <div class="ways">
-      <article class="way way-member reveal">
-        <svg class="ring" viewBox="-1 -1 42 42" aria-hidden="true"><g fill="#fff" fill-opacity=".32"><circle cx="20.24" cy="3.56" r="2.8"/><circle cx="28.72" cy="5.76" r="2.52"/><circle cx="35.24" cy="11.6" r="2.16"/><circle cx="37.88" cy="19.92" r="2.12"/><circle cx="35.72" cy="28.56" r="2.04"/><circle cx="29.2" cy="34.64" r="1.84"/><circle cx="20.48" cy="37.48" r="1.76"/><circle cx="12.08" cy="35.4" r="1.84"/><circle cx="5.76" cy="29.44" r="2.68"/><circle cx="5.36" cy="12.28" r="3.32"/><circle cx="11.64" cy="6.04" r="2.84"/></g><circle cx="3.36" cy="20.8" r="3.36" fill="#fdc915"/></svg>
-        <span class="k">Le plus simple</span>
-        <h3>Devenir<br>membre</h3>
-        <p>Un formulaire en ligne, une signature électronique, et le comité s'occupe du reste. Vous choisissez le statut qui correspond à votre disponibilité.</p>
-        <p class="price">50 CHF <span>par an, pour tous les statuts</span></p>
-        <div class="acts">
-          <a href="adhesion.html" class="btn btn-white">Remplir le formulaire <span class="arr" aria-hidden="true">→</span></a>
-          <a href="#adhesion" class="link">Voir les étapes</a>
-        </div>
-      </article>
-      <article class="way way-field reveal" style="--d:.1s">
-        <span class="k">Sur le terrain</span>
-        <h3>Venir en maraude</h3>
-        <p>Le statut de membre actif est fait pour celles et ceux qui veulent participer aux maraudes et aux rendez-vous de l'association.</p>
-        <div class="acts"><a href="#maraudes" class="link link-arrow">Comment ça se passe</a></div>
-      </article>
-      <article class="way way-gift reveal" style="--d:.2s">
-        <span class="k">À distance</span>
-        <h3>Faire un don</h3>
-        <p>Pas le temps de vous engager en personne ? Un don soutient directement les actions de l'association.</p>
-        <div class="acts"><a href="#don" class="link link-arrow">Soutenir GE-FAIS</a></div>
-      </article>
-    </div>
-    <div class="attendu">
-      <div>
-        <h3>Ce qu'on attend de chaque membre</h3>
-        <p>Extraits de notre charte éthique et de valeurs, signée au moment de l'adhésion.</p>
-        <a href="charte.html" class="link link-arrow">Lire la charte complète</a>
-      </div>
-      <ul>
-        <li><b>Respecter les personnes</b>Leur dignité, leur intimité et la confidentialité de ce qu'elles confient, sans jugement.</li>
-        <li><b>Tenir ses engagements</b>Participer activement aux activités auxquelles on s'inscrit, et prévenir en cas d'absence.</li>
-        <li><b>Agir avec responsabilité</b>Respecter les consignes et le matériel, et signaler au comité toute situation à risque.</li>
-        <li><b>Rester humble</b>Respecter les cultures, les traditions et les croyances, ici comme hors frontières.</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<!-- 06 ADHÉSION -->
-<section id="adhesion" class="section adh" aria-labelledby="t-adh">
-  <div class="wrap">
-    <p class="marker reveal"><b>06</b><span>Adhésion</span></p>
-    <div class="adh-top">
-      <div>
-        <h2 id="t-adh" class="h2 reveal">Trois statuts, une seule cotisation.</h2>
-        <div class="text reveal" style="--d:.1s">
-          <p>La cotisation est de 50 CHF par an, quel que soit votre statut. Ce qui change, c'est la présence attendue aux rendez-vous de l'association.</p>
-          <p>Vous hésitez entre deux statuts ? Indiquez-le dans le formulaire, le comité en discutera avec vous.</p>
-        </div>
-      </div>
-      <ul class="status reveal" style="--d:.15s">
-        <li style="--c:var(--red)">
-          <div><h3>Membre actif</h3><p>Vous participez aux maraudes et à la vie de l'association.</p></div>
-          <div class="meter"><b>80 %</b>de présence attendue<span class="bar" aria-hidden="true"><i style="--v:80%"></i></span></div>
-        </li>
-        <li style="--c:var(--gold)">
-          <div><h3>Membre actif suisse</h3><p>Le statut actif pour les membres de nationalité suisse.</p></div>
-          <div class="meter"><b>40 %</b>de présence attendue<span class="bar" aria-hidden="true"><i style="--v:40%"></i></span></div>
-        </li>
-        <li style="--c:#8b8b86">
-          <div><h3>Membre passif</h3><p>Vous soutenez l'association sans participer aux activités.</p></div>
-          <div class="meter"><b>—</b>pas de présence attendue<span class="bar" aria-hidden="true"><i style="--v:0%"></i></span></div>
-        </li>
-      </ul>
-    </div>
-
-    <div class="howto">
-      <div class="howto-head">
-        <h3 class="reveal">Comment se passe une adhésion</h3>
-        <a href="adhesion.html" class="btn btn-red reveal">Commencer mon adhésion <span class="arr" aria-hidden="true">→</span></a>
-      </div>
-      <ol class="flow reveal">
-        <li><span class="dot" aria-hidden="true">1</span><h4>Vous choisissez votre statut</h4><p>Actif, actif suisse ou passif, selon le temps que vous pouvez donner.</p></li>
-        <li><span class="dot" aria-hidden="true">2</span><h4>Vous remplissez le formulaire</h4><p>En ligne, en quelques minutes. Vous signez électroniquement votre adhésion et la charte éthique.</p></li>
-        <li><span class="dot" aria-hidden="true">3</span><h4>Le comité étudie la demande</h4><p>Chaque demande est lue par le comité de l'association.</p></li>
-        <li><span class="dot" aria-hidden="true">4</span><h4>Double signature</h4><p>La présidence et la vice-présidence cosignent votre adhésion.</p></li>
-        <li><span class="dot" aria-hidden="true">5</span><h4>Confirmation et cotisation</h4><p>On vous contacte pour confirmer votre adhésion et régler les 50 CHF.</p></li>
-      </ol>
-    </div>
-  </div>
-</section>
-
-<!-- 07 DON -->
-<section id="don" class="section gift" aria-labelledby="t-don">
-  <div class="wrap">
-    <div class="gift-grid" id="don-financier">
-      <div>
-        <p class="marker"><b>07</b><span>Dons</span></p>
-        <h2 id="t-don" class="h2">Soutenir, même de loin.</h2>
-        <p class="text">Pas besoin d'être membre pour aider. Chaque contribution, quel que soit son montant, permet à l'association de poursuivre ses actions.</p>
-        <p class="gift-note">Scannez le QR code avec l'application de votre banque : l'IBAN et le bénéficiaire se remplissent tout seuls. Le paiement par TWINT arrive bientôt.</p>
-      </div>
-      <div><div class="slip qrb" role="group" aria-label="Bulletin de versement pour un don">
-        <div class="stub">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#62625e" stroke-width="1.6" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.6 7.6 20 18M8.6 16.4 20 6"/></svg>
-          <h3>Récépissé</h3>
-          <dl>
-            <div><dt>Compte / Payable à</dt><dd>CH58 0021 5215 3246 9901 V<br>Association GE-FAIS<br>Chemin des Raclerets 14<br>1284 Chancy</dd></div>
-          </dl>
-          <dl class="amount"><div><dt>Monnaie</dt><dd>CHF</dd></div><div><dt>Montant</dt><dd>Libre</dd></div></dl>
-        </div>
-        <div class="pay">
-          <h3>Section paiement</h3>
-          <div class="pay-grid">
-            <div class="qr-zone"><img class="qr-img" src="images/qr-don.svg" width="132" height="132" alt="QR code de paiement : don à l'Association GE-FAIS, montant libre">
-              <dl class="amount"><div><dt>Monnaie</dt><dd>CHF</dd></div><div><dt>Montant</dt><dd>Libre</dd></div></dl></div>
-            <dl>
-              <div><dt>Compte / Payable à</dt><dd><span class="iban" id="iban">CH58 0021 5215 3246 9901 V</span><br><button type="button" class="copier" data-copie="CH580021521532469901V" aria-describedby="iban">Copier</button><br>Association GE-FAIS<br>Chemin des Raclerets 14<br>1284 Chancy</dd></div>
-              <div><dt>Informations supplémentaires</dt><dd>Don GE-FAIS</dd></div>
-              <div><dt>Banque</dt><dd>UBS Switzerland AG</dd></div>
-            </dl>
-          </div>
-        </div>
-      </div></div>
-    </div>
-
-    <div class="vet" id="don-vetements">
-      <div class="vet-g">
-        <p class="lbl">Don de vêtements</p>
-        <figure class="vet-estampe"><img src="images/don-vetements.webp" loading="lazy" width="640" height="560" alt="Gravure sur linoléum : une pile de vêtements chauds, une veste, une écharpe et des chaussettes"></figure>
-      </div>
-      <div class="vet-corps">
-        <div class="vet-texte">
-        <p class="vet-words"><span>Vestes<i>.</i></span> <span>Sous-vêtements<i>.</i></span> <span>Chaussettes<i>.</i></span> <span>Plaids et couvertures<i>.</i></span></p>
-        <div class="vet-bas">
-          <p>Pour nos prochaines maraudes. Des vêtements propres et en bon état&nbsp;; sous-vêtements et chaussettes neufs.</p>
-          <div class="vet-acts">
-            <a class="btn btn-ink" href="https://www.instagram.com/associationgefais/" target="_blank" rel="noopener">Écrire sur Instagram <span class="arr" aria-hidden="true">→</span></a>
-            <a class="link link-arrow" href="mailto:contact@gefais.ch">Écrire par e-mail</a>
-          </div>
-        </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 08 FAQ -->
-<section id="faq" class="section" aria-labelledby="t-faq">
-  <div class="wrap">
-    <p class="marker reveal"><b>08</b><span>Questions fréquentes</span></p>
-    <div class="faq-grid">
-      <div class="faq-side reveal">
-        <h2 id="t-faq" class="h2">Vous vous posez des questions&nbsp;?</h2>
-        <p>Voici celles qu'on nous pose le plus souvent avant d'adhérer.</p>
-        <a href="#contact" class="link link-arrow">Une autre question</a>
-      </div>
-      <div class="qa reveal" style="--d:.1s">
-        <details>
-          <summary>Faut-il de l'expérience pour participer à une maraude&nbsp;? <span class="pm" aria-hidden="true"></span></summary>
-          <div class="ans"><p>Non. Personne ne vous demandera un diplôme ou un parcours dans le social. Des formations sont organisées entre membres pour se préparer au terrain, et l'on part en maraude à plusieurs.</p></div>
-        </details>
-        <details>
-          <summary>Combien coûte l'adhésion&nbsp;? <span class="pm" aria-hidden="true"></span></summary>
-          <div class="ans"><p>50 CHF par an, quel que soit le statut choisi : membre actif, membre actif suisse ou membre passif.</p></div>
-        </details>
-        <details>
-          <summary>Quelle différence entre membre actif et membre actif suisse&nbsp;? <span class="pm" aria-hidden="true"></span></summary>
-          <div class="ans"><p>Les deux statuts permettent de participer pleinement aux activités. Le statut de membre actif suisse concerne les personnes de nationalité suisse, avec une présence attendue à 40 % des rendez-vous, contre 80 % pour le statut de membre actif.</p></div>
-        </details>
-        <details>
-          <summary>Je n'ai pas beaucoup de temps. Puis-je quand même soutenir l'association&nbsp;? <span class="pm" aria-hidden="true"></span></summary>
-          <div class="ans"><p>Oui, de deux façons. Le statut de membre passif vous permet de soutenir GE-FAIS sans participer aux activités. Et vous pouvez faire un don, sans être membre : par virement, bientôt par TWINT, ou en donnant des vêtements chauds.</p></div>
-        </details>
-        <details>
-          <summary>Que se passe-t-il après l'envoi du formulaire&nbsp;? <span class="pm" aria-hidden="true"></span></summary>
-          <div class="ans"><p>Le comité étudie votre demande. Si elle est acceptée, la présidence et la vice-présidence cosignent votre adhésion. Vous êtes ensuite contacté·e pour confirmer et régler la cotisation.</p></div>
-        </details>
-        <details>
-          <summary>Comment payer la cotisation&nbsp;? <span class="pm" aria-hidden="true"></span></summary>
-          <div class="ans"><p>Rien à payer au moment du formulaire. C'est une fois votre adhésion validée que le comité vous contacte et vous indique comment régler les 50 CHF.</p></div>
-        </details>
-        <details>
-          <summary>Qu'est-ce qu'on attend de moi si je deviens membre&nbsp;? <span class="pm" aria-hidden="true"></span></summary>
-          <div class="ans"><p>De respecter notre <a href="charte.html" class="link">charte éthique et de valeurs</a> : respecter les personnes rencontrées et leur confidentialité, participer aux activités auxquelles vous vous inscrivez et prévenir en cas d'absence, suivre les consignes et signaler au comité toute situation à risque.</p></div>
-        </details>
-        <details>
-          <summary>Peut-on prendre des photos pendant une maraude&nbsp;? <span class="pm" aria-hidden="true"></span></summary>
-          <div class="ans"><p>Pas des personnes rencontrées sans leur autorisation préalable. Notre charte interdit toute utilisation d'image, de vidéo ou de témoignage sans accord : la protection de la vie privée est une obligation fondamentale.</p></div>
-        </details>
-        <details>
-          <summary>GE-FAIS agit-elle seulement à Genève&nbsp;? <span class="pm" aria-hidden="true"></span></summary>
-          <div class="ans"><p>Les maraudes ont lieu à Genève, mais l'association mène des actions de solidarité en Suisse et hors frontières, toujours dans le respect des cultures et des réalités locales.</p></div>
-        </details>
-        <details>
-          <summary>Peut-on donner des vêtements&nbsp;? <span class="pm" aria-hidden="true"></span></summary>
-          <div class="ans"><p>Oui, et c'est très utile en hiver : vestes, sous-vêtements, chaussettes, plaids et couvertures. Écrivez-nous en message sur Instagram (@associationgefais) ou à contact@gefais.ch pour organiser le dépôt.</p></div>
-        </details>
-        <details>
-          <summary>Qui fait vivre l'association&nbsp;? <span class="pm" aria-hidden="true"></span></summary>
-          <div class="ans"><p>Ses membres, tous bénévoles. Un comité de quatre personnes coordonne l'ensemble : présidence, vice-présidence et trésorerie, secrétariat, et communication.</p></div>
-        </details>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- 09 CONTACT -->
 <section id="contact" class="section contact on-dark" aria-labelledby="t-contact">
   <div class="contact-media" aria-hidden="true">
     <img src="images/geneve-jet-deau.webp" srcset="images/geneve-jet-deau.webp 1600w, images/geneve-jet-deau-3200.webp 3200w, images/geneve-jet-deau-3840.webp 3840w" sizes="100vw" alt="" width="1600" height="1033" loading="lazy">
   </div>
   <div class="wrap">
-    <p class="marker reveal"><b>09</b><span>Contact</span></p>
+    <p class="marker reveal"><span>Contact</span></p>
     <div class="contact-grid">
       <div>
         <h2 id="t-contact" class="h2 reveal">Écrire au comité.</h2>
@@ -1110,10 +804,11 @@ body.menu-open .haut{opacity:0;pointer-events:none}
       <nav class="foot-col" aria-labelledby="f-site">
         <h3 id="f-site">Le site</h3>
         <ul>
-          <li><a href="#association">L'association</a></li>
-          <li><a href="#maraudes">Maraudes</a></li>
-          <li><a href="#agenda">Agenda</a></li>
-          <li><a href="#faq">Questions fréquentes</a></li>
+          <li><a href="association.html">L'association</a></li>
+          <li><a href="activites.html">Maraudes</a></li>
+          <li><a href="activites.html#agenda">Agenda</a></li>
+          <li><a href="questions.html">Questions fréquentes</a></li>
+          <li><a href="aide.html">Besoin d'aide&nbsp;?</a></li>
           <li><a href="#contact">Contact</a></li>
           <li><a href="https://www.instagram.com/associationgefais/" target="_blank" rel="noopener">Instagram</a></li>
         </ul>
@@ -1122,10 +817,10 @@ body.menu-open .haut{opacity:0;pointer-events:none}
         <h3>Nous rejoindre</h3>
         <ul>
           <li><a href="adhesion.html">Formulaire d'adhésion</a></li>
-          <li><a href="#adhesion">Les statuts de membre</a></li>
+          <li><a href="engager.html#adhesion">Les statuts de membre</a></li>
           <li><a href="charte.html">La charte éthique</a></li>
-          <li><a href="#don-financier">Don financier</a></li>
-          <li><a href="#don-vetements">Don de vêtements</a></li>
+          <li><a href="dons.html#don-financier">Don financier</a></li>
+          <li><a href="dons.html#don-vetements">Don de vêtements</a></li>
         </ul>
       </div>
     </div>
@@ -1146,7 +841,7 @@ body.menu-open .haut{opacity:0;pointer-events:none}
   var header = document.querySelector('.site-header');
   var ticking = false;
   function onScroll(){
-    header.classList.toggle('is-scrolled', window.scrollY > 40);
+    header.classList.toggle('is-scrolled', window.scrollY > 40 || document.body.classList.contains('sous-page'));
     ticking = false;
   }
   window.addEventListener('scroll', function(){
@@ -1292,6 +987,7 @@ function stop(k){(timers[k]||[]).forEach(clearTimeout);timers[k]=[];if(rafs[k])c
 const NS='http://www.w3.org/2000/svg';
 const el=(t,a,parent)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(parent)parent.appendChild(e);return e;};
 
+if(document.getElementById('sceneA')){
 /* ── A : le cadran des valeurs ── */
 const PTS=[[20.24,3.56,2.8],[28.72,5.76,2.52],[35.24,11.6,2.16],[37.88,19.92,2.12],[35.72,28.56,2.04],[29.2,34.64,1.84],[20.48,37.48,1.76],[12.08,35.4,1.84],[5.76,29.44,2.68],[3.36,20.8,3.36,'y'],[5.36,12.28,3.32,'r'],[11.64,6.04,2.84]];
 const VALEURS=[ // charte éthique et de valeurs GE-FAIS : les 9 valeurs de la section 1, puis dignité, confidentialité (section 2) et humilité (section 5)
@@ -1348,6 +1044,13 @@ function jouerA(){
   plan('A',finA,400+12*850+500);
 }
 
+
+[...gP.children].forEach(p=>p.classList.remove('on'));aigA.style.display='none';ctaA.classList.remove('on');
+const vusA={v:false};
+if('IntersectionObserver' in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting&&!vusA.v){vusA.v=true;jouerA();}}),{threshold:.55});io.observe(document.getElementById('sceneA'));}else jouerA();
+document.getElementById('rejouerA').addEventListener('click',jouerA);
+}
+if(document.getElementById('sceneC')){
 /* ── C : le parcours (carte OpenStreetMap, trajet piéton réel) ── */
 const SUP={"W": 1063, "H": 901, "route": [[556.2, 557.1], [556.0, 561.0], [555.5, 561.0], [555.5, 562.0], [556.1, 562.0], [556.2, 560.2], [557.2, 559.7], [558.2, 559.3], [559.9, 558.5], [560.5, 558.3], [560.5, 559.0], [560.8, 559.3], [571.7, 559.0], [572.8, 558.8], [573.7, 558.4], [574.7, 557.5], [575.7, 558.0], [576.2, 558.3], [577.0, 558.8], [577.9, 558.8], [578.4, 558.8], [578.6, 558.8], [578.8, 558.8], [579.2, 558.9], [579.3, 556.4], [579.6, 556.4], [580.2, 529.2], [581.3, 524.5], [581.9, 520.0], [582.2, 516.6], [586.5, 520.8], [586.9, 520.4], [588.5, 518.5], [589.5, 518.7], [590.5, 518.6], [592.3, 518.0], [594.0, 517.3], [597.0, 515.6], [598.1, 514.5], [599.4, 512.8], [601.7, 511.4], [602.5, 510.9], [603.8, 509.9], [604.0, 509.9], [605.5, 508.9], [607.9, 506.6], [610.3, 504.5], [613.8, 502.5], [615.7, 502.0], [617.1, 503.2], [618.9, 504.9], [621.0, 502.7], [623.0, 500.5], [612.4, 490.8], [618.3, 482.9], [621.7, 477.3], [613.1, 471.9], [609.3, 471.7], [607.8, 470.5], [605.4, 468.6], [599.9, 470.9], [599.6, 470.2], [599.3, 469.7], [598.8, 469.3], [602.1, 465.8], [603.3, 464.9], [604.7, 464.3], [606.3, 464.1], [606.3, 463.3], [606.3, 462.9], [601.9, 461.2], [602.1, 459.8], [602.4, 456.1], [602.6, 454.9], [602.6, 454.5], [602.7, 453.9], [602.7, 453.5], [602.8, 452.3], [603.0, 451.0], [603.1, 449.5], [599.1, 446.6], [597.8, 445.8], [598.3, 444.4], [597.5, 442.0], [595.2, 434.2], [590.0, 416.2], [588.3, 409.6], [587.7, 407.3], [586.4, 402.9], [585.3, 399.2], [585.3, 398.2], [585.1, 395.3], [581.0, 378.3], [580.9, 376.8], [581.1, 376.0], [581.5, 375.4], [582.4, 374.7], [584.0, 374.0], [589.7, 372.7], [591.7, 372.5], [592.9, 372.5], [592.4, 371.1], [592.2, 370.5], [592.0, 369.9], [591.6, 368.8], [590.2, 364.4], [588.9, 360.2], [591.3, 359.3], [596.3, 357.7], [596.1, 357.2], [592.3, 358.3], [592.5, 356.7], [592.6, 355.6], [592.6, 355.0], [592.6, 354.3], [591.2, 351.8], [590.8, 349.6], [590.6, 348.8], [589.2, 338.4], [588.7, 337.1], [588.6, 336.3], [584.1, 322.6], [583.8, 321.8], [580.7, 312.7], [580.6, 312.2], [580.5, 312.0], [579.4, 309.5], [579.1, 308.9], [578.2, 306.7], [576.7, 307.4], [576.3, 307.6], [575.8, 307.8], [575.4, 308.0], [574.7, 308.2], [573.9, 306.4], [569.8, 297.1], [568.4, 295.3], [563.4, 284.5], [563.1, 284.0], [562.6, 283.2], [562.3, 282.5], [562.0, 281.8], [562.1, 281.2], [557.0, 270.1], [556.9, 269.4], [555.9, 267.2], [554.1, 265.8], [553.4, 265.2], [552.2, 264.1], [551.4, 262.7], [551.1, 261.1], [551.0, 259.6], [551.2, 258.3], [547.7, 257.2], [545.0, 253.5], [543.9, 252.7], [547.3, 247.9], [545.6, 246.7], [545.0, 246.2], [544.3, 245.8], [544.0, 245.5], [543.3, 245.1], [544.4, 243.6], [537.8, 238.5], [536.0, 237.1], [534.9, 236.2], [528.1, 230.9], [529.1, 229.7], [526.0, 226.9], [525.3, 225.0], [524.5, 223.1], [524.2, 222.3], [524.0, 221.8], [522.0, 222.6], [520.2, 218.7], [518.7, 216.4], [516.4, 213.9], [512.9, 211.0], [511.7, 210.0], [509.7, 208.4], [508.7, 208.4], [507.6, 207.6], [506.6, 206.4], [506.5, 205.9], [504.8, 204.5], [506.6, 202.0], [508.7, 199.3], [502.7, 194.4], [503.5, 193.2], [502.2, 188.6], [510.2, 186.0], [509.9, 185.4], [509.7, 184.9], [509.4, 184.3], [509.0, 183.3], [508.5, 183.5]], "legsKm": [0.583, 0.482, 0.794], "arrets": [[556.2, 557.1], [607.8, 470.5], [591.3, 359.3], [508.5, 183.5]], "passages": [{"n": "Place Neuve", "x": 597.8, "y": 445.8}, {"n": "Pont de l'Île", "x": 588.6, "y": 336.3}]};
 const svg=document.getElementById('carteC');
@@ -1409,11 +1112,12 @@ function jouerC(){
 }
 
 
-// au repos : état final lisible ; chaque scène se joue quand elle devient visible
-[...gP.children].forEach(p=>p.classList.remove('on'));aigA.style.display='none';ctaA.classList.remove('on');tr.style.strokeDashoffset=L;majPassages(-1);arretC(0);kmC.textContent=fmtKm(0);
-const vus=new Set();
-if('IntersectionObserver' in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting&&!vus.has(e.target.id)){vus.add(e.target.id);({sceneA:jouerA,sceneC:jouerC})[e.target.id]();}}),{threshold:.55});['sceneA','sceneC'].forEach(id=>io.observe(document.getElementById(id)));}
-document.getElementById('rejouerA').addEventListener('click',jouerA);document.getElementById('rejouerC').addEventListener('click',jouerC);
+
+tr.style.strokeDashoffset=L;majPassages(-1);arretC(0);kmC.textContent=fmtKm(0);
+const vusC={v:false};
+if('IntersectionObserver' in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting&&!vusC.v){vusC.v=true;jouerC();}}),{threshold:.55});io.observe(document.getElementById('sceneC'));}else jouerC();
+document.getElementById('rejouerC').addEventListener('click',jouerC);
+}
 </script>
 <script>
 document.querySelectorAll('.copier').forEach(b=>b.addEventListener('click',async()=>{
