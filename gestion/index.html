@@ -4375,17 +4375,19 @@ function renderRapport(){
 }
 
 // ── EXPORTS CSV ──────────────────────────────────────────────────
+// Cellule CSV sûre : guillemets doublés, et une apostrophe devant = + - @ pour qu'Excel n'exécute aucune formule
+function _csvCell(v){if(typeof v==='number')return String(v);let t=String(v??'');if(/^[=+\-@\t\r]/.test(t))t="'"+t;return '"'+t.replace(/"/g,'""')+'"';}
+function _csv(rows){return rows.map(r=>r.map(_csvCell).join(';')).join('\n');}
 function downloadCSV(content,filename){const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent('\uFEFF'+content);a.download=filename;a.click();}
 // exportMembresCSV defined later
 function exportPresencesCSV(){
   const evts=events.slice().sort((a,b)=>a.date.localeCompare(b.date));
-  let csv='Membre,Type,'+evts.map(e=>e.nom||e.type).join(',')+',% Présence\n';
-  csv+=membres.map(m=>{const p=evts.filter(e=>presences[m.id+'_'+e.id]).length;const pct=evts.length>0?Math.round((p/evts.length)*100):0;return[m.prenom+' '+m.nom,m.type||'',...evts.map(e=>presences[m.id+'_'+e.id]?'Présent':'Absent'),pct+'%'].map(v=>`"${v}"`).join(',');}).join('\n');
+  const csv=_csv([['Membre','Type',...evts.map(e=>(e.nom||e.type)+' ('+e.date+')'),'% Présence'],...membres.map(m=>{const p=evts.filter(e=>presences[m.id+'_'+e.id]).length;const pct=evts.length>0?Math.round((p/evts.length)*100):0;return[m.prenom+' '+m.nom,m.type||'',...evts.map(e=>presences[m.id+'_'+e.id]?'Présent':'Absent'),pct+'%'];})]);
   downloadCSV(csv,'presences_gefais.csv');
 }
 function exportCotisCSV(){
-  let csv='Membre,Type,Montant CHF,Statut,Date paiement,Année\n';
-  csv+=cotisations.map(c=>{const m=membres.find(x=>x.id===c.membreId);if(!m)return'';return[m.prenom+' '+m.nom,m.type||'',c.montant,c.statut==='paye'?'Payé':'En attente',c.datePaiement||'',c.annee].map(v=>`"${v}"`).join(',');}).filter(Boolean).join('\n');
+  const lignes=cotisations.map(c=>{const m=membres.find(x=>x.id===c.membreId);if(!m)return null;return[m.prenom+' '+m.nom,m.type||'',c.montant,c.statut==='paye'?'Payé':c.statut==='exonere'?'Exonéré':'En attente',c.datePaiement||'',c.annee];}).filter(Boolean);
+  const csv=_csv([['Membre','Type','Montant CHF','Statut','Date paiement','Année'],...lignes]);
   downloadCSV(csv,'cotisations_gefais.csv');
 }
 // exportComptaCSV defined later
@@ -4902,7 +4904,7 @@ function exportMembresCSV() {
     const pres = events.length > 0 ? Math.round(events.filter(e=>presences[m.id+'_'+e.id]).length / events.length * 100) : 0;
     return [m.nom, m.prenom, m.role||'', m.type||'', m.email||'', m.tel||'', m.adhesion||'', pres];
   });
-  const csv = [header, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(';')).join('\n');
+  const csv = _csv([header, ...rows]);
   const blob = new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8'});
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
   a.download = `membres_gef_${today}.csv`; a.click();
@@ -4914,7 +4916,7 @@ function exportComptaCSV() {
   const rows = compta.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(c =>
     [c.date, c.type, c.montant.toFixed(2), c.categorie||'', c.description||'', c.piece||'']
   );
-  const csv = [header, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(';')).join('\n');
+  const csv = _csv([header, ...rows]);
   const blob = new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8'});
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
   a.download = `compta_gef_${today}.csv`; a.click();
