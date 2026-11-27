@@ -14,7 +14,7 @@
 
   var css = [
     /* titres : mots qui sortent d'une ligne invisible */
-    '.anim .mw{display:inline-block;overflow:hidden;vertical-align:top;padding:0 .02em .1em;margin:0 -.02em -.1em}',
+    '.anim .mw{display:inline-block;overflow:hidden;vertical-align:top;padding:.14em .02em .1em;margin:-.14em -.02em -.1em}',
     '.anim .mw>span{display:inline-block;transform:translateY(108%);transition:transform .95s ' + EASE + ';transition-delay:calc(var(--i,0)*45ms + var(--d0,0ms))}',
     '.anim .mt.in .mw>span{transform:none}',
     /* mots qui s\'allument au défilement */

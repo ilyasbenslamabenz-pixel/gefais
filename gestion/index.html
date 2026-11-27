@@ -40,7 +40,7 @@
   --bg:#f3f1ec;--bg2:#faf9f6;--bg3:#ebe8e1;--card:#ffffff;--card2:#f7f5f0;--border:#e2ded5;--border2:#d3cec3;
   --red:#d42a20;--red2:#b8221a;--red-light:#f9e9e7;
   --gold:#a88400;--gold2:#c49a00;--gold-light:#f7f0d9;
-  --text:#141414;--text2:#55534e;--text3:#8a867d;
+  --text:#141414;--text2:#55534e;--text3:#6b675f;
   --green:#2e7d4f;--green-light:#e7f2eb;
   --blue:#2b5d8c;--blue-light:#e7eef5;
   --purple:#6b4f8a;--purple-light:#efeaf4;
@@ -337,12 +337,12 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 .don-hero-inner{position:relative;z-index:1;display:flex;align-items:center;gap:18px;}
 .don-hero-icon{font-size:42px;flex-shrink:0;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.2));}
 .don-hero-title{font-size:20px;font-weight:800;letter-spacing:-0.3px;margin-bottom:5px;}
-.don-hero-sub{font-size:13px;opacity:0.82;line-height:1.5;}
+.don-hero-sub{font-size:13px;opacity:1;line-height:1.5;}
 .don-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
 .don-card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:22px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:16px;}
 .don-card-header{display:flex;flex-direction:column;gap:4px;}
 .don-badge{display:inline-flex;align-items:center;font-size:10px;font-weight:800;letter-spacing:2px;padding:3px 10px;border-radius:20px;width:fit-content;margin-bottom:4px;}
-.don-badge-twint{background:#00b0f0;color:#fff;}
+.don-badge-twint{background:#0072a3;color:#fff;}
 .don-badge-bank{background:#1a1a2e;color:#fff;}
 .don-card-title{font-size:16px;font-weight:700;color:var(--text);}
 .don-card-sub{font-size:12px;color:var(--text3);}
@@ -1202,7 +1202,7 @@ td{font-size:14px;color:var(--text2);}
 .db-grid-even{grid-template-columns:repeat(2,minmax(0,1fr));gap:56px;}
 .db-sec{border-top:1px solid var(--border);padding-top:18px;margin-bottom:48px;}
 .db-sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:18px;}
-.db-num{font-size:14px;font-weight:600;color:var(--red);}
+.db-num{font-size:14px;font-weight:600;color:var(--red2);}
 .db-sec-head h2{font-family:var(--head);font-size:26px;font-weight:800;letter-spacing:-.02em;margin:0;color:var(--text);flex:1;}
 .db-more{background:none;border:none;font:inherit;font-size:14px;color:var(--text2);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
 .db-more:hover{color:var(--text);}
@@ -1422,6 +1422,10 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
   .modal{max-height:92vh;max-height:92dvh;}
   .modal>h3:first-child{top:-22px;margin:-22px -16px 12px;padding:22px 16px 12px;}
 }
+
+/* Mode sombre : rouge clair pour le texte, rouge soutenu sous le texte blanc */
+[data-theme=sombre] .db-num{color:var(--red);}
+[data-theme=sombre] .login-btn,[data-theme=sombre] .don-hero,[data-theme=sombre] .don-upload-btn,[data-theme=sombre] .don-action-primary,[data-theme=sombre] .don-copy-btn,[data-theme=sombre] #photo-viewer-dl,[data-theme=sombre] .kpi-mini-total,[data-theme=sombre] .btn-primary,[data-theme=sombre] .btn-red{background:#d42a20!important;border-color:#d42a20!important;color:#fff!important;}
 </style>
 </head>
 <body>
@@ -1693,11 +1697,11 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
       <div id="membres-kpi" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;"></div>
       <div class="toolbar">
         <input type="text" placeholder="Rechercher…" id="search-membres" oninput="renderMembres()">
-        <select id="filter-type" onchange="renderMembres()" style="width:130px;">
+        <select aria-label="Filtrer par statut" id="filter-type" onchange="renderMembres()" style="width:130px;">
           <option value="">Tous</option><option value="Actif">Actif</option>
           <option value="Actif Suisse">Actif Suisse</option><option value="Passif">Passif</option>
         </select>
-        <select id="sort-membres" onchange="renderMembres()" style="width:140px;">
+        <select aria-label="Trier les membres" id="sort-membres" onchange="renderMembres()" style="width:140px;">
           <option value="prenom">Tri : Prénom</option>
           <option value="nom">Tri : Nom</option>
           <option value="type">Tri : Type</option>
@@ -1752,17 +1756,17 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
       <!-- Filtres événements -->
       <div class="toolbar" style="margin-bottom:12px;">
         <input type="text" placeholder="Rechercher…" id="search-events" oninput="renderEvents()" style="flex:1;min-width:100px;">
-        <select id="filter-events-type" onchange="renderEvents()" style="width:130px;">
+        <select aria-label="Type d'événement" id="filter-events-type" onchange="renderEvents()" style="width:130px;">
           <option value="">Tous les types</option>
         </select>
-        <select id="filter-events-period" onchange="renderEvents()" style="width:140px;">
+        <select aria-label="Période" id="filter-events-period" onchange="renderEvents()" style="width:140px;">
           <option value="">Toute période</option>
           <option value="month">Ce mois-ci</option>
           <option value="year">Cette année</option>
           <option value="past">Passés</option>
           <option value="upcoming">À venir</option>
         </select>
-        <select id="sort-events" onchange="renderEvents()" style="width:140px;">
+        <select id="sort-events" aria-label="Trier les événements" onchange="renderEvents()" style="width:140px;">
           <option value="date_desc">Date ↓ récent</option>
           <option value="date_asc">Date ↑ ancien</option>
           <option value="pres_desc">Présence ↓</option>
@@ -1789,10 +1793,10 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
         <div id="cotis-progress-chart" class="gef-chart"></div>
       </div>
       <div class="toolbar">
-        <select id="cotis-filter-annee" onchange="renderCotisations()" style="width:100px;">
+        <select aria-label="Année" id="cotis-filter-annee" onchange="renderCotisations()" style="width:100px;">
           <option value="2025">2025</option><option value="2026" selected>2026</option>
         </select>
-        <select id="cotis-filter-statut" onchange="renderCotisations()" style="width:130px;">
+        <select aria-label="Statut de paiement" id="cotis-filter-statut" onchange="renderCotisations()" style="width:130px;">
           <option value="">Tous</option><option value="paye">Payé</option><option value="impaye">Non payé</option>
         </select>
       </div>
@@ -1817,7 +1821,7 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
       <div class="toolbar">
         <button class="btn btn-primary btn-sm" onclick="openComptaModal('recette')">+ Recette</button>
         <button class="btn btn-gold btn-sm" onclick="openComptaModal('depense')">+ Dépense</button>
-        <select id="compta-filter-type" onchange="renderCompta()" style="width:110px;">
+        <select aria-label="Filtrer par type" id="compta-filter-type" onchange="renderCompta()" style="width:110px;">
           <option value="">Tous</option><option value="recette">Recettes</option><option value="depense">Dépenses</option>
         </select>
         <button class="btn btn-secondary btn-sm" onclick="exportComptaCSV()" title="Exporter CSV">CSV</button>
@@ -2401,6 +2405,12 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
 
 <script>
 // ── ICÔNES AU TRAIT (style Lucide, licence ISC) : remplacent tous les émojis ──
+// Copie dans le presse-papiers, avec repli quand le navigateur refuse l'accès
+function copierTexte(t){
+  const repli=()=>{try{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;top:-1000px;opacity:0';document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,t.length);const ok=document.execCommand('copy');ta.remove();return ok;}catch(e){return false;}};
+  if(navigator.clipboard&&window.isSecureContext){return navigator.clipboard.writeText(t).then(()=>true,()=>repli());}
+  return Promise.resolve(repli());
+}
 const _ICP={
 alert:'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
 check:'<path d="M20 6 9 17l-5-5"/>',
@@ -3748,7 +3758,7 @@ Le bureau de GE-Fais`;
   document.getElementById('rappel-email-preview').textContent=email;
   document.getElementById('modal-rappel').classList.add('open');
 }
-function copierEmail(){navigator.clipboard.writeText(document.getElementById('rappel-email-preview').textContent).then(()=>iosAlert('Email copié dans le presse-papier !')).catch(()=>iosAlert('Copiez manuellement le texte ci-dessus.'));}
+function copierEmail(){copierTexte(document.getElementById('rappel-email-preview').textContent).then(ok=>{if(!ok)throw 0;iosAlert('Email copié dans le presse-papier !');}).catch(()=>iosAlert('Copiez manuellement le texte ci-dessus.'));}
 
 // ── COMPTA ───────────────────────────────────────────────────────
 // ── COMPTABILITÉ ─────────────────────────────────────────────────
@@ -3837,7 +3847,7 @@ function _renderAttachmentsPreview(){
     const isImage=a.type&&a.type.startsWith('image/');
     if(isImage){
       return`<div style="position:relative;display:inline-block;">
-        <img src="${a.thumb||a.data}" class="attach-thumb" onclick="voirPJEdition(${i})" title="${a.name}">
+        <img src="${a.thumb||a.data}" alt="" class="attach-thumb" onclick="voirPJEdition(${i})" title="${a.name}">
         <button onclick="_removeAttachment(${i})" style="position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">✕</button>
       </div>`;
     }
@@ -3972,7 +3982,7 @@ function renderCompta(){
     const atts=c.attachments||[];
     const thumbs=atts.map((a,i)=>({a,i})).filter(({a})=>a.type&&a.type.startsWith('image/')&&(a.thumb||a.data)).slice(0,3);
     const justif=thumbs.length
-      ? thumbs.map(({a,i})=>`<img src="${a.thumb||a.data}" class="attach-thumb" style="width:32px;height:32px;border-radius:6px;object-fit:cover;cursor:pointer;" onclick="voirPJCompta(${c.id},${i})" title="${a.name}">`).join('')
+      ? thumbs.map(({a,i})=>`<img src="${a.thumb||a.data}" alt="" class="attach-thumb" style="width:32px;height:32px;border-radius:6px;object-fit:cover;cursor:pointer;" onclick="voirPJCompta(${c.id},${i})" title="${a.name}">`).join('')
       : (atts.length?`<span style="font-size:11px;color:var(--text3);">📎 ${atts.length}</span>`:'<span style="color:var(--border);">—</span>');
     return`<tr>
       <td>${fmtDate(c.date)}</td>
@@ -4200,7 +4210,8 @@ function envoyerEmail(){
 function emailCopierDestinataires(){
   const adresses = [...emailSelectionnes].map(id=>membres.find(m=>m.id===id)).filter(m=>m&&m.email).map(m=>m.email);
   if(!adresses.length){ iosAlert('Aucun destinataire avec email.'); return; }
-  navigator.clipboard.writeText(adresses.join(', ')).then(()=>{
+  copierTexte(adresses.join(', ')).then(ok=>{
+    if(!ok){ iosAlert(adresses.join(', '),'Copiez ces adresses'); return; }
     const fb = document.getElementById('email-feedback');
     fb.style.display='inline';
     setTimeout(()=>fb.style.display='none', 2500);
@@ -4714,7 +4725,8 @@ function donSaveField(field) {
 
 function donCopyIBAN() {
   const iban = _donData.iban || '';
-  navigator.clipboard.writeText(iban).then(() => {
+  copierTexte(iban).then(ok => {
+    if (!ok) { iosAlert(iban, 'Copiez cet IBAN'); return; }
     const lbl = document.getElementById('don-copy-label');
     lbl.textContent = 'Copié !';
     setTimeout(() => lbl.textContent = "Copier l'IBAN", 2000);
@@ -4731,12 +4743,12 @@ function _injectThemeCSS(css){
 }
 const _THEMES={
   clair:{'--bg':'#f3f1ec','--bg2':'#faf9f6','--bg3':'#ebe8e1','--card':'#ffffff','--card2':'#f7f5f0','--border':'#e2ded5','--border2':'#d3cec3',
-    '--text':'#141414','--text2':'#55534e','--text3':'#8a867d','--red':'#d42a20','--red2':'#b8221a','--red-light':'#f9e9e7',
+    '--text':'#141414','--text2':'#55534e','--text3':'#6b675f','--red':'#d42a20','--red2':'#b8221a','--red-light':'#f9e9e7',
     '--gold':'#a88400','--gold2':'#c49a00','--gold-light':'#f7f0d9','--green':'#2e7d4f','--green-light':'#e7f2eb',
     '--blue':'#2b5d8c','--blue-light':'#e7eef5','--purple':'#6b4f8a','--purple-light':'#efeaf4',
     '--shadow':'none','--shadow-md':'0 1px 2px rgba(20,20,20,.06)','--shadow-lg':'0 24px 48px -24px rgba(20,20,20,.35)'},
   sombre:{'--bg':'#141414','--bg2':'#191919','--bg3':'#222220','--card':'#1b1b1a','--card2':'#232321','--border':'rgba(243,241,236,.10)','--border2':'rgba(243,241,236,.18)',
-    '--text':'#f3f1ec','--text2':'#bdb9b0','--text3':'#8a867d','--red':'#e5493e','--red2':'#d42a20','--red-light':'rgba(229,73,62,.14)',
+    '--text':'#f3f1ec','--text2':'#bdb9b0','--text3':'#9c988f','--red':'#f0645a','--red2':'#d42a20','--red-light':'rgba(229,73,62,.14)',
     '--gold':'#d6aa1e','--gold2':'#c49a00','--gold-light':'rgba(214,170,30,.14)','--green':'#5fb985','--green-light':'rgba(95,185,133,.14)',
     '--blue':'#7fa7d1','--blue-light':'rgba(127,167,209,.14)','--purple':'#b49ad3','--purple-light':'rgba(180,154,211,.14)',
     '--shadow':'none','--shadow-md':'none','--shadow-lg':'0 24px 48px -24px rgba(0,0,0,.7)'}
@@ -5204,7 +5216,7 @@ async function renderDemandes(){
       ${sigSrc?`<div style="padding:0 20px 16px;">
         <div style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;">Signature du membre</div>
         <div style="background:#fff;border-radius:12px;padding:8px 12px;display:inline-block;box-shadow:0 2px 8px rgba(0,0,0,0.3);">
-          <img src="${sigSrc}" style="max-height:52px;max-width:220px;display:block;">
+          <img src="${sigSrc}" alt="Signature" style="max-height:52px;max-width:220px;display:block;">
         </div>
       </div>`:''}
 
@@ -5507,9 +5519,7 @@ function partagerLienAdhesion(){
   if(navigator.share){
     navigator.share({title:'Adhésion GE-FAIS',text:msg,url}).catch(()=>{});
   } else {
-    navigator.clipboard?.writeText(url).then(()=>showToast('Lien copié !','📋','success')).catch(()=>{
-      iosAlert(url,'Copie ce lien');
-    });
+    copierTexte(url).then(ok=>ok?showToast('Lien copié !','📋','success'):iosAlert(url,'Copiez ce lien'));
   }
 }
 
