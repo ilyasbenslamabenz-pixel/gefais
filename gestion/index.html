@@ -1428,19 +1428,6 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
 [data-theme=sombre] .db-num{color:var(--red);}
 [data-theme=sombre] .login-btn,[data-theme=sombre] .don-hero,[data-theme=sombre] .don-upload-btn,[data-theme=sombre] .don-action-primary,[data-theme=sombre] .don-copy-btn,[data-theme=sombre] #photo-viewer-dl,[data-theme=sombre] .kpi-mini-total,[data-theme=sombre] .btn-primary,[data-theme=sombre] .btn-red{background:#d42a20!important;border-color:#d42a20!important;color:#fff!important;}
 </style>
-</head>
-<body>
-
-<!-- LOADING -->
-<div id="loading-overlay" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:998;flex-direction:column;align-items:center;justify-content:center;gap:18px;color:var(--text);">
-  <div class="loading-logo"><svg width="64" height="64" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20.24" cy="3.56" r="2.8" fill="currentColor"/><circle cx="28.72" cy="5.76" r="2.52" fill="currentColor"/><circle cx="35.24" cy="11.6" r="2.16" fill="currentColor"/><circle cx="37.88" cy="19.92" r="2.12" fill="currentColor"/><circle cx="35.72" cy="28.56" r="2.04" fill="currentColor"/><circle cx="29.2" cy="34.64" r="1.84" fill="currentColor"/><circle cx="20.48" cy="37.48" r="1.76" fill="currentColor"/><circle cx="12.08" cy="35.4" r="1.84" fill="currentColor"/><circle cx="5.76" cy="29.44" r="2.68" fill="currentColor"/><circle cx="3.36" cy="20.8" r="3.36" fill="#fdc915"/><circle cx="5.36" cy="12.28" r="3.32" fill="#ee1e27"/><circle cx="11.64" cy="6.04" r="2.84" fill="currentColor"/></svg><span class="wordmark" role="img" aria-label="GE-FAIS"></span></div>
-  <div id="loading-text" style="font-size:15px;color:var(--text2);text-align:center;max-width:320px;line-height:1.5;padding:0 20px;">Chargement des données…</div>
-  <div id="loading-actions" style="display:none;gap:10px;">
-    <button class="btn btn-secondary" onclick="_chargerDonnees()">Réessayer</button>
-    <button class="btn btn-secondary" onclick="logout()">Se déconnecter</button>
-  </div>
-  <button id="loading-cache-btn" onclick="afficherDerniereVersion()" style="display:none;background:none;border:none;font:inherit;font-size:14px;color:var(--text2);text-decoration:underline;text-underline-offset:3px;cursor:pointer;">Consulter la dernière version enregistrée</button>
-</div>
 <style>
 @keyframes logoSpin{
   0%{transform:rotate(0deg);}
@@ -1503,6 +1490,19 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
   .db-anneau~.db-fact-label{padding-right:40px;}
 }
 </style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading-overlay" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:998;flex-direction:column;align-items:center;justify-content:center;gap:18px;color:var(--text);">
+  <div class="loading-logo"><svg width="64" height="64" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20.24" cy="3.56" r="2.8" fill="currentColor"/><circle cx="28.72" cy="5.76" r="2.52" fill="currentColor"/><circle cx="35.24" cy="11.6" r="2.16" fill="currentColor"/><circle cx="37.88" cy="19.92" r="2.12" fill="currentColor"/><circle cx="35.72" cy="28.56" r="2.04" fill="currentColor"/><circle cx="29.2" cy="34.64" r="1.84" fill="currentColor"/><circle cx="20.48" cy="37.48" r="1.76" fill="currentColor"/><circle cx="12.08" cy="35.4" r="1.84" fill="currentColor"/><circle cx="5.76" cy="29.44" r="2.68" fill="currentColor"/><circle cx="3.36" cy="20.8" r="3.36" fill="#fdc915"/><circle cx="5.36" cy="12.28" r="3.32" fill="#ee1e27"/><circle cx="11.64" cy="6.04" r="2.84" fill="currentColor"/></svg><span class="wordmark" role="img" aria-label="GE-FAIS"></span></div>
+  <div id="loading-text" style="font-size:15px;color:var(--text2);text-align:center;max-width:320px;line-height:1.5;padding:0 20px;">Chargement des données…</div>
+  <div id="loading-actions" style="display:none;gap:10px;">
+    <button type="button" class="btn btn-secondary" onclick="_chargerDonnees()">Réessayer</button>
+    <button type="button" class="btn btn-secondary" onclick="logout()">Se déconnecter</button>
+  </div>
+  <button type="button" id="loading-cache-btn" onclick="afficherDerniereVersion()" style="display:none;background:none;border:none;font:inherit;font-size:14px;color:var(--text2);text-decoration:underline;text-underline-offset:3px;cursor:pointer;">Consulter la dernière version enregistrée</button>
+</div>
 
 <!-- LOGIN -->
 <div id="login-screen">
@@ -1543,7 +1543,7 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
           <label for="login-input">Mot de passe</label>
           <input type="password" id="login-input" autocomplete="current-password" autocorrect="off" autocapitalize="none" spellcheck="false"
             onkeydown="if(event.key==='Enter'){event.preventDefault();checkLogin();}">
-          <button id="login-btn" class="login-submit" onclick="checkLogin()">Se connecter</button>
+          <button type="button" id="login-btn" class="login-submit" onclick="checkLogin()">Se connecter</button>
           <button type="button" class="login-link" onclick="motDePasseOublie()">Mot de passe oublié ?</button>
         </div>
 
@@ -1557,7 +1557,7 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
           <label for="pwd-confirm">Confirmer le mot de passe</label>
           <input type="password" id="pwd-confirm" autocomplete="new-password"
             onkeydown="if(event.key==='Enter'){event.preventDefault();validerNouveauMotDePasse();}">
-          <button id="pwd-setup-btn" class="login-submit" onclick="validerNouveauMotDePasse()">Enregistrer et continuer</button>
+          <button type="button" id="pwd-setup-btn" class="login-submit" onclick="validerNouveauMotDePasse()">Enregistrer et continuer</button>
           <button type="button" class="login-link" onclick="logout()">Se déconnecter</button>
         </div>
 
@@ -1578,17 +1578,17 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
   <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
 
   <div class="topbar">
-    <button class="hamburger" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+    <button type="button" class="hamburger" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
     <span class="topbar-title" id="topbar-title">Tableau de bord</span>
-    <button onclick="openGlobalSearch()" style="background:none;border:none;color:var(--text2);cursor:pointer;padding:8px;border-radius:10px;display:flex;align-items:center;" title="Recherche (Ctrl+K)"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></button>
-    <button id="theme-toggle" onclick="toggleTheme()" style="background:none;border:none;cursor:pointer;padding:6px;border-radius:10px;font-size:16px;" title="Changer le thème">☀️</button>
-    <button class="btn-logout" onclick="logout()">Quitter</button>
+    <button type="button" onclick="openGlobalSearch()" style="background:none;border:none;color:var(--text2);cursor:pointer;padding:8px;border-radius:10px;display:flex;align-items:center;" title="Recherche (Ctrl+K)"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></button>
+    <button type="button" id="theme-toggle" onclick="toggleTheme()" style="background:none;border:none;cursor:pointer;padding:6px;border-radius:10px;font-size:16px;" title="Changer le thème">☀️</button>
+    <button type="button" class="btn-logout" onclick="logout()">Quitter</button>
     <span id="sync-indicator" style="font-size:11px;color:var(--green);display:none;cursor:default;"></span>
   </div>
   <!-- BANNIÈRE HORS LIGNE -->
   <div id="offline-banner" role="alert" style="display:none;background:var(--gold-light);border-bottom:1px solid var(--border);padding:10px 16px;font-size:14px;color:var(--text);align-items:center;gap:12px;position:fixed;top:58px;left:0;right:0;z-index:38;">
     <span id="offline-banner-msg" style="flex:1;">Données non chargées.</span>
-    <button id="offline-banner-btn" onclick="syncNow()" style="background:var(--card);border:1px solid var(--border2);color:var(--text);padding:7px 14px;border-radius:3px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;">Réessayer</button>
+    <button type="button" id="offline-banner-btn" onclick="syncNow()" style="background:var(--card);border:1px solid var(--border2);color:var(--text);padding:7px 14px;border-radius:3px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;">Réessayer</button>
   </div>
   <!-- WIDGET STATUT SAUVEGARDE -->
   <div id="save-status"><span id="save-status-icon"></span><span id="save-status-text"></span></div>
@@ -1658,13 +1658,13 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
     </div>
     <div class="sidebar-footer">
       <div style="display:flex;gap:4px;flex-wrap:wrap;">
-        <button onclick="openGlobalSearch()" style="background:none;border:1px solid var(--border);color:var(--text3);cursor:pointer;padding:5px 8px;border-radius:8px;font-size:11px;display:flex;align-items:center;gap:4px;transition:0.15s;" title="Ctrl+K">
+        <button type="button" onclick="openGlobalSearch()" style="background:none;border:1px solid var(--border);color:var(--text3);cursor:pointer;padding:5px 8px;border-radius:8px;font-size:11px;display:flex;align-items:center;gap:4px;transition:0.15s;" title="Ctrl+K">
           <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg> Recherche
         </button>
-        <button id="theme-toggle-sidebar" onclick="toggleTheme()" style="background:none;border:1px solid var(--border);color:var(--text3);cursor:pointer;padding:5px 8px;border-radius:8px;font-size:13px;transition:0.15s;" title="Thème">🌙</button>
-        <button onclick="openPresentationMode()" style="background:none;border:1px solid var(--border);color:var(--text3);cursor:pointer;padding:5px 8px;border-radius:8px;font-size:11px;transition:0.15s;" title="Mode présentation">Présentation AG</button>
+        <button type="button" id="theme-toggle-sidebar" onclick="toggleTheme()" style="background:none;border:1px solid var(--border);color:var(--text3);cursor:pointer;padding:5px 8px;border-radius:8px;font-size:13px;transition:0.15s;" title="Thème">🌙</button>
+        <button type="button" onclick="openPresentationMode()" style="background:none;border:1px solid var(--border);color:var(--text3);cursor:pointer;padding:5px 8px;border-radius:8px;font-size:11px;transition:0.15s;" title="Mode présentation">Présentation AG</button>
       </div>
-      <button class="btn-logout" onclick="logout()">Déconnexion</button>
+      <button type="button" class="btn-logout" onclick="logout()">Déconnexion</button>
     </div>
   </nav>
 
@@ -1697,9 +1697,9 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
         <h1 class="db-title" id="db-greeting">Bonjour.</h1>
         <p class="db-lead" id="db-lead"></p>
         <div class="db-actions">
-          <button class="btn btn-primary" onclick="navTo('membres','Membres');setTimeout(openMemberModal,100)">Ajouter un membre</button>
-          <button class="btn btn-secondary" onclick="navTo('evenements','Événements');setTimeout(openEventModal,100)">Créer un événement</button>
-          <button class="db-textlink" onclick="navTo('cotisations','Cotisations')">Cotisations →</button>
+          <button type="button" class="btn btn-primary" onclick="navTo('membres','Membres');setTimeout(openMemberModal,100)">Ajouter un membre</button>
+          <button type="button" class="btn btn-secondary" onclick="navTo('evenements','Événements');setTimeout(openEventModal,100)">Créer un événement</button>
+          <button type="button" class="db-textlink" onclick="navTo('cotisations','Cotisations')">Cotisations →</button>
         </div>
         </div>
       </header>
@@ -1710,19 +1710,19 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
 
       <div class="db-grid">
         <section class="db-sec">
-          <div class="db-sec-head"><span class="db-num">01</span><h2>Agenda</h2><button class="db-more" onclick="navTo('evenements','Événements')">Tout l'agenda</button></div>
+          <div class="db-sec-head"><span class="db-num">01</span><h2>Agenda</h2><button type="button" class="db-more" onclick="navTo('evenements','Événements')">Tout l'agenda</button></div>
           <div id="db-agenda"></div>
           <h3 class="db-sub">Dernières sorties</h3>
           <div id="db-participation"></div>
         </section>
         <section class="db-sec">
-          <div class="db-sec-head"><span class="db-num">02</span><h2>Présence</h2><button class="db-more" onclick="navTo('presences','Présences')">Détail</button></div>
+          <div class="db-sec-head"><span class="db-num">02</span><h2>Présence</h2><button type="button" class="db-more" onclick="navTo('presences','Présences')">Détail</button></div>
           <div id="db-presence"></div>
         </section>
       </div>
 
       <section class="db-sec">
-        <div class="db-sec-head"><span class="db-num">03</span><h2>Finances et membres</h2><button class="db-more" onclick="navTo('compta','Comptabilité')">Comptabilité</button></div>
+        <div class="db-sec-head"><span class="db-num">03</span><h2>Finances et membres</h2><button type="button" class="db-more" onclick="navTo('compta','Comptabilité')">Comptabilité</button></div>
         <div class="db-grid db-grid-even">
           <div id="db-finances"></div>
           <div id="db-composition"></div>
@@ -1740,8 +1740,8 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
           <p id="membres-header-sub">Actifs · Passifs · Suisses</p>
         </div>
         <div style="display:flex;gap:8px;">
-          <button class="btn btn-primary btn-sm" onclick="openMemberModal()">+ Ajouter</button>
-          <button class="btn btn-secondary btn-sm" onclick="exportMembresCSV()">Exporter</button>
+          <button type="button" class="btn btn-primary btn-sm" onclick="openMemberModal()">+ Ajouter</button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="exportMembresCSV()">Exporter</button>
         </div>
       </div>
       <!-- KPI membres -->
@@ -1769,7 +1769,7 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
           <option value="adhesion">Tri : Adhésion</option>
           <option value="presence">Tri : Présence ↓</option>
         </select>
-        <button class="btn btn-secondary btn-sm" id="sort-dir-btn" onclick="toggleSortDir()" title="Inverser l'ordre">↑↓</button>
+        <button type="button" class="btn btn-secondary btn-sm" id="sort-dir-btn" onclick="toggleSortDir()" title="Inverser l'ordre">↑↓</button>
       </div>
       <!-- Mini graphique répartition membres -->
       <div class="card" style="margin-bottom:16px;">
@@ -1788,7 +1788,7 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
     <div id="page-presences" class="page">
       <div class="page-header">
         <div class="page-header-left"><h2>Présences</h2><p id="pres-header-sub">Taux de participation</p></div>
-        <button class="btn btn-secondary btn-sm" onclick="exportPresencesCSV()">CSV</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="exportPresencesCSV()">CSV</button>
       </div>
       <!-- Stats band -->
       <div id="presences-stats-band" class="pres-stats-band"></div>
@@ -1810,7 +1810,7 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
     <div id="page-evenements" class="page">
       <div class="page-header">
         <div class="page-header-left"><h2>Événements</h2><p id="events-header-sub">Gérez et suivez vos événements</p></div>
-        <button class="btn btn-primary btn-sm" onclick="openEventModal()">+ Ajouter</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="openEventModal()">+ Ajouter</button>
       </div>
       <!-- Stats globales -->
       <div id="events-stats-row" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;"></div>
@@ -1843,9 +1843,9 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
       <div class="page-header">
         <div class="page-header-left"><h2>Cotisations</h2><p>Suivi des cotisations par membre</p></div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
-          <button class="btn btn-secondary btn-sm" onclick="exportCotisCSV()">Export CSV</button>
-          <button class="btn btn-blue btn-sm" onclick="openRappelModal()">Rappel email</button>
-          <button class="btn btn-gold btn-sm" onclick="genererCotisationsAnnee()">Générer année</button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="exportCotisCSV()">Export CSV</button>
+          <button type="button" class="btn btn-blue btn-sm" onclick="openRappelModal()">Rappel email</button>
+          <button type="button" class="btn btn-gold btn-sm" onclick="genererCotisationsAnnee()">Générer année</button>
         </div>
       </div>
       <div class="stats-grid" id="cotis-stats" style="grid-template-columns:repeat(3,1fr);"></div>
@@ -1872,7 +1872,7 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
     <div id="page-compta" class="page">
       <div class="page-header">
         <div class="page-header-left"><h2>Comptabilité</h2><p>Recettes et dépenses</p></div>
-        <button class="btn btn-secondary btn-sm" onclick="exportComptaCSV()">Export CSV</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="exportComptaCSV()">Export CSV</button>
       </div>
       <div class="compta-summary" id="compta-summary"></div>
       <div class="card" style="margin-bottom:16px;">
@@ -1880,12 +1880,12 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
         <div id="compta-chart" class="gef-chart"></div>
       </div>
       <div class="toolbar">
-        <button class="btn btn-primary btn-sm" onclick="openComptaModal('recette')">+ Recette</button>
-        <button class="btn btn-gold btn-sm" onclick="openComptaModal('depense')">+ Dépense</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="openComptaModal('recette')">+ Recette</button>
+        <button type="button" class="btn btn-gold btn-sm" onclick="openComptaModal('depense')">+ Dépense</button>
         <select aria-label="Filtrer par type" id="compta-filter-type" onchange="renderCompta()" style="width:110px;">
           <option value="">Tous</option><option value="recette">Recettes</option><option value="depense">Dépenses</option>
         </select>
-        <button class="btn btn-secondary btn-sm" onclick="exportComptaCSV()" title="Exporter CSV">CSV</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="exportComptaCSV()" title="Exporter CSV">CSV</button>
       </div>
       <div class="card"><div class="table-wrap">
         <table><thead><tr><th>Date</th><th>Type</th><th>Description</th><th>Montant CHF</th><th>Justificatif</th><th></th></tr></thead>
@@ -1947,8 +1947,8 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
               <div id="adhesion-doc-date" style="font-size:12px;color:var(--text3);margin-top:3px;"></div>
             </div>
           </div>
-          <button class="btn btn-primary" style="width:100%;padding:15px;font-size:15px;margin-bottom:8px;" onclick="telechargerAdhesionMembre()">Télécharger le PDF</button>
-          <button class="btn btn-secondary" style="width:100%;" onclick="remplacerAdhesion()">Remplacer le formulaire</button>
+          <button type="button" class="btn btn-primary" style="width:100%;padding:15px;font-size:15px;margin-bottom:8px;" onclick="telechargerAdhesionMembre()">Télécharger le PDF</button>
+          <button type="button" class="btn btn-secondary" style="width:100%;" onclick="remplacerAdhesion()">Remplacer le formulaire</button>
         </div>
 
         <!-- Pas de formulaire -->
@@ -1967,7 +1967,7 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
           <input type="file" id="adhesion-file-input" accept=".pdf,image/*" style="display:none;" onchange="importerAdhesion(this)">
         </div>
 
-        <button class="btn btn-secondary" style="width:100%;margin-top:8px;" onclick="closeModal('modal-adhesion-membre')">Fermer</button>
+        <button type="button" class="btn btn-secondary" style="width:100%;margin-top:8px;" onclick="closeModal('modal-adhesion-membre')">Fermer</button>
       </div>
     </div>
 
@@ -1979,7 +1979,7 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
                 <div style="position:relative;">
           <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;">
             <div style="font-size:13px;font-weight:600;color:var(--text3);">Adhésions</div>
-            <button onclick="partagerLienAdhesion()" style="background:var(--card);border:1px solid var(--border2);color:var(--text);padding:8px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,sans-serif;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:5px;-webkit-appearance:none;">
+            <button type="button" onclick="partagerLienAdhesion()" style="background:var(--card);border:1px solid var(--border2);color:var(--text);padding:8px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,sans-serif;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:5px;-webkit-appearance:none;">
               Partager
             </button>
           </div>
@@ -1990,9 +1990,9 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
 
       <!-- TABS -->
       <div class="tabs" style="margin-bottom:16px;">
-        <button class="tab active" onclick="setDemandesTab('attente')">En attente</button>
-        <button class="tab" onclick="setDemandesTab('validees')">Validées</button>
-        <button class="tab" onclick="setDemandesTab('refusees')">Refusées</button>
+        <button type="button" class="tab active" onclick="setDemandesTab('attente')">En attente</button>
+        <button type="button" class="tab" onclick="setDemandesTab('validees')">Validées</button>
+        <button type="button" class="tab" onclick="setDemandesTab('refusees')">Refusées</button>
       </div>
 
       <div id="demandes-list"></div>
@@ -2006,12 +2006,12 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
         <p style="font-size:13px;color:var(--text2);margin:8px 0 16px;">Signez dans le cadre ci-dessous avec votre doigt.</p>
         <div style="background:rgba(255,255,255,0.03);border:1.5px dashed var(--border2);border-radius:14px;overflow:hidden;position:relative;">
           <canvas id="sig-unique" height="130" style="display:block;width:100%;touch-action:none;cursor:crosshair;"></canvas>
-          <button onclick="clearSigBureau()" style="position:absolute;top:8px;right:8px;background:rgba(255,255,255,0.1);border:1px solid var(--border2);color:var(--text2);padding:5px 12px;border-radius:8px;font-size:11px;cursor:pointer;font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,sans-serif;">Effacer</button>
+          <button type="button" onclick="clearSigBureau()" style="position:absolute;top:8px;right:8px;background:rgba(255,255,255,0.1);border:1px solid var(--border2);color:var(--text2);padding:5px 12px;border-radius:8px;font-size:11px;cursor:pointer;font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,sans-serif;">Effacer</button>
           <div style="font-size:11px;color:var(--text3);text-align:center;padding:6px;border-top:1px solid var(--border);">Signez ici →</div>
         </div>
         <div style="display:flex;gap:10px;margin-top:14px;">
-          <button class="btn btn-secondary" onclick="closeModal('modal-sig-bureau')">Annuler</button>
-          <button class="btn btn-primary" onclick="confirmerSignature()" style="flex:1;">Confirmer la signature</button>
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modal-sig-bureau')">Annuler</button>
+          <button type="button" class="btn btn-primary" onclick="confirmerSignature()" style="flex:1;">Confirmer la signature</button>
         </div>
       </div>
     </div>
@@ -2032,11 +2032,11 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
         <div class="card">
           <div class="card-title">Destinataires</div>
           <div class="toolbar" style="margin-bottom:10px;">
-            <button class="btn btn-sm btn-secondary" onclick="emailSelectGroupe('Actif')">Actifs</button>
-            <button class="btn btn-sm btn-secondary" onclick="emailSelectGroupe('Actif Suisse')">Actifs Suisses</button>
-            <button class="btn btn-sm btn-secondary" onclick="emailSelectGroupe('Passif')">Passifs</button>
-            <button class="btn btn-sm btn-secondary" onclick="emailSelectGroupe('tous')">Tous</button>
-            <button class="btn btn-sm btn-secondary" onclick="emailSelectGroupe('aucun')" style="color:var(--red)">Aucun</button>
+            <button type="button" class="btn btn-sm btn-secondary" onclick="emailSelectGroupe('Actif')">Actifs</button>
+            <button type="button" class="btn btn-sm btn-secondary" onclick="emailSelectGroupe('Actif Suisse')">Actifs Suisses</button>
+            <button type="button" class="btn btn-sm btn-secondary" onclick="emailSelectGroupe('Passif')">Passifs</button>
+            <button type="button" class="btn btn-sm btn-secondary" onclick="emailSelectGroupe('tous')">Tous</button>
+            <button type="button" class="btn btn-sm btn-secondary" onclick="emailSelectGroupe('aucun')" style="color:var(--red)">Aucun</button>
           </div>
           <div id="email-destinataires-list" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
           <div id="email-sans-email" style="margin-top:10px;font-size:12px;color:var(--text3);display:none;">
@@ -2072,11 +2072,11 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
           </div>
 
           <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-            <button class="btn btn-primary" onclick="envoyerEmail()">
+            <button type="button" class="btn btn-primary" onclick="envoyerEmail()">
               <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
               Ouvrir dans ma messagerie
             </button>
-            <button class="btn btn-secondary" onclick="emailCopierDestinataires()">Copier les adresses</button>
+            <button type="button" class="btn btn-secondary" onclick="emailCopierDestinataires()">Copier les adresses</button>
             <span id="email-feedback" style="font-size:12px;color:var(--green);display:none;">Copié !</span>
           </div>
         </div>
@@ -2085,7 +2085,7 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
       <!-- HISTORIQUE -->
       <div id="tab-historique" style="display:none;">
         <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
-          <button class="btn btn-secondary btn-sm" onclick="emailEffacerHistorique()" style="color:var(--red)">Effacer l'historique</button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="emailEffacerHistorique()" style="color:var(--red)">Effacer l'historique</button>
         </div>
         <div id="email-historique-list"></div>
       </div>
@@ -2099,7 +2099,7 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
           <p id="docs-header-sub">Chargement…</p>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn btn-secondary btn-sm" onclick="creerDossier()">Dossier</button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="creerDossier()">Dossier</button>
           <label class="btn btn-primary btn-sm" style="cursor:pointer;">
             + Document
             <input type="file" id="doc-file-input" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.jpg,.png,.zip" style="display:none;" onchange="ajouterDocuments(this)">
@@ -2136,7 +2136,7 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
     <div id="page-rapport" class="page">
       <div class="page-header">
         <div class="page-header-left"><h2>Rapport annuel</h2><p>Résumé complet de l'association</p></div>
-        <button class="btn btn-primary btn-sm" onclick="exportRapportTxt()">Télécharger</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="exportRapportTxt()">Télécharger</button>
       </div>
       <div id="rapport-content"></div>
     </div>
@@ -2184,10 +2184,10 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
                 <input type="file" accept="image/*" onchange="donUploadQR(this,'twint')" style="display:none;">
               </label>
             </div>
-            <img id="don-twint-img" class="don-qr-img" src="" alt="QR TWINT" style="display:none;" onclick="donViewQR('twint')">
+            <img id="don-twint-img" class="don-qr-img" alt="QR TWINT" style="display:none;" onclick="donViewQR('twint')">
           </div>
           <div class="don-card-footer">
-            <button class="don-action-btn don-action-secondary" onclick="donRemoveQR('twint')" id="don-twint-remove" style="display:none;">Supprimer</button>
+            <button type="button" class="don-action-btn don-action-secondary" onclick="donRemoveQR('twint')" id="don-twint-remove" style="display:none;">Supprimer</button>
             <label class="don-action-btn don-action-primary">
               <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
               Changer l'image
@@ -2218,10 +2218,10 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
                 <input type="file" accept="image/*" onchange="donUploadQR(this,'bank')" style="display:none;">
               </label>
             </div>
-            <img id="don-bank-img" class="don-qr-img" src="" alt="QR Bancaire" style="display:none;" onclick="donViewQR('bank')">
+            <img id="don-bank-img" class="don-qr-img" alt="QR Bancaire" style="display:none;" onclick="donViewQR('bank')">
           </div>
           <div class="don-card-footer">
-            <button class="don-action-btn don-action-secondary" onclick="donRemoveQR('bank')" id="don-bank-remove" style="display:none;">Supprimer</button>
+            <button type="button" class="don-action-btn don-action-secondary" onclick="donRemoveQR('bank')" id="don-bank-remove" style="display:none;">Supprimer</button>
             <label class="don-action-btn don-action-primary">
               <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
               Changer l'image
@@ -2250,7 +2250,7 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
               <span class="don-info-val" id="don-message-val" onclick="donEditField('message')">Don GE-FAIS <span class="don-edit-hint">✏️</span></span>
               <input type="text" class="don-field-input" id="don-message-input" placeholder="Don GE-FAIS" onblur="donSaveField('message')" onkeydown="if(event.key==='Enter')donSaveField('message')" style="display:none;">
             </div>
-            <button class="don-copy-btn" onclick="donCopyIBAN()">
+            <button type="button" class="don-copy-btn" onclick="donCopyIBAN()">
               <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
               <span id="don-copy-label">Copier l'IBAN</span>
             </button>
@@ -2273,7 +2273,7 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
 <!-- MODAL MEMBRE -->
 <div class="modal-overlay" id="modal-membre-fiche" onclick="if(event.target===this)closeModal('modal-membre-fiche')">
   <div class="modal" style="max-width:480px;">
-    <button class="mf-close" onclick="closeModal('modal-membre-fiche')" aria-label="Fermer">Fermer</button>
+    <button type="button" class="mf-close" onclick="closeModal('modal-membre-fiche')" aria-label="Fermer">Fermer</button>
     <div id="membre-fiche"></div>
   </div>
 </div>
@@ -2319,8 +2319,8 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
       <div class="form-group full"><label>Notes</label><textarea id="m-notes" placeholder="Notes…"></textarea></div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-membre')">Annuler</button>
-      <button class="btn btn-primary" onclick="saveMember()">Enregistrer</button>
+      <button type="button" class="btn btn-secondary" onclick="closeModal('modal-membre')">Annuler</button>
+      <button type="button" class="btn btn-primary" onclick="saveMember()">Enregistrer</button>
     </div>
   </div>
 </div>
@@ -2338,8 +2338,8 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
       <div class="form-group full"><label>Commentaires</label><textarea id="e-comment" placeholder="Notes…"></textarea></div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-event')">Annuler</button>
-      <button class="btn btn-primary" onclick="saveEvent()">Enregistrer</button>
+      <button type="button" class="btn btn-secondary" onclick="closeModal('modal-event')">Annuler</button>
+      <button type="button" class="btn btn-primary" onclick="saveEvent()">Enregistrer</button>
     </div>
   </div>
 </div>
@@ -2351,12 +2351,12 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
       <span style="font-size:12px;color:var(--text2);" id="presence-event-count"></span>
       <div style="display:flex;gap:6px;">
-        <button class="btn btn-sm btn-green" onclick="toggleAllPresences(true)">Tous</button>
-        <button class="btn btn-sm btn-secondary" onclick="toggleAllPresences(false)">Aucun</button>
+        <button type="button" class="btn btn-sm btn-green" onclick="toggleAllPresences(true)">Tous</button>
+        <button type="button" class="btn btn-sm btn-secondary" onclick="toggleAllPresences(false)">Aucun</button>
       </div>
     </div>
     <div class="presence-check-list" id="presence-check-list"></div>
-    <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modal-presences-event')">Fermer</button></div>
+    <div class="modal-footer"><button type="button" class="btn btn-secondary" onclick="closeModal('modal-presences-event')">Fermer</button></div>
   </div>
 </div>
 
@@ -2398,17 +2398,17 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
     </div>
 
     <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-compta')">Annuler</button>
-      <button class="btn btn-primary" onclick="saveCompta()">Enregistrer</button>
+      <button type="button" class="btn btn-secondary" onclick="closeModal('modal-compta')">Annuler</button>
+      <button type="button" class="btn btn-primary" onclick="saveCompta()">Enregistrer</button>
     </div>
   </div>
 </div>
 
 <!-- VIEWER PHOTO PLEIN ÉCRAN -->
 <div id="photo-viewer" onclick="if(event.target===this)closePhotoViewer()">
-  <button id="photo-viewer-close" onclick="closePhotoViewer()">✕</button>
-  <img id="photo-viewer-img" src="" alt="Justificatif">
-  <button id="photo-viewer-dl" onclick="telechargerPhoto()">Télécharger</button>
+  <button type="button" id="photo-viewer-close" onclick="closePhotoViewer()">✕</button>
+  <img id="photo-viewer-img" alt="Justificatif">
+  <button type="button" id="photo-viewer-dl" onclick="telechargerPhoto()">Télécharger</button>
 </div>
 
 <div class="modal-overlay" id="modal-types">
@@ -2418,10 +2418,10 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
     <div id="types-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
     <div style="display:flex;gap:8px;">
       <input id="new-type-input" type="text" placeholder="Nouveau type…" style="flex:1;" onkeydown="if(event.key==='Enter')ajouterType()">
-      <button class="btn btn-primary btn-sm" onclick="ajouterType()">+ Ajouter</button>
+      <button type="button" class="btn btn-primary btn-sm" onclick="ajouterType()">+ Ajouter</button>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-types')">Fermer</button>
+      <button type="button" class="btn btn-secondary" onclick="closeModal('modal-types')">Fermer</button>
     </div>
   </div>
 </div>
@@ -2440,8 +2440,8 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
       <div class="form-group full"><label>Notes</label><input id="cotis-notes" type="text" placeholder="Remarque…"></div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-cotisation')">Annuler</button>
-      <button class="btn btn-primary" onclick="saveCotisation()">Enregistrer</button>
+      <button type="button" class="btn btn-secondary" onclick="closeModal('modal-cotisation')">Annuler</button>
+      <button type="button" class="btn btn-primary" onclick="saveCotisation()">Enregistrer</button>
     </div>
   </div>
 </div>
@@ -2458,8 +2458,8 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
     <label style="font-size:11px;color:var(--text2);text-transform:uppercase;display:block;margin-bottom:6px;">Email à envoyer</label>
     <div class="email-preview" id="rappel-email-preview"></div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-rappel')">Fermer</button>
-      <button class="btn btn-primary" onclick="copierEmail()">Copier l'email</button>
+      <button type="button" class="btn btn-secondary" onclick="closeModal('modal-rappel')">Fermer</button>
+      <button type="button" class="btn btn-primary" onclick="copierEmail()">Copier l'email</button>
     </div>
   </div>
 </div>
@@ -3200,14 +3200,14 @@ function renderDashboard(){
   if(!cotisAnnee.length&&total)todo.push({t:`Les cotisations ${annee} ne sont pas encore générées`,a:"navTo('cotisations','Cotisations')",l:'Générer'});
   else if(cotisAttente)todo.push({t:`${cotisAttente} cotisation${cotisAttente>1?'s':''} ${annee} en attente de paiement`,a:"navTo('cotisations','Cotisations')",l:'Voir'});
   aVenir.filter(e=>jours(e.date)<=7).forEach(e=>todo.push({t:`${esc(e.nom||e.type)} : ${quand(e.date)}`,a:"navTo('presences','Présences')",l:'Préparer'}));
-  set('db-todo',todo.length?`<h2 class="db-todo-title">À faire</h2><ul>${todo.map(x=>`<li><span>${x.t}</span><button class="db-textlink" onclick="${x.a}">${x.l} →</button></li>`).join('')}</ul>`:'',true);
+  set('db-todo',todo.length?`<h2 class="db-todo-title">À faire</h2><ul>${todo.map(x=>`<li><span>${x.t}</span><button type="button" class="db-textlink" onclick="${x.a}">${x.l} →</button></li>`).join('')}</ul>`:'',true);
 
   // 01 Agenda
   const mois=d=>new Date(d+'T12:00:00').toLocaleDateString('fr-CH',{month:'short'}).replace('.','');
   set('db-agenda',aVenir.length?`<ul class="db-list">${aVenir.slice(0,4).map(e=>`
     <li class="db-event"><span class="db-date"><b>${+e.date.slice(8,10)}</b>${mois(e.date)}</span>
       <span class="db-event-body"><span class="db-event-name">${esc(e.nom||e.type)}</span><span class="db-event-meta">${esc(e.type||'')} · ${quand(e.date)}</span></span></li>`).join('')}</ul>`
-    :'<p class="db-empty">Aucun événement à venir. <button class="db-textlink" onclick="navTo(\'evenements\',\'Événements\');setTimeout(openEventModal,100)">Créer un événement →</button></p>',true);
+    :'<p class="db-empty">Aucun événement à venir. <button type="button" class="db-textlink" onclick="navTo(\'evenements\',\'Événements\');setTimeout(openEventModal,100)">Créer un événement →</button></p>',true);
   const recents=passes.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,4);
   set('db-participation',recents.length?`<ul class="db-list">${recents.map(e=>{const n=membres.filter(m=>presences[m.id+'_'+e.id]).length;const pct=total?Math.round(n/total*100):0;
     return`<li class="db-row"><span class="db-row-name">${esc(e.nom||e.type)}<small>${fmtDate(e.date)}</small></span><span class="db-bar"><i style="width:${pct}%"></i></span><span class="db-row-val">${n}<small>/${total}</small></span></li>`;}).join('')}</ul>`
@@ -3306,9 +3306,9 @@ function renderMembres(){
 
   const paginationM=totalPagesM>1?`
     <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;">
-      <button class="btn btn-secondary btn-sm" onclick="memPage(-1)" ${pageM===0?'disabled':''}>Précédent</button>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="memPage(-1)" ${pageM===0?'disabled':''}>Précédent</button>
       <span style="font-size:12px;color:var(--text2);">${pageM+1} / ${totalPagesM} · ${totalM} membres</span>
-      <button class="btn btn-secondary btn-sm" onclick="memPage(1)" ${pageM>=totalPagesM-1?'disabled':''}>Suivant →</button>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="memPage(1)" ${pageM>=totalPagesM-1?'disabled':''}>Suivant →</button>
     </div>`:'';
 
   document.getElementById('membres-tbody').innerHTML=paged.map(m=>{
@@ -3319,7 +3319,7 @@ function renderMembres(){
     <td>${badgeType(m.type)}</td>
     <td style="color:var(--text3)">${_e(m.email||'—')}</td>
     <td style="color:var(--text3);font-size:12px">${_e(m.tel||'—')}</td>
-    <td><button class="btn-icon" onclick="ouvrirFicheAdhesion(${m.id})" title="Formulaire d'adhésion"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg></button><button class="btn-icon" onclick="editMember(${m.id})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="btn-icon" onclick="deleteMember(${m.id})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg></button></td>
+    <td><button type="button" class="btn-icon" onclick="ouvrirFicheAdhesion(${m.id})" title="Formulaire d'adhésion"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg></button><button type="button" class="btn-icon" onclick="editMember(${m.id})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button type="button" class="btn-icon" onclick="deleteMember(${m.id})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg></button></td>
   </tr>`;}).join('');
 
   document.getElementById('member-cards').innerHTML=paged.map(m=>{
@@ -3328,7 +3328,7 @@ function renderMembres(){
     const dot=t==='Actif'?'var(--red)':t==='Actif Suisse'?'var(--gold2)':t==='Passif'?'var(--text3)':'var(--border2)';
     const pres=events.length>0?Math.round(events.filter(e=>presences[m.id+'_'+e.id]).length/events.length*100):null;
     const meta=[t?t.replace('Actif Suisse','Actif suisse'):'Sans statut',m.role].filter(Boolean).map(esc).join(' · ');
-    return`<button class="mrow" onclick="ouvrirMembre(${m.id})">
+    return`<button type="button" class="mrow" onclick="ouvrirMembre(${m.id})">
       <span class="mrow-dot" style="background:${dot}"></span>
       <span class="mrow-id"><span class="mrow-name">${esc(m.prenom)} ${esc(m.nom)}</span><span class="mrow-meta">${meta}</span></span>
       ${pres!==null?`<span class="mrow-pres${pres>=70?' is-good':''}">${pres}<small>%</small></span>`:''}
@@ -3392,10 +3392,10 @@ function ouvrirMembre(id){
       ${ligne('Notes',esc(m.notes||''))}
     </dl>
     <div class="mf-actions">
-      <button class="btn btn-secondary" onclick="closeModal('modal-membre-fiche');ouvrirFicheAdhesion(${m.id})">Fiche d'adhésion</button>
-      <button class="btn btn-primary" onclick="closeModal('modal-membre-fiche');editMember(${m.id})">Modifier</button>
+      <button type="button" class="btn btn-secondary" onclick="closeModal('modal-membre-fiche');ouvrirFicheAdhesion(${m.id})">Fiche d'adhésion</button>
+      <button type="button" class="btn btn-primary" onclick="closeModal('modal-membre-fiche');editMember(${m.id})">Modifier</button>
     </div>
-    <button class="mf-delete" onclick="closeModal('modal-membre-fiche');deleteMember(${m.id})">Supprimer ce membre</button>`;
+    <button type="button" class="mf-delete" onclick="closeModal('modal-membre-fiche');deleteMember(${m.id})">Supprimer ce membre</button>`;
   document.getElementById('modal-membre-fiche').classList.add('open');
 }
 function deleteMember(id){
@@ -3542,10 +3542,10 @@ function _buildEventListHTML(filtered){
         </div>
         <div class="event-row-body" id="event-body-${e.id}">
           <div class="event-row-actions">
-            <button class="btn btn-sm btn-green" onclick="toggleAllPresencesInline(${e.id},true);event.stopPropagation()">Tous présents</button>
-            <button class="btn btn-sm btn-secondary" onclick="toggleAllPresencesInline(${e.id},false);event.stopPropagation()">Tous absents</button>
-            <button class="btn btn-sm btn-secondary" onclick="editEvent(${e.id});event.stopPropagation()">Modifier</button>
-            <button class="btn btn-sm btn-secondary" style="color:var(--red);" onclick="deleteEvent(${e.id});event.stopPropagation()">Supprimer</button>
+            <button type="button" class="btn btn-sm btn-green" onclick="toggleAllPresencesInline(${e.id},true);event.stopPropagation()">Tous présents</button>
+            <button type="button" class="btn btn-sm btn-secondary" onclick="toggleAllPresencesInline(${e.id},false);event.stopPropagation()">Tous absents</button>
+            <button type="button" class="btn btn-sm btn-secondary" onclick="editEvent(${e.id});event.stopPropagation()">Modifier</button>
+            <button type="button" class="btn btn-sm btn-secondary" style="color:var(--red);" onclick="deleteEvent(${e.id});event.stopPropagation()">Supprimer</button>
           </div>
           ${e.commentaires?`<div style="font-size:13px;color:var(--text2);background:var(--bg3);border-radius:10px;padding:10px 14px;margin-bottom:14px;border:1px solid var(--border);display:flex;gap:8px;align-items:flex-start;"><span>💬</span><span>${_e(e.commentaires)}</span></div>`:''}
           <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;">
@@ -3556,7 +3556,7 @@ function _buildEventListHTML(filtered){
       </div>`;
     });
   });
-  return html||'<p style="color:var(--text3);text-align:center;padding:32px 0;font-size:14px;">Aucun événement pour cette catégorie.<br><button class="btn btn-primary btn-sm" style="margin-top:10px;" onclick="openEventModal()">+ Ajouter un événement</button></p>';
+  return html||'<p style="color:var(--text3);text-align:center;padding:32px 0;font-size:14px;">Aucun événement pour cette catégorie.<br><button type="button" class="btn btn-primary btn-sm" style="margin-top:10px;" onclick="openEventModal()">+ Ajouter un événement</button></p>';
 }
 
 function renderEvents(){
@@ -3630,9 +3630,9 @@ function renderEvents(){
 
   const paginationHTML=totalPages>1?`
     <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;padding-top:12px;border-top:1px solid var(--border);">
-      <button class="btn btn-secondary btn-sm" onclick="evPage(-1)" ${page===0?'disabled':''}>Précédent</button>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="evPage(-1)" ${page===0?'disabled':''}>Précédent</button>
       <span style="font-size:13px;color:var(--text2);">${page+1} / ${totalPages}</span>
-      <button class="btn btn-secondary btn-sm" onclick="evPage(1)" ${page>=totalPages-1?'disabled':''}>Suivant →</button>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="evPage(1)" ${page>=totalPages-1?'disabled':''}>Suivant →</button>
     </div>`:'';
 
   const content=document.getElementById('evsp-content');
@@ -3738,7 +3738,7 @@ function renderTypesList(){
         <span class="event-chip ${chipClass(t)}">${t}</span>
         ${fixe?'<span style="font-size:10px;color:var(--text3);">par défaut</span>':''}
       </div>
-      ${!fixe?`<button class="btn-icon" onclick="supprimerType('${t}')" title="Supprimer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg></button>`:'<span style="font-size:18px;color:var(--border);">🔒</span>'}
+      ${!fixe?`<button type="button" class="btn-icon" onclick="supprimerType('${t}')" title="Supprimer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg></button>`:'<span style="font-size:18px;color:var(--border);">🔒</span>'}
     </div>`;
   }).join('');
 }
@@ -3780,7 +3780,7 @@ function renderCotisations(){
     <div class="stat-card"><div class="stat-label">En attente</div><div class="stat-value amount-out">${total-payees}</div></div>
     <div class="stat-card"><div class="stat-label">Encaissé</div><div class="stat-value">${montantTotal.toFixed(0)}<span>CHF</span></div></div>
   `;
-  document.getElementById('cotis-tbody').innerHTML=list.map(c=>{const m=membres.find(x=>x.id===c.membreId);if(!m)return'';return`<tr><td class="td-name">${_e(m.prenom)} ${_e(m.nom)}</td><td>${badgeType(m.type)}</td><td style="font-weight:500">${c.montant>0?c.montant.toFixed(2):'—'}</td><td><span class="badge ${c.statut==='paye'?'badge-paye':'badge-impaye'}">${c.statut==='paye'?'Payé':'En attente'}</span></td><td style="color:var(--text3)">${c.datePaiement?fmtDate(c.datePaiement):'—'}</td><td><button class="btn btn-sm btn-secondary" onclick="editCotisation(${c.membreId},${annee})">Modifier</button></td></tr>`;}).join('');
+  document.getElementById('cotis-tbody').innerHTML=list.map(c=>{const m=membres.find(x=>x.id===c.membreId);if(!m)return'';return`<tr><td class="td-name">${_e(m.prenom)} ${_e(m.nom)}</td><td>${badgeType(m.type)}</td><td style="font-weight:500">${c.montant>0?c.montant.toFixed(2):'—'}</td><td><span class="badge ${c.statut==='paye'?'badge-paye':'badge-impaye'}">${c.statut==='paye'?'Payé':'En attente'}</span></td><td style="color:var(--text3)">${c.datePaiement?fmtDate(c.datePaiement):'—'}</td><td><button type="button" class="btn btn-sm btn-secondary" onclick="editCotisation(${c.membreId},${annee})">Modifier</button></td></tr>`;}).join('');
   document.getElementById('cotis-cards').innerHTML=list.map(c=>{
     const m=membres.find(x=>x.id===c.membreId);if(!m)return'';
     const p=c.statut==='paye';
@@ -3801,7 +3801,7 @@ function renderCotisations(){
         </div>
       </div>
       <div class="cotis-card-v2-bottom">
-        <button class="btn btn-sm btn-secondary" style="font-size:11px;padding:6px 12px;" onclick="editCotisation(${c.membreId},${annee})">Modifier</button>
+        <button type="button" class="btn btn-sm btn-secondary" style="font-size:11px;padding:6px 12px;" onclick="editCotisation(${c.membreId},${annee})">Modifier</button>
         ${p?`<span style="font-size:11px;color:var(--green);">Cotisation réglée ✓</span>`:`<span style="font-size:11px;color:var(--text3);">En attente de paiement</span>`}
       </div>
     </div>`;
@@ -3926,12 +3926,12 @@ function _renderAttachmentsPreview(){
     if(isImage){
       return`<div style="position:relative;display:inline-block;">
         <img src="${a.thumb||a.data}" alt="" class="attach-thumb" onclick="voirPJEdition(${i})" title="${_e(a.name)}">
-        <button onclick="_removeAttachment(${i})" style="position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">✕</button>
+        <button type="button" onclick="_removeAttachment(${i})" style="position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">✕</button>
       </div>`;
     }
     return`<div class="attach-file">
       <span onclick="voirPJEdition(${i})" style="cursor:pointer;text-decoration:underline;text-underline-offset:2px;">${_e(a.name)}</span><span style="color:var(--text3);font-size:11px;margin-left:4px;">${(a.size/1024).toFixed(0)}Ko</span>
-      <button onclick="_removeAttachment(${i})" class="attach-remove">✕</button>
+      <button type="button" onclick="_removeAttachment(${i})" class="attach-remove">✕</button>
     </div>`;
   }).join('');
   if(count){
@@ -3956,7 +3956,7 @@ function openPhotoViewer(src,nom){
 }
 function closePhotoViewer(){
   document.getElementById('photo-viewer').classList.remove('open');
-  document.getElementById('photo-viewer-img').src='';
+  document.getElementById('photo-viewer-img').removeAttribute('src');
 }
 function telechargerPhoto(){
   const a=document.createElement('a');
@@ -4068,7 +4068,7 @@ function renderCompta(){
       <td class="td-name">${_e(c.description)}</td>
       <td class="${c.type==='recette'?'amount-in':'amount-out'}" style="font-weight:600">${c.type==='recette'?'+':'−'}${c.montant.toFixed(2)}</td>
       <td>${justif}</td>
-      <td style="white-space:nowrap"><button class="btn-icon" onclick="editCompta(${c.id})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="btn-icon" onclick="deleteCompta(${c.id})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg></button></td>
+      <td style="white-space:nowrap"><button type="button" class="btn-icon" onclick="editCompta(${c.id})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button type="button" class="btn-icon" onclick="deleteCompta(${c.id})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg></button></td>
     </tr>`;
   }).join('');
   // Cartes mobile
@@ -4092,8 +4092,8 @@ function renderCompta(){
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;">
         <div class="compta-card-v2-amount" style="color:${color};">${isIn?'+':'−'}${c.montant.toFixed(2)}<span style="font-size:12px;font-weight:500;"> CHF</span></div>
         <div class="compta-card-v2-actions">
-          <button class="btn-icon" onclick="editCompta(${c.id})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
-          <button class="btn-icon" onclick="deleteCompta(${c.id})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg></button>
+          <button type="button" class="btn-icon" onclick="editCompta(${c.id})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
+          <button type="button" class="btn-icon" onclick="deleteCompta(${c.id})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg></button>
         </div>
       </div>
     </div>`;
@@ -4318,8 +4318,8 @@ function renderEmailHistorique(){
           <div style="font-size:12px;color:var(--text2);margin-top:8px;padding:10px;background:var(--bg3);border-radius:var(--radius);white-space:pre-wrap;max-height:80px;overflow:hidden;text-overflow:ellipsis;">${_e(e.corps)}</div>
         </div>
         <div style="display:flex;gap:6px;flex-shrink:0;">
-          <button class="btn btn-sm btn-secondary" onclick="emailReutiliser(${e.id})" title="Réutiliser ce message">Réutiliser</button>
-          <button class="btn-icon" onclick="emailSupprimerHistorique(${e.id})" title="Supprimer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg></button>
+          <button type="button" class="btn btn-sm btn-secondary" onclick="emailReutiliser(${e.id})" title="Réutiliser ce message">Réutiliser</button>
+          <button type="button" class="btn-icon" onclick="emailSupprimerHistorique(${e.id})" title="Supprimer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg></button>
         </div>
       </div>
     </div>`).join('');
@@ -4651,8 +4651,8 @@ function renderDocuments(){
           <div class="doc-folder-name">${_e(f.nom)}</div>
           <div class="doc-folder-count">${count} élément${count>1?'s':''}</div>
           <div class="doc-folder-actions" onclick="event.stopPropagation()">
-            <button class="btn-icon" onclick="renommerDossier(${f.id})" title="Renommer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
-            <button class="btn-icon" onclick="supprimerDoc(${f.id})" title="Supprimer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg></button>
+            <button type="button" class="btn-icon" onclick="renommerDossier(${f.id})" title="Renommer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
+            <button type="button" class="btn-icon" onclick="supprimerDoc(${f.id})" title="Supprimer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg></button>
           </div>
         </div>`;
       }).join('')}
@@ -4671,8 +4671,8 @@ function renderDocuments(){
             <div class="doc-file-meta">${_e(d.categorie)} · ${formatSize(d.taille)} · ${fmtDate(d.date)}</div>
           </div>
           <div class="doc-file-actions">
-            <button class="btn-icon" onclick="telechargerDoc(${d.id})" title="Télécharger"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></button>
-            <button class="btn-icon" onclick="supprimerDoc(${d.id})" title="Supprimer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg></button>
+            <button type="button" class="btn-icon" onclick="telechargerDoc(${d.id})" title="Télécharger"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></button>
+            <button type="button" class="btn-icon" onclick="supprimerDoc(${d.id})" title="Supprimer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg></button>
           </div>
         </div>`;
       }).join('')}
@@ -5126,9 +5126,9 @@ function ouvrirFicheAdhesion(id){
             <div style="font-size:14px;font-weight:700;color:var(--green);margin-bottom:4px;">Demande trouvée dans Firebase</div>
             <div style="font-size:12px;color:var(--text3);">Le formulaire signé peut être régénéré</div>
           </div>
-          <button class="btn btn-primary" style="width:100%;margin-bottom:8px;" onclick="regenererDepuisFirebase('${demande.id}',${m.id})">Régénérer le PDF</button>
+          <button type="button" class="btn btn-primary" style="width:100%;margin-bottom:8px;" onclick="regenererDepuisFirebase('${demande.id}',${m.id})">Régénérer le PDF</button>
           <input type="file" id="adhesion-file-input-fb" accept=".pdf,image/*" style="display:none;" onchange="importerAdhesion(this)">
-          <button class="btn btn-secondary" style="width:100%;" onclick="document.getElementById('adhesion-file-input').click()">Importer manuellement</button>`;
+          <button type="button" class="btn btn-secondary" style="width:100%;" onclick="document.getElementById('adhesion-file-input').click()">Importer manuellement</button>`;
         }
       }).catch(()=>{});
   }
@@ -5210,7 +5210,7 @@ async function renderDemandes(){
     <div style="width:64px;height:64px;border-radius:20px;background:rgba(255,159,10,0.1);border:1px solid rgba(255,159,10,0.2);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px;">☁️</div>
     <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;">Connexion requise</div>
     <div style="font-size:13px;color:var(--text3);margin-bottom:20px;">Les demandes d'adhésion nécessitent Firebase</div>
-    <button onclick="syncNow()" style="background:var(--red);color:#fff;border:none;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,sans-serif;">Reconnecter</button>
+    <button type="button" onclick="syncNow()" style="background:var(--red);color:#fff;border:none;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,sans-serif;">Reconnecter</button>
   </div>`;
     return;
   }
@@ -5318,7 +5318,7 @@ async function renderDemandes(){
           </div>
           ${hasPres
             ?`<span style="background:var(--green-light);color:var(--green);font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;">Signé ✓</span>`
-            :`<button onclick="ouvrirSignature('${safeId}','president')" style="background:var(--red);color:#fff;border:none;padding:9px 18px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center;gap:6px;-webkit-appearance:none;">Signer</button>`}
+            :`<button type="button" onclick="ouvrirSignature('${safeId}','president')" style="background:var(--red);color:#fff;border:none;padding:9px 18px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center;gap:6px;-webkit-appearance:none;">Signer</button>`}
         </div>
         <!-- VP -->
         <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;${hasVp?'background:rgba(48,209,88,0.05);':''}">
@@ -5331,12 +5331,12 @@ async function renderDemandes(){
           </div>
           ${hasVp
             ?`<span style="background:var(--green-light);color:var(--green);font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;">Signé ✓</span>`
-            :`<button onclick="ouvrirSignature('${safeId}','vp')" style="background:var(--red);color:#fff;border:none;padding:9px 18px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center;gap:6px;-webkit-appearance:none;">Signer</button>`}
+            :`<button type="button" onclick="ouvrirSignature('${safeId}','vp')" style="background:var(--red);color:#fff;border:none;padding:9px 18px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center;gap:6px;-webkit-appearance:none;">Signer</button>`}
         </div>
       </div>
       <!-- Refuser -->
       <div style="padding:0 16px 16px;">
-        <button onclick="refuserDemande('${safeId}')" style="width:100%;background:rgba(255,59,48,0.08);color:var(--red);border:1px solid rgba(255,59,48,0.2);padding:12px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,sans-serif;">Refuser cette demande</button>
+        <button type="button" onclick="refuserDemande('${safeId}')" style="width:100%;background:rgba(255,59,48,0.08);color:var(--red);border:1px solid rgba(255,59,48,0.2);padding:12px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,sans-serif;">Refuser cette demande</button>
       </div>`
 
       :isValidee?`
@@ -5345,7 +5345,7 @@ async function renderDemandes(){
           <div style="font-size:14px;font-weight:800;color:var(--green);margin-bottom:3px;">Adhésion validée</div>
           ${d.dateValidation?`<div style="font-size:11px;color:var(--text3);">${new Date(d.dateValidation).toLocaleDateString('fr-CH',{day:'2-digit',month:'long',year:'numeric'})}</div>`:''}
         </div>
-        <button onclick="regenererPDF('${safeId}')" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:0 16px;border-radius:14px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,sans-serif;flex-shrink:0;">PDF</button>
+        <button type="button" onclick="regenererPDF('${safeId}')" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:0 16px;border-radius:14px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,sans-serif;flex-shrink:0;">PDF</button>
       </div>`:isRefusee?`
       <div style="padding:0 16px 16px;">
         <div style="background:rgba(255,59,48,0.08);border:1px solid rgba(255,59,48,0.2);border-radius:14px;padding:14px 16px;">
@@ -5913,7 +5913,7 @@ if(document.readyState==='loading'){
 </div>
 
 <!-- BOUTON FLOTTANT + -->
-<button id="fab-add" onclick="openFAB()" style="position:fixed;bottom:86px;right:20px;width:52px;height:52px;border-radius:50%;background:var(--red);color:#fff;border:none;font-size:24px;cursor:pointer;box-shadow:none;z-index:90;display:none;align-items:center;justify-content:center;transition:all 0.2s;">＋</button>
+<button type="button" id="fab-add" onclick="openFAB()" style="position:fixed;bottom:86px;right:20px;width:52px;height:52px;border-radius:50%;background:var(--red);color:#fff;border:none;font-size:24px;cursor:pointer;box-shadow:none;z-index:90;display:none;align-items:center;justify-content:center;transition:all 0.2s;">＋</button>
 <div id="fab-menu" style="display:none;position:fixed;bottom:146px;right:20px;z-index:90;flex-direction:column;gap:8px;align-items:flex-end;">
   <div class="fab-item" onclick="closeFAB();navTo('membres','Membres');setTimeout(openMemberModal,300);">Membre</div>
   <div class="fab-item" onclick="closeFAB();navTo('evenements','Événements');setTimeout(openEventModal,300);">Événement</div>
@@ -5925,7 +5925,7 @@ if(document.readyState==='loading'){
 
 <!-- MODAL PRESENTATION MODE -->
 <div id="modal-presentation" style="display:none;position:fixed;inset:0;background:#141414;color:#f3f1ec;z-index:500;flex-direction:column;align-items:center;justify-content:center;padding:48px;overflow-y:auto;">
-  <button onclick="closePresentationMode()" style="position:fixed;top:24px;right:24px;background:none;border:1px solid rgba(243,241,236,.3);color:#f3f1ec;padding:9px 16px;border-radius:3px;cursor:pointer;font-size:14px;font-family:inherit;">Quitter</button>
+  <button type="button" onclick="closePresentationMode()" style="position:fixed;top:24px;right:24px;background:none;border:1px solid rgba(243,241,236,.3);color:#f3f1ec;padding:9px 16px;border-radius:3px;cursor:pointer;font-size:14px;font-family:inherit;">Quitter</button>
   <div id="presentation-content" style="width:100%;max-width:1100px;"></div>
 </div>
 
@@ -5938,8 +5938,8 @@ if(document.readyState==='loading'){
       <p id="confirm-delete-msg" style="font-size:13px;color:var(--text2);line-height:1.5;"></p>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-confirm-delete')">Annuler</button>
-      <button class="btn btn-primary" id="confirm-delete-btn" style="background:var(--red);">Supprimer définitivement</button>
+      <button type="button" class="btn btn-secondary" onclick="closeModal('modal-confirm-delete')">Annuler</button>
+      <button type="button" class="btn btn-primary" id="confirm-delete-btn" style="background:var(--red);">Supprimer définitivement</button>
     </div>
   </div>
 </div>
@@ -5950,7 +5950,7 @@ if(document.readyState==='loading'){
     <div style="font-size:38px;margin-bottom:10px;" id="ios-alert-icon">ℹ️</div>
     <h3 style="margin-bottom:8px;" id="ios-alert-title">Information</h3>
     <p id="ios-alert-msg" style="font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:22px;"></p>
-    <button class="btn btn-primary" style="width:100%;" onclick="closeModal('modal-ios-alert')">OK</button>
+    <button type="button" class="btn btn-primary" style="width:100%;" onclick="closeModal('modal-ios-alert')">OK</button>
   </div>
 </div>
 
@@ -5963,8 +5963,8 @@ if(document.readyState==='loading'){
       <p id="ios-confirm-msg" style="font-size:13px;color:var(--text2);line-height:1.5;"></p>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-ios-confirm')">Annuler</button>
-      <button class="btn btn-primary" id="ios-confirm-btn">Confirmer</button>
+      <button type="button" class="btn btn-secondary" onclick="closeModal('modal-ios-confirm')">Annuler</button>
+      <button type="button" class="btn btn-primary" id="ios-confirm-btn">Confirmer</button>
     </div>
   </div>
 </div>
@@ -5978,8 +5978,8 @@ if(document.readyState==='loading'){
     </div>
     <input id="ios-prompt-input" type="text" style="width:100%;margin-bottom:4px;" onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('ios-prompt-btn').click();}">
     <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-ios-prompt')">Annuler</button>
-      <button class="btn btn-primary" id="ios-prompt-btn">Valider</button>
+      <button type="button" class="btn btn-secondary" onclick="closeModal('modal-ios-prompt')">Annuler</button>
+      <button type="button" class="btn btn-primary" id="ios-prompt-btn">Valider</button>
     </div>
   </div>
 </div>
@@ -5990,7 +5990,7 @@ if(document.readyState==='loading'){
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
       <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="color:var(--text3);flex-shrink:0;"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
       <input id="global-search-input" type="text" placeholder="Rechercher un membre, événement…" style="border:none;background:none;font-size:16px;flex:1;color:var(--text);outline:none;padding:0;" oninput="globalSearch(this.value)">
-      <button onclick="closeModal('modal-search')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:20px;padding:0 4px;">✕</button>
+      <button type="button" onclick="closeModal('modal-search')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:20px;padding:0 4px;">✕</button>
     </div>
     <div id="global-search-results" style="display:flex;flex-direction:column;gap:4px;max-height:60vh;overflow-y:auto;"></div>
   </div>
