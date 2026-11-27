@@ -74,6 +74,25 @@
   @view-transition{navigation:auto;}
   ::view-transition-old(root),::view-transition-new(root){animation-duration:.22s;}
   @media (prefers-reduced-motion:reduce){@view-transition{navigation:none;}}
+  /* ── Cadran qui suit la lecture ── */
+  .suivi{display:none}
+  @media (min-width:1000px){
+    .lecture{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:48px;align-items:start}
+    .suivi{display:block;position:sticky;top:110px;padding:22px 20px;background:#fff;border-radius:3px;box-shadow:0 1px 2px rgba(20,20,20,.05)}
+  }
+  .suivi-cercle{width:130px;height:130px;display:block;margin:0 auto 14px}
+  .suivi-cercle circle{fill:transparent;stroke:#c9c6bd;stroke-width:.6;transform-box:fill-box;transform-origin:center;transition:fill .5s,stroke .5s,transform .5s cubic-bezier(.3,1.6,.5,1)}
+  .suivi-cercle circle.vu{fill:#d8d5cc;stroke:#d8d5cc}
+  .suivi-cercle circle.ici{fill:var(--ink);stroke:var(--ink);transform:scale(1.25)}
+  .suivi-cercle circle.y.ici{fill:#fdc915;stroke:#fdc915}.suivi-cercle circle.r.ici{fill:#ee1e27;stroke:#ee1e27}
+  .suivi-art{font:700 13px var(--head);color:var(--red);margin:0 0 8px;text-align:center}
+  .suivi-mots{list-style:none;margin:0 0 14px;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:5px;min-height:52px}
+  .suivi-mots li{font-size:12.5px;font-weight:600;padding:3px 9px;border-radius:20px;background:#f3f1ec;animation:smot .45s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes smot{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .suivi-total{margin:0;font-size:12.5px;color:var(--muted);text-align:center;border-top:1px solid var(--line);padding-top:10px}
+  .suivi-total b{color:var(--ink);font-size:15px}
+  @media (prefers-reduced-motion:reduce){.suivi-cercle circle{transition:none}.suivi-mots li{animation:none}}
+  @media print{.suivi{display:none!important}.lecture{display:block!important}}
 </style>
 </head>
 <body>
@@ -103,6 +122,7 @@
     <li>Solidarité</li><li>Respect</li><li>Bienveillance</li><li>Responsabilité</li><li>Inclusion</li><li>Intégrité</li><li>Transparence</li><li>Engagement</li><li>Sérieux</li><li class="y">Humilité</li><li class="r">Dignité</li><li>Confidentialité</li>
   </ul>
 
+  <div class="lecture">
   <ol class="articles">
     <li class="art" id="principes">
       <span class="n" aria-hidden="true">1</span>
@@ -152,6 +172,13 @@
       </div>
     </li>
   </ol>
+    <aside class="suivi" aria-hidden="true">
+      <svg class="suivi-cercle" viewBox="-2 -2 44 44"><circle cx="20.24" cy="3.56" r="2.8" data-v="Solidarité"/><circle cx="28.72" cy="5.76" r="2.52" data-v="Respect"/><circle cx="35.24" cy="11.6" r="2.16" data-v="Bienveillance"/><circle cx="37.88" cy="19.92" r="2.12" data-v="Responsabilité"/><circle cx="35.72" cy="28.56" r="2.04" data-v="Inclusion"/><circle cx="29.2" cy="34.64" r="1.84" data-v="Intégrité"/><circle cx="20.48" cy="37.48" r="1.76" data-v="Transparence"/><circle cx="12.08" cy="35.4" r="1.84" data-v="Engagement"/><circle cx="5.76" cy="29.44" r="2.68" data-v="Sérieux"/><circle cx="3.36" cy="20.8" r="3.36" data-v="Humilité" class="y"/><circle cx="5.36" cy="12.28" r="3.32" data-v="Dignité" class="r"/><circle cx="11.64" cy="6.04" r="2.84" data-v="Confidentialité"/></svg>
+      <p class="suivi-art" id="suivi-art">Article 1</p>
+      <ul class="suivi-mots" id="suivi-mots"></ul>
+      <p class="suivi-total"><b id="suivi-n">0</b> / 12 valeurs rencontrées</p>
+    </aside>
+  </div>
 
   <section class="signer" aria-labelledby="t-signer">
     <div>
@@ -171,5 +198,29 @@
     <span><a href="confidentialite.html">Confidentialité</a> · <a href="mailto:contact@gefais.ch">contact@gefais.ch</a></span>
   </div>
 </footer>
+<script>
+/* Le cadran suit la lecture : les valeurs de l'article en cours s'allument */
+(function(){
+  var aside=document.querySelector('.suivi');if(!aside)return;
+  var TOUTES=['Solidarité','Respect','Bienveillance','Responsabilité','Inclusion','Intégrité','Transparence','Engagement','Sérieux','Humilité','Dignité','Confidentialité'];
+  var MAP={principes:TOUTES.slice(0,9),confidentialite:['Dignité','Confidentialité','Respect'],comportement:['Intégrité','Responsabilité','Respect'],
+    engagement:['Engagement','Sérieux','Responsabilité'],cultures:['Humilité','Respect','Inclusion'],application:TOUTES};
+  var arts=[].slice.call(document.querySelectorAll('.art')),dots=[].slice.call(aside.querySelectorAll('circle'));
+  var vus={},cur=null;
+  function maj(){
+    var vh=innerHeight,c=arts[0];
+    arts.forEach(function(a){if(a.getBoundingClientRect().top<vh*0.45)c=a;});
+    if(scrollY+vh>=document.documentElement.scrollHeight-4)c=arts[arts.length-1];
+    if(c===cur)return;cur=c;
+    var vals=MAP[c.id]||[];vals.forEach(function(v){vus[v]=1;});
+    dots.forEach(function(d){var v=d.getAttribute('data-v');d.classList.toggle('ici',vals.indexOf(v)>=0);d.classList.toggle('vu',!!vus[v]);});
+    document.getElementById('suivi-art').textContent='Article '+(arts.indexOf(c)+1);
+    document.getElementById('suivi-mots').innerHTML=(c.id==='application'?['Les douze valeurs']:vals).map(function(v,i){return '<li style="animation-delay:'+(i*60)+'ms">'+v+'</li>';}).join('');
+    document.getElementById('suivi-n').textContent=Object.keys(vus).length;
+  }
+  var t=false;addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(function(){t=false;maj();});}},{passive:true});
+  maj();
+})();
+</script>
 </body>
 </html>

@@ -1427,6 +1427,28 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
 /* Mode sombre : rouge clair pour le texte, rouge soutenu sous le texte blanc */
 [data-theme=sombre] .db-num{color:var(--red);}
 [data-theme=sombre] .login-btn,[data-theme=sombre] .don-hero,[data-theme=sombre] .don-upload-btn,[data-theme=sombre] .don-action-primary,[data-theme=sombre] .don-copy-btn,[data-theme=sombre] #photo-viewer-dl,[data-theme=sombre] .kpi-mini-total,[data-theme=sombre] .btn-primary,[data-theme=sombre] .btn-red{background:#d42a20!important;border-color:#d42a20!important;color:#fff!important;}
+
+/* Le cercle de l'équipe */
+.cq{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:32px;align-items:center}
+.cq-svg{width:100%;max-width:300px;height:auto;display:block}
+.cq-orbite{fill:none;stroke:var(--border);stroke-width:1;stroke-dasharray:2 5}
+.cq-svg circle.cq-r{fill:var(--card);stroke:var(--red);stroke-width:2.5}
+.cq-svg circle.cq-g{fill:var(--card);stroke:#c49a00;stroke-width:2.5}
+.cq-svg circle.cq-r.cq-ok{fill:var(--red)}.cq-svg circle.cq-g.cq-ok{fill:#fdc915;stroke:#c49a00}
+.cq-pt{transform-origin:150px 150px}
+.cq-anim .cq-pt{animation:cqIn 1s cubic-bezier(.2,.7,.1,1) both;animation-delay:calc(var(--i)*45ms)}
+@keyframes cqIn{from{transform:rotate(-120deg) scale(.3);opacity:0}75%{transform:rotate(6deg) scale(1.04);opacity:1}to{transform:none;opacity:1}}
+.cq-n{font:800 44px var(--head,inherit);text-anchor:middle;fill:var(--text)}
+.cq-l{font-size:12px;text-anchor:middle;fill:var(--text2)}
+.cq-leg{font-size:13px;color:var(--text2);line-height:2;margin:0 0 6px}
+.cq-d{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:8px;vertical-align:-1px;border:2px solid var(--red);background:var(--card)}
+.cq-d.cq-g{border-color:#c49a00}.cq-d.cq-r.cq-ok{background:var(--red)}.cq-d.cq-g.cq-ok{background:#fdc915}
+.cq-liste{list-style:none;margin:0;padding:0}
+.cq-liste li{position:relative;display:flex;justify-content:space-between;padding:9px 0 13px;border-bottom:1px solid var(--border);font-size:14px}
+.cq-liste li i{position:absolute;left:0;bottom:4px;height:3px;border-radius:2px;background:var(--red);opacity:.6}
+.cq-bravo{font-weight:600;color:var(--green)}
+@media(max-width:768px){.cq{grid-template-columns:1fr;gap:16px}.cq-svg{margin:0 auto;max-width:260px}}
+@media(prefers-reduced-motion:reduce){.cq-anim .cq-pt{animation:none}}
 </style>
 </head>
 <body>
@@ -1667,6 +1689,11 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
           <div id="db-finances"></div>
           <div id="db-composition"></div>
         </div>
+      </section>
+
+      <section class="db-sec">
+        <div class="db-sec-head"><span class="db-num">04</span><h2>Le cercle de l'équipe</h2><button class="db-more" onclick="navTo('presences','Présences')">Présences</button></div>
+        <div id="db-cercle"></div>
       </section>
 
       <p class="db-foot" id="db-storage"></p>
@@ -3087,7 +3114,36 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&_authUser
 
 // ── DASHBOARD ────────────────────────────────────────────────────
 let _demandesEnAttente=0;
+// ── Le cercle de l'équipe : chaque membre actif est un point autour du logo ──
+let _cercleVu=false;
+function renderCercleEquipe(){
+  const box=document.getElementById('db-cercle');if(!box)return;
+  const today=new Date().toISOString().slice(0,10);
+  const passes=events.filter(e=>e.date<today);
+  const equipe=membres.filter(m=>['Actif','Actif Suisse'].includes((m.type||'').trim()));
+  if(!equipe.length){box.innerHTML='<p class="db-empty">Le cercle se formera avec les premiers membres actifs.</p>';return;}
+  const pres=m=>passes.length?Math.round(passes.filter(e=>presences[m.id+'_'+e.id]).length/passes.length*100):0;
+  const attendu=m=>(m.type||'').trim()==='Actif'?80:40;
+  const liste=equipe.map(m=>({m,p:pres(m),a:attendu(m)})).sort((x,y)=>(x.m.type||'').localeCompare(y.m.type||'')||(y.p-x.p));
+  const n=liste.length,R=118,C=150;
+  const pts=liste.map((o,i)=>{const ang=-Math.PI/2+i*2*Math.PI/n;const r=7+o.p/100*9;return{...o,x:C+R*Math.cos(ang),y:C+R*Math.sin(ang),r};});
+  const ok=liste.filter(o=>passes.length&&o.p>=o.a).length;
+  const anim=!_cercleVu&&!matchMedia('(prefers-reduced-motion: reduce)').matches;_cercleVu=true;
+  const aEncourager=liste.filter(o=>passes.length&&o.p<o.a).sort((x,y)=>(x.p-x.a)-(y.p-y.a)).slice(0,5);
+  box.innerHTML=`<div class="cq">
+    <svg class="cq-svg${anim?' cq-anim':''}" viewBox="0 0 300 300" role="img" aria-label="${n} membres actifs, ${ok} au niveau de présence attendu">
+      <circle cx="150" cy="150" r="${R}" class="cq-orbite"/>
+      ${pts.map((o,i)=>`<g class="cq-pt" style="--i:${i};--a:${(i*360/n).toFixed(1)}deg"><circle cx="${o.x.toFixed(1)}" cy="${o.y.toFixed(1)}" r="${o.r.toFixed(1)}" class="${(o.m.type||'').trim()==='Actif'?'cq-r':'cq-g'}${passes.length&&o.p>=o.a?' cq-ok':''}"><title>${_e(o.m.prenom+' '+o.m.nom)} · ${o.p} % (attendu ${o.a} %)</title></circle></g>`).join('')}
+      <text x="150" y="146" class="cq-n">${passes.length?ok:n}</text>
+      <text x="150" y="172" class="cq-l">${passes.length?'sur '+n+' au rendez-vous':'membres actifs'}</text>
+    </svg>
+    <div class="cq-side">
+      <p class="cq-leg"><span class="cq-d cq-r cq-ok"></span>Plein : présence attendue atteinte<br><span class="cq-d cq-r"></span>Contour : en dessous<br><span class="cq-d cq-g cq-ok"></span>Jaune : actifs suisses (40 %)</p>
+      ${aEncourager.length?`<h3 class="db-sub">À recontacter</h3><ul class="cq-liste">${aEncourager.map(o=>`<li><span>${_e(o.m.prenom+' '+o.m.nom)}</span><b>${o.p} %</b><i style="width:${Math.max(4,o.p)}%"></i></li>`).join('')}</ul>`:(passes.length?'<p class="cq-bravo">Toute l\'équipe est au rendez-vous.</p>':'<p class="db-empty">Les présences apparaîtront après le premier événement.</p>')}
+    </div></div>`;
+}
 function renderDashboard(){
+  setTimeout(renderCercleEquipe,0);
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const chf=n=>n.toLocaleString('fr-CH',{minimumFractionDigits:2,maximumFractionDigits:2});
   const type=m=>(m.type||'').trim();
