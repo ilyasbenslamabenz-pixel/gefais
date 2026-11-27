@@ -5201,9 +5201,9 @@ async function renderDemandes(){
 
         <!-- Infos -->
         <div style="flex:1;min-width:0;">
-          <div style="font-size:18px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;">${_e(e.prenom)} ${_e(e.nom)}</div>
+          <div style="font-size:18px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;">${e.prenom} ${e.nom}</div>
           <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
-            <span style="background:${typeBg};color:${typeColor};font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;border:1px solid ${typeColor}40;">${_e(e.type||'—')}</span>
+            <span style="background:${typeBg};color:${typeColor};font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;border:1px solid ${typeColor}40;">${e.type||'—'}</span>
             <span style="background:${accentBg};color:${accentColor};font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">${sigEnCours?'En attente':isValidee?'Validée':'Refusée'}</span>
             <span style="font-size:11px;color:var(--text3);">${date}</span>
           </div>
@@ -5213,19 +5213,19 @@ async function renderDemandes(){
       <!-- Contact -->
       ${d.email||d.tel?`<div style="padding:0 20px 14px;display:flex;flex-direction:column;gap:7px;">
         ${d.email?`<div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border-radius:10px;padding:9px 12px;">
-          <span style="font-size:12px;color:var(--text3);min-width:58px;">E-mail</span><span style="font-size:13px;color:var(--text2);font-weight:500;">${_e(e.email)}</span>
+          <span style="font-size:12px;color:var(--text3);min-width:58px;">E-mail</span><span style="font-size:13px;color:var(--text2);font-weight:500;">${e.email}</span>
         </div>`:''}
         ${d.tel?`<div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border-radius:10px;padding:9px 12px;">
-          <span style="font-size:12px;color:var(--text3);min-width:58px;">Tél.</span><span style="font-size:13px;color:var(--text2);font-weight:500;">${_e(e.tel)}</span>
+          <span style="font-size:12px;color:var(--text3);min-width:58px;">Tél.</span><span style="font-size:13px;color:var(--text2);font-weight:500;">${e.tel}</span>
         </div>`:''}
         ${e.adresse?`<div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border-radius:10px;padding:9px 12px;">
-          <span style="font-size:12px;color:var(--text3);min-width:58px;">Adresse</span><span style="font-size:13px;color:var(--text2);font-weight:500;">${_e(e.adresse)}</span>
+          <span style="font-size:12px;color:var(--text3);min-width:58px;">Adresse</span><span style="font-size:13px;color:var(--text2);font-weight:500;">${e.adresse}</span>
         </div>`:''}
       </div>`:''}
 
       ${e.motivation?`<div style="padding:0 20px 14px;">
         <div style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:6px;">Motivation</div>
-        <div style="font-size:13px;color:var(--text2);line-height:1.6;white-space:pre-line;background:var(--bg3);border-radius:10px;padding:10px 12px;">${_e(e.motivation)}</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.6;white-space:pre-line;background:var(--bg3);border-radius:10px;padding:10px 12px;">${e.motivation}</div>
       </div>`:''}
 
       <!-- Signature membre -->
