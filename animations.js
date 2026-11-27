@@ -41,7 +41,7 @@
 
   function onVisible(el, fn, margin) {
     var io = new IntersectionObserver(function (es) {
-      es.forEach(function (e) { if (e.isIntersecting) { io.unobserve(e.target); fn(e.target); } });
+      es.forEach(function (e) { if (e.isIntersecting || e.boundingClientRect.top < 0) { io.unobserve(e.target); fn(e.target); } });
     }, { rootMargin: margin || '0px 0px -12% 0px', threshold: 0.01 });
     io.observe(el);
   }
