@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f3f1ec">
+<title>Besoin d'aide à Genève : repas, douche, lit — GE-FAIS</title>
+<meta name="description" content="Où trouver un repas, une douche, un lit ou des soins gratuits à Genève. Numéros d'urgence et plan grand froid.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%23fff'/%3E%3Ccircle cx='24.25' cy='6.74' r='3.78' fill='%23131313'/%3E%3Ccircle cx='33.16' cy='9.05' r='3.40' fill='%23131313'/%3E%3Ccircle cx='40.00' cy='15.18' r='2.92' fill='%23131313'/%3E%3Ccircle cx='42.77' cy='23.92' r='2.86' fill='%23131313'/%3E%3Ccircle cx='40.51' cy='32.99' r='2.75' fill='%23131313'/%3E%3Ccircle cx='33.66' cy='39.37' r='2.48' fill='%23131313'/%3E%3Ccircle cx='24.50' cy='42.35' r='2.38' fill='%23131313'/%3E%3Ccircle cx='15.68' cy='40.17' r='2.48' fill='%23131313'/%3E%3Ccircle cx='9.05' cy='33.91' r='3.62' fill='%23131313'/%3E%3Ccircle cx='6.53' cy='24.84' r='4.54' fill='%23fdc915'/%3E%3Ccircle cx='8.63' cy='15.89' r='4.48' fill='%23ee1e27'/%3E%3Ccircle cx='15.22' cy='9.34' r='3.83' fill='%23131313'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="/images/icon-180.png?v=6">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--paper:#f3f1ec;--ink:#141414;--ink-2:#3a3a37;--muted:#62625e;--red:#d42a20;--line:rgba(20,20,20,.14);
+    --head:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--body:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--gutter:clamp(20px,4.2vw,56px);}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.65 var(--body);-webkit-font-smoothing:antialiased;}
+  a{color:inherit;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 var(--gutter);}
+  .wordmark{display:block;height:15px;aspect-ratio:771/150;background:currentColor;-webkit-mask:url(images/gefais-mot.svg) center/contain no-repeat;mask:url(images/gefais-mot.svg) center/contain no-repeat;}
+  header.top{border-bottom:1px solid var(--line);}
+  header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;height:76px;}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+  .top nav{display:flex;gap:22px;font-size:15px;font-weight:500;}
+  .top nav a{text-decoration:none;}
+  .top nav a:hover{text-decoration:underline;text-underline-offset:3px;}
+
+  .intro{padding:clamp(48px,7vw,88px) 0 clamp(28px,4vw,44px);}
+  .kicker{display:flex;align-items:center;gap:12px;font-size:15px;font-weight:500;color:var(--ink-2);margin:0 0 20px;}
+  .kicker::before{content:"";width:28px;height:1px;background:currentColor;}
+  h1{font:900 clamp(40px,6.4vw,80px)/.95 var(--head);letter-spacing:-.04em;margin:0;text-wrap:balance;max-width:16ch}
+  .chapo{font-size:clamp(17px,1.6vw,20px);color:var(--ink-2);margin:22px 0 0;max-width:52ch}
+  .chapo strong{color:var(--ink)}
+  .urg{list-style:none;margin:0 0 18px;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+  .urg a{display:flex;flex-direction:column;gap:8px;height:100%;padding:20px 22px;border:1.5px solid var(--ink);border-radius:4px;text-decoration:none;background:#fff;transition:background .15s,color .15s,border-color .15s}
+  .urg a:hover{background:var(--red);border-color:var(--red);color:#fff}
+  .urg b{font:900 46px/1 var(--head);letter-spacing:-.03em;color:var(--red)}
+  .urg a:hover b{color:#fff}
+  .urg span{font-weight:600;font-size:16px;line-height:1.3}
+  .urg small{display:block;font-weight:400;font-size:14px;opacity:.75;margin-top:3px}
+  .dormir{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 28px;align-items:center;background:var(--red);color:#fff;border-radius:4px;padding:clamp(22px,3vw,32px) clamp(22px,3vw,36px);margin:0 0 12px;text-decoration:none}
+  .dormir h2{font:800 clamp(24px,2.6vw,32px)/1.1 var(--head);margin:0 0 6px;letter-spacing:-.02em}
+  .dormir p{margin:0;font-size:15.5px;line-height:1.5}
+  .dormir b{font:900 clamp(40px,5.4vw,64px)/1 var(--head);letter-spacing:-.04em;white-space:nowrap}
+  .froid{display:flex;gap:18px;background:#e3f0f7;border-left:5px solid #2b6f9e;border-radius:4px;padding:20px 24px;margin:0 0 clamp(36px,5vw,56px)}
+  .froid svg{flex:0 0 34px;height:34px;fill:none;stroke:#2b6f9e;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;margin-top:2px}
+  .froid h2{font:800 22px var(--head);color:#1d4f73;margin:0 0 4px}
+  .froid p{margin:0 0 6px;font-size:15.5px;line-height:1.55;max-width:70ch}
+  .froid p:last-child{margin:0}
+  .cat{display:grid;grid-template-columns:200px minmax(0,1fr);gap:24px;padding:28px 0;border-top:2px solid var(--ink)}
+  .cat h2{font:800 clamp(24px,2.6vw,32px)/1.1 var(--head);letter-spacing:-.02em;margin:0}
+  .lieux{list-style:none;margin:0;padding:0;display:grid;gap:18px}
+  .lieux li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 20px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+  .lieux li:last-child{border-bottom:0;padding-bottom:0}
+  .lieux h3{font:700 19px var(--head);margin:0;grid-column:1}
+  .lieux .adr{grid-column:1;font-size:16px}
+  .lieux .adr a{text-underline-offset:3px}
+  .lieux .hor{grid-column:1;font-size:15px;color:var(--muted);line-height:1.5}
+  .lieux .tel{grid-column:2;grid-row:1 / span 3;align-self:center;font-weight:600;color:#b8221a;text-decoration:none;white-space:nowrap;border:1.5px solid #b8221a;border-radius:3px;padding:9px 14px;font-size:15px}
+  .lieux .tel:hover{background:var(--red);color:#fff}
+  .note{margin:clamp(36px,5vw,56px) 0 clamp(48px,6vw,80px);padding-top:22px;border-top:1px solid var(--line);font-size:14.5px;color:var(--muted);max-width:72ch}
+  .note p{margin:0 0 8px}
+  .btn{display:inline-flex;align-items:center;gap:8px;background:var(--red);color:#fff;padding:15px 22px;border-radius:3px;font:600 15px var(--body);text-decoration:none;white-space:nowrap}
+  .btn:hover{background:#b8221a}
+  .gefais{background:var(--ink);color:#fff;border-radius:4px;padding:clamp(24px,3.5vw,36px);margin:0 0 clamp(48px,6vw,72px);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center}
+  .gefais h2{font:800 clamp(20px,2.2vw,26px)/1.15 var(--head);margin:0 0 8px}
+  .gefais p{margin:0;color:rgba(255,255,255,.8);font-size:15.5px;max-width:56ch}
+  footer{border-top:1px solid var(--line);padding:22px 0 30px;font-size:13px;color:var(--muted);}
+  footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+  :focus-visible{outline:2px solid var(--ink);outline-offset:3px;}
+  @media (max-width:760px){
+    .top nav a:not(:last-child){display:none;}
+    .urg{grid-template-columns:1fr}
+    .urg a{flex-direction:row;align-items:center;gap:18px}
+    .urg b{font-size:40px;min-width:84px}
+    .dormir{grid-template-columns:1fr}
+    .cat{grid-template-columns:1fr;gap:14px;padding:22px 0}
+    .lieux li{grid-template-columns:1fr}
+    .lieux .tel{grid-column:1;grid-row:auto;justify-self:start;margin-top:8px}
+    .gefais{grid-template-columns:1fr}
+    body{font-size:16px;}
+  }
+  @media print{header.top nav,.gefais{display:none}body{background:#fff}.dormir{background:#fff;color:#000;border:2px solid #000}.urg a{background:#fff}}
+  @view-transition{navigation:auto;}
+  @media (prefers-reduced-motion:reduce){@view-transition{navigation:none;}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="./" aria-label="GE-FAIS, retour à l'accueil">
+      <svg width="26" height="26" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20.24" cy="3.56" r="2.8" fill="#141414"/><circle cx="28.72" cy="5.76" r="2.52" fill="#141414"/><circle cx="35.24" cy="11.6" r="2.16" fill="#141414"/><circle cx="37.88" cy="19.92" r="2.12" fill="#141414"/><circle cx="35.72" cy="28.56" r="2.04" fill="#141414"/><circle cx="29.2" cy="34.64" r="1.84" fill="#141414"/><circle cx="20.48" cy="37.48" r="1.76" fill="#141414"/><circle cx="12.08" cy="35.4" r="1.84" fill="#141414"/><circle cx="5.76" cy="29.44" r="2.68" fill="#141414"/><circle cx="3.36" cy="20.8" r="3.36" fill="#fdc915"/><circle cx="5.36" cy="12.28" r="3.32" fill="#ee1e27"/><circle cx="11.64" cy="6.04" r="2.84" fill="#141414"/></svg>
+      <span class="wordmark" role="img" aria-label="GE-FAIS"></span>
+    </a>
+    <nav aria-label="Navigation">
+      <a href="./">Le site</a><a href="adhesion.html">Adhérer</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="intro" aria-labelledby="titre">
+    <p class="kicker">Genève · aide gratuite</p>
+    <h1 id="titre">Besoin d'un repas, d'une douche ou d'un lit&nbsp;?</h1>
+    <p class="chapo">Pour vous ou pour quelqu'un près de vous, voici où trouver de l'aide à Genève. <strong>Si une personne est en danger, appelez tout de suite les secours</strong> : GE-FAIS n'est pas un service d'urgence.</p>
+  </section>
+
+  <ul class="urg" aria-label="Numéros d'urgence">
+    <li><a href="tel:144"><b>144</b><span>Urgence médicale<small>Malaise, blessure, froid extrême</small></span></a></li>
+    <li><a href="tel:117"><b>117</b><span>Police<small>Danger, violence</small></span></a></li>
+    <li><a href="tel:143"><b>143</b><span>La Main Tendue<small>Écoute anonyme, 24 h sur 24</small></span></a></li>
+  </ul>
+
+  <a class="dormir" href="tel:0800222210" aria-label="Dormir : appeler l'hébergement d'urgence au 0800 22 22 10">
+    <div><h2>Dormir</h2><p>Hébergement d'urgence, appel gratuit. Lundi à vendredi 10h30–20h, samedi et dimanche 15h–20h. La centrale de la Ville attribue les places dans les foyers&nbsp;: il faut appeler avant de s'y rendre.</p></div>
+    <b>0800 22 22 10</b>
+  </a>
+
+  <aside class="froid" aria-labelledby="t-froid">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M4.9 4.9l14.2 14.2M2 12h20M4.9 19.1 19.1 4.9M9 3.5l3 2.5 3-2.5M9 20.5l3-2.5 3 2.5M3.5 9l2.5 3-2.5 3M20.5 9 18 12l2.5 3"/></svg>
+    <div>
+      <h2 id="t-froid">Grand froid</h2>
+      <p>De mi-novembre à mi-avril, quand il gèle plusieurs jours de suite, la Ville ouvre <strong>80 places supplémentaires</strong> et double ses tournées de nuit.</p>
+      <p>Vous voyez quelqu'un dehors dans le froid&nbsp;? Signalez-le au <a href="tel:0800222210"><strong>0800 22 22 10</strong></a>, ou au <a href="tel:144"><strong>144</strong></a> s'il est en danger.</p>
+    </div>
+  </aside>
+
+  <section class="cat" aria-labelledby="t-manger">
+    <h2 id="t-manger">Manger</h2>
+    <ul class="lieux">
+      <li><h3>Club social rive gauche</h3><span class="adr"><a href="https://www.google.com/maps/search/?api=1&query=Rue%20Hugo-de-Senger%204%2C%201205%20Gen%C3%A8ve" target="_blank" rel="noopener">Rue Hugo-de-Senger 4, 1205 Genève</a></span><span class="hor">Petit-déjeuner lun–ven 8h–9h15. Repas de midi tous les jours à 11h, 12h et 13h (le samedi à l'emporter). Tickets repas dès 8h, le dimanche dès 10h30.</span></li>
+      <li><h3>Le CARÉ</h3><span class="adr"><a href="https://www.google.com/maps/search/?api=1&query=Rue%20du%20Grand-Bureau%2013%2C%201227%20Les%20Acacias" target="_blank" rel="noopener">Rue du Grand-Bureau 13, 1227 Les Acacias</a></span><span class="hor">Repas chaud lun–ven 12h–13h, et le samedi en hiver. Brunch le matin.</span><a class="tel" href="tel:+41223431717">022 343 17 17</a></li>
+      <li><h3>Le Bateau Genève</h3><span class="adr"><a href="https://www.google.com/maps/search/?api=1&query=Bateau%20Gen%C3%A8ve%2C%20Quai%20Gustave-Ador%201%2C%201207%20Gen%C3%A8ve" target="_blank" rel="noopener">Quai Gustave-Ador, 1207 Genève</a></span><span class="hor">Petit-déjeuner lun–ven 7h30–9h30. Repas chaud le lundi et le jeudi 10h–11h.</span></li>
+    </ul>
+  </section>
+
+  <section class="cat" aria-labelledby="t-laver">
+    <h2 id="t-laver">Se laver</h2>
+    <ul class="lieux">
+      <li><h3>Point d'Eau (Carrefour-Rue)</h3><span class="adr"><a href="https://www.google.com/maps/search/?api=1&query=Rue%20de%20Vermont%2021%2C%201202%20Gen%C3%A8ve" target="_blank" rel="noopener">Rue de Vermont 21, 1202 Genève</a></span><span class="hor">Douches et lessives lun–ven 8h–13h et 14h–16h. Certains après-midi réservés aux femmes. Aussi : coiffure, podologie, soins dentaires selon planning.</span><a class="tel" href="tel:+41227346760">022 734 67 60</a></li>
+      <li><h3>Le CARÉ</h3><span class="adr"><a href="https://www.google.com/maps/search/?api=1&query=Rue%20du%20Grand-Bureau%2013%2C%201227%20Les%20Acacias" target="_blank" rel="noopener">Rue du Grand-Bureau 13, 1227 Les Acacias</a></span><span class="hor">Douches lun, mar, mer, ven 8h40–10h40 et 13h30–15h30 ; jeudi 8h40–10h40.</span><a class="tel" href="tel:+41223431717">022 343 17 17</a></li>
+    </ul>
+  </section>
+
+  <section class="cat" aria-labelledby="t-soigner">
+    <h2 id="t-soigner">Se soigner</h2>
+    <ul class="lieux">
+      <li><h3>UMSCOM (HUG)</h3><span class="adr"><a href="https://www.google.com/maps/search/?api=1&query=Rue%20Hugo-de-Senger%204%2C%201205%20Gen%C3%A8ve" target="_blank" rel="noopener">Rue Hugo-de-Senger 4, 1205 Genève</a></span><span class="hor">Soins, conseil santé et orientation, même sans assurance maladie. Lun, mar, jeu, ven 8h30–11h ; mer 13h30–16h.</span></li>
+    </ul>
+  </section>
+
+  <div class="note">
+    <p>Informations tirées du feuillet « Lieux d'accueil d'urgence à Genève » de la Ville de Genève (juillet 2026) et des sites des structures. Les horaires peuvent changer, notamment les jours fériés : en cas de doute, appelez avant de vous déplacer.</p>
+    <p>Liste complète et à jour de tous les lieux d'aide : <a href="https://geaide.ch" target="_blank" rel="noopener">geaide.ch</a>.</p>
+  </div>
+
+  <section class="gefais" aria-labelledby="t-gefais">
+    <div><h2 id="t-gefais">Les maraudes de GE-FAIS</h2><p>Nos bénévoles sillonnent les rues de Genève avec un repas, une boisson chaude et du temps pour écouter. Vous souhaitez nous rejoindre&nbsp;?</p></div>
+    <a class="btn" href="adhesion.html">Devenir membre →</a>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Association GE-FAIS · Association à but non lucratif, Genève</span>
+    <span><a href="charte.html">Charte éthique</a> · <a href="confidentialite.html">Confidentialité</a> · <a href="mailto:contact@gefais.ch">contact@gefais.ch</a></span>
+  </div>
+</footer>
+<script src="animations.js" defer></script>
+</body>
+</html>
