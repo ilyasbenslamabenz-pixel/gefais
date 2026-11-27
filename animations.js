@@ -26,6 +26,7 @@
     '.anim .meter.in .bar i{transform:none}',
     /* étapes de l\'adhésion */
     '.anim .flow::after{content:"";position:absolute;left:22px;right:22px;top:22px;height:2px;margin-top:-.5px;background:var(--red,#d52b1e);transform-origin:left;transform:scaleX(var(--f,0));pointer-events:none}',
+    '.anim .flow li{z-index:1}.anim .flow::after{z-index:0}.anim .flow::before,.anim .flow::after{right:var(--fr,22px)}',
     '.anim .flow .dot{transition:background .45s ease,color .45s ease,border-color .45s ease,transform .5s ' + SPRING + '}',
     '.anim .flow li.on .dot{transform:scale(1.08)}',
     '.anim .flow li:not(:first-child):not(:last-child).on .dot{background:var(--ink,#141414);color:#fff}',
@@ -204,6 +205,8 @@
     function upd() {
       ticking = false;
       var r = flow.getBoundingClientRect(), vh = innerHeight, mobile = innerWidth <= 640;
+      var last = flow.querySelector('li:last-child .dot');
+      if (last && !mobile) { var lr = last.getBoundingClientRect(); flow.style.setProperty('--fr', Math.max(0, r.right - (lr.left + lr.width / 2)).toFixed(1) + 'px'); }
       if (mobile) {
         Array.prototype.forEach.call(lis, function (li) { li.classList.toggle('on', li.getBoundingClientRect().top < vh * 0.72); });
       } else {
