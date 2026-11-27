@@ -130,7 +130,7 @@
   /* ---------- Hero ---------- */
   .hero{position:relative;min-height:max(640px,100svh);display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;background:#1d1626;color:#fff;}
   .hero-media{position:absolute;inset:0;}
-  .hero-media img{width:100%;height:100%;object-fit:cover;object-position:58% 45%;animation:zoom 28s ease-out infinite alternate;transform-origin:56% 62%;}
+  .hero-media img{width:100%;height:100%;object-fit:cover;object-position:58% 42%;animation:zoom 28s ease-out infinite alternate;transform-origin:56% 50%;}
   .hero-shade{position:absolute;inset:0;background:
     linear-gradient(180deg,rgba(12,10,16,.55) 0%,rgba(12,10,16,0) 20%),
     linear-gradient(90deg,rgba(12,10,16,.72) 0%,rgba(12,10,16,.34) 45%,rgba(12,10,16,0) 70%),
@@ -147,7 +147,7 @@
   .hero-foot .scroll{display:flex;align-items:center;gap:10px;}
   .hero-foot .scroll i{display:block;width:1px;height:22px;background:rgba(255,255,255,.35);position:relative;overflow:hidden;}
   .hero-foot .scroll i::after{content:"";position:absolute;left:0;top:-100%;width:1px;height:100%;background:#fff;animation:drip 2.4s var(--ease) infinite;}
-  @keyframes zoom{from{transform:scale(1.03)}to{transform:scale(1.13)}}
+  @keyframes zoom{from{transform:scale(1.02)}to{transform:scale(1.07)}}
   @keyframes drip{0%{top:-100%}60%,100%{top:100%}}
   @keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
   .rise{animation:rise 1s var(--ease) both;}
@@ -673,7 +673,7 @@ body.menu-open .haut{opacity:0;pointer-events:none}
 <!-- HERO -->
 <section class="hero on-dark" aria-labelledby="hero-title">
   <div class="hero-media">
-    <img src="images/geneve-jet-deau.webp" srcset="images/geneve-jet-deau.webp 1600w, images/geneve-jet-deau-3200.webp 3200w, images/geneve-jet-deau-3840.webp 3840w" sizes="100vw" alt="Le Jet d'eau de Genève au coucher du soleil, nuages dorés au-dessus du lac et des quais" width="1600" height="900" fetchpriority="high">
+    <img src="images/geneve-jet-deau.webp" srcset="images/geneve-jet-deau.webp 1600w, images/geneve-jet-deau-3200.webp 3200w, images/geneve-jet-deau-3840.webp 3840w" sizes="100vw" alt="Le Jet d'eau de Genève au coucher du soleil, nuages dorés au-dessus du lac et des quais" width="1600" height="1033" fetchpriority="high">
   </div>
   <div class="hero-shade"></div>
   <div class="wrap hero-inner">
@@ -1058,7 +1058,7 @@ body.menu-open .haut{opacity:0;pointer-events:none}
 <!-- 09 CONTACT -->
 <section id="contact" class="section contact on-dark" aria-labelledby="t-contact">
   <div class="contact-media" aria-hidden="true">
-    <img src="images/geneve-jet-deau.webp" srcset="images/geneve-jet-deau.webp 1600w, images/geneve-jet-deau-3200.webp 3200w, images/geneve-jet-deau-3840.webp 3840w" sizes="100vw" alt="" width="1600" height="900" loading="lazy">
+    <img src="images/geneve-jet-deau.webp" srcset="images/geneve-jet-deau.webp 1600w, images/geneve-jet-deau-3200.webp 3200w, images/geneve-jet-deau-3840.webp 3840w" sizes="100vw" alt="" width="1600" height="1033" loading="lazy">
   </div>
   <div class="wrap">
     <p class="marker reveal"><b>09</b><span>Contact</span></p>
