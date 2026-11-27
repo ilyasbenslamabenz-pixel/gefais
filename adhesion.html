@@ -11,7 +11,7 @@
 <meta property="og:title" content="Devenir membre de GE-FAIS">
 <meta property="og:description" content="Formulaire d'adhésion en ligne à l'association GE-FAIS, Genève.">
 <meta property="og:url" content="https://www.gefais.ch/adhesion.html">
-<meta property="og:image" content="https://www.gefais.ch/images/og-gefais.jpg">
+<meta property="og:image" content="https://www.gefais.ch/images/og-gefais-2026.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
@@ -189,6 +189,48 @@
   @media (prefers-reduced-motion:reduce){.spinner{animation:none;}}
   .facts a,.done-contact a{color:inherit;text-decoration:underline;text-underline-offset:3px;}
   .done-contact{margin:0 0 24px;color:var(--muted,#6a6a66);}
+
+  /* ── Bulletin en direct, cercle du logo, rendez-vous ── */
+  .cercle circle{fill:transparent;stroke:#c9c6bd;stroke-width:.7;transition:fill .5s ease,stroke .5s ease,transform .5s cubic-bezier(.3,1.5,.5,1);transform-box:fill-box;transform-origin:center}
+  .cercle circle.on{fill:var(--ink);stroke:var(--ink);transform:scale(1.12)}
+  .cercle circle.on.g{fill:#fdc915;stroke:#fdc915}.cercle circle.on.r{fill:#ee1e27;stroke:#ee1e27}
+  .bulletin{display:none}
+  @media (min-width:961px){
+    .bulletin{display:block;position:relative;background:#fff;border-radius:3px;padding:22px 24px 18px;box-shadow:0 1px 0 rgba(20,20,20,.06),0 22px 44px -30px rgba(20,20,20,.5);transform:rotate(-.6deg);max-height:0;opacity:0;overflow:hidden;padding-top:0;padding-bottom:0;transition:max-height .7s cubic-bezier(.2,.7,.2,1),opacity .5s ease,padding .5s ease}
+    .remplit .bulletin{max-height:520px;opacity:1;padding-top:22px;padding-bottom:18px}
+    .facts{transition:max-height .6s cubic-bezier(.2,.7,.2,1),opacity .35s ease;max-height:400px;overflow:hidden}
+    .remplit .facts{max-height:0;opacity:0;border-top-color:transparent}
+    .remplit .intro p{margin-bottom:20px}
+  }
+  .b-head{display:flex;align-items:center;gap:14px;padding-bottom:14px;border-bottom:1.5px solid var(--ink)}
+  .b-head .cercle{width:46px;height:46px;flex-shrink:0}
+  .b-t{display:flex;flex-direction:column;line-height:1.25}.b-t b{font-size:15px}.b-t span{font-size:12px;color:var(--muted)}
+  .b-count{margin-left:auto;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}.b-count b{font-size:20px;color:var(--ink)}
+  .bulletin dl{margin:0}
+  .bulletin dl div{display:grid;grid-template-columns:80px minmax(0,1fr);gap:10px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:14px}
+  .bulletin dt{color:var(--muted);font-size:12.5px;padding-top:1px}
+  .bulletin dd{margin:0;font-weight:600;color:var(--ink);overflow-wrap:anywhere;min-height:1.3em}
+  .bulletin dd.vide{color:#b9b6ad;font-weight:500}
+  .bulletin dd.maj{animation:bmaj .5s ease}
+  @keyframes bmaj{from{background:rgba(253,201,21,.45)}to{background:transparent}}
+  .b-sig{display:flex;align-items:flex-end;gap:12px;margin-top:12px;min-height:54px;border-bottom:1px solid var(--ink);padding-bottom:4px}
+  .b-sig span{font-size:12.5px;color:var(--muted);padding-bottom:2px}
+  .b-sig img{height:50px;max-width:200px;object-fit:contain;opacity:0;transform:translateY(-6px) rotate(-3deg);transition:opacity .5s ease,transform .6s cubic-bezier(.3,1.4,.5,1)}
+  .b-sig img.on{opacity:1;transform:none}
+  .b-foot{margin:8px 0 0!important;font-size:12px!important;color:var(--muted)!important}
+  .rdv{margin-top:16px}
+  .rdv-cases{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px}
+  .rdv-cases i{display:block;height:14px;border-radius:2px;background:rgba(20,20,20,.08);transition:background .35s ease,transform .35s cubic-bezier(.3,1.5,.5,1)}
+  .rdv-cases i.on{transform:scaleY(1.25)}
+  .rdv-txt{margin:9px 0 0;font-size:13.5px;color:var(--muted)}
+  .rdv-txt b{color:var(--ink)}
+  #done-title:focus{outline:none}
+  .cercle-fin{display:flex;align-items:center;gap:14px;margin:4px 0 22px;font-weight:600}
+  .cercle-fin .cercle{width:64px;height:64px}
+  .cercle-fin .vous{fill:var(--red);stroke:none;transform:scale(0)}
+  .done.show .cercle-fin .vous{animation:vous .7s 1.3s cubic-bezier(.3,1.6,.5,1) forwards}
+  @keyframes vous{to{transform:scale(1)}}
+  @media (prefers-reduced-motion:reduce){.cercle circle,.bulletin,.facts,.rdv-cases i,.b-sig img{transition:none}.bulletin dd.maj{animation:none}.done.show .cercle-fin .vous{animation:none;transform:none}}
 </style>
 </head>
 <body>
@@ -228,6 +270,21 @@
       <li><span>Validation</span><span>Par le président et la vice-présidente</span></li>
       <li><span>Une question ?</span><span><a href="mailto:contact@gefais.ch">contact@gefais.ch</a></span></li>
     </ul>
+    <div class="bulletin" aria-hidden="true">
+      <div class="b-head">
+        <svg class="cercle" viewBox="0 0 40 40"><circle cx="20.24" cy="3.56" r="2.8"/><circle cx="28.72" cy="5.76" r="2.52"/><circle cx="35.24" cy="11.6" r="2.16"/><circle cx="37.88" cy="19.92" r="2.12"/><circle cx="35.72" cy="28.56" r="2.04"/><circle cx="29.2" cy="34.64" r="1.84"/><circle cx="20.48" cy="37.48" r="1.76"/><circle cx="12.08" cy="35.4" r="1.84"/><circle cx="5.76" cy="29.44" r="2.68"/><circle cx="3.36" cy="20.8" r="3.36" class="g"/><circle cx="5.36" cy="12.28" r="3.32" class="r"/><circle cx="11.64" cy="6.04" r="2.84"/></svg>
+        <div class="b-t"><b>Bulletin d'adhésion</b><span>Association GE-FAIS · Genève</span></div>
+        <span class="b-count"><b id="b-n">0</b> / 12</span>
+      </div>
+      <dl>
+        <div><dt>Membre</dt><dd data-b="nom">—</dd></div>
+        <div><dt>Adresse</dt><dd data-b="adresse">—</dd></div>
+        <div><dt>Contact</dt><dd data-b="contact">—</dd></div>
+        <div><dt>Statut</dt><dd data-b="type">—</dd></div>
+      </dl>
+      <div class="b-sig"><span>Signature</span><img id="b-sig" alt=""></div>
+      <p class="b-foot" id="b-date"></p>
+    </div>
   </aside>
 
   <div class="card">
@@ -329,6 +386,10 @@
             </label>
           </div>
           <div class="err" id="e-type">Choisissez un statut.</div>
+        <div class="rdv" aria-hidden="true">
+          <div class="rdv-cases"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <p class="rdv-txt" id="rdv-txt">Choisissez un statut pour voir l'engagement attendu.</p>
+        </div>
         </div>
         <div class="field" style="margin-top:22px;">
           <label for="f-motivation">Pourquoi souhaitez-vous nous rejoindre ? <span class="opt-tag">(facultatif)</span></label>
@@ -361,7 +422,7 @@
             <span>Votre signature</span>
             <button type="button" class="sig-clear" id="sig-clear">Effacer</button>
           </div>
-          <div class="sig-zone"><canvas id="sig-canvas" aria-label="Zone de signature : signez avec le doigt ou la souris"></canvas><span class="sig-ph" aria-hidden="true">Signez ici</span></div>
+          <div class="sig-zone"><canvas id="sig-canvas" role="img" aria-label="Zone de signature : signez avec le doigt ou la souris"></canvas><span class="sig-ph" aria-hidden="true">Signez ici</span></div>
           <div class="sig-foot">
             <span>Signez avec le doigt ou la souris</span>
             <span id="sig-date"></span>
@@ -381,6 +442,7 @@
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
       </div>
       <h2 tabindex="-1" id="done-title">Merci, votre demande est envoyée.</h2>
+      <div class="cercle-fin" aria-hidden="true"><svg class="cercle" viewBox="-4 -4 48 48"><circle cx="20.24" cy="3.56" r="2.8"/><circle cx="28.72" cy="5.76" r="2.52"/><circle cx="35.24" cy="11.6" r="2.16"/><circle cx="37.88" cy="19.92" r="2.12"/><circle cx="35.72" cy="28.56" r="2.04"/><circle cx="29.2" cy="34.64" r="1.84"/><circle cx="20.48" cy="37.48" r="1.76"/><circle cx="12.08" cy="35.4" r="1.84"/><circle cx="5.76" cy="29.44" r="2.68"/><circle cx="3.36" cy="20.8" r="3.36" class="g"/><circle cx="5.36" cy="12.28" r="3.32" class="r"/><circle cx="11.64" cy="6.04" r="2.84"/><circle class="vous" cx="20" cy="20" r="3.4"/></svg><span>Vous rejoignez le cercle.</span></div>
       <p>Le comité de GE-FAIS a bien reçu votre demande d'adhésion. Voici la suite :</p>
       <ol class="steps">
         <li><b>1</b><span>Le comité examine votre demande.</span></li>
@@ -701,6 +763,57 @@ $('btn-pdf').addEventListener('click',()=>{
   const safe=(formData.nom||'membre').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-');
   doc.save('demande-adhesion-gefais-'+safe+'.pdf');
 });
+</script>
+<script>
+/* Bulletin en direct, cercle du logo et rendez-vous attendus */
+(function(){
+  var page=document.body, form=document.getElementById('form');
+  var dots=[].slice.call(document.querySelectorAll('.bulletin .cercle circle'));
+  var nEl=document.getElementById('b-n');
+  var d=document.getElementById('b-date');
+  if(d)d.textContent='Genève, le '+new Date().toLocaleDateString('fr-CH',{day:'numeric',month:'long',year:'numeric'});
+  function v(id){var e=document.getElementById(id);return e?e.value.trim():'';}
+  function set(k,txt){var dd=document.querySelector('.bulletin [data-b="'+k+'"]');if(!dd)return;var t=txt||'—';if(dd.textContent!==t){dd.textContent=t;dd.classList.toggle('vide',!txt);dd.classList.remove('maj');void dd.offsetWidth;if(txt)dd.classList.add('maj');}}
+  function score(){
+    var f=0;try{f=CHAMPS.filter(function(k){return rules[k]();}).length+(rules.type()?1:0)+(document.getElementById('f-statuts').checked?1:0)+(document.getElementById('f-donnees').checked?1:0)+(sigEmpty?0:1);}catch(e){}
+    return f;
+  }
+  function maj(){
+    var f=score();
+    dots.forEach(function(c,i){c.classList.toggle('on',i<f);});
+    if(nEl)nEl.textContent=f;
+    set('nom',[v('f-prenom'),v('f-nom')].filter(Boolean).join(' '));
+    var loc=[v('f-npa'),v('f-localite')].filter(Boolean).join(' ');
+    set('adresse',[v('f-adresse'),loc].filter(Boolean).join(', '));
+    var tel=v('f-tel');var ind=document.getElementById('f-tel-indicatif');
+    set('contact',[v('f-email'),tel?((ind&&ind.value?ind.value+' ':'')+tel):''].filter(Boolean).join(' · '));
+    var r=document.querySelector('input[name="type"]:checked');
+    set('type',r?({'Actif':'Membre actif','Actif Suisse':'Membre actif suisse','Passif':'Membre passif'})[r.value]:'');
+    var img=document.getElementById('b-sig');
+    if(img){if(!sigEmpty){try{img.src=canvas.toDataURL('image/png');img.classList.add('on');}catch(e){}}else img.classList.remove('on');}
+    rdv();
+  }
+  var TXT={'Actif':['var(--red)',8,'Environ <b>8 rendez-vous sur 10</b> : maraudes, réunions et formations.'],
+           'Actif Suisse':['var(--gold)',4,'Environ <b>4 rendez-vous sur 10</b>.'],
+           'Passif':['var(--grey)',0,'<b>Aucune présence attendue</b> : vous soutenez l\'association à distance.']};
+  var cases=[].slice.call(document.querySelectorAll('.rdv-cases i')),dernier='';
+  function rdv(){
+    var r=document.querySelector('input[name="type"]:checked');var k=r?r.value:'';
+    if(k===dernier)return;dernier=k;
+    var t=TXT[k];
+    cases.forEach(function(c,i){var on=t&&i<t[1];c.style.transitionDelay=(on?i*70:0)+'ms';c.style.background=on?t[0]:'';c.classList.toggle('on',!!on);});
+    var p=document.getElementById('rdv-txt');if(p)p.innerHTML=t?t[2]:'Choisissez un statut pour voir l\'engagement attendu.';
+  }
+  form.addEventListener('input',maj);form.addEventListener('change',maj);
+  if(typeof canvas!=='undefined')canvas.addEventListener('pointerup',function(){setTimeout(maj,30);});
+  var clr=document.getElementById('sig-clear');if(clr)clr.addEventListener('click',function(){setTimeout(maj,30);});
+  form.addEventListener('focusin',function(){page.classList.add('remplit');},{once:true});
+  maj();
+  // cercle de la confirmation : 11 points s'allument, puis le vôtre
+  var fin=[].slice.call(document.querySelectorAll('.cercle-fin circle:not(.vous)'));
+  var done=document.getElementById('done');
+  if(done&&'MutationObserver' in window){new MutationObserver(function(){if(done.classList.contains('show')){fin.forEach(function(c,i){setTimeout(function(){c.classList.add('on');},150+i*80);});dots.forEach(function(c){c.classList.add('on');});if(nEl)nEl.textContent=12;}}).observe(done,{attributes:true,attributeFilter:['class']});}
+})();
 </script>
 <script src="animations.js" defer></script>
 </body>

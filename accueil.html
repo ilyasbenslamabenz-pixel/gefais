@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#141414">
 <meta property="og:title" content="GE-FAIS — Association genevoise">
 <meta property="og:description" content="Des bénévoles qui vont, en maraude, à la rencontre des personnes qui vivent dans la rue à Genève.">
-<meta property="og:image" content="https://www.gefais.ch/images/og-gefais.jpg">
+<meta property="og:image" content="https://www.gefais.ch/images/og-gefais-2026.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:type" content="website">
@@ -245,13 +245,14 @@
   .way{position:relative;border-radius:4px;padding:clamp(26px,3vw,40px);display:flex;flex-direction:column;overflow:hidden;transition:transform .35s var(--ease);}
   .way:hover{transform:translateY(-4px);}
   .way .k{font-size:14px;font-weight:600;opacity:.85;}
+  .way-member .k,.way-member .price span{opacity:1;}
   .way h3{font-size:clamp(28px,3vw,40px);letter-spacing:-.035em;line-height:1.02;margin:auto 0 14px;padding-top:40px;}
   .way p{max-width:30em;}
   .way .acts{display:flex;gap:22px;align-items:center;flex-wrap:wrap;margin-top:28px;}
   .way-member{grid-row:1 / span 2;background:var(--red);color:#fff;min-height:520px;--focus:#fff;}
   .way-member h3{font-size:clamp(40px,5.2vw,76px);letter-spacing:-.045em;}
   .way-member .price{font-family:var(--head);font-weight:700;font-size:20px;display:flex;align-items:baseline;gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.3);max-width:30em;}
-  .way-member .price span{font-size:14px;font-weight:500;font-family:var(--body);opacity:.9;}
+  .way-member .price span{font-size:14px;font-weight:500;font-family:var(--body);opacity:1;}
   .way-member .ring{position:absolute;right:clamp(24px,3vw,44px);top:clamp(24px,3vw,44px);width:clamp(120px,14vw,190px);height:auto;pointer-events:none;transition:transform 1.2s var(--ease);}
   .way-member:hover .ring{transform:rotate(30deg);}
   .way-field{background:var(--gold);color:var(--ink);min-height:250px;}
@@ -292,7 +293,7 @@
   /* ---------- 07 Don ---------- */
   .gift{background:var(--gold);color:var(--ink);}
   .gift-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,6vw,96px);align-items:center;}
-  .gift .marker{border-top-color:rgba(20,20,20,.3);}
+  .gift .marker{border-top-color:rgba(20,20,20,.3);color:var(--ink);}
   .gift .marker b{color:var(--ink);}
   .gift .text{color:var(--ink);margin-top:24px;max-width:28em;}
   .slip{background:#fff;border-radius:3px;display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);box-shadow:0 1px 0 rgba(20,20,20,.08),0 24px 48px -28px rgba(20,20,20,.45);transform:rotate(-1.2deg);transition:transform .5s var(--ease);}
@@ -300,7 +301,7 @@
   .slip > div{padding:26px 26px 30px;}
   .slip .stub{border-right:1.5px dashed rgba(20,20,20,.35);position:relative;}
   .slip .stub svg{position:absolute;right:-10px;top:18px;background:#fff;padding:2px 0;}
-  .slip h4{font-family:var(--body);font-size:14px;font-weight:700;margin-bottom:18px;}
+  .slip h3,.slip h4{font-family:var(--body);font-size:14px;font-weight:700;margin-bottom:18px;}
   .slip dl{margin:0;display:grid;gap:14px;}
   .slip dt{font-size:12px;font-weight:600;color:var(--muted);}
   .slip dd{margin:2px 0 0;font-size:15.5px;line-height:1.4;font-weight:500;}
@@ -308,7 +309,8 @@
   .slip .copier{margin-left:6px;font:600 12px var(--body);color:var(--ink);background:none;border:1px solid var(--line);border-radius:2px;padding:2px 8px;cursor:pointer;vertical-align:1px;}
   .slip .copier:hover{border-color:var(--ink);}
   .slip .ph{font-family:var(--head);font-weight:600;color:var(--ink);background:var(--paper);padding:1px 6px;border-radius:2px;}
-  .slip .amount{display:flex;gap:28px;}
+  .slip .amount{display:flex;gap:28px;margin:0;}
+  .slip .stub .amount{margin-top:14px;}
   .gift-note{margin-top:24px;font-size:14.5px;display:flex;gap:10px;align-items:flex-start;}
   .gift-note::before{content:"";flex-shrink:0;width:8px;height:8px;border-radius:50%;background:var(--ink);margin-top:8px;}
 
@@ -491,7 +493,7 @@
 .sC .etape .hr{font:800 clamp(22px,3vw,36px)/1 var(--head);font-variant-numeric:tabular-nums;color:#fdc915;margin-top:6px}
 .sC .etape .lieu{font:800 clamp(22px,3vw,36px)/1.02 var(--head);letter-spacing:-.025em;margin-top:8px}
 .sC .etape .ds{font-size:clamp(12px,1.35vw,15px);color:rgba(243,241,236,.82);margin-top:10px;max-width:32ch}
-.sC .exemple{font:600 10px var(--body);color:#5c5c58;margin-top:auto}
+.sC .exemple{font:600 10px var(--body);color:#8f8f89;margin-top:auto}
 
 @media (max-width:820px){  .scene{aspect-ratio:4/5}
   .sA{grid-template-columns:1fr;grid-template-rows:auto 1fr;align-content:center;gap:4px;padding:6% 6%}
@@ -519,7 +521,8 @@ body.menu-open .haut{opacity:0;pointer-events:none}
 .qa details .ans{overflow:hidden}
 .flash{animation:flash 1s ease}
 @keyframes flash{0%,100%{background:transparent}25%{background:rgba(253,201,21,.65)}}
-.rejouer{background:none;border:0;padding:0;font:600 13px var(--body);color:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px;opacity:.8}
+.rejouer{background:none;border:0;padding:0;font:600 13px var(--body);color:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px;opacity:.92}
+.valeurs .rejouer{color:#55554f;opacity:1}
 .rejouer:hover{opacity:1}
 .sC .rejouer{color:#c9c6bd;margin-top:10px;align-self:flex-start}
 .menu-panel ol a.is-current{color:var(--gold)}
@@ -645,7 +648,7 @@ body.menu-open .haut{opacity:0;pointer-events:none}
   <div class="lecture" aria-hidden="true"><i></i></div>
 </header>
 
-<div class="menu-panel" id="menu" aria-label="Menu">
+<div class="menu-panel" id="menu" role="dialog" aria-label="Menu">
   <ol>
     <li><a href="#association"><small>01</small>L'association</a></li>
     <li><a href="#maraudes"><small>02</small>Maraudes</a></li>
@@ -698,13 +701,13 @@ body.menu-open .haut{opacity:0;pointer-events:none}
   <div class="wrap">
     <p class="marker"><span id="t-valeurs">Nos valeurs</span></p>
     <div class="scene sA" id="sceneA">
-      <svg viewBox="-27 -5 94 50" role="img" aria-label="Le logo GE-FAIS en cadran : une valeur de la charte par point">
+      <svg viewBox="-27 -5 94 50" role="group" aria-label="Le logo GE-FAIS en cadran : une valeur de la charte par point">
         <g id="motsA"></g><g id="ptsA"></g>
         <g id="aigA"><line class="aig" x1="20" y1="23" x2="20" y2="6.5"/><circle class="aig-d" cx="20" cy="8.6" r="1.25"/><circle cx="20" cy="20" r=".55" fill="#141414"/></g>
       </svg>
       <div class="panneau" aria-live="polite">
         <div class="num" id="numA"></div>
-        <h2 class="val" id="valA"></h2>
+        <h2 class="val" id="valA">Notre charte,<br>en douze mots.</h2>
         <p class="lig" id="ligA"></p>
         <div class="cta" id="ctaA"><a href="adhesion.html">Devenir membre →</a><a href="#maraudes">Comment se passe une maraude</a></div>
       </div>
@@ -727,7 +730,7 @@ body.menu-open .haut{opacity:0;pointer-events:none}
         <p>Plus largement, GE-FAIS mène des actions de solidarité en Suisse et hors frontières, dans le respect de la dignité humaine, des cultures et des réalités locales. Chaque membre signe <a href="charte.html" class="link">notre charte éthique et de valeurs</a>.</p>
         <a href="#engager" class="link link-arrow">Les façons de s'engager</a>
       </div>
-      <aside class="facts reveal" style="--d:.2s" aria-labelledby="t-facts">
+      <div class="facts reveal" style="--d:.2s" role="group" aria-labelledby="t-facts">
         <h3 id="t-facts">GE-FAIS en bref</h3>
         <dl>
           <div><dt>Forme</dt><dd>Association à but non lucratif</dd></div>
@@ -739,7 +742,7 @@ body.menu-open .haut{opacity:0;pointer-events:none}
           <div><dt>Cadre</dt><dd>Une charte éthique et de valeurs, signée par chaque membre</dd></div>
           <div><dt>Devise</dt><dd>« Ensemble, faisons qu'un »</dd></div>
         </dl>
-      </aside>
+      </div>
     </div>
   </div>
 </section>
@@ -753,13 +756,13 @@ body.menu-open .haut{opacity:0;pointer-events:none}
       <p class="m-intro reveal" style="--d:.1s">Une maraude, c'est une tournée à pied dans la ville, à la rencontre des personnes qui vivent dans la rue. Pas de guichet, pas de file d'attente : c'est nous qui nous déplaçons.</p>
     </div>
     <div class="parcours-bloc">
-      <p class="lbl-p">Un parcours type</p>
+      <p class="lbl-p">Notre parcours</p>
       <div class="scene sC" id="sceneC">
-        <div class="carte"><svg id="carteC" role="img" aria-label="Carte de Genève avec un parcours type de maraude"></svg><div class="legende"><span><i style="background:#f3f1ec"></i>Arrêt</span><span><i style="border:2px solid #c9c6bd;width:7px;height:7px"></i>Passage</span></div><div class="credit">© contributeurs OpenStreetMap</div></div>
+        <div class="carte"><svg id="carteC" role="img" aria-label="Carte de Genève avec le parcours de nos maraudes : Plainpalais, Bastions, Bel-Air, les Grottes"></svg><div class="legende"><span><i style="background:#f3f1ec"></i>Arrêt</span><span><i style="border:2px solid #c9c6bd;width:7px;height:7px"></i>Passage</span></div><div class="credit">© contributeurs OpenStreetMap</div></div>
         <div class="panneau">
           <div class="compteur"><div>Parcouru<b id="kmC">0,0 km</b></div><div>Arrêt<b id="noC">1 / 4</b></div></div>
           <div class="etapes" id="etapesC"></div>
-          <div class="exemple">Parcours type : il varie selon les soirs.</div>
+          <div class="exemple">Le parcours peut varier selon les soirs.</div>
           <button type="button" class="rejouer" id="rejouerC">Revoir le trajet</button>
         </div>
       </div>
@@ -835,14 +838,14 @@ body.menu-open .haut{opacity:0;pointer-events:none}
           </li>
         </ul>
       </div>
-      <aside class="past reveal" style="--d:.15s" aria-labelledby="t-past">
+      <div class="past reveal" style="--d:.15s" role="group" aria-labelledby="t-past">
         <h3 id="t-past">Ces derniers mois</h3>
         <ol>
           <li style="--c:var(--red)"><time>Début 2026</time><p>Plusieurs maraudes dans les rues de Genève.</p></li>
           <li style="--c:var(--gold)"><time datetime="2025-12">Décembre 2025</time><p>Assemblée générale de l'association.</p></li>
         </ol>
         <p class="foot">Vous voulez être informé·e des prochaines dates ? <a href="adhesion.html" class="link">Devenez membre</a>.</p>
-      </aside>
+      </div>
     </div>
   </div>
 </section>
@@ -953,17 +956,17 @@ body.menu-open .haut{opacity:0;pointer-events:none}
       <div><div class="slip qrb" role="group" aria-label="Bulletin de versement pour un don">
         <div class="stub">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#62625e" stroke-width="1.6" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.6 7.6 20 18M8.6 16.4 20 6"/></svg>
-          <h4>Récépissé</h4>
+          <h3>Récépissé</h3>
           <dl>
             <div><dt>Compte / Payable à</dt><dd>CH58 0021 5215 3246 9901 V<br>Association GE-FAIS<br>Chemin des Raclerets 14<br>1284 Chancy</dd></div>
-            <div class="amount"><div><dt>Monnaie</dt><dd>CHF</dd></div><div><dt>Montant</dt><dd>Libre</dd></div></div>
           </dl>
+          <dl class="amount"><div><dt>Monnaie</dt><dd>CHF</dd></div><div><dt>Montant</dt><dd>Libre</dd></div></dl>
         </div>
         <div class="pay">
-          <h4>Section paiement</h4>
+          <h3>Section paiement</h3>
           <div class="pay-grid">
             <div class="qr-zone"><img class="qr-img" src="images/qr-don.svg" width="132" height="132" alt="QR code de paiement : don à l'Association GE-FAIS, montant libre">
-              <div class="amount"><div><dt>Monnaie</dt><dd>CHF</dd></div><div><dt>Montant</dt><dd>Libre</dd></div></div></div>
+              <dl class="amount"><div><dt>Monnaie</dt><dd>CHF</dd></div><div><dt>Montant</dt><dd>Libre</dd></div></dl></div>
             <dl>
               <div><dt>Compte / Payable à</dt><dd><span class="iban" id="iban">CH58 0021 5215 3246 9901 V</span><br><button type="button" class="copier" data-copie="CH580021521532469901V" aria-describedby="iban">Copier</button><br>Association GE-FAIS<br>Chemin des Raclerets 14<br>1284 Chancy</dd></div>
               <div><dt>Informations supplémentaires</dt><dd>Don GE-FAIS</dd></div>
@@ -977,7 +980,7 @@ body.menu-open .haut{opacity:0;pointer-events:none}
     <div class="vet" id="don-vetements">
       <div class="vet-g">
         <p class="lbl">Don de vêtements</p>
-        <figure class="vet-estampe"><img src="images/don-vetements.webp" loading="lazy" width="1200" height="1050" alt="Gravure sur linoléum : une pile de vêtements chauds, une veste, une écharpe et des chaussettes"></figure>
+        <figure class="vet-estampe"><img src="images/don-vetements.webp" loading="lazy" width="640" height="560" alt="Gravure sur linoléum : une pile de vêtements chauds, une veste, une écharpe et des chaussettes"></figure>
       </div>
       <div class="vet-corps">
         <div class="vet-texte">
@@ -1202,10 +1205,11 @@ body.menu-open .haut{opacity:0;pointer-events:none}
 
   /* Sous-menu « Dons » */
   document.querySelectorAll('.has-sub').forEach(function(li){
-    var b = li.querySelector('.sub-btn'), t;
+    var b = li.querySelector('.sub-btn'), t, tSurvol = 0;
     function ouvrir(o){ li.classList.toggle('is-open', o); b.setAttribute('aria-expanded', o ? 'true' : 'false'); }
-    b.addEventListener('click', function(){ ouvrir(!li.classList.contains('is-open')); });
-    li.addEventListener('mouseenter', function(){ clearTimeout(t); if(matchMedia('(hover:hover)').matches) ouvrir(true); });
+    // Un clic juste après l'ouverture au survol ne doit pas refermer le menu
+    b.addEventListener('click', function(){ if(Date.now() - tSurvol < 700){ ouvrir(true); return; } ouvrir(!li.classList.contains('is-open')); });
+    li.addEventListener('mouseenter', function(){ clearTimeout(t); if(matchMedia('(hover:hover)').matches && !li.classList.contains('is-open')){ tSurvol = Date.now(); ouvrir(true); } });
     li.addEventListener('mouseleave', function(){ t = setTimeout(function(){ ouvrir(false); }, 180); });
     li.addEventListener('click', function(e){ if(e.target.closest('.sub a')) ouvrir(false); });
     document.addEventListener('click', function(e){ if(!li.contains(e.target)) ouvrir(false); });
@@ -1345,17 +1349,17 @@ function jouerA(){
 }
 
 /* ── C : le parcours (carte OpenStreetMap, trajet piéton réel) ── */
-const SUP={"W": 1063, "H": 901, "route": [[546.0, 600.9], [547.2, 572.7], [551.0, 572.8], [552.6, 572.8], [553.1, 572.9], [553.6, 572.9], [554.1, 572.9], [556.1, 572.9], [558.3, 573.0], [558.6, 572.7], [558.9, 572.5], [559.6, 572.5], [566.0, 573.0], [570.2, 577.5], [570.8, 576.8], [571.2, 577.2], [573.6, 579.2], [573.8, 579.4], [574.5, 580.2], [574.9, 579.8], [575.3, 579.4], [575.8, 579.0], [576.5, 578.3], [576.6, 578.2], [577.0, 578.2], [577.5, 578.2], [577.9, 578.2], [578.4, 578.2], [578.8, 578.2], [579.5, 578.2], [579.7, 578.2], [580.6, 578.1], [581.4, 577.8], [582.1, 577.4], [582.8, 577.0], [583.6, 576.3], [584.3, 575.5], [584.8, 574.6], [585.3, 573.7], [585.8, 573.8], [587.3, 574.2], [588.3, 574.4], [588.5, 575.3], [589.0, 576.2], [589.7, 576.7], [590.0, 576.9], [590.3, 576.5], [590.8, 575.7], [591.2, 573.2], [591.6, 571.0], [597.1, 570.3], [597.5, 573.8], [599.4, 575.0], [601.1, 576.1], [601.3, 576.3], [602.4, 574.9], [602.6, 574.6], [611.9, 565.3], [610.7, 564.2], [610.9, 564.0], [615.5, 568.3], [616.5, 567.3], [617.2, 566.6], [621.1, 562.6], [622.4, 563.9], [623.1, 563.3], [624.3, 562.0], [626.5, 564.1], [628.8, 561.8], [635.4, 568.4], [635.8, 568.2], [636.3, 567.7], [637.0, 567.6], [637.8, 567.8], [638.5, 568.1], [640.0, 569.0], [641.3, 569.6], [642.6, 569.7], [643.6, 569.8], [644.8, 569.5], [646.1, 569.0], [647.2, 567.9], [647.9, 566.8], [648.4, 565.6], [648.6, 564.3], [650.8, 563.9], [652.4, 563.5], [653.2, 563.0], [653.8, 562.5], [654.5, 561.8], [654.9, 560.8], [655.1, 559.7], [655.1, 558.2], [653.5, 556.9], [654.8, 555.4], [656.7, 553.1], [663.3, 545.5], [665.1, 546.8], [667.0, 547.1], [668.5, 546.6], [665.3, 543.2], [651.6, 530.7], [641.3, 521.3], [639.5, 519.7], [632.3, 513.1], [622.4, 504.0], [621.0, 502.7], [599.3, 483.1], [595.5, 479.9], [596.4, 476.1], [593.4, 473.4], [593.1, 473.0], [594.7, 471.1], [598.6, 466.8], [598.3, 466.5], [598.0, 466.2], [597.4, 465.6], [596.9, 465.0], [596.7, 464.9], [596.4, 464.5], [595.8, 465.3], [591.5, 470.2], [588.9, 473.0], [584.6, 477.7], [583.9, 478.5], [583.4, 478.4], [582.9, 478.2], [580.3, 477.2], [576.9, 477.7], [576.4, 478.0], [575.7, 477.9], [564.1, 483.7], [564.6, 484.7], [562.6, 485.6], [560.5, 486.7], [560.0, 485.7], [538.7, 496.2], [538.2, 496.5], [538.6, 497.3], [537.0, 498.0], [534.7, 499.1], [534.2, 499.3], [533.7, 499.6], [532.6, 500.0], [533.1, 501.1], [533.4, 502.5], [533.6, 503.9], [527.5, 503.9], [508.8, 503.9], [507.2, 504.1], [506.2, 504.9], [503.8, 518.7], [502.0, 526.9], [499.8, 526.5], [497.6, 526.0], [495.2, 525.6], [494.3, 526.8], [482.5, 523.2], [481.9, 523.0], [480.4, 522.6], [479.5, 522.3], [464.6, 517.5], [464.5, 516.9], [463.4, 516.5], [461.9, 516.1], [461.8, 516.6], [455.0, 514.5], [454.4, 516.2], [452.7, 515.5], [451.4, 515.0], [449.1, 514.4], [446.7, 513.7], [430.4, 508.4], [426.7, 505.9], [419.1, 503.5], [414.5, 502.1], [409.5, 500.6], [404.8, 499.8], [404.1, 501.1], [402.8, 500.7], [398.9, 499.6], [394.5, 498.5], [393.2, 498.0], [392.4, 497.7], [372.1, 491.0], [370.6, 490.5], [369.7, 491.5], [368.9, 490.6], [367.7, 489.4], [355.1, 502.2], [354.1, 503.1], [353.3, 503.9], [347.2, 509.9], [345.4, 508.5], [343.6, 511.0], [342.3, 512.7], [333.3, 505.4], [328.4, 502.4], [326.4, 501.5], [322.9, 500.4], [322.4, 500.3], [320.6, 499.7], [309.1, 496.9], [297.6, 494.1], [286.9, 491.4], [285.2, 490.6], [281.0, 489.7], [278.1, 489.0], [271.8, 487.6], [262.5, 500.8], [258.7, 506.2], [257.5, 505.2], [256.7, 504.5], [255.7, 505.9], [254.5, 507.5], [254.6, 508.8], [254.8, 509.8], [254.2, 510.0], [253.8, 510.3], [253.4, 510.6], [253.0, 511.1], [239.0, 531.4], [241.7, 533.3], [242.0, 532.9], [239.7, 531.3], [238.6, 530.4], [238.1, 531.1], [230.5, 525.6], [227.1, 523.3], [226.7, 523.9], [229.8, 526.1], [229.3, 527.0], [228.6, 528.2], [227.9, 529.0], [227.7, 530.8], [226.7, 529.9], [217.2, 522.9], [215.0, 520.5], [213.1, 518.8], [211.6, 517.5], [210.4, 516.6], [209.5, 515.9], [208.7, 515.5], [208.1, 515.3], [206.6, 515.1], [206.0, 514.9], [205.6, 514.8], [204.8, 514.2], [203.1, 512.8], [202.5, 512.7], [198.2, 512.7], [196.6, 512.5], [190.4, 511.8], [186.6, 509.0], [183.0, 506.9], [181.4, 506.4], [176.9, 505.6], [173.1, 504.9], [170.7, 504.5], [172.0, 502.0], [166.5, 500.8], [144.3, 496.2], [143.4, 495.6], [142.9, 494.8], [142.7, 493.9], [143.1, 492.7], [145.7, 493.2], [156.2, 495.3], [169.0, 498.1], [169.1, 497.7], [181.1, 469.8], [182.0, 467.5], [182.3, 466.5], [183.2, 463.6], [183.6, 462.4], [183.9, 461.4], [183.0, 457.0], [183.8, 447.2], [184.0, 444.3], [184.2, 442.1], [184.4, 440.1], [184.6, 438.0], [184.6, 437.0], [184.8, 435.2], [185.7, 424.6], [185.7, 422.9], [189.1, 422.8], [193.0, 422.4], [195.3, 422.1], [207.8, 419.2], [221.9, 415.3], [234.4, 413.7], [236.6, 413.4], [244.0, 412.5], [248.8, 411.9], [255.9, 411.0], [263.3, 411.2], [276.5, 411.7], [276.6, 413.7], [277.6, 448.8], [277.9, 449.7], [278.5, 450.4], [279.2, 450.9], [280.1, 451.1], [282.1, 452.4], [282.3, 452.2], [282.8, 451.6], [284.6, 449.7], [307.0, 417.6], [307.4, 416.6], [307.5, 415.8], [308.2, 414.6], [308.5, 415.3], [308.7, 416.6], [308.7, 417.7], [308.3, 419.9], [309.8, 419.4], [312.1, 419.1], [313.0, 418.2], [314.4, 416.8], [315.7, 415.7], [316.8, 414.8], [317.7, 414.1], [318.4, 413.8], [319.5, 413.2], [324.2, 411.9], [329.6, 410.3], [330.9, 410.0], [332.0, 409.7], [344.3, 405.9], [347.9, 406.7], [348.5, 405.1], [348.4, 404.7], [348.2, 403.8], [348.0, 403.2], [358.3, 400.5], [362.4, 399.4], [365.8, 398.5], [366.8, 398.3], [368.1, 398.0], [369.6, 397.7], [371.0, 397.6], [370.8, 397.1], [370.8, 396.6], [370.6, 396.2], [370.4, 394.7], [372.2, 393.9], [373.0, 392.6], [373.5, 390.0], [374.0, 389.2], [375.2, 388.3], [384.6, 383.5], [384.8, 383.3], [387.0, 382.2], [401.9, 372.9], [406.9, 372.2], [412.1, 371.6], [419.4, 370.8], [425.4, 370.2], [426.3, 370.2], [433.5, 369.7], [433.6, 371.1], [440.7, 370.8], [443.8, 370.5], [448.8, 370.1], [448.9, 371.3], [452.3, 371.7], [454.6, 372.1], [463.3, 372.9], [468.2, 374.8], [484.7, 381.3], [486.7, 381.7], [487.5, 382.5], [488.1, 383.2], [491.0, 382.7], [492.4, 382.4], [499.0, 381.9], [500.1, 382.1], [504.2, 381.6], [504.8, 381.6], [504.7, 380.9], [505.7, 380.8], [506.8, 380.6], [507.1, 380.6], [507.4, 380.6], [508.3, 380.5], [508.8, 380.4], [509.4, 380.3], [510.2, 380.3], [511.8, 380.1], [511.8, 380.4], [512.3, 380.3], [530.1, 378.6], [530.6, 378.5], [532.6, 378.3], [535.0, 378.0], [535.4, 378.0], [535.3, 377.1], [535.9, 377.1], [537.2, 376.9], [539.3, 376.7], [539.3, 377.4], [552.5, 376.1], [552.9, 376.1], [559.5, 375.4], [559.2, 375.0], [560.0, 374.7], [560.8, 374.5], [561.9, 374.1], [562.5, 373.9], [563.0, 373.7], [563.9, 374.1], [565.2, 374.4], [566.4, 374.5], [572.8, 372.6], [573.1, 371.9], [574.1, 371.7], [575.3, 371.4], [576.0, 371.3], [576.1, 371.2], [576.0, 370.8], [575.8, 369.7], [574.6, 364.9], [574.5, 364.2], [574.6, 363.6], [574.8, 362.7], [575.2, 361.7], [575.7, 361.0], [576.3, 360.3], [577.5, 359.5], [579.1, 358.9], [580.4, 358.4], [581.6, 358.0], [582.5, 357.5], [583.3, 356.8], [583.7, 355.8], [583.6, 354.7], [582.6, 353.3], [582.5, 352.4], [582.4, 351.4], [579.2, 351.3], [579.8, 350.5], [580.1, 349.7], [580.2, 348.7], [580.0, 347.5], [577.8, 340.8], [577.4, 339.7], [574.2, 330.2], [573.7, 328.8], [573.5, 328.2], [572.2, 324.6], [571.1, 321.8], [569.8, 319.0], [568.9, 317.5], [568.2, 316.7], [567.8, 316.3], [566.8, 315.7], [565.5, 315.1], [565.5, 314.6], [565.5, 313.9], [565.5, 310.6], [565.6, 309.7], [565.6, 309.2], [567.0, 309.1], [564.0, 300.2], [563.8, 299.7], [565.0, 299.2], [569.8, 297.1], [568.4, 295.3], [563.4, 284.5], [563.1, 284.0], [562.6, 283.2], [562.3, 282.5], [562.0, 281.8], [562.1, 281.2], [557.0, 270.1], [556.9, 269.4], [555.9, 267.2], [554.1, 265.8], [553.4, 265.2], [552.2, 264.1], [551.4, 262.7], [551.1, 261.1], [551.0, 259.6], [551.2, 258.3], [555.5, 248.2], [555.9, 247.1], [557.5, 245.5], [558.0, 244.1], [558.5, 243.4], [560.0, 242.2], [560.6, 241.3], [563.1, 234.1], [563.5, 232.6], [563.4, 231.3], [563.0, 230.3], [561.6, 229.1], [560.8, 228.5], [558.9, 227.3], [559.3, 226.8], [559.8, 226.3], [560.8, 225.4], [561.4, 224.9], [563.6, 223.2], [565.9, 221.5], [566.6, 220.9], [567.1, 220.4], [567.5, 220.1], [568.4, 219.1], [569.3, 217.4], [571.5, 217.2], [575.5, 192.8], [575.8, 191.5], [577.2, 190.5], [578.9, 188.4], [580.3, 186.6], [579.2, 185.9], [573.1, 182.0], [572.3, 181.4], [571.7, 181.1], [566.1, 176.2], [564.7, 175.4], [562.2, 173.7], [562.1, 172.3], [562.1, 171.9], [558.8, 169.6], [557.5, 168.7], [557.1, 168.4], [557.7, 167.7], [560.3, 164.2]], "legsKm": [0.748, 2.27, 2.814], "arrets": [[546.0, 600.9], [651.6, 530.7], [145.7, 493.2], [560.3, 164.2]], "passages": [{"n": "Place Neuve", "x": 591.5, "y": 470.2}, {"n": "Quai du Rh\u00f4ne", "x": 358.3, "y": 400.5}, {"n": "Bel-Air", "x": 574.6, "y": 363.6}]};
+const SUP={"W": 1063, "H": 901, "route": [[556.2, 557.1], [556.0, 561.0], [555.5, 561.0], [555.5, 562.0], [556.1, 562.0], [556.2, 560.2], [557.2, 559.7], [558.2, 559.3], [559.9, 558.5], [560.5, 558.3], [560.5, 559.0], [560.8, 559.3], [571.7, 559.0], [572.8, 558.8], [573.7, 558.4], [574.7, 557.5], [575.7, 558.0], [576.2, 558.3], [577.0, 558.8], [577.9, 558.8], [578.4, 558.8], [578.6, 558.8], [578.8, 558.8], [579.2, 558.9], [579.3, 556.4], [579.6, 556.4], [580.2, 529.2], [581.3, 524.5], [581.9, 520.0], [582.2, 516.6], [586.5, 520.8], [586.9, 520.4], [588.5, 518.5], [589.5, 518.7], [590.5, 518.6], [592.3, 518.0], [594.0, 517.3], [597.0, 515.6], [598.1, 514.5], [599.4, 512.8], [601.7, 511.4], [602.5, 510.9], [603.8, 509.9], [604.0, 509.9], [605.5, 508.9], [607.9, 506.6], [610.3, 504.5], [613.8, 502.5], [615.7, 502.0], [617.1, 503.2], [618.9, 504.9], [621.0, 502.7], [623.0, 500.5], [612.4, 490.8], [618.3, 482.9], [621.7, 477.3], [613.1, 471.9], [609.3, 471.7], [607.8, 470.5], [605.4, 468.6], [599.9, 470.9], [599.6, 470.2], [599.3, 469.7], [598.8, 469.3], [602.1, 465.8], [603.3, 464.9], [604.7, 464.3], [606.3, 464.1], [606.3, 463.3], [606.3, 462.9], [601.9, 461.2], [602.1, 459.8], [602.4, 456.1], [602.6, 454.9], [602.6, 454.5], [602.7, 453.9], [602.7, 453.5], [602.8, 452.3], [603.0, 451.0], [603.1, 449.5], [599.1, 446.6], [597.8, 445.8], [598.3, 444.4], [597.5, 442.0], [595.2, 434.2], [590.0, 416.2], [588.3, 409.6], [587.7, 407.3], [586.4, 402.9], [585.3, 399.2], [585.3, 398.2], [585.1, 395.3], [581.0, 378.3], [580.9, 376.8], [581.1, 376.0], [581.5, 375.4], [582.4, 374.7], [584.0, 374.0], [589.7, 372.7], [591.7, 372.5], [592.9, 372.5], [592.4, 371.1], [592.2, 370.5], [592.0, 369.9], [591.6, 368.8], [590.2, 364.4], [588.9, 360.2], [591.3, 359.3], [596.3, 357.7], [596.1, 357.2], [592.3, 358.3], [592.5, 356.7], [592.6, 355.6], [592.6, 355.0], [592.6, 354.3], [591.2, 351.8], [590.8, 349.6], [590.6, 348.8], [589.2, 338.4], [588.7, 337.1], [588.6, 336.3], [584.1, 322.6], [583.8, 321.8], [580.7, 312.7], [580.6, 312.2], [580.5, 312.0], [579.4, 309.5], [579.1, 308.9], [578.2, 306.7], [576.7, 307.4], [576.3, 307.6], [575.8, 307.8], [575.4, 308.0], [574.7, 308.2], [573.9, 306.4], [569.8, 297.1], [568.4, 295.3], [563.4, 284.5], [563.1, 284.0], [562.6, 283.2], [562.3, 282.5], [562.0, 281.8], [562.1, 281.2], [557.0, 270.1], [556.9, 269.4], [555.9, 267.2], [554.1, 265.8], [553.4, 265.2], [552.2, 264.1], [551.4, 262.7], [551.1, 261.1], [551.0, 259.6], [551.2, 258.3], [547.7, 257.2], [545.0, 253.5], [543.9, 252.7], [547.3, 247.9], [545.6, 246.7], [545.0, 246.2], [544.3, 245.8], [544.0, 245.5], [543.3, 245.1], [544.4, 243.6], [537.8, 238.5], [536.0, 237.1], [534.9, 236.2], [528.1, 230.9], [529.1, 229.7], [526.0, 226.9], [525.3, 225.0], [524.5, 223.1], [524.2, 222.3], [524.0, 221.8], [522.0, 222.6], [520.2, 218.7], [518.7, 216.4], [516.4, 213.9], [512.9, 211.0], [511.7, 210.0], [509.7, 208.4], [508.7, 208.4], [507.6, 207.6], [506.6, 206.4], [506.5, 205.9], [504.8, 204.5], [506.6, 202.0], [508.7, 199.3], [502.7, 194.4], [503.5, 193.2], [502.2, 188.6], [510.2, 186.0], [509.9, 185.4], [509.7, 184.9], [509.4, 184.3], [509.0, 183.3], [508.5, 183.5]], "legsKm": [0.583, 0.482, 0.794], "arrets": [[556.2, 557.1], [607.8, 470.5], [591.3, 359.3], [508.5, 183.5]], "passages": [{"n": "Place Neuve", "x": 597.8, "y": 445.8}, {"n": "Pont de l'Île", "x": 588.6, "y": 336.3}]};
 const svg=document.getElementById('carteC');
-const mqC=matchMedia('(max-width:820px)');const cadreC=()=>svg.setAttribute('viewBox',mqC.matches?'60 150 640 480':'10 120 710 540');cadreC();mqC.addEventListener?.('change',cadreC);svg.setAttribute('preserveAspectRatio','xMidYMid meet');svg.style.overflow='visible';
+const mqC=matchMedia('(max-width:820px)');const cadreC=()=>svg.setAttribute('viewBox',mqC.matches?'252 150 620 465':'266 147 592 450');cadreC();mqC.addEventListener?.('change',cadreC);svg.setAttribute('preserveAspectRatio','xMidYMid meet');svg.style.overflow='visible';
 el('image',{href:'images/carte-geneve.webp',x:0,y:0,width:SUP.W,height:SUP.H},svg);
 const lbl=(t,x,y)=>{const e=el('text',{x,y,class:'lbl'},svg);e.textContent=t;};
-lbl('Rhône',255,392);lbl('Arve',318,600);lbl('Léman',740,262);
+lbl('Rhône',380,318);lbl('Léman',740,262);
 const ARRETS=[
-  {n:'Plainpalais',plein:'Plaine de Plainpalais',h:'19:00',d:'Rendez-vous des bénévoles. On remplit les thermos et on se répartit les sacs.',dx:14,dy:24,a:'start'},
-  {n:'Bastions',plein:'Parc des Bastions',h:'19:30',d:'Premières rencontres. On s’arrête, on salue, on prend des nouvelles.',dx:-14,dy:26,a:'end'},
-  {n:'Jonction',plein:'Pointe de la Jonction',h:'20:30',d:'Là où le Rhône et l’Arve se rejoignent. On prend le temps de discuter.',dx:-2,dy:34,a:'start'},
-  {n:'Cornavin',plein:'Gare Cornavin',h:'21:30',d:'Dernier arrêt. Les derniers cafés, puis on fait le point ensemble.',dx:16,dy:6,a:'start'}
+  {n:'Plainpalais',plein:'Rond-point de Plainpalais',d:'Rendez-vous des bénévoles. On remplit les thermos et on se répartit les sacs.',dx:16,dy:6,a:'start'},
+  {n:'Bastions',plein:'Parc des Bastions',d:'Premières rencontres. On s’arrête, on salue, on prend des nouvelles.',dx:16,dy:6,a:'start'},
+  {n:'Bel-Air',plein:'Place de Bel-Air',d:'Au bord du Rhône, en plein centre. On prend le temps de discuter.',dx:-16,dy:6,a:'end'},
+  {n:'Les Grottes',plein:'Rue des Quatre-Saisons, aux Grottes',d:'Dernier arrêt, derrière la gare. Les derniers cafés, puis on fait le point ensemble.',dx:16,dy:6,a:'start'}
 ];
 // Un seul trait qui suit exactement les rues (itinéraire piéton calculé sur OpenStreetMap)
 const R0=SUP.route;
@@ -1415,7 +1419,7 @@ document.getElementById('rejouerA').addEventListener('click',jouerA);document.ge
 document.querySelectorAll('.copier').forEach(b=>b.addEventListener('click',async()=>{
   const t=b.dataset.copie,ok=()=>{b.textContent='Copié';setTimeout(()=>b.textContent='Copier',1800);};
   try{await navigator.clipboard.writeText(t);ok();}
-  catch(e){const r=document.createRange();r.selectNodeContents(document.getElementById('iban'));const sel=getSelection();sel.removeAllRanges();sel.addRange(r);}
+  catch(e){const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;top:-1000px;opacity:0';document.body.appendChild(ta);ta.select();let c=false;try{c=document.execCommand('copy');}catch(_){}ta.remove();if(c)ok();else{const el=document.getElementById('iban');if(el){const r=document.createRange();r.selectNodeContents(el);const sel=getSelection();sel.removeAllRanges();sel.addRange(r);}b.textContent='Sélectionné';setTimeout(()=>b.textContent='Copier',1800);}}
 }));
 </script>
 <script src="animations.js" defer></script>
