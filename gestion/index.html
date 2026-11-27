@@ -1402,7 +1402,8 @@ td{font-size:14px;color:var(--text2);}
 
 /* Icônes au trait (remplacent les émojis) */
 .ic{display:inline-block;flex-shrink:0;}
-.ic.emo{width:1em;height:1em;vertical-align:-0.14em;stroke-width:2;}
+.ic.emo{width:1em;height:1em;vertical-align:-0.14em;stroke-width:1.6;}
+.ic.emo *{vector-effect:non-scaling-stroke;}
 .ic.emo.ic-alert{color:#d97706;}
 .ic.emo.ic-check,.ic.emo.ic-check-circle{color:var(--green);}
 .ic.emo.ic-x-circle{color:var(--red);}
@@ -2472,6 +2473,8 @@ grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7
 };
 function ic(n,s){const z=s?` width="${s}" height="${s}"`:'';return `<svg class="ic ic-${n}"${z} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${_ICP[n]||''}</svg>`;}
 const _EMO2IC={'⚠️':'alert','⚠':'alert','✅':'check-circle','✓':'check','✔️':'check','❌':'x-circle','✕':'x','❓':'help','ℹ️':'info','ℹ':'info','🗑️':'trash','🗑':'trash','✏️':'pencil','✏':'pencil','📄':'file','📝':'file','📤':'upload','📥':'arrow-in','📂':'folder','📁':'folder','📎':'clip','📷':'camera','📅':'calendar','👥':'users','👤':'user','🏅':'award','💳':'card','💰':'wallet','📊':'chart','📈':'trend-up','📉':'trend-down','✉️':'mail','✉':'mail','💛':'heart','💚':'trend-up','🔴':'trend-down','📱':'phone','🏦':'bank','🖼️':'image','🖼':'image','📦':'archive','☁️':'cloud','☁':'cloud','🔄':'refresh','💾':'save','📌':'pin','💬':'message','🗣️':'talk','🗣':'talk','🔒':'lock','🤝':'route','🏠':'home','📋':'clipboard','✍️':'pen','✍':'pen','☀️':'sun','☀':'sun','🌙':'moon','⏳':'hourglass','⊞':'grid'};
+// Émoji des données → icône au trait (ou texte échappé s'il n'est pas connu)
+function _icx(e,s){return _EMO2IC[e]?ic(_EMO2IC[e],s).replace('class="ic ','class="ic emo '):_e(e);}
 const _EMO_RE=new RegExp('('+Object.keys(_EMO2IC).sort((a,b)=>b.length-a.length).map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')','g');
 const _EMO_SKIP=/^(SCRIPT|STYLE|TEXTAREA|OPTION|SELECT|TITLE|INPUT)$/;
 function _deEmoji(root){
@@ -2487,8 +2490,7 @@ function _deEmojiText(t){
   _EMO_RE.lastIndex=0;if(!_EMO_RE.test(t.nodeValue))return;
   const tpl=document.createElement('template');
   const esc=v=>v.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-  const big=parseFloat(getComputedStyle(p).fontSize)>=26?' big':'';
-  tpl.innerHTML=esc(t.nodeValue).replace(_EMO_RE,m=>ic(_EMO2IC[m]).replace('class="ic ','class="ic emo'+big+' '));
+  tpl.innerHTML=esc(t.nodeValue).replace(_EMO_RE,m=>ic(_EMO2IC[m]).replace('class="ic ','class="ic emo '));
   p.replaceChild(tpl.content,t);
 }
 (function(){
@@ -3450,13 +3452,13 @@ function _buildEventListHTML(filtered){
       const presencesHtml=membres.map(mb=>{
         const p=!!presences[mb.id+'_'+e.id];
         return`<div class="presence-inline-item ${p?'present':''}" onclick="togglePresenceInline(${mb.id},${e.id},this)">
-          <div class="pi-check">${p?'✓':''}</div>
+          <div class="pi-check">${p?ic('check',12):''}</div>
           <div style="min-width:0;"><div class="pi-name">${_e(mb.prenom)} ${_e(mb.nom)}</div><div class="pi-type">${_e(mb.type||'—')}</div></div>
         </div>`;
       }).join('');
       html+=`<div class="event-row${isOpen?' open':''}" id="event-row-${e.id}">
         <div class="event-row-header" onclick="toggleEventRow(${e.id})">
-          <div style="width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;background:${sp?sp.couleur+'22':'var(--bg3)'};">${eventIcon}</div>
+          <div style="width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;background:${sp?sp.couleur+'22':'var(--bg3)'};">${_icx(eventIcon)}</div>
           <div class="event-row-meta">
             <div class="event-row-title">${_e(e.nom||e.type)}</div>
             <div class="event-row-sub">
@@ -3600,7 +3602,7 @@ function togglePresenceInline(mid,eid,el){
   presences[key]=!presences[key];
   save('gef_presences',presences);
   el.classList.toggle('present',presences[key]);
-  el.querySelector('.pi-check').textContent=presences[key]?'✓':'';
+  el.querySelector('.pi-check').innerHTML=presences[key]?ic('check',12):'';
   // Mettre à jour le compteur dans le header
   const count=membres.filter(m=>presences[m.id+'_'+eid]).length;
   const pct=membres.length>0?Math.round((count/membres.length)*100):0;
@@ -3629,7 +3631,7 @@ function toggleAllPresencesInline(eid,val){
       const m=membres[i];
       if(!m)return;
       el.classList.toggle('present',val);
-      el.querySelector('.pi-check').textContent=val?'✓':'';
+      el.querySelector('.pi-check').innerHTML=val?ic('check',12):'';
     });
   }
   // Mettre à jour compteur
