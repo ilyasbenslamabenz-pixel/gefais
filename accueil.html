@@ -87,8 +87,8 @@
   .brand svg{width:28px;height:28px;flex-shrink:0;transition:transform .8s var(--ease);}
   .wordmark{display:block;height:17px;aspect-ratio:771/150;background:currentColor;-webkit-mask:url(images/gefais-mot.svg) center/contain no-repeat;mask:url(images/gefais-mot.svg) center/contain no-repeat;}
   .nav{display:flex;align-items:center;gap:32px;font-size:15px;font-weight:500;}
-  .nav-links{display:flex;gap:26px;list-style:none;margin:0;padding:0;}
-  .nav-links a{position:relative;padding:6px 0;opacity:.88;transition:opacity .2s;}
+  .nav-links{display:flex;align-items:center;gap:26px;list-style:none;margin:0;padding:0;}
+  .nav-links a{position:relative;display:block;padding:6px 0;opacity:.88;transition:opacity .2s;}
   .nav-links a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1.5px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .3s var(--ease);}
   .nav-links a:hover,.nav-links a.is-current{opacity:1;}
   .nav-links a:hover::after,.nav-links a.is-current::after{transform:scaleX(1);transform-origin:left;}
