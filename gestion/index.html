@@ -1446,6 +1446,62 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
   0%{transform:rotate(0deg);}
   100%{transform:rotate(360deg);}
 }
+
+/* ── Tableau de bord dans le style du site public ── */
+.db-hero{position:relative;margin:-36px -44px 44px;padding:64px 44px 52px;color:#fff;overflow:hidden;isolation:isolate;background:#141414;}
+.db-hero-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 46%;z-index:-2;}
+.db-hero-shade{position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(12,10,16,.84) 0%,rgba(12,10,16,.6) 45%,rgba(12,10,16,.2) 80%,rgba(12,10,16,.1) 100%),linear-gradient(0deg,rgba(12,10,16,.55) 0%,rgba(12,10,16,0) 40%);}
+.db-hero-in{position:relative;max-width:760px;}
+.db-hero .db-kicker{display:flex;align-items:center;gap:14px;color:rgba(255,255,255,.88);}
+.db-hero .db-kicker::before{content:'';width:32px;height:1px;background:currentColor;flex:none;}
+.db-hero .db-title{color:#fff;font-size:clamp(56px,6vw,88px);letter-spacing:-.04em;}
+.db-hero .db-lead{color:rgba(255,255,255,.9);}
+.db-hero .db-lead strong{color:#fff;}
+.db-hero .btn-secondary{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.7);}
+.db-hero .btn-secondary:hover{background:#fff;color:#141414;}
+.db-hero .db-textlink{color:#fff;}
+.db-hero .db-textlink:hover{color:#fff;opacity:.8;}
+.db-facts{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;border:none;margin-bottom:48px;}
+.db-fact{position:relative;min-height:220px;padding:24px 24px 22px;border:none;border-radius:4px;text-align:left;font:inherit;cursor:pointer;transition:transform .3s cubic-bezier(.2,.7,.2,1),box-shadow .3s cubic-bezier(.2,.7,.2,1);}
+.db-fact:first-child{padding-left:24px;}
+.db-fact:hover{transform:translateY(-4px);box-shadow:0 22px 40px -26px rgba(20,20,20,.55);}
+.db-fact:focus-visible{outline:2px solid var(--text);outline-offset:3px;}
+.db-fact .db-fact-label{font-size:14px;font-weight:600;color:inherit;opacity:.85;}
+.db-fact .db-fact-num{margin-top:auto;color:inherit;font-size:48px;}
+.db-fact .db-fact-num small{color:inherit;opacity:.7;}
+.db-fact .db-fact-sub{color:inherit;opacity:.8;}
+.db-fact-fl{margin-top:14px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.db-fact-fl i{font-style:normal;transition:transform .3s cubic-bezier(.2,.7,.2,1);}
+.db-fact:hover .db-fact-fl i{transform:translateX(5px);}
+.db-fact.c-ink{background:#141414;color:#fff;}
+.db-fact.c-gold{background:#c49a00;color:#141414;}
+.db-fact.c-line{background:var(--card);color:var(--text);box-shadow:inset 0 0 0 1.5px var(--text);}
+.db-fact.c-line:hover{box-shadow:inset 0 0 0 1.5px var(--text),0 22px 40px -26px rgba(20,20,20,.55);}
+.db-fact.c-red{background:#d42a20;color:#fff;}
+.db-fact .is-neg{color:var(--red)!important;}
+.db-anneau{position:absolute;top:20px;right:20px;width:54px;height:54px;}
+.db-anneau~.db-fact-label{padding-right:62px;}
+.db-anneau circle{fill:currentColor;opacity:.25;}
+.db-anneau circle.on{opacity:1;}
+.db-sec-head h2{font-size:32px;letter-spacing:-.03em;}
+[data-theme=sombre] .db-fact.c-ink{background:#f3f1ec;color:#141414;}
+@media (max-width:1180px){.db-facts{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media (max-width:900px){
+  .db-hero{margin:0 0 20px;padding:28px 20px 24px;border-radius:4px;}
+  .db-hero .db-kicker{font-size:13.5px;gap:10px;}
+  .db-hero .db-kicker::before{width:20px;}
+  .db-hero .db-title{font-size:46px;margin-bottom:14px;}
+  .db-hero .db-lead{font-size:16px;margin-bottom:22px;}
+  .db-hero .db-actions .btn{flex:1 1 40%;white-space:nowrap;padding:12px 12px;font-size:14.5px;}
+  .db-hero .db-textlink{margin-top:4px;}
+  .db-facts{gap:10px;}
+  .db-fact,.db-fact:first-child,.db-fact:nth-child(odd){min-height:170px;padding:18px 16px 16px;}
+  .db-fact:nth-child(n+3){border-top:none;}
+  .db-fact .db-fact-num{font-size:34px;}
+  .db-fact-fl{display:none;}
+  .db-anneau{width:36px;height:36px;top:14px;right:14px;}
+  .db-anneau~.db-fact-label{padding-right:40px;}
+}
 </style>
 
 <!-- LOGIN -->
@@ -1633,7 +1689,10 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
     <!-- DASHBOARD -->
     <div id="page-dashboard" class="page active">
 
-      <header class="db-head">
+      <header class="db-head db-hero">
+        <img class="db-hero-photo" src="../images/geneve-jet-deau.webp" srcset="../images/geneve-jet-deau.webp 1600w, ../images/geneve-jet-deau-3200.webp 3200w" sizes="(max-width:900px) 100vw, 80vw" alt="" aria-hidden="true">
+        <div class="db-hero-shade" aria-hidden="true"></div>
+        <div class="db-hero-in">
         <p class="db-kicker" id="db-date">Tableau de bord</p>
         <h1 class="db-title" id="db-greeting">Bonjour.</h1>
         <p class="db-lead" id="db-lead"></p>
@@ -1641,6 +1700,7 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
           <button class="btn btn-primary" onclick="navTo('membres','Membres');setTimeout(openMemberModal,100)">Ajouter un membre</button>
           <button class="btn btn-secondary" onclick="navTo('evenements','Événements');setTimeout(openEventModal,100)">Créer un événement</button>
           <button class="db-textlink" onclick="navTo('cotisations','Cotisations')">Cotisations →</button>
+        </div>
         </div>
       </header>
 
@@ -3124,11 +3184,15 @@ function renderDashboard(){
   set('db-lead',lead.join(' '),true);
 
   // En bref : fiche de chiffres
+  // anneau de 12 points du logo : n points allumés sur 12
+  const anneau=(part)=>{const P=[[20.24,3.56,2.8],[28.72,5.76,2.52],[35.24,11.6,2.16],[37.88,19.92,2.12],[35.72,28.56,2.04],[29.2,34.64,1.84],[20.48,37.48,1.76],[12.08,35.4,1.84],[5.76,29.44,2.68],[3.36,20.8,3.36],[5.36,12.28,3.32],[11.64,6.04,2.84]];
+    const n=Math.max(0,Math.min(12,Math.round(part*12)));
+    return `<svg class="db-anneau" viewBox="0 0 40 40" aria-hidden="true">${P.map((p,k)=>`<circle cx="${p[0]}" cy="${p[1]}" r="${p[2]}" class="${k<n?'on':''}"/>`).join('')}</svg>`;};
   set('db-facts',`
-    <div class="db-fact"><span class="db-fact-label">Membres</span><span class="db-fact-num">${total}</span><span class="db-fact-sub">${actifs} actifs · ${suisses} actifs suisses · ${passifs} passifs${autres>0?' · '+autres+' sans statut':''}</span></div>
-    <div class="db-fact"><span class="db-fact-label">Présence moyenne</span><span class="db-fact-num">${presMoy}<small>%</small></span><span class="db-fact-sub">sur ${passes.length} événement${passes.length>1?'s':''} passé${passes.length>1?'s':''}</span></div>
-    <div class="db-fact"><span class="db-fact-label">Solde</span><span class="db-fact-num ${solde<0?'is-neg':''}">${solde<0?'−':''}${chf(Math.abs(solde))}<small>CHF</small></span><span class="db-fact-sub">${chf(totalIn)} de recettes · ${chf(totalOut)} de dépenses</span></div>
-    <div class="db-fact"><span class="db-fact-label">Cotisations ${annee}</span><span class="db-fact-num">${cotisPayees}<small>/ ${cotisAnnee.length}</small></span><span class="db-fact-sub">${cotisAnnee.length?(cotisAttente?cotisAttente+' en attente':'toutes réglées'):'pas encore générées'}</span></div>`,true);
+    <button type="button" class="db-fact c-ink" onclick="navTo('membres','Membres')"><span class="db-fact-label">Membres</span><span class="db-fact-num">${total}</span><span class="db-fact-sub">${actifs} actifs · ${suisses} actifs suisses · ${passifs} passifs${autres>0?' · '+autres+' sans statut':''}</span><span class="db-fact-fl">Voir les membres <i>→</i></span></button>
+    <button type="button" class="db-fact c-gold" onclick="navTo('presences','Présences')">${anneau(presMoy/100)}<span class="db-fact-label">Présence moyenne</span><span class="db-fact-num">${presMoy}<small>%</small></span><span class="db-fact-sub">sur ${passes.length} événement${passes.length>1?'s':''} passé${passes.length>1?'s':''}</span><span class="db-fact-fl">Les présences <i>→</i></span></button>
+    <button type="button" class="db-fact c-line" onclick="navTo('compta','Comptabilité')"><span class="db-fact-label">Solde</span><span class="db-fact-num ${solde<0?'is-neg':''}">${solde<0?'−':''}${chf(Math.abs(solde))}<small>CHF</small></span><span class="db-fact-sub">${chf(totalIn)} de recettes · ${chf(totalOut)} de dépenses</span><span class="db-fact-fl">La comptabilité <i>→</i></span></button>
+    <button type="button" class="db-fact c-red" onclick="navTo('cotisations','Cotisations')">${anneau(cotisAnnee.length?cotisPayees/cotisAnnee.length:0)}<span class="db-fact-label">Cotisations ${annee}</span><span class="db-fact-num">${cotisPayees}<small>/ ${cotisAnnee.length}</small></span><span class="db-fact-sub">${cotisAnnee.length?(cotisAttente?cotisAttente+' en attente':'toutes réglées'):'pas encore générées'}</span><span class="db-fact-fl">Les cotisations <i>→</i></span></button>`,true);
 
   // À faire
   const todo=[];
