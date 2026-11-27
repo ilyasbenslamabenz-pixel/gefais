@@ -49,25 +49,6 @@
   @media (prefers-reduced-motion:reduce){
     .bg,.content > *{animation:none;}
   }
-
-  /* ── Hors du tracé : la carte des maraudes ── */
-  .carte404{margin:36px 0 0;width:min(100%,420px);border-radius:4px;overflow:hidden;background:#1d1d1b;box-shadow:0 30px 60px -30px rgba(0,0,0,.7);position:relative}
-  .carte404 svg{display:block;width:100%;height:auto;aspect-ratio:660/540}
-  .carte404 image{opacity:.85}
-  .carte404 .trace{fill:none;stroke:#e5392d;stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
-  .carte404 .arret{fill:#fff;stroke:#141414;stroke-width:4}
-  .carte404 .errance{fill:none;stroke:rgba(255,255,255,.7);stroke-width:3;stroke-dasharray:3 9;stroke-linecap:round}
-  .carte404 .retour{fill:none;stroke:#fdc915;stroke-width:4;stroke-dasharray:6 8;stroke-linecap:round}
-  .carte404 .point{fill:#fdc915;stroke:#141414;stroke-width:3}
-  .carte404 .halo{fill:rgba(253,201,21,.25);transform-box:fill-box;transform-origin:center;animation:halo 2s ease-out infinite}
-  @keyframes halo{from{transform:scale(.4);opacity:1}to{transform:scale(1.6);opacity:0}}
-  .carte404 figcaption{position:absolute;left:12px;bottom:12px;font-size:12.5px;font-weight:600;background:rgba(20,20,20,.82);color:#fff;padding:6px 10px;border-radius:3px}
-  .carte404 .ok{display:none;color:#fdc915}
-  .carte404.revenu .ici{display:none}.carte404.revenu .ok{display:inline}
-  @media (min-width:1000px){
-    .carte404{position:absolute;right:40px;top:50%;transform:translateY(-50%) rotate(1.2deg);width:min(440px,36vw);margin:0}
-  }
-  @media (prefers-reduced-motion:reduce){.carte404 .halo{animation:none}}
 </style>
 </head>
 <body>
@@ -97,18 +78,7 @@
       <p class="kicker">Erreur 404</p>
       <h1>Cette page n'existe pas.</h1>
       <p class="lead">Le lien est peut-être ancien ou mal saisi. Revenez à l'accueil pour retrouver votre chemin.</p>
-      <div><a class="btn" id="btn-retour" href="/">Retour à l'accueil</a></div>
-      <figure class="carte404" aria-hidden="true">
-        <svg viewBox="90 120 660 540" preserveAspectRatio="xMidYMid slice">
-          <image href="/images/carte-geneve.webp" x="0" y="0" width="1063" height="901"/>
-          <path class="trace" d="M546.0 600.9 L547.2 572.7 L566.0 573.0 L574.5 580.2 L576.6 578.2 L582.8 577.0 L585.3 573.7 L588.3 574.4 L590.0 576.9 L591.6 571.0 L597.1 570.3 L597.5 573.8 L601.3 576.3 L611.9 565.3 L610.9 564.0 L615.5 568.3 L621.1 562.6 L622.4 563.9 L624.3 562.0 L626.5 564.1 L628.8 561.8 L635.4 568.4 L637.0 567.6 L643.6 569.8 L647.2 567.9 L648.6 564.3 L654.5 561.8 L655.1 558.2 L653.5 556.9 L663.3 545.5 L665.1 546.8 L668.5 546.6 L595.5 479.9 L596.4 476.1 L593.1 473.0 L598.6 466.8 L596.4 464.5 L583.9 478.5 L580.3 477.2 L575.7 477.9 L564.1 483.7 L564.6 484.7 L560.5 486.7 L560.0 485.7 L538.7 496.2 L538.6 497.3 L532.6 500.0 L533.6 503.9 L507.2 504.1 L502.0 526.9 L495.2 525.6 L494.3 526.8 L455.0 514.5 L454.4 516.2 L419.1 503.5 L409.5 500.6 L404.8 499.8 L404.1 501.1 L394.5 498.5 L370.6 490.5 L369.7 491.5 L367.7 489.4 L347.2 509.9 L345.4 508.5 L342.3 512.7 L326.4 501.5 L271.8 487.6 L258.7 506.2 L256.7 504.5 L254.5 507.5 L254.8 509.8 L239.0 531.4 L241.7 533.3 L227.1 523.3 L229.8 526.1 L227.7 530.8 L209.5 515.9 L203.1 512.8 L190.4 511.8 L183.0 506.9 L170.7 504.5 L172.0 502.0 L144.3 496.2 L142.7 493.9 L143.1 492.7 L169.0 498.1 L183.9 461.4 L183.0 457.0 L185.7 422.9 L195.3 422.1 L221.9 415.3 L255.9 411.0 L276.5 411.7 L277.6 448.8 L282.1 452.4 L308.2 414.6 L308.3 419.9 L312.1 419.1 L319.5 413.2 L344.3 405.9 L347.9 406.7 L348.0 403.2 L371.0 397.6 L370.4 394.7 L372.2 393.9 L374.0 389.2 L401.9 372.9 L433.5 369.7 L433.6 371.1 L448.8 370.1 L448.9 371.3 L463.3 372.9 L486.7 381.7 L488.1 383.2 L535.4 378.0 L535.3 377.1 L559.5 375.4 L563.0 373.7 L566.4 374.5 L576.0 371.3 L574.5 364.2 L575.2 361.7 L582.5 357.5 L583.6 354.7 L582.4 351.4 L579.2 351.3 L580.0 347.5 L572.2 324.6 L568.9 317.5 L565.5 315.1 L565.6 309.2 L567.0 309.1 L563.8 299.7 L569.8 297.1 L555.9 267.2 L551.4 262.7 L551.0 259.6 L555.9 247.1 L560.6 241.3 L563.5 232.6 L563.0 230.3 L558.9 227.3 L569.3 217.4 L571.5 217.2 L575.8 191.5 L580.3 186.6 L562.2 173.7 L562.1 171.9 L557.1 168.4 L560.3 164.2"/>
-          <circle class="arret" cx="546.0" cy="600.9" r="9"/><circle class="arret" cx="651.6" cy="530.7" r="9"/><circle class="arret" cx="145.7" cy="493.2" r="9"/><circle class="arret" cx="560.3" cy="164.2" r="9"/>
-          <path class="errance" d="M690 612 C 700 590, 720 600, 712 625 S 676 640, 690 612"/>
-          <path class="retour" d=""/>
-          <g class="egare" transform="translate(690 612)"><circle class="halo" r="22"/><circle class="point" r="10"/></g>
-        </svg>
-        <figcaption><span class="ici">Vous êtes ici</span><span class="ok">De retour sur le tracé</span></figcaption>
-      </figure>
+      <div><a class="btn" href="/">Retour à l'accueil</a></div>
     </main>
 
     <footer class="foot">
@@ -117,34 +87,6 @@
     </footer>
   </div>
 </div>
-<script>
-/* Hors du tracé : le point égaré rejoint la ligne rouge quand on s'apprête à revenir */
-(function(){
-  var fig=document.querySelector('.carte404');if(!fig)return;
-  var trace=fig.querySelector('.trace'),pt=fig.querySelector('.egare'),retour=fig.querySelector('.retour'),errance=fig.querySelector('.errance');
-  var reduit=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var L=trace.getTotalLength();
-  if(!reduit){trace.style.strokeDasharray=L;trace.style.strokeDashoffset=L;trace.getBoundingClientRect();trace.style.transition='stroke-dashoffset 2.4s cubic-bezier(.4,0,.2,1) .3s';trace.style.strokeDashoffset=0;}
-  // errance : le point tourne sur lui-même à l'écart du tracé
-  var t0=performance.now(),ancre=[690,612],revenu=false,raf;
-  function errer(t){if(revenu)return;var a=(t-t0)/900;var x=ancre[0]+Math.cos(a)*14,y=ancre[1]+Math.sin(a*1.3)*10;pt.setAttribute('transform','translate('+x.toFixed(1)+' '+y.toFixed(1)+')');raf=requestAnimationFrame(errer);}
-  if(!reduit)raf=requestAnimationFrame(errer);
-  // point du tracé le plus proche
-  var best=null;for(var s=0;s<=L;s+=4){var p=trace.getPointAtLength(s),d=Math.hypot(p.x-ancre[0],p.y-ancre[1]);if(!best||d<best.d)best={d:d,x:p.x,y:p.y};}
-  function revenir(){
-    if(revenu)return;revenu=true;cancelAnimationFrame(raf);
-    var tr=pt.getAttribute('transform').match(/[-\d.]+/g).map(Number);
-    retour.setAttribute('d','M'+tr[0]+' '+tr[1]+' L'+best.x.toFixed(1)+' '+best.y.toFixed(1));
-    errance.style.transition='opacity .4s';errance.style.opacity=0;
-    var dur=reduit?0:900,start=performance.now();
-    (function step(t){var k=Math.min(1,(t-start)/(dur||1)),e=1-Math.pow(1-k,3);
-      var x=tr[0]+(best.x-tr[0])*e,y=tr[1]+(best.y-tr[1])*e;pt.setAttribute('transform','translate('+x.toFixed(1)+' '+y.toFixed(1)+')');
-      if(k<1)requestAnimationFrame(step);else fig.classList.add('revenu');})(start);
-  }
-  var btn=document.getElementById('btn-retour');
-  ['mouseenter','focus','touchstart'].forEach(function(ev){btn.addEventListener(ev,revenir,{passive:true});});
-})();
-</script>
 <script src="/animations.js" defer></script>
 </body>
 </html>
