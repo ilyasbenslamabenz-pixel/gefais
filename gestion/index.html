@@ -2405,6 +2405,17 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;}
 
 <script>
 // ── ICÔNES AU TRAIT (style Lucide, licence ISC) : remplacent tous les émojis ──
+// ── Neutralisation des données saisies : aucun code ne peut s'y glisser ──
+// Les chevrons < > (qui servent à écrire du HTML) sont remplacés par ‹ › dans tous
+// les textes enregistrés, chargés ou reçus d'un autre appareil. Les fichiers (data:) ne sont pas touchés.
+function _neutre(v,d){
+  d=d||0;if(d>8||v==null)return v;
+  if(typeof v==='string')return v.startsWith('data:')?v:v.replace(/</g,'‹').replace(/>/g,'›');
+  if(Array.isArray(v)){for(let i=0;i<v.length;i++)v[i]=_neutre(v[i],d+1);return v;}
+  if(typeof v==='object'){for(const k in v)if(Object.prototype.hasOwnProperty.call(v,k))v[k]=_neutre(v[k],d+1);return v;}
+  return v;
+}
+const _e=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 // Copie dans le presse-papiers, avec repli quand le navigateur refuse l'accès
 function copierTexte(t){
   const repli=()=>{try{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;top:-1000px;opacity:0';document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,t.length);const ok=document.execCommand('copy');ta.remove();return ok;}catch(e){return false;}};
@@ -2803,6 +2814,7 @@ function _allegerMembres(list){
 }
 
 function save(key,value){
+  _neutre(value);
   if(key==='gef_membres')_allegerMembres(value);
   const localOk=lsSet(key,value);
   _lastSave[key]=Date.now();
@@ -2859,16 +2871,16 @@ function setupListeners(){
   };
   // On ignore les snapshots dans les 3 secondes suivant notre propre sauvegarde
   const fromOther=(key)=>!_lastSave[key]||(Date.now()-_lastSave[key]>3000);
-  db.collection('gef_data').doc('gef_membres').onSnapshot(s=>{if(s.exists&&fromOther('gef_membres')){membres=s.data().value;rerender();}});
-  db.collection('gef_data').doc('gef_events').onSnapshot(s=>{if(s.exists&&fromOther('gef_events')){events=s.data().value;rerender();}});
-  db.collection('gef_data').doc('gef_presences').onSnapshot(s=>{if(s.exists&&fromOther('gef_presences')){presences=s.data().value;rerender();}});
-  db.collection('gef_data').doc('gef_compta').onSnapshot(s=>{if(s.exists&&fromOther('gef_compta')){compta=s.data().value;rerender();}});
-  db.collection('gef_data').doc('gef_cotisations').onSnapshot(s=>{if(s.exists&&fromOther('gef_cotisations')){cotisations=s.data().value;rerender();}});
-  db.collection('gef_data').doc('gef_event_types').onSnapshot(s=>{if(s.exists&&fromOther('gef_event_types'))eventTypes=s.data().value;});
-  db.collection('gef_data').doc('gef_email_historique').onSnapshot(s=>{if(s.exists&&fromOther('gef_email_historique'))emailHistorique=s.data().value;});
-  db.collection('gef_data').doc('gef_documents').onSnapshot(s=>{if(s.exists&&fromOther('gef_documents')){documents_list=s.data().value;rerender();}});
-  db.collection('gef_data').doc('gef_event_subpages').onSnapshot(s=>{if(s.exists&&fromOther('gef_event_subpages')){event_subpages=s.data().value;renderEvents();}});
-  db.collection('gef_data').doc('gef_don_data').onSnapshot(s=>{if(s.exists&&fromOther('gef_don_data')){Object.assign(_donData,s.data().value);lsSet('gef_don_data',_donData);_donApplyUI();}});
+  db.collection('gef_data').doc('gef_membres').onSnapshot(s=>{if(s.exists&&fromOther('gef_membres')){membres=_neutre(s.data().value);rerender();}});
+  db.collection('gef_data').doc('gef_events').onSnapshot(s=>{if(s.exists&&fromOther('gef_events')){events=_neutre(s.data().value);rerender();}});
+  db.collection('gef_data').doc('gef_presences').onSnapshot(s=>{if(s.exists&&fromOther('gef_presences')){presences=_neutre(s.data().value);rerender();}});
+  db.collection('gef_data').doc('gef_compta').onSnapshot(s=>{if(s.exists&&fromOther('gef_compta')){compta=_neutre(s.data().value);rerender();}});
+  db.collection('gef_data').doc('gef_cotisations').onSnapshot(s=>{if(s.exists&&fromOther('gef_cotisations')){cotisations=_neutre(s.data().value);rerender();}});
+  db.collection('gef_data').doc('gef_event_types').onSnapshot(s=>{if(s.exists&&fromOther('gef_event_types'))eventTypes=_neutre(s.data().value);});
+  db.collection('gef_data').doc('gef_email_historique').onSnapshot(s=>{if(s.exists&&fromOther('gef_email_historique'))emailHistorique=_neutre(s.data().value);});
+  db.collection('gef_data').doc('gef_documents').onSnapshot(s=>{if(s.exists&&fromOther('gef_documents')){documents_list=_neutre(s.data().value);rerender();}});
+  db.collection('gef_data').doc('gef_event_subpages').onSnapshot(s=>{if(s.exists&&fromOther('gef_event_subpages')){event_subpages=_neutre(s.data().value);renderEvents();}});
+  db.collection('gef_data').doc('gef_don_data').onSnapshot(s=>{if(s.exists&&fromOther('gef_don_data')){Object.assign(_donData,_neutre(s.data().value));lsSet('gef_don_data',_donData);_donApplyUI();}});
 }
 
 function fmtDate(d){if(!d)return'—';const[y,m,day]=d.split('T')[0].split('-');return`${day}/${m}/${y}`;}
@@ -2883,7 +2895,7 @@ function badgeType(t){
 }
 
 // ── LOCALSTORAGE FALLBACK ─────────────────────────────────────────
-function lsGet(key,def){try{const v=localStorage.getItem(key);return v?JSON.parse(v):def;}catch(e){return def;}}
+function lsGet(key,def){try{const v=localStorage.getItem(key);return v?_neutre(JSON.parse(v)):def;}catch(e){return def;}}
 function lsSet(key,val){try{localStorage.setItem(key,JSON.stringify(val));return true;}catch(e){console.warn('Stockage local impossible :',key,e);return false;}}
 let _firebaseOk=false;
 // Tant que les vraies données ne sont pas chargées, aucune sauvegarde n'est
@@ -2987,7 +2999,7 @@ async function _chargerDonnees(){
     _masquerHorsLigne();
     docs.forEach((d,i)=>{
       if(d===null)return; // chargée juste après l'affichage
-      const val=d.exists?d.data().value:defaults[i];
+      const val=d.exists?_neutre(d.data().value):defaults[i];
       if(i===0)membres=val;
       else if(i===1)events=val;
       else if(i===2)presences=val;
@@ -3053,7 +3065,7 @@ async function _chargerSecondaires(essai=1){
   try{
     const docs=await Promise.all(manquantes.map(k=>db.collection('gef_data').doc(k).get()));
     docs.forEach((d,i)=>{
-      const k=manquantes[i];const val=d.exists?d.data().value:[];
+      const k=manquantes[i];const val=d.exists?_neutre(d.data().value):[];
       if(k==='gef_documents')documents_list=val||[];
       if(k==='gef_email_historique')emailHistorique=val||[];
       lsSet(k,val||[]);_secondairesChargees.add(k);
@@ -3236,11 +3248,11 @@ function renderMembres(){
   document.getElementById('membres-tbody').innerHTML=paged.map(m=>{
     const isNew=m.createdAt&&(new Date()-new Date(m.createdAt))<30*86400000;
     return`<tr>
-    <td class="td-name">${m.nom}${isNew?` <span style="background:rgba(34,197,94,0.2);color:#4ade80;font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;margin-left:4px;letter-spacing:0.5px;">NOUVEAU</span>`:''}</td><td>${m.prenom}</td>
-    <td>${m.role?`<span class="badge-role">${m.role}</span>`:''}</td>
+    <td class="td-name">${_e(m.nom)}${isNew?` <span style="background:rgba(34,197,94,0.2);color:#4ade80;font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;margin-left:4px;letter-spacing:0.5px;">NOUVEAU</span>`:''}</td><td>${_e(m.prenom)}</td>
+    <td>${m.role?`<span class="badge-role">${_e(m.role)}</span>`:''}</td>
     <td>${badgeType(m.type)}</td>
-    <td style="color:var(--text3)">${m.email||'—'}</td>
-    <td style="color:var(--text3);font-size:12px">${m.tel||'—'}</td>
+    <td style="color:var(--text3)">${_e(m.email||'—')}</td>
+    <td style="color:var(--text3);font-size:12px">${_e(m.tel||'—')}</td>
     <td><button class="btn-icon" onclick="ouvrirFicheAdhesion(${m.id})" title="Formulaire d'adhésion"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg></button><button class="btn-icon" onclick="editMember(${m.id})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="btn-icon" onclick="deleteMember(${m.id})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg></button></td>
   </tr>`;}).join('');
 
@@ -3380,7 +3392,7 @@ function renderPresences(){
       <div style="flex:1;min-width:0;">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;">
           <div>
-            <div class="pres-rank-name">${m.prenom} <strong>${m.nom}</strong></div>
+            <div class="pres-rank-name">${_e(m.prenom)} <strong>${_e(m.nom)}</strong></div>
             <div style="display:flex;align-items:center;gap:10px;margin-top:3px;flex-wrap:wrap;">
               <span style="font-size:16px;color:var(--text3);">${m.p}/${evts.length} présences</span>
               ${attendu!=null?`<span style="font-size:15px;color:var(--text3);">·</span>
@@ -3439,16 +3451,16 @@ function _buildEventListHTML(filtered){
         const p=!!presences[mb.id+'_'+e.id];
         return`<div class="presence-inline-item ${p?'present':''}" onclick="togglePresenceInline(${mb.id},${e.id},this)">
           <div class="pi-check">${p?'✓':''}</div>
-          <div style="min-width:0;"><div class="pi-name">${mb.prenom} ${mb.nom}</div><div class="pi-type">${mb.type||'—'}</div></div>
+          <div style="min-width:0;"><div class="pi-name">${_e(mb.prenom)} ${_e(mb.nom)}</div><div class="pi-type">${_e(mb.type||'—')}</div></div>
         </div>`;
       }).join('');
       html+=`<div class="event-row${isOpen?' open':''}" id="event-row-${e.id}">
         <div class="event-row-header" onclick="toggleEventRow(${e.id})">
           <div style="width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;background:${sp?sp.couleur+'22':'var(--bg3)'};">${eventIcon}</div>
           <div class="event-row-meta">
-            <div class="event-row-title">${e.nom||e.type}</div>
+            <div class="event-row-title">${_e(e.nom||e.type)}</div>
             <div class="event-row-sub">
-              <span class="event-chip ${chipCls}" style="font-size:10px;padding:2px 7px;">${e.type}</span>
+              <span class="event-chip ${chipCls}" style="font-size:10px;padding:2px 7px;">${_e(e.type)}</span>
               <span>${fmtDate(e.date)}</span>
               ${isPast?'<span style="color:var(--text3);">· Passé</span>':`<span style="color:var(--green);font-weight:700;">· ${Math.round((new Date(e.date+'T12:00:00')-new Date(today+'T12:00:00'))/86400000)===0?'Auj.':Math.round((new Date(e.date+'T12:00:00')-new Date(today+'T12:00:00'))/86400000)===1?'Demain':'Dans '+Math.round((new Date(e.date+'T12:00:00')-new Date(today+'T12:00:00'))/86400000)+'j'}</span>`}
             </div>
@@ -3469,7 +3481,7 @@ function _buildEventListHTML(filtered){
             <button class="btn btn-sm btn-secondary" onclick="editEvent(${e.id});event.stopPropagation()">Modifier</button>
             <button class="btn btn-sm btn-secondary" style="color:var(--red);" onclick="deleteEvent(${e.id});event.stopPropagation()">Supprimer</button>
           </div>
-          ${e.commentaires?`<div style="font-size:13px;color:var(--text2);background:var(--bg3);border-radius:10px;padding:10px 14px;margin-bottom:14px;border:1px solid var(--border);display:flex;gap:8px;align-items:flex-start;"><span>💬</span><span>${e.commentaires}</span></div>`:''}
+          ${e.commentaires?`<div style="font-size:13px;color:var(--text2);background:var(--bg3);border-radius:10px;padding:10px 14px;margin-bottom:14px;border:1px solid var(--border);display:flex;gap:8px;align-items:flex-start;"><span>💬</span><span>${_e(e.commentaires)}</span></div>`:''}
           <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;">
             <span>Présences</span><span style="font-size:11px;font-weight:600;color:${barColor};">${count} / ${membres.length}</span>
           </div>
@@ -3702,7 +3714,7 @@ function renderCotisations(){
     <div class="stat-card"><div class="stat-label">En attente</div><div class="stat-value amount-out">${total-payees}</div></div>
     <div class="stat-card"><div class="stat-label">Encaissé</div><div class="stat-value">${montantTotal.toFixed(0)}<span>CHF</span></div></div>
   `;
-  document.getElementById('cotis-tbody').innerHTML=list.map(c=>{const m=membres.find(x=>x.id===c.membreId);if(!m)return'';return`<tr><td class="td-name">${m.prenom} ${m.nom}</td><td>${badgeType(m.type)}</td><td style="font-weight:500">${c.montant>0?c.montant.toFixed(2):'—'}</td><td><span class="badge ${c.statut==='paye'?'badge-paye':'badge-impaye'}">${c.statut==='paye'?'Payé':'En attente'}</span></td><td style="color:var(--text3)">${c.datePaiement?fmtDate(c.datePaiement):'—'}</td><td><button class="btn btn-sm btn-secondary" onclick="editCotisation(${c.membreId},${annee})">Modifier</button></td></tr>`;}).join('');
+  document.getElementById('cotis-tbody').innerHTML=list.map(c=>{const m=membres.find(x=>x.id===c.membreId);if(!m)return'';return`<tr><td class="td-name">${_e(m.prenom)} ${_e(m.nom)}</td><td>${badgeType(m.type)}</td><td style="font-weight:500">${c.montant>0?c.montant.toFixed(2):'—'}</td><td><span class="badge ${c.statut==='paye'?'badge-paye':'badge-impaye'}">${c.statut==='paye'?'Payé':'En attente'}</span></td><td style="color:var(--text3)">${c.datePaiement?fmtDate(c.datePaiement):'—'}</td><td><button class="btn btn-sm btn-secondary" onclick="editCotisation(${c.membreId},${annee})">Modifier</button></td></tr>`;}).join('');
   document.getElementById('cotis-cards').innerHTML=list.map(c=>{
     const m=membres.find(x=>x.id===c.membreId);if(!m)return'';
     const p=c.statut==='paye';
@@ -3713,7 +3725,7 @@ function renderCotisations(){
       <div class="cotis-card-v2-top">
         <div class="cotis-card-v2-avatar" style="background:${color}20;color:${color};">${initials}</div>
         <div class="cotis-card-v2-info">
-          <div class="cotis-card-v2-name">${m.prenom} ${m.nom}</div>
+          <div class="cotis-card-v2-name">${_e(m.prenom)} ${_e(m.nom)}</div>
           <div class="cotis-card-v2-type">${badgeType(m.type)}</div>
         </div>
         <div class="cotis-card-v2-right">
@@ -3847,12 +3859,12 @@ function _renderAttachmentsPreview(){
     const isImage=a.type&&a.type.startsWith('image/');
     if(isImage){
       return`<div style="position:relative;display:inline-block;">
-        <img src="${a.thumb||a.data}" alt="" class="attach-thumb" onclick="voirPJEdition(${i})" title="${a.name}">
+        <img src="${a.thumb||a.data}" alt="" class="attach-thumb" onclick="voirPJEdition(${i})" title="${_e(a.name)}">
         <button onclick="_removeAttachment(${i})" style="position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">✕</button>
       </div>`;
     }
     return`<div class="attach-file">
-      <span onclick="voirPJEdition(${i})" style="cursor:pointer;text-decoration:underline;text-underline-offset:2px;">${a.name}</span><span style="color:var(--text3);font-size:11px;margin-left:4px;">${(a.size/1024).toFixed(0)}Ko</span>
+      <span onclick="voirPJEdition(${i})" style="cursor:pointer;text-decoration:underline;text-underline-offset:2px;">${_e(a.name)}</span><span style="color:var(--text3);font-size:11px;margin-left:4px;">${(a.size/1024).toFixed(0)}Ko</span>
       <button onclick="_removeAttachment(${i})" class="attach-remove">✕</button>
     </div>`;
   }).join('');
@@ -3982,12 +3994,12 @@ function renderCompta(){
     const atts=c.attachments||[];
     const thumbs=atts.map((a,i)=>({a,i})).filter(({a})=>a.type&&a.type.startsWith('image/')&&(a.thumb||a.data)).slice(0,3);
     const justif=thumbs.length
-      ? thumbs.map(({a,i})=>`<img src="${a.thumb||a.data}" alt="" class="attach-thumb" style="width:32px;height:32px;border-radius:6px;object-fit:cover;cursor:pointer;" onclick="voirPJCompta(${c.id},${i})" title="${a.name}">`).join('')
+      ? thumbs.map(({a,i})=>`<img src="${a.thumb||a.data}" alt="" class="attach-thumb" style="width:32px;height:32px;border-radius:6px;object-fit:cover;cursor:pointer;" onclick="voirPJCompta(${c.id},${i})" title="${_e(a.name)}">`).join('')
       : (atts.length?`<span style="font-size:11px;color:var(--text3);">📎 ${atts.length}</span>`:'<span style="color:var(--border);">—</span>');
     return`<tr>
       <td>${fmtDate(c.date)}</td>
       <td><span class="badge ${c.type==='recette'?'badge-recette':'badge-depense'}">${c.type==='recette'?'Recette':'Dépense'}</span></td>
-      <td class="td-name">${c.description}</td>
+      <td class="td-name">${_e(c.description)}</td>
       <td class="${c.type==='recette'?'amount-in':'amount-out'}" style="font-weight:600">${c.type==='recette'?'+':'−'}${c.montant.toFixed(2)}</td>
       <td>${justif}</td>
       <td style="white-space:nowrap"><button class="btn-icon" onclick="editCompta(${c.id})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="btn-icon" onclick="deleteCompta(${c.id})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg></button></td>
@@ -4004,10 +4016,10 @@ function renderCompta(){
       <div class="compta-card-v2-stripe" style="background:${color};"></div>
       <div class="compta-card-v2-icon" style="color:${color};">${icon}</div>
       <div class="compta-card-v2-body">
-        <div class="compta-card-v2-desc">${c.description}</div>
+        <div class="compta-card-v2-desc">${_e(c.description)}</div>
         <div class="compta-card-v2-meta">
           <span>${fmtDate(c.date)}</span>
-          ${c.categorie?`<span>· ${c.categorie}</span>`:''}
+          ${c.categorie?`<span>· ${_e(c.categorie)}</span>`:''}
           ${atts.length?`<span class="cc-att">· ${ic('clip',12)} ${atts.length}</span>`:''}
         </div>
       </div>
@@ -4050,7 +4062,7 @@ function renderStatistiques(){
     const medal=i===0?'1':i===1?'2':i===2?'3':'';
     return`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);animation:fadeUp 0.25s ease both;animation-delay:${i*0.015}s;">
       <div style="width:22px;text-align:center;font-size:12px;color:var(--text3);flex-shrink:0;">${medal||(i+1)}</div>
-      <div style="min-width:90px;max-width:140px;width:30%;font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0;">${d.label}</div>
+      <div style="min-width:90px;max-width:140px;width:30%;font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0;">${_e(d.label)}</div>
       <div style="flex:1;height:26px;background:var(--bg3);border-radius:6px;overflow:hidden;position:relative;">
         <div style="height:100%;width:${d.val}%;background:${color};border-radius:6px;transition:width 0.6s ease;display:flex;align-items:center;padding:0 8px;min-width:${d.val>10?'38px':'0'};">
           <span style="font-size:11px;font-weight:800;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.5);white-space:nowrap;">${d.val>10?d.val+'%':''}</span>
@@ -4065,7 +4077,7 @@ function renderStatistiques(){
   document.getElementById('stat-event-chart').innerHTML=evData.map((d,i)=>{
     const color=d.val>=70?'var(--green)':d.val>=40?'var(--gold)':'var(--red)';
     return`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);animation:fadeUp 0.25s ease both;animation-delay:${i*0.03}s;">
-      <div style="min-width:90px;max-width:130px;width:25%;font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0;">${d.label}</div>
+      <div style="min-width:90px;max-width:130px;width:25%;font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0;">${_e(d.label)}</div>
       <div style="flex:1;height:26px;background:var(--bg3);border-radius:6px;overflow:hidden;position:relative;">
         <div style="height:100%;width:${d.val}%;background:${color};border-radius:6px;transition:width 0.6s ease;display:flex;align-items:center;padding:0 8px;min-width:${d.val>10?'40px':'0'};">
           <span style="font-size:11px;font-weight:800;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.5);white-space:nowrap;">${d.val>10?d.val+'%':''}</span>
@@ -4077,7 +4089,7 @@ function renderStatistiques(){
 
   // Top 3
   const medals=['1','2','3'];
-  document.getElementById('stat-top3').innerHTML=presData.slice(0,3).map((d,i)=>`<div class="top3-card"><div class="top3-medal">${medals[i]}</div><div class="top3-name">${d.label}</div><div class="top3-pct" style="color:${d.val>=70?'var(--green)':d.val>=40?'var(--gold)':'var(--red)'};">${d.val}%</div></div>`).join('');
+  document.getElementById('stat-top3').innerHTML=presData.slice(0,3).map((d,i)=>`<div class="top3-card"><div class="top3-medal">${medals[i]}</div><div class="top3-name">${_e(d.label)}</div><div class="top3-pct" style="color:${d.val>=70?'var(--green)':d.val>=40?'var(--gold)':'var(--red)'};">${d.val}%</div></div>`).join('');
 
   // Cotisations
   const payees=cotisations.filter(c=>c.statut==='paye').length;
@@ -4096,7 +4108,7 @@ function renderStatistiques(){
 
   // Événements par type
   const typeEl=document.getElementById('stat-type-chart');
-  if(typeEl){const types=[...new Set(events.map(e=>e.type))];const data=types.map(t=>{const evs=events.filter(e=>e.type===t);const avg=evs.length>0&&membres.length>0?Math.round(evs.reduce((s,e)=>s+membres.filter(m=>presences[m.id+'_'+e.id]).length,0)/(evs.length*membres.length)*100):0;return{label:t,count:evs.length,avg};}).sort((a,b)=>b.count-a.count);const maxT=Math.max(...data.map(d=>d.count),1);typeEl.innerHTML=data.map(d=>`<div class="chart-bar-row"><div class="chart-bar-label">${d.label}</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:${Math.round(d.count/maxT*100)}%;background:var(--red);">${d.count||''}</div></div><div class="chart-bar-val">${d.count} · <span style="color:var(--text3);font-size:10px;">${d.avg}%</span></div></div>`).join('');}
+  if(typeEl){const types=[...new Set(events.map(e=>e.type))];const data=types.map(t=>{const evs=events.filter(e=>e.type===t);const avg=evs.length>0&&membres.length>0?Math.round(evs.reduce((s,e)=>s+membres.filter(m=>presences[m.id+'_'+e.id]).length,0)/(evs.length*membres.length)*100):0;return{label:t,count:evs.length,avg};}).sort((a,b)=>b.count-a.count);const maxT=Math.max(...data.map(d=>d.count),1);typeEl.innerHTML=data.map(d=>`<div class="chart-bar-row"><div class="chart-bar-label">${_e(d.label)}</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:${Math.round(d.count/maxT*100)}%;background:var(--red);">${d.count||''}</div></div><div class="chart-bar-val">${d.count} · <span style="color:var(--text3);font-size:10px;">${d.avg}%</span></div></div>`).join('');}
 }
 // ── EMAILS ───────────────────────────────────────────────────────
 let emailSelectionnes = new Set();
@@ -4124,7 +4136,7 @@ function renderEmailDestinataires(){
     const sel = emailSelectionnes.has(m.id);
     const hasEmail = !!m.email;
     return `<div onclick="emailToggle(${m.id})" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;border:1px solid ${sel?'var(--red)':'var(--border)'};background:${sel?'var(--red-light)':'var(--bg3)'};cursor:pointer;font-size:13px;transition:0.15s;">
-      <span style="color:${sel?'var(--red)':'var(--text2)'};">${m.prenom} ${m.nom}</span>
+      <span style="color:${sel?'var(--red)':'var(--text2)'};">${_e(m.prenom)} ${_e(m.nom)}</span>
       ${!hasEmail ? '<span title="Pas d\'email" style="font-size:10px;">⚠️</span>' : ''}
       ${sel ? '<span style="color:var(--red);font-weight:700;">✓</span>' : ''}
     </div>`;
@@ -4163,7 +4175,7 @@ function renderEmailFichiers(){
   cont.innerHTML = emailFichiers.map((f,i) => {
     const kb = (f.size/1024).toFixed(0);
     return `<div style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:var(--bg3);font-size:12px;">
-      <span>${f.name}</span>
+      <span>${_e(f.name)}</span>
       <span style="color:var(--text3);">${kb} Ko</span>
       <span onclick="emailRetirerFichier(${i})" style="cursor:pointer;color:var(--text3);font-weight:bold;" title="Retirer">✕</span>
     </div>`;
@@ -4237,7 +4249,7 @@ function renderEmailHistorique(){
             ${e.destinataires.map(n=>`<span style="font-size:11px;padding:2px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;color:var(--text2);">${n}</span>`).join('')}
           </div>
           ${e.fichiers&&e.fichiers.length ? `<div style="font-size:11px;color:var(--text3);">📎 ${e.fichiers.join(', ')}</div>` : ''}
-          <div style="font-size:12px;color:var(--text2);margin-top:8px;padding:10px;background:var(--bg3);border-radius:var(--radius);white-space:pre-wrap;max-height:80px;overflow:hidden;text-overflow:ellipsis;">${e.corps}</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:8px;padding:10px;background:var(--bg3);border-radius:var(--radius);white-space:pre-wrap;max-height:80px;overflow:hidden;text-overflow:ellipsis;">${_e(e.corps)}</div>
         </div>
         <div style="display:flex;gap:6px;flex-shrink:0;">
           <button class="btn btn-sm btn-secondary" onclick="emailReutiliser(${e.id})" title="Réutiliser ce message">Réutiliser</button>
@@ -4330,7 +4342,7 @@ function renderRapport(){
       </div>
       ${nbReunions>0?`<div class="rapport-list-item"><span>Réunions</span><strong>${nbReunions}</strong></div>`:''}
       ${nbAutresEvts>0?`<div class="rapport-list-item"><span>Autres types</span><strong>${nbAutresEvts}</strong></div>`:''}
-      ${topPresence.map((m,i)=>`<div class="rapport-list-item"><span>${['1','2','3'][i]} ${m.name}</span><strong style="color:${m.color};">${m.pct}%</strong></div>`).join('')}
+      ${topPresence.map((m,i)=>`<div class="rapport-list-item"><span>${['1','2','3'][i]} ${_e(m.name)}</span><strong style="color:${m.color};">${m.pct}%</strong></div>`).join('')}
     </div>
 
     <!-- Cotisations -->
@@ -4534,7 +4546,7 @@ function renderDocuments(){
     while(cur){const f=documents_list.find(d=>d.id===cur&&d.type==='folder');if(!f)break;path.unshift({id:f.id,nom:f.nom});cur=f.parentId;}
     const all=[...crumbs,...path];
     bcEl.innerHTML=all.map((c,i)=>`
-      <span onclick="ouvrirDossier(${JSON.stringify(c.id)})" style="cursor:pointer;font-size:12px;font-weight:${i===all.length-1?'700':'500'};color:${i===all.length-1?'var(--text)':'var(--red)'};padding:4px 8px;border-radius:8px;background:${i===all.length-1?'var(--bg3)':'transparent'};">${c.nom}</span>
+      <span onclick="ouvrirDossier(${JSON.stringify(c.id)})" style="cursor:pointer;font-size:12px;font-weight:${i===all.length-1?'700':'500'};color:${i===all.length-1?'var(--text)':'var(--red)'};padding:4px 8px;border-radius:8px;background:${i===all.length-1?'var(--bg3)':'transparent'};">${_e(c.nom)}</span>
       ${i<all.length-1?'<span style="color:var(--text3);font-size:12px;">›</span>':''}
     `).join('');
   }
@@ -4568,7 +4580,7 @@ function renderDocuments(){
         const count=documents_list.filter(d=>d.parentId===f.id).length;
         return`<div class="doc-folder-card" onclick="ouvrirDossier(${f.id})">
           <div class="doc-folder-icon">📁</div>
-          <div class="doc-folder-name">${f.nom}</div>
+          <div class="doc-folder-name">${_e(f.nom)}</div>
           <div class="doc-folder-count">${count} élément${count>1?'s':''}</div>
           <div class="doc-folder-actions" onclick="event.stopPropagation()">
             <button class="btn-icon" onclick="renommerDossier(${f.id})" title="Renommer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
@@ -4587,8 +4599,8 @@ function renderDocuments(){
         return`<div class="doc-file-row">
           <div class="doc-file-icon" style="background:${ic.color}22;color:${ic.color};">${ic.icon}</div>
           <div class="doc-file-info">
-            <div class="doc-file-name">${d.nom}</div>
-            <div class="doc-file-meta">${d.categorie} · ${formatSize(d.taille)} · ${fmtDate(d.date)}</div>
+            <div class="doc-file-name">${_e(d.nom)}</div>
+            <div class="doc-file-meta">${_e(d.categorie)} · ${formatSize(d.taille)} · ${fmtDate(d.date)}</div>
           </div>
           <div class="doc-file-actions">
             <button class="btn-icon" onclick="telechargerDoc(${d.id})" title="Télécharger"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></button>
@@ -4876,7 +4888,7 @@ function globalSearch(q) {
     <div onclick="${r.action}" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''">
       <div style="font-size:20px;width:36px;height:36px;border-radius:10px;background:var(--bg3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">${r.icon}</div>
       <div style="min-width:0;">
-        <div style="font-size:14px;font-weight:600;color:var(--text);">${r.label}</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);">${_e(r.label)}</div>
         <div style="font-size:11px;color:var(--text3);">${r.sub}</div>
       </div>
     </div>`).join('');
@@ -5185,9 +5197,9 @@ async function renderDemandes(){
 
         <!-- Infos -->
         <div style="flex:1;min-width:0;">
-          <div style="font-size:18px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;">${e.prenom} ${e.nom}</div>
+          <div style="font-size:18px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;">${_e(e.prenom)} ${_e(e.nom)}</div>
           <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
-            <span style="background:${typeBg};color:${typeColor};font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;border:1px solid ${typeColor}40;">${e.type||'—'}</span>
+            <span style="background:${typeBg};color:${typeColor};font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;border:1px solid ${typeColor}40;">${_e(e.type||'—')}</span>
             <span style="background:${accentBg};color:${accentColor};font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">${sigEnCours?'En attente':isValidee?'Validée':'Refusée'}</span>
             <span style="font-size:11px;color:var(--text3);">${date}</span>
           </div>
@@ -5197,19 +5209,19 @@ async function renderDemandes(){
       <!-- Contact -->
       ${d.email||d.tel?`<div style="padding:0 20px 14px;display:flex;flex-direction:column;gap:7px;">
         ${d.email?`<div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border-radius:10px;padding:9px 12px;">
-          <span style="font-size:12px;color:var(--text3);min-width:58px;">E-mail</span><span style="font-size:13px;color:var(--text2);font-weight:500;">${e.email}</span>
+          <span style="font-size:12px;color:var(--text3);min-width:58px;">E-mail</span><span style="font-size:13px;color:var(--text2);font-weight:500;">${_e(e.email)}</span>
         </div>`:''}
         ${d.tel?`<div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border-radius:10px;padding:9px 12px;">
-          <span style="font-size:12px;color:var(--text3);min-width:58px;">Tél.</span><span style="font-size:13px;color:var(--text2);font-weight:500;">${e.tel}</span>
+          <span style="font-size:12px;color:var(--text3);min-width:58px;">Tél.</span><span style="font-size:13px;color:var(--text2);font-weight:500;">${_e(e.tel)}</span>
         </div>`:''}
         ${e.adresse?`<div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border-radius:10px;padding:9px 12px;">
-          <span style="font-size:12px;color:var(--text3);min-width:58px;">Adresse</span><span style="font-size:13px;color:var(--text2);font-weight:500;">${e.adresse}</span>
+          <span style="font-size:12px;color:var(--text3);min-width:58px;">Adresse</span><span style="font-size:13px;color:var(--text2);font-weight:500;">${_e(e.adresse)}</span>
         </div>`:''}
       </div>`:''}
 
       ${e.motivation?`<div style="padding:0 20px 14px;">
         <div style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:6px;">Motivation</div>
-        <div style="font-size:13px;color:var(--text2);line-height:1.6;white-space:pre-line;background:var(--bg3);border-radius:10px;padding:10px 12px;">${e.motivation}</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.6;white-space:pre-line;background:var(--bg3);border-radius:10px;padding:10px 12px;">${_e(e.motivation)}</div>
       </div>`:''}
 
       <!-- Signature membre -->
