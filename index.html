@@ -32,8 +32,9 @@
   a{color:inherit;text-decoration:none;}
   .wordmark{display:block;height:15px;aspect-ratio:771/150;background:currentColor;-webkit-mask:url(images/gefais-mot.svg) center/contain no-repeat;mask:url(images/gefais-mot.svg) center/contain no-repeat;}
   .page{position:relative;min-height:100%;display:flex;flex-direction:column;overflow:hidden;}
-  .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 45%;animation:kenburns 24s ease-out infinite alternate;transform-origin:50% 60%;}
-  .shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(12,10,16,.82) 0%,rgba(12,10,16,.55) 50%,rgba(12,10,16,.25) 100%),linear-gradient(0deg,rgba(12,10,16,.6) 0%,rgba(12,10,16,0) 45%);}
+  .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 42%;animation:kenburns 24s ease-out infinite alternate;transform-origin:50% 50%;}
+  .shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(12,10,16,.8) 0%,rgba(12,10,16,.5) 42%,rgba(12,10,16,.12) 72%,rgba(12,10,16,.04) 100%),linear-gradient(0deg,rgba(12,10,16,.55) 0%,rgba(12,10,16,0) 32%);}
+  @media (max-width:760px){.shade{background:linear-gradient(90deg,rgba(12,10,16,.74) 0%,rgba(12,10,16,.52) 100%),linear-gradient(0deg,rgba(12,10,16,.55) 0%,rgba(12,10,16,0) 32%);}}
   .inner{position:relative;z-index:1;flex:1;width:100%;max-width:1200px;margin:0 auto;padding:32px 40px 40px;display:flex;flex-direction:column;}
   .brand{display:flex;align-items:center;gap:10px;font-family:'Archivo',sans-serif;font-size:19px;font-weight:800;letter-spacing:-.3px;}
   .content{flex:1;display:flex;flex-direction:column;justify-content:center;padding:48px 0;max-width:620px;}
@@ -46,7 +47,7 @@
   .foot a{transition:color .15s;}
   .foot a:hover{color:#fff;}
   .foot .links{display:flex;gap:22px;flex-wrap:wrap;}
-  @keyframes kenburns{from{transform:scale(1.02)}to{transform:scale(1.12)}}
+  @keyframes kenburns{from{transform:scale(1.02)}to{transform:scale(1.07)}}
   @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
   .content > *{animation:rise .9s cubic-bezier(.2,.7,.2,1) both;}
   .content > *:nth-child(2){animation-delay:.12s;}
@@ -60,11 +61,14 @@
   @media (prefers-reduced-motion:reduce){
     .bg,.content > *{animation:none;}
   }
+  @view-transition{navigation:auto;}
+  ::view-transition-old(root),::view-transition-new(root){animation-duration:.22s;}
+  @media (prefers-reduced-motion:reduce){@view-transition{navigation:none;}}
 </style>
 </head>
 <body>
 <div class="page">
-  <img class="bg" src="images/geneve-jet-deau.webp" srcset="images/geneve-jet-deau.webp 1600w, images/geneve-jet-deau-3200.webp 3200w" sizes="100vw" alt="">
+  <img class="bg" src="images/geneve-jet-deau.webp" srcset="images/geneve-jet-deau.webp 1600w, images/geneve-jet-deau-3200.webp 3200w, images/geneve-jet-deau-3840.webp 3840w" sizes="100vw" alt="">
   <div class="shade"></div>
   <div class="inner">
     <div class="brand">
@@ -94,9 +98,10 @@
 
     <div class="foot">
       <span>© 2026 Association GE-FAIS · « Ensemble, faisons qu'un »</span>
-      <span class="links"><a href="mailto:contact@gefais.ch">contact@gefais.ch</a><a href="gestion/">Accès comité</a></span>
+      <span class="links"><a href="mailto:contact@gefais.ch">contact@gefais.ch</a><a href="confidentialite.html">Confidentialité</a><a href="gestion/">Accès comité</a></span>
     </div>
   </div>
 </div>
+<script src="animations.js" defer></script>
 </body>
 </html>

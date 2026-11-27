@@ -938,7 +938,8 @@ label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:
 .compta-card-v2{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;transition:all 0.2s;}
 .compta-card-v2:hover{box-shadow:var(--shadow-md);border-color:var(--border2);}
 .compta-card-v2-stripe{width:4px;height:48px;border-radius:4px;flex-shrink:0;}
-.compta-card-v2-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.compta-card-v2-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--bg3);}
+.cc-att{display:inline-flex;align-items:center;gap:3px;}
 .compta-card-v2-body{flex:1;min-width:0;}
 .compta-card-v2-desc{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .compta-card-v2-meta{font-size:11px;color:var(--text3);margin-top:3px;display:flex;gap:6px;flex-wrap:wrap;}
@@ -1397,6 +1398,29 @@ td{font-size:14px;color:var(--text2);}
   #app .page-header-left p{font-size:16px!important;margin-top:10px!important;}
   #app .page-header > div:not(.page-header-left){display:flex;gap:8px;flex-wrap:wrap;}
   #app .page-header > div:not(.page-header-left) .btn,#app .page-header > .btn{flex:0 0 auto!important;width:auto!important;}
+}
+
+/* Icônes au trait (remplacent les émojis) */
+.ic{display:inline-block;flex-shrink:0;}
+.ic.emo{width:1em;height:1em;vertical-align:-0.14em;stroke-width:2;}
+.ic.emo.ic-alert{color:#d97706;}
+.ic.emo.ic-check,.ic.emo.ic-check-circle{color:var(--green);}
+.ic.emo.ic-x-circle{color:var(--red);}
+.ic.emo.big{color:var(--text3);stroke-width:1.3;}
+.ic.emo.big.ic-alert{color:#d97706;}
+
+/* ── Finitions : casse normale, fenêtres et champs date sur mobile ── */
+label{text-transform:none;letter-spacing:0;}
+label.btn{font-size:inherit;font-weight:600;color:inherit;margin:0;}
+.stat-label,.events-month-label,.event-body-stat-label,.don-info-lbl,.stat-kpi-label,.stat-section-title,.kmt-label,.kpi-mini-lbl,.docs-section-title,.pres-stat-label,.rapport-kpi-label{text-transform:none!important;letter-spacing:0!important;font-size:12.5px;}
+[style*="text-transform:uppercase"]{text-transform:none!important;letter-spacing:0!important;font-size:12.5px!important;}
+.form-grid>*{min-width:0;}
+input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width:0;max-width:100%;text-align:left;min-height:44px;}
+input[type=date]::-webkit-date-and-time-value{text-align:left;}
+.modal>h3:first-child{position:sticky;top:-28px;z-index:3;margin:-28px -28px 14px;padding:28px 28px 12px;background:var(--card);}
+@media(max-width:768px){
+  .modal{max-height:92vh;max-height:92dvh;}
+  .modal>h3:first-child{top:-22px;margin:-22px -16px 12px;padding:22px 16px 12px;}
 }
 </style>
 </head>
@@ -2376,6 +2400,81 @@ td{font-size:14px;color:var(--text2);}
 </div>
 
 <script>
+// ── ICÔNES AU TRAIT (style Lucide, licence ISC) : remplacent tous les émojis ──
+const _ICP={
+alert:'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+check:'<path d="M20 6 9 17l-5-5"/>',
+'check-circle':'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+x:'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+'x-circle':'<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>',
+help:'<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
+info:'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+trash:'<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/>',
+pencil:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+file:'<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v5h5"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+upload:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/>',
+'arrow-in':'<path d="M17 7 7 17"/><path d="M17 17H7V7"/>',
+'arrow-out':'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>',
+folder:'<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>',
+clip:'<path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/>',
+camera:'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>',
+calendar:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/>',
+users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+user:'<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+award:'<circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/>',
+card:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',
+wallet:'<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>',
+chart:'<path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>',
+'trend-up':'<path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/>',
+'trend-down':'<path d="m22 17-8.5-8.5-5 5L2 7"/><path d="M16 17h6v-6"/>',
+mail:'<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>',
+heart:'<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',
+phone:'<rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/>',
+bank:'<path d="M3 22h18"/><path d="M6 18v-7"/><path d="M10 18v-7"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M12 2 20 7H4z"/>',
+image:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/>',
+archive:'<rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/>',
+cloud:'<path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>',
+refresh:'<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+save:'<path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/>',
+pin:'<path d="M20 10c0 4.99-5.54 10.19-7.4 11.8a1 1 0 0 1-1.2 0C9.54 20.19 4 14.99 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+message:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+talk:'<path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z"/><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/>',
+lock:'<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+route:'<circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/>',
+home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
+clipboard:'<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>',
+pen:'<path d="M12 20h9"/><path d="M16.38 3.62a1 1 0 0 1 3 3L7.37 18.64a2 2 0 0 1-.85.5l-2.87.84a.5.5 0 0 1-.62-.62l.84-2.87a2 2 0 0 1 .5-.85z"/>',
+sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>',
+moon:'<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+hourglass:'<path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.17a2 2 0 0 0-.59-1.42L12 12l-4.41 4.41A2 2 0 0 0 7 17.83V22"/><path d="M7 2v4.17a2 2 0 0 0 .59 1.42L12 12l4.41-4.41A2 2 0 0 0 17 6.17V2"/>',
+grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'
+};
+function ic(n,s){const z=s?` width="${s}" height="${s}"`:'';return `<svg class="ic ic-${n}"${z} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${_ICP[n]||''}</svg>`;}
+const _EMO2IC={'⚠️':'alert','⚠':'alert','✅':'check-circle','✓':'check','✔️':'check','❌':'x-circle','✕':'x','❓':'help','ℹ️':'info','ℹ':'info','🗑️':'trash','🗑':'trash','✏️':'pencil','✏':'pencil','📄':'file','📝':'file','📤':'upload','📥':'arrow-in','📂':'folder','📁':'folder','📎':'clip','📷':'camera','📅':'calendar','👥':'users','👤':'user','🏅':'award','💳':'card','💰':'wallet','📊':'chart','📈':'trend-up','📉':'trend-down','✉️':'mail','✉':'mail','💛':'heart','💚':'trend-up','🔴':'trend-down','📱':'phone','🏦':'bank','🖼️':'image','🖼':'image','📦':'archive','☁️':'cloud','☁':'cloud','🔄':'refresh','💾':'save','📌':'pin','💬':'message','🗣️':'talk','🗣':'talk','🔒':'lock','🤝':'route','🏠':'home','📋':'clipboard','✍️':'pen','✍':'pen','☀️':'sun','☀':'sun','🌙':'moon','⏳':'hourglass','⊞':'grid'};
+const _EMO_RE=new RegExp('('+Object.keys(_EMO2IC).sort((a,b)=>b.length-a.length).map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')','g');
+const _EMO_SKIP=/^(SCRIPT|STYLE|TEXTAREA|OPTION|SELECT|TITLE|INPUT)$/;
+function _deEmoji(root){
+  if(!root)return;
+  if(root.nodeType===3){_deEmojiText(root);return;}
+  if(root.nodeType!==1||_EMO_SKIP.test(root.nodeName)||root.closest&&root.closest('svg'))return;
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>{_EMO_RE.lastIndex=0;const p=n.parentNode;return p&&!_EMO_SKIP.test(p.nodeName)&&_EMO_RE.test(n.nodeValue)?1:2;}});
+  const list=[];while(w.nextNode())list.push(w.currentNode);
+  list.forEach(_deEmojiText);
+}
+function _deEmojiText(t){
+  const p=t.parentNode;if(!p||_EMO_SKIP.test(p.nodeName))return;
+  _EMO_RE.lastIndex=0;if(!_EMO_RE.test(t.nodeValue))return;
+  const tpl=document.createElement('template');
+  const esc=v=>v.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const big=parseFloat(getComputedStyle(p).fontSize)>=26?' big':'';
+  tpl.innerHTML=esc(t.nodeValue).replace(_EMO_RE,m=>ic(_EMO2IC[m]).replace('class="ic ','class="ic emo'+big+' '));
+  p.replaceChild(tpl.content,t);
+}
+(function(){
+  const run=()=>{_deEmoji(document.body);new MutationObserver(ms=>{for(const m of ms){if(m.type==='characterData')_deEmojiText(m.target);else m.addedNodes.forEach(_deEmoji);}}).observe(document.body,{childList:true,subtree:true,characterData:true});};
+  if(document.body)run();else document.addEventListener('DOMContentLoaded',run);
+})();
+
 // ── CONNEXION ────────────────────────────────────────────────────
 // Un compte Firebase par membre du comité. Le mot de passe est vérifié par
 // Google, pas dans cette page ; les règles Firestore n'ouvrent les données
@@ -2735,7 +2834,7 @@ let emailHistorique=[];
 let editingMembre=null,editingEvent=null,editingCompta=null,editingCotisation=null,currentEventId=null;
 let _openEventId=null;
 let documents_list=[];
-const _donData=lsGet('gef_don_data',{twint:null,bank:null,iban:'CH•• •••• •••• •••• •••• •',benef:'Association GE-FAIS',banque:'',message:'Don GE-FAIS'});
+const _donData=lsGet('gef_don_data',{twint:null,bank:null,iban:'CH58 0021 5215 3246 9901 V',benef:'Association GE-FAIS',banque:'UBS Switzerland AG',message:'Don GE-FAIS'});
 const _lastSave={};
 
 // Listeners temps réel
@@ -3890,17 +3989,16 @@ function renderCompta(){
     const atts=c.attachments||[];
     const isIn=c.type==='recette';
     const color=isIn?'var(--green)':'var(--red)';
-    const bg=isIn?'rgba(34,197,94,0.12)':'rgba(255,59,48,0.1)';
-    const icon=isIn?'📥':'📤';
+    const icon=ic(isIn?'arrow-in':'arrow-out',18);
     return`<div class="compta-card-v2">
       <div class="compta-card-v2-stripe" style="background:${color};"></div>
-      <div class="compta-card-v2-icon" style="background:${bg};">${icon}</div>
+      <div class="compta-card-v2-icon" style="color:${color};">${icon}</div>
       <div class="compta-card-v2-body">
         <div class="compta-card-v2-desc">${c.description}</div>
         <div class="compta-card-v2-meta">
           <span>${fmtDate(c.date)}</span>
           ${c.categorie?`<span>· ${c.categorie}</span>`:''}
-          ${atts.length?`<span>· 📎 ${atts.length}</span>`:''}
+          ${atts.length?`<span class="cc-att">· ${ic('clip',12)} ${atts.length}</span>`:''}
         </div>
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;">
@@ -4078,7 +4176,7 @@ function envoyerEmail(){
   // Avertissement pièces jointes
   let corpsEnvoi = corps;
   if(emailFichiers.length){
-    corpsEnvoi += `\n\n---\n⚠️ N'oubliez pas d'attacher manuellement ${emailFichiers.length === 1 ? 'le fichier suivant' : 'les fichiers suivants'} :\n${emailFichiers.map(f=>'• '+f.name).join('\n')}`;
+    corpsEnvoi += `\n\n---\nAttention : n'oubliez pas d'attacher manuellement ${emailFichiers.length === 1 ? 'le fichier suivant' : 'les fichiers suivants'} :\n${emailFichiers.map(f=>'• '+f.name).join('\n')}`;
   }
 
   // Sauvegarder dans l'historique

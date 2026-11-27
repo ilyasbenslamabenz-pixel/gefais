@@ -100,6 +100,33 @@
   .check{display:flex;gap:12px;align-items:flex-start;font-size:15px;line-height:1.55;color:var(--text);cursor:pointer;margin-bottom:14px;}
   .check input{width:20px;height:20px;margin:2px 0 0;flex-shrink:0;accent-color:var(--ink);cursor:pointer;}
   .check.invalid{color:var(--red);}
+  /* ── Retours visuels pendant le remplissage ── */
+  .progression{position:fixed;left:0;right:0;top:0;height:3px;z-index:60;pointer-events:none;}
+  .progression i{display:block;height:100%;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1);}
+  .num{position:relative;transition:background-color .3s;}
+  .num.ok{background:var(--red);color:transparent;}
+  .num.ok::after{content:"";position:absolute;inset:0;background:#fff;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3.2 3.2L13 5' fill='none' stroke='%23141414' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3.2 3.2L13 5' fill='none' stroke='%23141414' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat;animation:pop .35s cubic-bezier(.2,.7,.2,1.4);}
+  @keyframes pop{from{transform:scale(.4)}to{transform:scale(1)}}
+  .field input[type=text],.field input[type=email],.field input[type=tel]{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3.2 3.2L13 5' fill='none' stroke='%23141414' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:0 0;transition:background-size .25s cubic-bezier(.2,.7,.2,1.4),border-color .15s,box-shadow .15s;}
+  .field.valid:not(.invalid) input[type=text],.field.valid:not(.invalid) input[type=email],.field.valid:not(.invalid) input[type=tel]{background-size:15px 15px;padding-right:38px;}
+  .secoue{animation:secousse .38s ease;}
+  @keyframes secousse{0%,100%{transform:none}20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+  .sig-zone{position:relative;}
+  .sig-ph{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;font-size:22px;font-weight:600;color:#cfccc4;pointer-events:none;transition:opacity .3s;}
+  .sig.signe .sig-ph{opacity:0;}
+  .done.show .done-icon{animation:pop .4s cubic-bezier(.2,.7,.2,1.4);}
+  .done.show .done-icon path{stroke-dasharray:24;stroke-dashoffset:24;animation:trace .5s .25s cubic-bezier(.2,.7,.2,1) forwards;}
+  @keyframes trace{to{stroke-dashoffset:0}}
+  @view-transition{navigation:auto;}
+  ::view-transition-old(root),::view-transition-new(root){animation-duration:.22s;}
+  @media (prefers-reduced-motion:reduce){
+    .secoue,.num.ok::after,.done.show .done-icon{animation:none;}
+    .done.show .done-icon path{animation:none;stroke-dashoffset:0;}
+    .progression i,.field input{transition:none;}
+    @view-transition{navigation:none;}
+  }
+
+  .hp{position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;}
   .check a{color:inherit;text-decoration:underline;text-underline-offset:2px;}
   .charte-box{border:1px solid var(--line);border-left:3px solid var(--ink);border-radius:3px;background:#fff;padding:16px 18px;margin:0 0 20px;font-size:14.5px;line-height:1.55;color:var(--text);}
   .charte-box p{margin:0 0 8px;}
@@ -145,6 +172,7 @@
   .done-actions{display:flex;gap:12px;flex-wrap:wrap;}
 
   .foot{border-top:1px solid var(--line);padding:24px 0 40px;font-size:13px;color:var(--muted);}
+  .foot a{color:inherit;text-decoration:underline;text-underline-offset:2px;}
 
   @media (max-width:960px){
     .layout{grid-template-columns:1fr;gap:36px;padding-top:44px;padding-bottom:64px;}
@@ -206,6 +234,8 @@
     <form id="form" novalidate>
       <div class="alert" id="alert" role="alert" tabindex="-1"></div>
 
+      <div class="progression" aria-hidden="true"><i id="progression"></i></div>
+      <div class="hp" aria-hidden="true"><label for="f-site">Ne pas remplir ce champ</label><input type="text" id="f-site" name="site" tabindex="-1" autocomplete="off"></div>
       <fieldset>
         <legend><span class="num">1</span>Vos coordonnées</legend>
         <div class="grid">
@@ -323,7 +353,7 @@
         </label>
         <label class="check" id="c-donnees">
           <input type="checkbox" id="f-donnees">
-          <span>J'accepte que mes données soient utilisées par le comité de GE-FAIS uniquement pour la gestion des membres de l'association.</span>
+          <span>J'accepte que mes données soient utilisées par le comité de GE-FAIS uniquement pour la gestion des membres de l'association (<a href="confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a>).</span>
         </label>
 
         <div class="sig" id="sig-box">
@@ -331,7 +361,7 @@
             <span>Votre signature</span>
             <button type="button" class="sig-clear" id="sig-clear">Effacer</button>
           </div>
-          <canvas id="sig-canvas" aria-label="Zone de signature : signez avec le doigt ou la souris"></canvas>
+          <div class="sig-zone"><canvas id="sig-canvas" aria-label="Zone de signature : signez avec le doigt ou la souris"></canvas><span class="sig-ph" aria-hidden="true">Signez ici</span></div>
           <div class="sig-foot">
             <span>Signez avec le doigt ou la souris</span>
             <span id="sig-date"></span>
@@ -366,7 +396,7 @@
   </div>
 </main>
 
-<footer class="wrap foot">© 2026 Association GE-FAIS · Genève · « Ensemble, faisons qu'un »</footer>
+<footer class="wrap foot">© 2026 Association GE-FAIS · Genève · « Ensemble, faisons qu'un » · <a href="charte.html">Charte éthique</a> · <a href="confidentialite.html">Confidentialité</a></footer>
 
 <script>
 // ── Firebase (même projet que l'espace comité) ──────────────────────
@@ -486,18 +516,62 @@ Object.keys(rules).forEach(k=>{
 function showAlert(msg){const a=$('alert');a.textContent=msg;a.classList.add('show');a.focus();a.scrollIntoView({behavior:'smooth',block:'center'});}
 function hideAlert(){$('alert').classList.remove('show');}
 
+// ── Progression et retours visuels ─────────────────────────────────
+const CHAMPS=['prenom','nom','adresse','npa','localite','email','tel'];
+const numeros=[...document.querySelectorAll('legend .num')];
+function etapeOk(i){
+  if(i===0)return CHAMPS.every(k=>rules[k]());
+  if(i===1)return rules.type();
+  return $('f-statuts').checked&&$('f-donnees').checked&&!sigEmpty;
+}
+function majProgression(){
+  let fait=[...CHAMPS,'type'].filter(k=>rules[k]()).length;
+  fait+=($('f-statuts').checked?1:0)+($('f-donnees').checked?1:0)+(sigEmpty?0:1);
+  $('progression').style.transform='scaleX('+(fait/11).toFixed(3)+')';
+  numeros.forEach((n,i)=>{const ok=etapeOk(i);if(ok!==n.classList.contains('ok')){n.classList.toggle('ok',ok);n.setAttribute('aria-label',ok?'Étape '+(i+1)+' complète':'Étape '+(i+1));}});
+  $('sig-box').classList.toggle('signe',!sigEmpty);
+}
+CHAMPS.forEach(k=>{
+  const el=document.querySelector('[data-f="'+k+'"]');
+  const coche=()=>{if(el.dataset.touche)el.classList.toggle('valid',rules[k]());};
+  el.addEventListener('focusout',()=>{el.dataset.touche='1';coche();});
+  el.addEventListener('input',coche);
+});
+$('form').addEventListener('input',majProgression);
+$('form').addEventListener('change',majProgression);
+canvas.addEventListener('pointerup',majProgression);
+$('sig-clear').addEventListener('click',()=>setTimeout(majProgression));
+majProgression();
+
 // ── Envoi ───────────────────────────────────────────────────────────
 let formData=null;
+// Anti-spam : un robot remplit le champ invisible ou envoie en quelques secondes ;
+// on lui affiche la confirmation sans rien envoyer. Une seule demande toutes les 10 minutes par appareil.
+const T_CHARGEMENT=Date.now(),DELAI_MIN=5000,PAUSE_ENVOIS=10*60*1000;
+function derniereDemande(){try{return Number(localStorage.getItem('gef_adh_envoi'))||0;}catch(e){return 0;}}
+function afficherMerci(){
+  $('form').style.display='none';
+  $('done').classList.add('show');
+  $('done').scrollIntoView({behavior:'smooth',block:'start'});
+  setTimeout(()=>$('done-title').focus({preventScroll:true}),400);
+}
 
 $('form').addEventListener('submit',async e=>{
   e.preventDefault();
   hideAlert();
   const bad=validate();
   if(bad.length){
+    document.querySelectorAll('.field.invalid,.check.invalid,.sig.invalid').forEach(el=>{el.classList.remove('secoue');void el.offsetWidth;el.classList.add('secoue');el.addEventListener('animationend',()=>el.classList.remove('secoue'),{once:true});});
     showAlert(bad.length===1?'Un élément est à compléter ou à corriger.':bad.length+' éléments sont à compléter ou à corriger.');
     const first=document.querySelector('.invalid input:not([type=radio]), .invalid select, .field.invalid input[type=radio], .check.invalid input');
     if(first)setTimeout(()=>first.focus({preventScroll:true}),400);
     if(bad.length===1&&bad[0]==='signature')$('sig-box').scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+
+  if($('f-site').value.trim()!==''||Date.now()-T_CHARGEMENT<DELAI_MIN){afficherMerci();return;}
+  if(Date.now()-derniereDemande()<PAUSE_ENVOIS){
+    showAlert("Une demande vient déjà d'être envoyée depuis cet appareil. Pour en envoyer une autre, attendez quelques minutes ou écrivez-nous à contact@gefais.ch.");
     return;
   }
 
@@ -526,10 +600,8 @@ $('form').addEventListener('submit',async e=>{
     const database=await waitForDb(10000);
     if(!database)throw new Error('Firebase indisponible');
     await database.collection('gef_demandes').add(formData);
-    $('form').style.display='none';
-    $('done').classList.add('show');
-    $('done').scrollIntoView({behavior:'smooth',block:'start'});
-    setTimeout(()=>$('done-title').focus({preventScroll:true}),400);
+    try{localStorage.setItem('gef_adh_envoi',String(Date.now()));}catch(e){}
+    afficherMerci();
   }catch(err){
     console.warn('Envoi impossible :',err);
     showAlert("Votre demande n'a pas pu être envoyée. Vérifiez votre connexion internet puis réessayez : vos informations sont conservées sur cette page.");
@@ -630,5 +702,6 @@ $('btn-pdf').addEventListener('click',()=>{
   doc.save('demande-adhesion-gefais-'+safe+'.pdf');
 });
 </script>
+<script src="animations.js" defer></script>
 </body>
 </html>
