@@ -676,12 +676,14 @@ body.menu-open .haut{opacity:0;pointer-events:none}
 /* ── Page L'équipe ── */
 .equipe .lead-eq{max-width:40ch;font-size:clamp(19px,1.8vw,24px);line-height:1.45;color:var(--ink-2);margin:6px 0 clamp(32px,4vw,52px)}
 .comite{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.membre{background:#fff;border-radius:4px;padding:30px 28px 28px;display:flex;flex-direction:column;box-shadow:inset 0 0 0 1px var(--line)}
-.av{width:104px;height:104px;margin-bottom:22px}
-.av text{font:800 34px var(--head);letter-spacing:-.02em}
-.membre h3{font:800 clamp(26px,2.4vw,32px)/1.05 var(--head);letter-spacing:-.03em}
-.membre .role{display:inline-block;margin-top:10px;font:700 13px var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--red-text)}
-.membre p{margin-top:12px;color:var(--muted);font-size:16px;line-height:1.5}
+.membre{position:relative;overflow:hidden;border-radius:4px;padding:28px 28px 30px;min-height:340px;display:flex;flex-direction:column;isolation:isolate;transition:transform .35s var(--ease),box-shadow .35s var(--ease)}
+.membre:hover{transform:translateY(-4px);box-shadow:0 24px 44px -28px rgba(20,20,20,.55)}
+.membre .deco{position:absolute;right:-70px;bottom:-70px;width:250px;height:250px;opacity:.16;z-index:-1;transition:transform .8s var(--ease)}
+.membre:hover .deco{transform:rotate(30deg)}
+.membre .role{font:700 13px var(--body);letter-spacing:.07em;text-transform:uppercase;opacity:.9}
+.membre h3{font:800 clamp(34px,3.2vw,44px)/.98 var(--head);letter-spacing:-.04em;margin-top:auto}
+.membre p{margin-top:14px;font-size:16px;line-height:1.5;opacity:.92;max-width:26ch}
+.m-red{background:var(--red);color:#fff}.m-gold{background:var(--gold);color:var(--ink)}.m-ink{background:var(--ink);color:#fff}
 .resp{margin-top:clamp(56px,7vw,96px)}
 .resp-list{list-style:none;margin:0;padding:0;border-top:2px solid var(--ink)}
 .resp-list li{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) minmax(0,1.4fr);gap:24px;align-items:center;padding:24px 0;border-bottom:1px solid var(--line)}
@@ -689,13 +691,12 @@ body.menu-open .haut{opacity:0;pointer-events:none}
 .resp-list .act::before{content:"";width:14px;height:14px;border-radius:50%;background:var(--ink);flex:none}
 .resp-list .act.r::before{background:var(--red)}.resp-list .act.y::before{background:#fdc915;box-shadow:0 0 0 1.5px var(--ink)}
 .resp-list .qui{display:flex;align-items:center;gap:14px;font-weight:700;font-size:18px}
-.resp-list .qui .av{width:56px;height:56px;margin:0}
 .resp-list .quoi{color:var(--muted);font-size:16px;line-height:1.5}
 .eq-cta{margin-top:clamp(48px,6vw,80px);display:flex;align-items:center;justify-content:space-between;gap:20px 32px;flex-wrap:wrap;background:var(--paper);border-radius:4px;padding:28px 30px}
 .eq-cta b{display:block;font:800 22px var(--head);letter-spacing:-.02em}
 .eq-cta span{color:var(--muted)}
 .eq-cta .acts{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
-@media (max-width:900px){.comite{grid-template-columns:1fr}.membre{flex-direction:row;align-items:center;gap:20px;padding:22px}.membre .av{width:84px;height:84px;margin:0;flex:none}.resp-list li{grid-template-columns:1fr;gap:10px;padding:20px 0}}
+@media (max-width:900px){.comite{grid-template-columns:1fr}.membre{min-height:230px;padding:24px}.membre .deco{width:200px;height:200px;right:-56px;bottom:-56px}.resp-list li{grid-template-columns:1fr;gap:10px;padding:20px 0}}
 </style>
 </head>
 <body class="sous-page">
@@ -766,15 +767,15 @@ body.menu-open .haut{opacity:0;pointer-events:none}
     <h2 id="t-comite" class="h2 reveal">Trois bénévoles aux commandes</h2>
     <p class="lead-eq reveal">Il fait vivre l'association au quotidien, étudie les demandes d'adhésion et prépare les rendez-vous.</p>
     <ul class="comite">
-      <li class="membre reveal"><svg class="av" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50.6" cy="8.9" r="4.34" fill="#141414"/><circle cx="71.8" cy="14.4" r="3.91" fill="#141414"/><circle cx="88.1" cy="29.0" r="3.35" fill="#141414"/><circle cx="94.7" cy="49.8" r="3.29" fill="#141414"/><circle cx="89.3" cy="71.4" r="3.16" fill="#141414"/><circle cx="73.0" cy="86.6" r="2.85" fill="#141414"/><circle cx="51.2" cy="93.7" r="2.73" fill="#141414"/><circle cx="30.2" cy="88.5" r="2.85" fill="#141414"/><circle cx="14.4" cy="73.6" r="4.15" fill="#141414"/><circle cx="8.4" cy="52.0" r="5.21" fill="#fdc915"/><circle cx="13.4" cy="30.7" r="5.15" fill="#d42a20"/><circle cx="29.1" cy="15.1" r="4.40" fill="#141414"/><circle cx="51" cy="51" r="33" fill="#d42a20"/><text x="51" y="51" dy=".35em" text-anchor="middle" fill="#fff">L</text></svg><div><h3>Louka</h3><span class="role">Présidence</span><p>Représente l'association et coordonne le comité.</p></div></li>
-      <li class="membre reveal" style="--d:.08s"><svg class="av" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50.6" cy="8.9" r="4.34" fill="#141414"/><circle cx="71.8" cy="14.4" r="3.91" fill="#141414"/><circle cx="88.1" cy="29.0" r="3.35" fill="#141414"/><circle cx="94.7" cy="49.8" r="3.29" fill="#141414"/><circle cx="89.3" cy="71.4" r="3.16" fill="#141414"/><circle cx="73.0" cy="86.6" r="2.85" fill="#141414"/><circle cx="51.2" cy="93.7" r="2.73" fill="#141414"/><circle cx="30.2" cy="88.5" r="2.85" fill="#141414"/><circle cx="14.4" cy="73.6" r="4.15" fill="#141414"/><circle cx="8.4" cy="52.0" r="5.21" fill="#fdc915"/><circle cx="13.4" cy="30.7" r="5.15" fill="#d42a20"/><circle cx="29.1" cy="15.1" r="4.40" fill="#141414"/><circle cx="51" cy="51" r="33" fill="#fdc915"/><text x="51" y="51" dy=".35em" text-anchor="middle" fill="#141414">S</text></svg><div><h3>Sana</h3><span class="role">Vice-présidence</span><p>Seconde la présidence et cosigne les adhésions.</p></div></li>
-      <li class="membre reveal" style="--d:.16s"><svg class="av" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50.6" cy="8.9" r="4.34" fill="#141414"/><circle cx="71.8" cy="14.4" r="3.91" fill="#141414"/><circle cx="88.1" cy="29.0" r="3.35" fill="#141414"/><circle cx="94.7" cy="49.8" r="3.29" fill="#141414"/><circle cx="89.3" cy="71.4" r="3.16" fill="#141414"/><circle cx="73.0" cy="86.6" r="2.85" fill="#141414"/><circle cx="51.2" cy="93.7" r="2.73" fill="#141414"/><circle cx="30.2" cy="88.5" r="2.85" fill="#141414"/><circle cx="14.4" cy="73.6" r="4.15" fill="#141414"/><circle cx="8.4" cy="52.0" r="5.21" fill="#fdc915"/><circle cx="13.4" cy="30.7" r="5.15" fill="#d42a20"/><circle cx="29.1" cy="15.1" r="4.40" fill="#141414"/><circle cx="51" cy="51" r="33" fill="#141414"/><text x="51" y="51" dy=".35em" text-anchor="middle" fill="#fff">I</text></svg><div><h3>Ilyas</h3><span class="role">Administration et site web</span><p>S'occupe de la gestion administrative, des adhésions et du site.</p></div></li>
+      <li class="membre m-red reveal"><svg class="deco" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50.6" cy="8.9" r="7.0" fill="#fff"/><circle cx="71.8" cy="14.4" r="6.3" fill="#fff"/><circle cx="88.1" cy="29.0" r="5.4" fill="#fff"/><circle cx="94.7" cy="49.8" r="5.3" fill="#fff"/><circle cx="89.3" cy="71.4" r="5.1" fill="#fff"/><circle cx="73.0" cy="86.6" r="4.6" fill="#fff"/><circle cx="51.2" cy="93.7" r="4.4" fill="#fff"/><circle cx="30.2" cy="88.5" r="4.6" fill="#fff"/><circle cx="14.4" cy="73.6" r="6.7" fill="#fff"/><circle cx="8.4" cy="52.0" r="8.4" fill="#fff"/><circle cx="13.4" cy="30.7" r="8.3" fill="#fff"/><circle cx="29.1" cy="15.1" r="7.1" fill="#fff"/></svg><span class="role">Président</span><h3>Louka<br>Pasche</h3><p>Représente l'association et coordonne le comité.</p></li>
+      <li class="membre m-gold reveal" style="--d:.08s"><svg class="deco" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50.6" cy="8.9" r="7.0" fill="#141414"/><circle cx="71.8" cy="14.4" r="6.3" fill="#141414"/><circle cx="88.1" cy="29.0" r="5.4" fill="#141414"/><circle cx="94.7" cy="49.8" r="5.3" fill="#141414"/><circle cx="89.3" cy="71.4" r="5.1" fill="#141414"/><circle cx="73.0" cy="86.6" r="4.6" fill="#141414"/><circle cx="51.2" cy="93.7" r="4.4" fill="#141414"/><circle cx="30.2" cy="88.5" r="4.6" fill="#141414"/><circle cx="14.4" cy="73.6" r="6.7" fill="#141414"/><circle cx="8.4" cy="52.0" r="8.4" fill="#141414"/><circle cx="13.4" cy="30.7" r="8.3" fill="#141414"/><circle cx="29.1" cy="15.1" r="7.1" fill="#141414"/></svg><span class="role">Vice-présidente</span><h3>Sana<br>Janezic</h3><p>Seconde la présidence et cosigne les adhésions.</p></li>
+      <li class="membre m-ink reveal" style="--d:.16s"><svg class="deco" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50.6" cy="8.9" r="7.0" fill="#fff"/><circle cx="71.8" cy="14.4" r="6.3" fill="#fff"/><circle cx="88.1" cy="29.0" r="5.4" fill="#fff"/><circle cx="94.7" cy="49.8" r="5.3" fill="#fff"/><circle cx="89.3" cy="71.4" r="5.1" fill="#fff"/><circle cx="73.0" cy="86.6" r="4.6" fill="#fff"/><circle cx="51.2" cy="93.7" r="4.4" fill="#fff"/><circle cx="30.2" cy="88.5" r="4.6" fill="#fff"/><circle cx="14.4" cy="73.6" r="6.7" fill="#fff"/><circle cx="8.4" cy="52.0" r="8.4" fill="#fff"/><circle cx="13.4" cy="30.7" r="8.3" fill="#fff"/><circle cx="29.1" cy="15.1" r="7.1" fill="#fff"/></svg><span class="role">Administration et site web</span><h3>Ilyas<br>Benslama</h3><p>S'occupe de la gestion administrative, des adhésions et du site.</p></li>
     </ul>
     <div class="resp">
       <p class="marker reveal"><span>Les responsables des activités</span></p>
       <h2 class="h2 reveal">Qui s'occupe de quoi</h2>
       <ul class="resp-list reveal" style="margin-top:clamp(24px,3vw,36px)">
-        <li><span class="act r">Maraudes</span><span class="qui"><svg class="av" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50.6" cy="8.9" r="4.34" fill="#141414"/><circle cx="71.8" cy="14.4" r="3.91" fill="#141414"/><circle cx="88.1" cy="29.0" r="3.35" fill="#141414"/><circle cx="94.7" cy="49.8" r="3.29" fill="#141414"/><circle cx="89.3" cy="71.4" r="3.16" fill="#141414"/><circle cx="73.0" cy="86.6" r="2.85" fill="#141414"/><circle cx="51.2" cy="93.7" r="2.73" fill="#141414"/><circle cx="30.2" cy="88.5" r="2.85" fill="#141414"/><circle cx="14.4" cy="73.6" r="4.15" fill="#141414"/><circle cx="8.4" cy="52.0" r="5.21" fill="#fdc915"/><circle cx="13.4" cy="30.7" r="5.15" fill="#d42a20"/><circle cx="29.1" cy="15.1" r="4.40" fill="#141414"/><circle cx="51" cy="51" r="33" fill="#f3f1ec"/><text x="51" y="51" dy=".35em" text-anchor="middle" fill="#141414">M</text></svg>Martine Pasche</span><span class="quoi">Organise les tournées et coordonne les bénévoles sur le terrain.</span></li>
+        <li><span class="act r">Maraudes</span><span class="qui">Martine Pasche</span><span class="quoi">Organise les tournées et coordonne les bénévoles sur le terrain.</span></li>
         <li><span class="act y">Réunions et sorties</span><span class="qui">Le comité</span><span class="quoi">Préparées ensemble, puis annoncées aux membres.</span></li>
       </ul>
     </div>
