@@ -173,7 +173,7 @@
   .intro-body{grid-column:1 / span 6;margin-top:56px;}
   .intro-body .link{margin-top:28px;display:inline-block;color:var(--red-text);}
   .facts{grid-column:8 / span 5;grid-row:2;margin:56px 0 0;align-self:start;}
-  .facts h3{font-size:15px;font-weight:700;letter-spacing:0;margin-bottom:6px;font-family:var(--body);}
+  .facts h3,.facts h2{font-size:15px;font-weight:700;letter-spacing:0;margin-bottom:6px;font-family:var(--body);}
   .facts dl{margin:0;border-top:1.5px solid var(--ink);}
   .facts div{display:grid;grid-template-columns:130px minmax(0,1fr);gap:16px;padding:14px 0;border-bottom:1px solid var(--line);font-size:15.5px;line-height:1.45;}
   .facts dt{color:var(--muted);}
@@ -621,6 +621,7 @@ body.menu-open .haut{opacity:0;pointer-events:none}
 .carte .k{font-size:14px;font-weight:600;opacity:.8}
 .carte h3{font:800 clamp(28px,2.6vw,36px)/1 var(--head);letter-spacing:-.03em;margin:auto 0 12px}
 .carte p{font-size:15.5px;line-height:1.5;opacity:.9}
+.c-eng .k,.c-eng p{opacity:1}
 .carte .fl{margin-top:22px;font-weight:600;font-size:15px;display:flex;align-items:center;gap:8px}
 .carte .fl i{font-style:normal;transition:transform .3s var(--ease)}.carte:hover .fl i{transform:translateX(6px)}
 .c-mar{background:var(--ink);color:#fff}.c-eng{background:var(--red);color:#fff}.c-don{background:var(--gold);color:var(--ink)}.c-aide{background:var(--paper);color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}
@@ -631,6 +632,45 @@ body.menu-open .haut{opacity:0;pointer-events:none}
 .rdv b{display:block;font:700 19px var(--head)}.rdv span{color:var(--muted);font-size:15px}
 @media (max-width:1000px){.cartes{grid-template-columns:1fr 1fr}.carte{min-height:260px}}
 @media (max-width:620px){.cartes{grid-template-columns:1fr}.carte{min-height:0}.carte h3{margin-top:36px}.rdv{grid-template-columns:auto minmax(0,1fr)}.rdv .link{grid-column:1/-1}}
+</style>
+<style>
+/* ── iPhone : lecture et toucher confortables ── */
+@media (max-width:820px){
+  .hero{min-height:max(560px,100svh)}
+  .page-tete{padding:112px 0 36px}
+  .page-tete+.section{padding-top:44px}
+  .menu-btn{min-height:44px;padding:12px 2px 12px 14px}
+  .brand{min-height:44px}
+  .link{position:relative}
+  .link::before{content:"";position:absolute;left:-6px;right:-6px;top:-11px;bottom:-9px}
+  .foot-col ul{gap:0}
+  .foot-col a{display:inline-block;padding:10px 0}
+  .rejouer{padding:13px 4px;margin:-13px -4px}
+  .slip .copier{padding:10px 14px;font-size:13px}
+  .foot-bottom a{display:inline-block;padding:12px 0}
+  .cal small,.rdv .cal small{font-size:11.5px;white-space:nowrap}
+  .rows li{grid-template-columns:76px minmax(0,1fr)}
+  .cal{width:76px;height:68px}
+  .rdv .cal{width:78px;height:68px}
+  .section{padding:64px 0}
+  .suite{padding:56px 0}
+  .haut{width:44px;height:44px;right:calc(12px + env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+  .valeurs .pied{font-size:13px}
+  .sA .hit{fill:transparent;cursor:pointer}
+  .sA .mot{cursor:pointer}
+  .sC .legende{font-size:11.5px;gap:10px;padding:4px 8px}
+  .sC .legende i{width:10px;height:10px}
+  .sC .credit{font-size:10.5px}
+  .sC .compteur{font-size:12px}
+  .sC .etape .no{font-size:12px}
+  .sC .exemple{font-size:12px;line-height:1.4;margin-top:14px}
+  .sC .legende{top:auto;bottom:8px;left:8px}
+  .sC .credit{top:6px;bottom:auto}
+  .sC .arret .t{font-size:25px;stroke-width:6px}
+  .sC .arret .n{font-size:13px}
+  .sC .passage text{font-size:20px;stroke-width:5px}
+  .sC .lbl{font-size:21px}
+}
 </style>
 </head>
 <body class="sous-page">
@@ -687,6 +727,7 @@ body.menu-open .haut{opacity:0;pointer-events:none}
 <button type="button" class="haut" aria-label="Revenir en haut de la page"><svg class="anneau" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22"/></svg><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
 
 
+<main id="contenu">
 <section class="page-tete">
   <div class="wrap">
     <p class="fil"><a href="accueil.html">Accueil</a> / Dons</p>
@@ -749,6 +790,7 @@ body.menu-open .haut{opacity:0;pointer-events:none}
   </div>
 </section>
 
+</main>
 <!-- PIED DE PAGE -->
 <footer class="on-dark">
   <div class="wrap">
@@ -923,7 +965,7 @@ body.menu-open .haut{opacity:0;pointer-events:none}
   } else {
     var io = new IntersectionObserver(function(entries){
       entries.forEach(function(en){
-        if(en.isIntersecting){ en.target.classList.add('is-in'); io.unobserve(en.target); }
+        if(en.isIntersecting || en.boundingClientRect.top < 0){ en.target.classList.add('is-in'); io.unobserve(en.target); }
       });
     }, {rootMargin:'0px 0px -8% 0px', threshold:0.12});
     items.forEach(function(el){ io.observe(el); });
@@ -973,6 +1015,7 @@ const VALEURS=[ // charte éthique et de valeurs GE-FAIS : les 9 valeurs de la s
   ['Confidentialité','L’intimité et la vie privée des personnes rencontrées sont protégées.']
 ];
 const gP=document.getElementById('ptsA'),gM=document.getElementById('motsA'),aigA=document.getElementById('aigA');
+const gH=el('g',{'aria-hidden':'true'},gP.parentNode);
 const angA=PTS.map(p=>{let a=Math.atan2(p[0]-20,-(p[1]-20))*180/Math.PI;return a<0?a+360:a;});
 PTS.forEach((p,i)=>{
   const c=el('circle',{cx:p[0],cy:p[1],r:p[2],class:'pt'+(p[3]?' '+p[3]:''),tabindex:0,role:'button','aria-label':VALEURS[i][0]},gP);
@@ -981,10 +1024,11 @@ PTS.forEach((p,i)=>{
   // mot placé à l'extérieur du point, ancré selon le côté
   const a=angA[i]*Math.PI/180,R=23.6,x=20+R*Math.sin(a),y=20-R*Math.cos(a)+0.8;
   const anc=Math.abs(Math.sin(a))<0.25?'middle':(Math.sin(a)>0?'start':'end');
-  const t=el('text',{x:x.toFixed(2),y:(y+(Math.cos(a)>0.9?-1.2:Math.cos(a)<-0.9?1.4:0)).toFixed(2),'text-anchor':anc,class:'mot'},gM);t.textContent=VALEURS[i][0];
+  const h=el('circle',{cx:p[0],cy:p[1],r:4.4,class:'hit'},gH);h.addEventListener('click',()=>{stop('A');montrerA(i,true);});
+  const t=el('text',{x:x.toFixed(2),y:(y+(Math.cos(a)>0.9?-1.2:Math.cos(a)<-0.9?1.4:0)).toFixed(2),'text-anchor':anc,class:'mot'},gM);t.textContent=VALEURS[i][0];t.addEventListener('click',()=>{stop('A');montrerA(i,true);});
 });
 const mqA=matchMedia('(max-width:820px)');
-function formatA(){const m=mqA.matches;gM.parentNode.setAttribute('viewBox',m?'-36 -6 112 52':'-27 -5 94 50');[...gM.children].forEach(t=>t.style.fontSize=m?'3.1px':'');}
+function formatA(){const m=mqA.matches;gM.parentNode.setAttribute('viewBox',m?'-38 -6 116 52':'-27 -5 94 50');[...gM.children].forEach(t=>t.style.fontSize=m?'3.5px':'');}
 formatA();mqA.addEventListener?.('change',formatA);
 void VALEURS.map(v=>`<li><b>${v[0]}</b> : ${v[1]}</li>`).join('');
 const panA=document.querySelector('#sceneA .panneau'),numA=document.getElementById('numA'),valA=document.getElementById('valA'),ligA=document.getElementById('ligA'),ctaA=document.getElementById('ctaA');
@@ -1022,7 +1066,7 @@ if(document.getElementById('sceneC')){
 /* ── C : le parcours (carte OpenStreetMap, trajet piéton réel) ── */
 const SUP={"W": 1063, "H": 901, "route": [[556.2, 557.1], [556.0, 561.0], [555.5, 561.0], [555.5, 562.0], [556.1, 562.0], [556.2, 560.2], [557.2, 559.7], [558.2, 559.3], [559.9, 558.5], [560.5, 558.3], [560.5, 559.0], [560.8, 559.3], [571.7, 559.0], [572.8, 558.8], [573.7, 558.4], [574.7, 557.5], [575.7, 558.0], [576.2, 558.3], [577.0, 558.8], [577.9, 558.8], [578.4, 558.8], [578.6, 558.8], [578.8, 558.8], [579.2, 558.9], [579.3, 556.4], [579.6, 556.4], [580.2, 529.2], [581.3, 524.5], [581.9, 520.0], [582.2, 516.6], [586.5, 520.8], [586.9, 520.4], [588.5, 518.5], [589.5, 518.7], [590.5, 518.6], [592.3, 518.0], [594.0, 517.3], [597.0, 515.6], [598.1, 514.5], [599.4, 512.8], [601.7, 511.4], [602.5, 510.9], [603.8, 509.9], [604.0, 509.9], [605.5, 508.9], [607.9, 506.6], [610.3, 504.5], [613.8, 502.5], [615.7, 502.0], [617.1, 503.2], [618.9, 504.9], [621.0, 502.7], [623.0, 500.5], [612.4, 490.8], [618.3, 482.9], [621.7, 477.3], [613.1, 471.9], [609.3, 471.7], [607.8, 470.5], [605.4, 468.6], [599.9, 470.9], [599.6, 470.2], [599.3, 469.7], [598.8, 469.3], [602.1, 465.8], [603.3, 464.9], [604.7, 464.3], [606.3, 464.1], [606.3, 463.3], [606.3, 462.9], [601.9, 461.2], [602.1, 459.8], [602.4, 456.1], [602.6, 454.9], [602.6, 454.5], [602.7, 453.9], [602.7, 453.5], [602.8, 452.3], [603.0, 451.0], [603.1, 449.5], [599.1, 446.6], [597.8, 445.8], [598.3, 444.4], [597.5, 442.0], [595.2, 434.2], [590.0, 416.2], [588.3, 409.6], [587.7, 407.3], [586.4, 402.9], [585.3, 399.2], [585.3, 398.2], [585.1, 395.3], [581.0, 378.3], [580.9, 376.8], [581.1, 376.0], [581.5, 375.4], [582.4, 374.7], [584.0, 374.0], [589.7, 372.7], [591.7, 372.5], [592.9, 372.5], [592.4, 371.1], [592.2, 370.5], [592.0, 369.9], [591.6, 368.8], [590.2, 364.4], [588.9, 360.2], [591.3, 359.3], [596.3, 357.7], [596.1, 357.2], [592.3, 358.3], [592.5, 356.7], [592.6, 355.6], [592.6, 355.0], [592.6, 354.3], [591.2, 351.8], [590.8, 349.6], [590.6, 348.8], [589.2, 338.4], [588.7, 337.1], [588.6, 336.3], [584.1, 322.6], [583.8, 321.8], [580.7, 312.7], [580.6, 312.2], [580.5, 312.0], [579.4, 309.5], [579.1, 308.9], [578.2, 306.7], [576.7, 307.4], [576.3, 307.6], [575.8, 307.8], [575.4, 308.0], [574.7, 308.2], [573.9, 306.4], [569.8, 297.1], [568.4, 295.3], [563.4, 284.5], [563.1, 284.0], [562.6, 283.2], [562.3, 282.5], [562.0, 281.8], [562.1, 281.2], [557.0, 270.1], [556.9, 269.4], [555.9, 267.2], [554.1, 265.8], [553.4, 265.2], [552.2, 264.1], [551.4, 262.7], [551.1, 261.1], [551.0, 259.6], [551.2, 258.3], [547.7, 257.2], [545.0, 253.5], [543.9, 252.7], [547.3, 247.9], [545.6, 246.7], [545.0, 246.2], [544.3, 245.8], [544.0, 245.5], [543.3, 245.1], [544.4, 243.6], [537.8, 238.5], [536.0, 237.1], [534.9, 236.2], [528.1, 230.9], [529.1, 229.7], [526.0, 226.9], [525.3, 225.0], [524.5, 223.1], [524.2, 222.3], [524.0, 221.8], [522.0, 222.6], [520.2, 218.7], [518.7, 216.4], [516.4, 213.9], [512.9, 211.0], [511.7, 210.0], [509.7, 208.4], [508.7, 208.4], [507.6, 207.6], [506.6, 206.4], [506.5, 205.9], [504.8, 204.5], [506.6, 202.0], [508.7, 199.3], [502.7, 194.4], [503.5, 193.2], [502.2, 188.6], [510.2, 186.0], [509.9, 185.4], [509.7, 184.9], [509.4, 184.3], [509.0, 183.3], [508.5, 183.5]], "legsKm": [0.583, 0.482, 0.794], "arrets": [[556.2, 557.1], [607.8, 470.5], [591.3, 359.3], [508.5, 183.5]], "passages": [{"n": "Place Neuve", "x": 597.8, "y": 445.8}, {"n": "Pont de l'Île", "x": 588.6, "y": 336.3}]};
 const svg=document.getElementById('carteC');
-const mqC=matchMedia('(max-width:820px)');const cadreC=()=>svg.setAttribute('viewBox',mqC.matches?'252 150 620 465':'266 147 592 450');cadreC();mqC.addEventListener?.('change',cadreC);svg.setAttribute('preserveAspectRatio','xMidYMid meet');svg.style.overflow='visible';
+const mqC=matchMedia('(max-width:820px)');const cadreC=()=>svg.setAttribute('viewBox',mqC.matches?'232 112 660 495':'266 147 592 450');cadreC();mqC.addEventListener?.('change',cadreC);svg.setAttribute('preserveAspectRatio','xMidYMid meet');svg.style.overflow='visible';
 el('image',{href:'images/carte-geneve.webp',x:0,y:0,width:SUP.W,height:SUP.H},svg);
 const lbl=(t,x,y)=>{const e=el('text',{x,y,class:'lbl'},svg);e.textContent=t;};
 lbl('Rhône',380,318);lbl('Léman',740,262);
