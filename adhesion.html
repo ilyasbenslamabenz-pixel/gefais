@@ -799,7 +799,7 @@ $('btn-pdf').addEventListener('click',()=>{
     if(img){if(!sigEmpty){try{img.src=canvas.toDataURL('image/png');img.classList.add('on');}catch(e){}}else img.classList.remove('on');}
     rdv();
   }
-  var TXT={'Actif':['var(--red)',8,'Environ <b>8 rendez-vous sur 10</b> : maraudes, réunions et formations.'],
+  var TXT={'Actif':['var(--red)',8,'Environ <b>8 rendez-vous sur 10</b> : maraudes et réunions.'],
            'Actif Suisse':['var(--gold)',4,'Environ <b>4 rendez-vous sur 10</b>.'],
            'Passif':['var(--grey)',0,'<b>Aucune présence attendue</b> : vous soutenez l\'association à distance.']};
   var cases=[].slice.call(document.querySelectorAll('.rdv-cases i')),dernier='';
